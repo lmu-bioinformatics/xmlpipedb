@@ -1,0 +1,114 @@
+<project name="XMLPipeDB" default="dist">
+    <description>This is the top-level build file for the XMLPipeDB project.</description>
+    
+    <!-- Global properties for this project. -->
+
+    <!-- Location of manually-written source code. -->
+    <property name="src" location="src"/>
+    
+    <!-- Location of automatically-generated source code (e.g., via Xdoclet). -->   
+    <property name="src-gen" location="src-gen"/>
+ 
+    <!-- Location of manually-added libraries (e.g., JARs). -->
+    <property name="lib" location="lib"/>
+ 
+    <!-- Location of automatically-generated libraries (e.g., via Xdoclet). -->
+    <property name="lib-gen" location="lib-gen"/>
+ 
+    <!-- Location of libraries needed only for building. -->
+    <property name="lib-build" location="lib-build"/>
+    
+    <!-- Location of build products (e.g., .class files, etc.). -->   
+    <property name="build" location="build"/>
+ 
+    <!-- Location of distribution product (i.e., for binary downloads). -->   
+    <property name="dist" location="dist"/>
+    
+    <!-- Location of distributed libraries. -->
+    <property name="distlib" location="${dist}/lib"/>
+    
+    <!-- Common paths, files, and patterns. -->
+    <patternset id="jars">
+        <include name="**/*.jar"/>
+    </patternset>
+    
+    <path id="path.lib">
+        <fileset dir="${lib}">
+            <patternset refid="jars"/>
+        </fileset>
+    </path>
+    
+    <path id="path.lib.gen">
+        <fileset dir="${lib-gen}">
+            <patternset refid="jars"/>
+        </fileset>
+    </path>
+    
+    <path id="path.lib.build">
+        <fileset dir="${lib-build}">
+            <patternset refid="jars"/>
+        </fileset>
+    </path>
+    
+    <!-- Targets. -->
+    <target name="init">
+        <!-- Initialize the time stamp. -->
+        <tstamp/>
+        
+        <!-- Create the directory for build products. -->
+        <mkdir dir="${build}"/>
+    </target>
+    
+    <!-- The xdoclet task generates any required source code from annotations. -->
+    <target name="xdoclet" depends="init">
+        <taskdef name="hibernatedoclet" classname="xdoclet.modules.hibernate.HibernateDocletTask" classpathref="path.lib.build"/>
+    </target>   
+    
+    <target name="compile" depends="xdoclet" description="Compiles the source code.">
+        <javac srcdir="${src}" destdir="${build}">
+            <!-- TODO: Uncomment this when we actually have a src-gen.   
+            <src path="${src-gen}"/>
+            -->
+            <src path="${src}"/>
+
+            <classpath>
+                <path refid="path.lib"/>
+                <!-- TODO: Uncomment this when/if we actually have a lib-gen.
+                <path refid="path.lib.gen"/>
+                -->
+            </classpath>
+        </javac>   
+    </target>
+ 
+    <target name="dist" depends="compile" description="Creates the binary distribution.">
+        <!-- Create the distribution directory. -->
+        <mkdir dir="${distlib}"/>
+     
+        <!-- Copy required libraries into the distribution. -->
+        <copy todir="${distlib}">
+            <fileset dir="${lib}">
+                <patternset refid="jars"/>
+            </fileset>
+            <!-- TODO: Uncomment this when/if we actually have a lib-gen.
+            <fileset dir="${lib-gen}">
+                <patternset refid="jars"/>
+            </fileset>
+            -->
+        </copy>
+        
+        <!-- Jar and copy the built classes. -->
+        <jar jarfile="${distlib}/${ant.project.name}.jar" basedir="${build}"/>   
+    </target>
+ 
+    <target name="clean" description="Deletes all compiled products.">
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>   
+    </target>   
+ 
+    <target name="distclean" depends="clean" description="Restores the directory to its distributed state (i.e., clean absolutely everything, including generated source code and libraries.).">
+        <delete dir="${src-gen}"/>
+        <delete dir="${lib-gen}"/>   
+    </target>
+ 
+    <!-- TODO: A javadoc document-generation task would be nice. -->   
+</project>

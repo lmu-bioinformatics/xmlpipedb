@@ -27,14 +27,17 @@ public class Log {
 	
 	public static void write(String line) {
 		log.append(line).append(System.getProperty("line.separator"));
+		System.out.println(line);
 	}
 	
 	public static void warn(String line) {
 		log.append(line).append(System.getProperty("line.separator"));
+		System.out.println(line);
 	}
 	
 	public static void error(String line) {
 		log.append(line).append(System.getProperty("line.separator"));
+		System.out.println(line);
 	}
 	
 }

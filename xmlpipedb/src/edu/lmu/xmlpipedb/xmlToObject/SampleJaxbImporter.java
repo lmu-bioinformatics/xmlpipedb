@@ -19,9 +19,15 @@
 
 package edu.lmu.xmlpipedb.xmlToObject;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -30,36 +36,91 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import util.Log;
+
+import com.sun.codemodel.JCodeModel;
+import com.sun.tools.xjc.BadCommandLineException;
+import com.sun.tools.xjc.Options;
+import com.sun.tools.xjc.Plugin;
+import com.sun.tools.xjc.api.ErrorListener;
+import com.sun.tools.xjc.api.S2JJAXBModel;
+import com.sun.tools.xjc.api.SchemaCompiler;
+import com.sun.tools.xjc.api.XJC;
+import com.sun.tools.xjc.outline.Outline;
 
 public class SampleJaxbImporter {
 
 	private static JAXBContext jaxbContext;
 	private static Unmarshaller unmarshaller;
 	
+	
+
+	
+	
 	//Default constructor.
 	public SampleJaxbImporter() {}
 	
 	public static void setXSD(File xsdFile) {
-		//setup schema here
-		//attach it to the unmarshaller
 		
+		SchemaCompiler sc = XJC.createSchemaCompiler();
+		sc.setDefaultPackageName("try");
 		try {
-			jaxbContext = JAXBContext.newInstance(xsdFile.toString());
-			unmarshaller = jaxbContext.createUnmarshaller();
 			
-			SchemaFactory schemaFactory = 
-				SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			Schema schema = schemaFactory.newSchema(xsdFile);
 			
-			unmarshaller.setSchema(schema);
 			
-			//unmarshaller.setEventHandler(new MyValidationEventHandler());
+			InputSource inputSource = new InputSource(new FileInputStream(xsdFile));
+			inputSource.setSystemId(xsdFile.toString());
+			inputSource.setEncoding("UTF-8");
+			sc.parseSchema(inputSource);
+			System.out.println("Success!");
 			
-		} catch (JAXBException e) { Log.error(e.toString());
-		} catch (SAXException e) { Log.error(e.toString()); }
+			S2JJAXBModel jaxbModel = sc.bind();
+
+			MyPlugins myPlugin = new MyPlugins();
+			
+			Options o1 = new Options();
+			o1.targetDir = new File("/u/blue/jjbarret/Desktop/try");
+			
+			String[] s = new String[1];
+			s[0] = "-d /u/blue/jjbarret/Desktop/try";
+			
+			myPlugin.addPlugin(s);
+			
+			s[0] = "-p generated";
+			
+			myPlugin.addPlugin(s);
+
+			
+			JCodeModel jCodeModel = jaxbModel.generateCode(null, new MyErrorListener());
+			
+			
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+//		//setup schema here
+//		//attach it to the unmarshaller
+//		
+//		try {
+//			jaxbContext = JAXBContext.newInstance(xsdFile.toString());
+//			unmarshaller = jaxbContext.createUnmarshaller();
+//			
+//			SchemaFactory schemaFactory = 
+//				SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+//			Schema schema = schemaFactory.newSchema(xsdFile);
+//			
+//			unmarshaller.setSchema(schema);
+//			
+//			unmarshaller.setEventHandler(new MyValidationEventHandler());
+//			
+//		} catch (JAXBException e) { Log.error(e.toString());
+//		} catch (SAXException e) { Log.error(e.toString()); }
 	}
 	
 	

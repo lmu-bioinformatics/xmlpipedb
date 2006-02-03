@@ -18,6 +18,10 @@
 // Created by dondi, Jan 27, 2006.
 package edu.lmu.xmlpipedb;
 
+import java.io.File;
+
+import edu.lmu.xmlpipedb.xmlToObject.SampleJaxbImporter;
+
 /**
  * ImportUniProtXML imports an XML file based on UniProt's XML Schema definition
  * into a relational database.
@@ -31,7 +35,14 @@ public class ImportUniProtXML {
      * 
      * @param args
      */
+	
+
     public static void main(String[] args) {
-        // TODO Write this utility when everything else is ready.
+       
+    	String xsdFile = "/u/blue/jjbarret/Desktop/try/po.xsd";
+    	
+    	SampleJaxbImporter.setXSD(new File(xsdFile));
+    	
+    	
     }
 }

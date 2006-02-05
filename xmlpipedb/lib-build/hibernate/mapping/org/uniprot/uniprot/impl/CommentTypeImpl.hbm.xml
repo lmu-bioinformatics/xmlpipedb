@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping
+        auto-import="false"
+>
+    <class
+        name="org.uniprot.uniprot.impl.CommentTypeImpl"
+        table="CommentType"
+        dynamic-update="false"
+        dynamic-insert="false"
+        select-before-update="false"
+    >
+
+        <id
+            name="idInternal"
+            column="idInternal"
+            type="java.lang.String"
+            length="32"
+            unsaved-value="null"
+        >
+            <generator class="uuid.hex">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-CommentTypeImpl.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <property
+            name="status"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="status"
+        />
+
+        <property
+            name="type"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="type"
+        />
+
+        <property
+            name="experiments"
+            type="java.math.BigInteger"
+            update="true"
+            insert="true"
+            access="property"
+            column="experiments"
+        />
+
+        <property
+            name="method"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="method"
+        />
+
+        <property
+            name="text"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="text"
+        />
+
+        <property
+            name="phDependence"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="phDependence"
+        />
+
+        <many-to-one
+            name="kinetics"
+            class="org.uniprot.uniprot.impl.BpcCommentGroupKineticsTypeImpl"
+            cascade="all"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            access="property"
+            column="kinetics"
+        />
+
+        <property
+            name="locationType"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="locationType"
+        />
+
+        <property
+            name="mass"
+            type="float"
+            update="true"
+            insert="true"
+            access="property"
+            column="mass"
+        />
+
+        <property
+            name="error"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="error"
+        />
+
+        <property
+            name="note"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="note"
+        />
+
+        <property
+            name="temperatureDependence"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="temperatureDependence"
+        />
+
+        <property
+            name="organismsDiffer"
+            type="boolean"
+            update="true"
+            insert="true"
+            access="property"
+            column="organismsDiffer"
+        />
+
+        <property
+            name="evidence"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="evidence"
+        />
+
+        <property
+            name="name"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="name"
+        />
+
+        <property
+            name="redoxPotential"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="redoxPotential"
+        />
+
+        <many-to-one
+            name="absorption"
+            class="org.uniprot.uniprot.impl.BpcCommentGroupAbsorptionTypeImpl"
+            cascade="all"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            access="property"
+            column="absorption"
+        />
+
+        <list
+            name="linkInternal"
+            table="CommentType_LinkInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="LinkInternal_index is not null"
+        >
+
+              <key
+                  column="CommentTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="LinkInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.CommentTypeImpl$LinkTypeImpl"
+              />
+
+        </list>
+
+        <list
+            name="locationInternal"
+            table="CommentType_LocationInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="LocationInternal_index is not null"
+        >
+
+              <key
+                  column="CommentTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="LocationInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.LocationTypeImpl"
+              />
+
+        </list>
+
+        <list
+            name="interactantInternal"
+            table="CommentType_InteractantInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="InteractantInternal_index is not null"
+        >
+
+              <key
+                  column="CommentTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="InteractantInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.InteractantTypeImpl"
+              />
+
+        </list>
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-CommentTypeImpl.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>

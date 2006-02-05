@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping
+        auto-import="false"
+>
+    <class
+        name="org.uniprot.uniprot.impl.SequenceTypeImpl"
+        table="SequenceType"
+        dynamic-update="false"
+        dynamic-insert="false"
+        select-before-update="false"
+    >
+
+        <id
+            name="idInternal"
+            column="idInternal"
+            type="java.lang.String"
+            length="32"
+            unsaved-value="null"
+        >
+            <generator class="uuid.hex">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-SequenceTypeImpl.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <property
+            name="modified"
+            type="de.fzi.dbs.jaxb.addon.hibernate.UTCCalendarType"
+            update="true"
+            insert="true"
+            access="property"
+            column="modified"
+        />
+
+        <property
+            name="value"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="value"
+        />
+
+        <property
+            name="mass"
+            type="java.math.BigInteger"
+            update="true"
+            insert="true"
+            access="property"
+            column="mass"
+        />
+
+        <property
+            name="length"
+            type="java.math.BigInteger"
+            update="true"
+            insert="true"
+            access="property"
+            column="length"
+        />
+
+        <property
+            name="checksum"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="checksum"
+        />
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-SequenceTypeImpl.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>

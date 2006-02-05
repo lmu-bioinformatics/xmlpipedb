@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping
+        auto-import="false"
+>
+    <class
+        name="org.uniprot.uniprot.impl.LocationTypeImpl"
+        table="LocationType"
+        dynamic-update="false"
+        dynamic-insert="false"
+        select-before-update="false"
+    >
+
+        <id
+            name="idInternal"
+            column="idInternal"
+            type="java.lang.String"
+            length="32"
+            unsaved-value="null"
+        >
+            <generator class="uuid.hex">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-LocationTypeImpl.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <property
+            name="sequence"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="sequence"
+        />
+
+        <many-to-one
+            name="begin"
+            class="org.uniprot.uniprot.impl.PositionTypeImpl"
+            cascade="all"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            access="property"
+            column="begin"
+        />
+
+        <many-to-one
+            name="position"
+            class="org.uniprot.uniprot.impl.PositionTypeImpl"
+            cascade="all"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            access="property"
+            column="position"
+        />
+
+        <many-to-one
+            name="end"
+            class="org.uniprot.uniprot.impl.PositionTypeImpl"
+            cascade="all"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            access="property"
+            column="end"
+        />
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-LocationTypeImpl.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>

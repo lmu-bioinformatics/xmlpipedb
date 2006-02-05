@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping
+        auto-import="false"
+>
+    <class
+        name="org.uniprot.uniprot.impl.EntryTypeImpl"
+        table="EntryType"
+        dynamic-update="false"
+        dynamic-insert="false"
+        select-before-update="false"
+    >
+
+        <id
+            name="idInternal"
+            column="idInternal"
+            type="java.lang.String"
+            length="32"
+            unsaved-value="null"
+        >
+            <generator class="uuid.hex">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-EntryTypeImpl.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <property
+            name="modified"
+            type="de.fzi.dbs.jaxb.addon.hibernate.UTCCalendarType"
+            update="true"
+            insert="true"
+            access="property"
+            column="modified"
+        />
+
+        <many-to-one
+            name="sequence"
+            class="org.uniprot.uniprot.impl.SequenceTypeImpl"
+            cascade="all"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            access="property"
+            column="sequence"
+        />
+
+        <property
+            name="dataset"
+            type="java.lang.String"
+            update="true"
+            insert="true"
+            access="property"
+            column="dataset"
+        />
+
+        <property
+            name="created"
+            type="de.fzi.dbs.jaxb.addon.hibernate.UTCCalendarType"
+            update="true"
+            insert="true"
+            access="property"
+            column="created"
+        />
+
+        <many-to-one
+            name="protein"
+            class="org.uniprot.uniprot.impl.ProteinTypeImpl"
+            cascade="all"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            access="property"
+            column="protein"
+        />
+
+        <list
+            name="commentInternal"
+            table="EntryType_CommentInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="CommentInternal_index is not null"
+        >
+
+              <key
+                  column="EntryTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="CommentInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.CommentTypeImpl"
+              />
+
+        </list>
+
+        <list
+            name="featureInternal"
+            table="EntryType_FeatureInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="FeatureInternal_index is not null"
+        >
+
+              <key
+                  column="EntryTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="FeatureInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.FeatureTypeImpl"
+              />
+
+        </list>
+
+        <list
+            name="keywordInternal"
+            table="EntryType_KeywordInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="KeywordInternal_index is not null"
+        >
+
+              <key
+                  column="EntryTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="KeywordInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.KeywordTypeImpl"
+              />
+
+        </list>
+
+        <list
+            name="dbReferenceInternal"
+            table="EntryType_DbReferenceInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="DbReferenceInternal_index is not null"
+        >
+
+              <key
+                  column="EntryTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="DbReferenceInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.DbReferenceTypeImpl"
+              />
+
+        </list>
+
+        <list
+            name="referenceInternal"
+            table="EntryType_ReferenceInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="ReferenceInternal_index is not null"
+        >
+
+              <key
+                  column="EntryTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="ReferenceInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.ReferenceTypeImpl"
+              />
+
+        </list>
+
+        <list
+            name="accessionInternal"
+            table="EntryType_AccessionInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="AccessionInternal_index is not null"
+        >
+
+              <key
+                  column="EntryTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="AccessionInternal_index"
+              />
+
+              <element
+                  column="value"
+                  type="java.lang.String"
+                  not-null="false"
+                  unique="false"
+              />
+
+        </list>
+
+        <list
+            name="geneInternal"
+            table="EntryType_GeneInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="GeneInternal_index is not null"
+        >
+
+              <key
+                  column="EntryTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="GeneInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.EntryTypeImpl$GeneTypeImpl"
+              />
+
+        </list>
+
+        <list
+            name="evidenceInternal"
+            table="EntryType_EvidenceInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="EvidenceInternal_index is not null"
+        >
+
+              <key
+                  column="EntryTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="EvidenceInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.EvidenceTypeImpl"
+              />
+
+        </list>
+
+        <list
+            name="geneLocationInternal"
+            table="EntryType_GeneLocationInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="GeneLocationInternal_index is not null"
+        >
+
+              <key
+                  column="EntryTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="GeneLocationInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.GeneLocationTypeImpl"
+              />
+
+        </list>
+
+        <list
+            name="nameInternal"
+            table="EntryType_NameInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="NameInternal_index is not null"
+        >
+
+              <key
+                  column="EntryTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="NameInternal_index"
+              />
+
+              <element
+                  column="value"
+                  type="java.lang.String"
+                  not-null="false"
+                  unique="false"
+              />
+
+        </list>
+
+        <list
+            name="organismInternal"
+            table="EntryType_OrganismInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="OrganismInternal_index is not null"
+        >
+
+              <key
+                  column="EntryTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="OrganismInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.OrganismTypeImpl"
+              />
+
+        </list>
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-EntryTypeImpl.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+        <joined-subclass
+            name="org.uniprot.uniprot.impl.EntryImpl"
+            table="Entry"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="parentid"
+        />
+
+        </joined-subclass>
+
+    </class>
+
+</hibernate-mapping>

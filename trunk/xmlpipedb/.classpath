@@ -2,11 +2,5 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib-build/jaxb-ri-12.23.05/activation.jar"/>
-	<classpathentry kind="lib" path="lib-build/jaxb-ri-12.23.05/jaxb1-impl.jar"/>
-	<classpathentry kind="lib" path="lib-build/jaxb-ri-12.23.05/jaxb-api.jar"/>
-	<classpathentry kind="lib" path="lib-build/jaxb-ri-12.23.05/jaxb-impl.jar"/>
-	<classpathentry kind="lib" path="lib-build/jaxb-ri-12.23.05/jaxb-xjc.jar"/>
-	<classpathentry kind="lib" path="lib-build/jaxb-ri-12.23.05/jsr173_1.0_api.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

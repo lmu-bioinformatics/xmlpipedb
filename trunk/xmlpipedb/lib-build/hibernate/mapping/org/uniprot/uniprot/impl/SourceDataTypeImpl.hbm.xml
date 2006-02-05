@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping
+        auto-import="false"
+>
+    <class
+        name="org.uniprot.uniprot.impl.SourceDataTypeImpl"
+        table="SourceDataType"
+        dynamic-update="false"
+        dynamic-insert="false"
+        select-before-update="false"
+    >
+
+        <id
+            name="idInternal"
+            column="idInternal"
+            type="java.lang.String"
+            length="32"
+            unsaved-value="null"
+        >
+            <generator class="uuid.hex">
+              <!--  
+                  To add non XDoclet generator parameters, create a file named 
+                  hibernate-generator-params-SourceDataTypeImpl.xml 
+                  containing the additional parameters and place it in your merge dir. 
+              --> 
+            </generator>
+        </id>
+
+        <list
+            name="speciesOrStrainOrPlasmidInternal"
+            table="SourceDataType_SpeciesOrStrainOrPlasmidInternal"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            where="SpeciesOrStrainOrPlasmidInternal_index is not null"
+        >
+
+              <key
+                  column="SourceDataTypeImpl_id"
+              >
+              </key>
+
+              <index
+                  column="SpeciesOrStrainOrPlasmidInternal_index"
+              />
+
+              <one-to-many
+                  class="org.uniprot.uniprot.impl.SourceDataTypeImpl$SpeciesOrStrainOrPlasmidImpl"
+              />
+
+        </list>
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-SourceDataTypeImpl.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>

@@ -288,7 +288,7 @@ public class Viewer extends JFrame {
 	 * Currently not used.
 	 */
 	private void preferences() {
-		// TODO Auto-generated method stub
+		//Add whatever is needed.
 
 	}
 

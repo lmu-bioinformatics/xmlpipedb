@@ -15,3 +15,10 @@ Here are the targets of the build process.
 	database/schema.sql and also into the database specified in the 
 	hibernate/hibernate.properties file;
     * all - full build process 
+    
+Note: On Windows machines, it has been seen that an error may occur involving javac
+not being in the class path when performing the Ant build in the Eclipse 
+environment.  To resolve this issue, do the following:
+	* Go to Windows->Preferences->Ant->Runtime.  
+	* Add tools.jar to the Classpath (this is located in JAVA_HOME/jdk/lib
+This should resolve the problem.  

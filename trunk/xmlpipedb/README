@@ -1,0 +1,17 @@
+Here are the targets of the build process.  
+
+	* init - initializes before the build 
+	* clean - cleans before the build; deletes classes, generated.sources, 
+	hibernate/mapping and database directories).
+    * generate.sources - invokes XJC and HyperJAXB to generate annotated sources 
+    in the generated.sources directory
+    * compile - compiles generated and static (those from the src directory) 
+    sources into the classes directory
+    * jar - packs the compiled classes and places the generated jar file into 
+    the dist directory;
+    * generate.hibernate.mapping - generates Hibernate mapping in the 
+    hibernate/mapping directory
+    * export.database.schema - exports database schema into the DDL file 
+	database/schema.sql and also into the database specified in the 
+	hibernate/hibernate.properties file;
+    * all - full build process 

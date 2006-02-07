@@ -44,7 +44,7 @@ public class ImportUniprotXML {
 	 * Takes a XML file and places it into
 	 * the Uniprot database
 	 */
-	public void loadXML(final File file) throws Exception {
+	public static void loadXML(final File file) throws Exception {
 		final Document document = getSampleDocument(file);
 		final Class sampleClass = getSampleClass(document);
 		
@@ -81,7 +81,7 @@ public class ImportUniprotXML {
 	   * @return Initialized session factory.
 	   * @throws Exception In case of problems building the session factory.
 	   */
-	  protected SessionFactory buildSessionFactory() throws Exception {
+	  protected static SessionFactory buildSessionFactory() throws Exception {
 	    final Configuration cfg = new Configuration();
 
 	    final Properties properties = new Properties();
@@ -92,7 +92,7 @@ public class ImportUniprotXML {
 	    return cfg.buildSessionFactory();
 	  }
 
-	  private Configuration addDirectory(final Configuration configuration,
+	  private static Configuration addDirectory(final Configuration configuration,
 	                                     final File directory, final boolean recurse, final FilenameFilter filenameFilter)
 	      throws IOException, MappingException {
 	    Configuration extendedConfiguration = configuration;
@@ -120,7 +120,7 @@ public class ImportUniprotXML {
 	   *
 	   * @return Directory containing Hibernate mapping.
 	   */
-	  public File getHibernateDirectory() {
+	  public static File getHibernateDirectory() {
 	    return new File("hibernate");
 	  }
 
@@ -129,7 +129,7 @@ public class ImportUniprotXML {
 	   *
 	   * @return Hibernate properties file.
 	   */
-	  public File getHibernatePropertiesFile() {
+	  public static File getHibernatePropertiesFile() {
 	    return new File(getHibernateDirectory(), "hibernate.properties");
 	  }
 	
@@ -144,7 +144,7 @@ public class ImportUniprotXML {
 	 * @throws IOException
 	 *             In case of I/O problems
 	 */
-	public Document getSampleDocument(final File file) throws SAXException,
+	public static Document getSampleDocument(final File file) throws SAXException,
 			IOException {
 		try {
 			
@@ -172,7 +172,7 @@ public class ImportUniprotXML {
 	 * @param node
 	 *            a node to clear whitespace from.
 	 */
-	public void clearWhitespace(final Node node) {
+	public static void clearWhitespace(final Node node) {
 		for (Node current = node.getLastChild(); current != null;) {
 			final Node next = current.getPreviousSibling();
 			if (current.getNodeType() == Node.TEXT_NODE) {
@@ -196,7 +196,7 @@ public class ImportUniprotXML {
 	 * @throws ClassNotFoundException
 	 *             In case spcified class could not be found.
 	 */
-	public Class getSampleClass(final Document document)
+	public static Class getSampleClass(final Document document)
 			throws ClassNotFoundException {
 		final String className = document.getFirstChild().getNodeValue();
 		if (className == null) {
@@ -220,10 +220,10 @@ public class ImportUniprotXML {
 	/**
 	 * Unmarshaller.
 	 */
-	protected Unmarshaller unmarshaller;
+	protected static Unmarshaller unmarshaller;
 	
 	/**
 	 * Session Factory
 	 */
-	protected SessionFactory sessionFactory;
+	protected static SessionFactory sessionFactory;
 }

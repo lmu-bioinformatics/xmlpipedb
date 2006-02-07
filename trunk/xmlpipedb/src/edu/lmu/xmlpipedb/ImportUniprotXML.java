@@ -29,6 +29,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -145,9 +146,24 @@ public class ImportUniprotXML {
 	 */
 	public Document getSampleDocument(final File file) throws SAXException,
 			IOException {
-		final Document document = documentBuilder.parse(file);
-		clearWhitespace(document);
-		return document;
+		try {
+			
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			
+			final Document document = db.parse(file);
+			clearWhitespace(document);
+			
+			return document;
+			
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+
 	}
 	
 	/**

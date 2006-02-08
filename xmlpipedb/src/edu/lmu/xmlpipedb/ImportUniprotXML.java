@@ -51,7 +51,7 @@ public class ImportUniprotXML {
 		// Construct JAXB context
 		final String implementingPackageName = sampleClass.getPackage().getName();
 		final String packageName = implementingPackageName.substring(0, implementingPackageName.lastIndexOf('.'));
-		final JAXBContext context = JAXBContext.newInstance(packageName);
+		final JAXBContext context = JAXBContext.newInstance("org.uniprot.uniprot");
 		unmarshaller = context.createUnmarshaller();
 		
 		// Unmarshall the document
@@ -198,13 +198,19 @@ public class ImportUniprotXML {
 	 */
 	public static Class getSampleClass(final Document document)
 			throws ClassNotFoundException {
-		final String className = document.getFirstChild().getNodeValue();
+		final String className = 
+			document.getFirstChild().getNodeName(); // JN - changed getNodeValue to getNodeName
 		if (className == null) {
 			throw new ClassNotFoundException(
 					"Object class is not specified in the sample."
 							+ " Please include <?class my.class.name?> in the document prolog.");
 		}
-		return Class.forName(className);
+		// JN-This will never work because the returned 
+		// value is not in the correct case and it must be fully
+		// qualified with the package name.
+//		return Class.forName( className );
+		
+		return Class.forName( "org.uniprot.uniprot.Uniprot" ); //JN-work around
 	}
 	
 	/**

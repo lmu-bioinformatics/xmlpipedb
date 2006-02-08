@@ -9,7 +9,7 @@ public class TestDriver {
 	 */
 	public static void main(String[] args) {
 		
-		File myFile = new File( "c:/!temp/109.P_putida.xml" );
+		File myFile = new File( "c:/!temp/test_109.P_putida.xml" );
 		
 		try {
 			if( myFile.exists() && myFile.canRead() )

@@ -44,6 +44,29 @@ public class ImportUniprotXML {
 	 * Takes a XML file and places it into
 	 * the Uniprot database
 	 */
+
+	private static final String usage = "usage: program_name xmlFile";
+	
+	public static void main(String[] args) {
+		File xmlFile = null;
+    	
+		if(args.length != 1) {
+    		System.err.println(usage);
+    		System.exit(1);
+    	} else {
+    		xmlFile = new File(args[0]);
+    	}
+    	
+		try {
+			if( xmlFile.canRead() )
+				loadXML( xmlFile );
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+	
+	
 	public static void loadXML(final File file) throws Exception {
 		final Document document = getSampleDocument(file);
 		final Class sampleClass = getSampleClass(document);

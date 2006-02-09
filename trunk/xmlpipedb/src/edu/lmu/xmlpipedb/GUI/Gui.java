@@ -14,6 +14,8 @@ import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import edu.lmu.xmlpipedb.ImportUniprotXML;
+
 /**
  *
  * @author Administrator
@@ -49,12 +51,23 @@ public class Gui implements Runnable{
     
     public void loadXmlFile(File file)
     {
+    	//BN - prevent exception if file open dialog is cancelled
+    	if( file == null )	
+    		return;
+    	
         _xmlFile = file; 
         _mainPanel.setXmlFilePath(file.getPath()); 
     }
-    public void startXmlToDataBase() throws Exception
+    
+    /**
+     * 2/8/2006 - bnaffas changed method prototype to take in file path as parameter
+     * @param filePath		The local path to the XML file we are loading. 
+     * @throws Exception	
+     */
+    public void startXmlToDataBase( String filePath ) throws Exception
     {
-            
+    	//Pass our parameters to the command line application.
+    	ImportUniprotXML.main( new String[]{filePath} );
     }
    
 }

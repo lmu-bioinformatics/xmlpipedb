@@ -33,7 +33,7 @@ public class GuiPanel extends JPanel{
     private JButton _loadXmlToDatabaseButton; 
     private JTextField _xmlFileBox;
     private JTextField _dataBaseNameBox; 
-    private JTextField _dataBaseUserBox; 
+    private JTextField _dataBaseUserBox;
     private JPasswordField _dataBasePasswordBox; 
     private JProgressBar _xmlLoadProgress; 
     private Gui _parent; 
@@ -69,7 +69,7 @@ public class GuiPanel extends JPanel{
                     return; 
                 }
                 try{
-                    _parent.startXmlToDataBase(); 
+                    _parent.startXmlToDataBase( _xmlFileBox.getText() ); 
                 }
                 catch(Exception e){
                     JOptionPane.showMessageDialog(me, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
@@ -85,7 +85,7 @@ public class GuiPanel extends JPanel{
         _dataBaseUserBox = new JTextField(); 
         _dataBasePasswordBox = new JPasswordField();  
         _xmlFileBox = new JTextField(); 
-        _xmlLoadProgress = new JProgressBar(); 
+        _xmlLoadProgress = new JProgressBar();
         
     }
 
@@ -140,8 +140,10 @@ public class GuiPanel extends JPanel{
     }
     private boolean isThereDataInTheFields()
     {
+    	//BN - the command line entry point only takes an XML file, no DB information
+    	return _xmlFileBox.getText().length() > 0;
        
-        return (_xmlFileBox.getText().length()>0)&&(_dataBaseNameBox.getText().length()>0)&&(_dataBaseUserBox.getText().length()>0)&& (_dataBasePasswordBox.getPassword().length>0); 
+        //return (_xmlFileBox.getText().length()>0)&&(_dataBaseNameBox.getText().length()>0)&&(_dataBaseUserBox.getText().length()>0)&& (_dataBasePasswordBox.getPassword().length>0); 
     }
     
 }

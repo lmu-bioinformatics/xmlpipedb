@@ -31,13 +31,9 @@ public class Gui implements Runnable{
     /**
      * @param args the command line arguments
      */
-    public void startGui(){
-        
-        SwingUtilities.invokeLater(this); 
-    }
+
     public static void main(String[] args) {
-        (new Gui()).startGui(); 
-        
+        SwingUtilities.invokeLater(new Gui()); 
     }
     
     public void run(){

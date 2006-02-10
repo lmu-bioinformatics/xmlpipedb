@@ -25,7 +25,7 @@ import javax.swing.JTextField;
 import edu.lmu.xmlpipedb.GUI.util.JLabelComponentFactory;
 
 /**
- * A simple login panel.
+ * A panel with a form to invoke the main operation, whatever that is.
  *
  * @author David Hoffman
  */
@@ -43,7 +43,8 @@ public class GuiPanel extends JPanel{
     /**
      * Creates the panel.
      *
-     * @param parent
+     * @param parent the Gui-based application object hosting this
+     * panel.
      */
     public GuiPanel(Gui parent) {
         _parent = parent;
@@ -53,6 +54,9 @@ public class GuiPanel extends JPanel{
         layoutComponents();
     }
 
+    /**
+     * Sets the path for the xml file.
+     */
     public void setXmlFilePath(String path) {
         _xmlFileBox.setText(path);
     }
@@ -62,22 +66,20 @@ public class GuiPanel extends JPanel{
     }
 
     private void createStartButtonAction() {
-
         final GuiPanel me = this;
-        _startButtonAction = new AbstractAction(){
-            public void actionPerformed(ActionEvent event)
-            {
 
-                if(!isThereDataInTheFields())
-                {
-                    JOptionPane.showMessageDialog(me, "All fields are required", "Input Needed", JOptionPane.ERROR_MESSAGE);
+        _startButtonAction = new AbstractAction(){
+            public void actionPerformed(ActionEvent event) {
+                if (!isThereDataInTheFields()) {
+                    JOptionPane.showMessageDialog(me, "All fields are required",
+                            "Input Needed", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                try{
-                    _parent.startXmlToDataBase( _xmlFileBox.getText() );
-                }
-                catch(Exception e){
-                    JOptionPane.showMessageDialog(me, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                try {
+                    _parent.startXmlToDataBase(_xmlFileBox.getText());
+                } catch(Exception e){
+                    JOptionPane.showMessageDialog(me, e.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         };
@@ -86,24 +88,21 @@ public class GuiPanel extends JPanel{
     private void createComponents() {
         _loadXmlToDatabaseButton = new JButton(_startButtonAction);
         _loadXmlToDatabaseButton.setText("Start");
-        _dataBaseNameBox = new JTextField(30);
-        _dataBaseUserBox = new JTextField(30);
-        _dataBasePasswordBox = new JPasswordField(30);
-        _xmlFileBox = new JTextField(30);
+        _dataBaseNameBox = new JTextField(20);
+        _dataBaseUserBox = new JTextField(20);
+        _dataBasePasswordBox = new JPasswordField(20);
+        _xmlFileBox = new JTextField(20);
         _xmlLoadProgress = new JProgressBar();
     }
 
     private void layoutComponents() {
         GridBagConstraints gbc = new GridBagConstraints();
 
+        // Global panel properties
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JPanel progressPanel = new JPanel();
-        progressPanel.add(JLabelComponentFactory
-                .createHorizontalLabelComponent(
-                        "Progress: ", 5, _xmlLoadProgress));
-
+        // Subpanels
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
         buttonPanel.add(_loadXmlToDatabaseButton);
@@ -112,6 +111,7 @@ public class GuiPanel extends JPanel{
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.insets = new Insets(2, 0, 0, 0);
         add(new JLabel("XML File Path: "), gbc);
         gbc.gridy++;
         add(new JLabel("Database Name: "), gbc);
@@ -120,10 +120,12 @@ public class GuiPanel extends JPanel{
         gbc.gridy++;
         add(new JLabel("Database Password: "), gbc);
 
+        // Text fields
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
+        gbc.insets = new Insets(2, 3, 0, 0);
         add(_xmlFileBox, gbc);
         gbc.gridy++;
         add(_dataBaseNameBox, gbc);
@@ -132,12 +134,14 @@ public class GuiPanel extends JPanel{
         gbc.gridy++;
         add(_dataBasePasswordBox, gbc);
 
+        // Progress bar
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 2;
-        gbc.insets = new Insets(10, 0, 0, 0);
-        add(progressPanel, gbc);
+        gbc.insets = new Insets(15, 0, 0, 0);
+        add(_xmlLoadProgress, gbc);
 
+        // Button panel
         gbc.gridy++;
         add(buttonPanel, gbc);
     }

@@ -22,14 +22,12 @@ import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
-import edu.lmu.xmlpipedb.GUI.util.JLabelComponentFactory;
-
 /**
  * A panel with a form to invoke the main operation, whatever that is.
  *
  * @author David Hoffman
  */
-public class GuiPanel extends JPanel{
+public class GuiPanel extends JPanel {
 
     private AbstractAction _startButtonAction;
     private JButton _loadXmlToDatabaseButton;
@@ -70,7 +68,7 @@ public class GuiPanel extends JPanel{
 
         _startButtonAction = new AbstractAction(){
             public void actionPerformed(ActionEvent event) {
-                if (!isThereDataInTheFields()) {
+                if (!inputValid()) {
                     JOptionPane.showMessageDialog(me, "All fields are required",
                             "Input Needed", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -146,10 +144,10 @@ public class GuiPanel extends JPanel{
         add(buttonPanel, gbc);
     }
 
-    private boolean isThereDataInTheFields() {
-        //BN - the command line entry point only takes an XML file, no DB information
-        return _xmlFileBox.getText().length() > 0;
+    // Validates form input.
+    private boolean inputValid() {
 
-        //return (_xmlFileBox.getText().length()>0)&&(_dataBaseNameBox.getText().length()>0)&&(_dataBaseUserBox.getText().length()>0)&& (_dataBasePasswordBox.getPassword().length>0);
+        // Only the XML path is required; database information has defaults.
+        return _xmlFileBox.getText().trim().length() > 0;
     }
 }

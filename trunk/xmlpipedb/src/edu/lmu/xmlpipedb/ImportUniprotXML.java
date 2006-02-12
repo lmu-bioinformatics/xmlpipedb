@@ -19,101 +19,114 @@
 package edu.lmu.xmlpipedb;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.FilenameFilter;
-import java.io.FileInputStream;
 import java.util.Properties;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.cfg.Configuration;
-import net.sf.hibernate.MappingException;
-import org.pf.file.DefaultFilenameFilter;
+import javax.xml.validation.Schema;
+
+import org.hibernate.MappingException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+
 
 public class ImportUniprotXML {
-	/**
-	 * Takes a XML file and places it into
-	 * the Uniprot database
-	 */
-
-	private static final String usage = "usage: program_name xmlFile";
+	
+	private static Unmarshaller unmarshaller;
+	private static JAXBContext jaxbContext;
+	private static Schema schema;
+	private static SessionFactory sessionFactory;
 	
 	public static void main(String[] args) {
-		File xmlFile = null;
-    	
-		if(args.length != 1) {
-    		System.err.println(usage);
-    		System.exit(1);
-    	} else {
-    		xmlFile = new File(args[0]);
-    	}
-    	
 		try {
-			if( xmlFile.canRead() )
-				loadXML( xmlFile );
-		} catch (Exception e) {
+			ImportUniprotXML.setXSD(new File("schema/uniprot.xsd"), "generated.java.org.uniprot.uniprot");
+		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
+			System.out.println("1");
 			e.printStackTrace();
 		}
+		
+		try {
+			ImportUniprotXML.loadXML(new File("xmlFiles/109.P_putida.xml"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println("2");
+			e.printStackTrace();
+		}
+		
+		
+    	
     }
 	
+	public static void setXSD(final File xsdFile, final String classesLocation) throws JAXBException {
+		
+		jaxbContext = JAXBContext.newInstance("generated.java.org.uniprot.uniprot");
+		unmarshaller = jaxbContext.createUnmarshaller();
+		
+        // create a SchemaFactory that conforms to W3C XML Schema
+        //SchemaFactory sf = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+        // parse the purchase order schema
+        //schema = sf.newSchema(xsdFile);
+
+        //unmarshaller.setSchema(schema);
+        // set your error handler to catch errors during schema construction
+        // we can use custom validation event handler
+        //unmarshaller.setEventHandler(new MyValidationEventHandler());
+		
+		
+	}
 	
-	public static void loadXML(final File file) throws Exception {
-		final Document document = getSampleDocument(file);
-		final Class sampleClass = getSampleClass(document);
+	
+	public static void loadXML(final File xmlFile) throws Exception {
+		//final Document document = getSampleDocument(file);
+		//final Class sampleClass = getSampleClass(document);
 		
 		// Construct JAXB context
-		final String implementingPackageName = sampleClass.getPackage().getName();
-		final String packageName = implementingPackageName.substring(0, implementingPackageName.lastIndexOf('.'));
-		final JAXBContext context = JAXBContext.newInstance("org.uniprot.uniprot");
-		unmarshaller = context.createUnmarshaller();
+		//final String implementingPackageName = sampleClass.getPackage().getName();
+		//final String packageName = implementingPackageName.substring(0, implementingPackageName.lastIndexOf('.'));
+		
+		
+
 		
 		// Unmarshall the document
-		final Object object = unmarshaller.unmarshal(document);
+		final Object object = unmarshaller.unmarshal(xmlFile);
+		
+		
+	    final Configuration cfg = new Configuration();
+
+	    final Properties properties = new Properties();
+	    properties.load(new FileInputStream(getHibernatePropertiesFile()));
+	    cfg.setProperties(properties);
+	    //addDirectory(cfg, getHibernateDirectory(), true, new DefaultFilenameFilter("*.hbm.xml"));
+		
+		
 		
 		// Open the session
-		sessionFactory = buildSessionFactory();
+		sessionFactory = cfg.buildSessionFactory();
 		final Session saveSession = sessionFactory.openSession();
 		final Serializable id = saveSession.save(object);
+		saveSession.save(id);
 		saveSession.flush();
 		
 		// Close the session
 		saveSession.close();
 		
 		// Open the seesion, load the object
-		final Session loadSession = sessionFactory.openSession();
-		final Object loadedObject = loadSession.load(sampleClass, id);
+		//final Session loadSession = sessionFactory.openSession();
+		//final Object loadedObject = loadSession.load(sampleClass, id);
 		
 		// Close the session
-		loadSession.close();
+		//loadSession.close();
 	}
 	
-	  /**
-	   * Builds the session factory. This method loads all the <code>*.hbm.xml</code> files
-	   * from the Hibernate directory and builds a session factory out of them.
-	   *
-	   * @return Initialized session factory.
-	   * @throws Exception In case of problems building the session factory.
-	   */
-	  protected static SessionFactory buildSessionFactory() throws Exception {
-	    final Configuration cfg = new Configuration();
-
-	    final Properties properties = new Properties();
-	    properties.load(new FileInputStream(getHibernatePropertiesFile()));
-	    cfg.setProperties(properties);
-	    addDirectory(cfg, getHibernateDirectory(), true, new DefaultFilenameFilter("*.hbm.xml"));
-
-	    return cfg.buildSessionFactory();
-	  }
 
 	  private static Configuration addDirectory(final Configuration configuration,
 	                                     final File directory, final boolean recurse, final FilenameFilter filenameFilter)
@@ -156,103 +169,4 @@ public class ImportUniprotXML {
 	    return new File(getHibernateDirectory(), "hibernate.properties");
 	  }
 	
-	/**
-	 * Loads a sample document from the given file.
-	 * 
-	 * @param file
-	 *            sample file.
-	 * @return Sample document.
-	 * @throws SAXException
-	 *             In case of parsing problems.
-	 * @throws IOException
-	 *             In case of I/O problems
-	 */
-	public static Document getSampleDocument(final File file) throws SAXException,
-			IOException {
-		try {
-			
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			
-			final Document document = db.parse(file);
-			clearWhitespace(document);
-			
-			return document;
-			
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
-
-	}
-	
-	/**
-	 * Clears whitespace text nodes from the node.
-	 * 
-	 * @param node
-	 *            a node to clear whitespace from.
-	 */
-	public static void clearWhitespace(final Node node) {
-		for (Node current = node.getLastChild(); current != null;) {
-			final Node next = current.getPreviousSibling();
-			if (current.getNodeType() == Node.TEXT_NODE) {
-				final String nodeValue = current.getNodeValue();
-				if (nodeValue.matches("\\s*")) {
-					node.removeChild(current);
-				}
-			} else if (current.getNodeType() == Node.ELEMENT_NODE) {
-				clearWhitespace(current);
-			}
-			current = next;
-		}
-	}
-	
-	/**
-	 * Returns sample class used in the document.
-	 * 
-	 * @param document
-	 *            document.
-	 * @return Sample class.
-	 * @throws ClassNotFoundException
-	 *             In case spcified class could not be found.
-	 */
-	public static Class getSampleClass(final Document document)
-			throws ClassNotFoundException {
-		final String className = 
-			document.getFirstChild().getNodeName(); // JN - changed getNodeValue to getNodeName
-		if (className == null) {
-			throw new ClassNotFoundException(
-					"Object class is not specified in the sample."
-							+ " Please include <?class my.class.name?> in the document prolog.");
-		}
-		// JN-This will never work because the returned 
-		// value is not in the correct case and it must be fully
-		// qualified with the package name.
-//		return Class.forName( className );
-		
-		return Class.forName( "org.uniprot.uniprot.Uniprot" ); //JN-work around
-	}
-	
-	/**
-	 * Document builder.
-	 */
-	protected DocumentBuilder documentBuilder;
-	
-	/**
-	 * Marshaller.
-	 */
-	protected Marshaller marshaller;
-
-	/**
-	 * Unmarshaller.
-	 */
-	protected static Unmarshaller unmarshaller;
-	
-	/**
-	 * Session Factory
-	 */
-	protected static SessionFactory sessionFactory;
 }

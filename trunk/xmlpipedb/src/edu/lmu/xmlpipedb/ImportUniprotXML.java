@@ -75,6 +75,12 @@ public class ImportUniprotXML {
 		jaxbContext = JAXBContext.newInstance("org.uniprot.uniprot");
 		unmarshaller = jaxbContext.createUnmarshaller();
 		
+		
+		//
+		//	EVERYTHING BELOW HERE IN THIS METHOD IS FOR CREATING A SCHEMA VALIDATOR.
+		//	THIS IS NOT NEEDED FOR IMPORTING BUT MAY WANT TO IMPLEMENT LATER.
+		//
+		
         // create a SchemaFactory that conforms to W3C XML Schema
         //SchemaFactory sf = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
@@ -91,31 +97,25 @@ public class ImportUniprotXML {
 	
 	
 	public static void loadXML(final File xmlFile) throws Exception {
-		//final Document document = getSampleDocument(file);
-		//final Class sampleClass = getSampleClass(document);
-		
-		// Construct JAXB context
-		//final String implementingPackageName = sampleClass.getPackage().getName();
-		//final String packageName = implementingPackageName.substring(0, implementingPackageName.lastIndexOf('.'));
-		
-		
 
-		
 		// Unmarshall the document
 		final Object object = unmarshaller.unmarshal(xmlFile);
 		
-		
+		// Create a new configuration
 	    final Configuration cfg = new Configuration();
 
+	    // Create the properties for Hibernate
 	    final Properties properties = new Properties();
-	    properties.load(new FileInputStream(getHibernatePropertiesFile()));
+	    properties.load(new FileInputStream("hibernate.properties"));
 	    cfg.setProperties(properties);
-	    //addDirectory(cfg, getHibernateDirectory(), true, new DefaultFilenameFilter("*.hbm.xml"));
-		
-		
-		
+	    
+		//
+	    //	EVERYTHING WORKS UP TO HERE.
+	    //
+	    
 		// Open the session
 		sessionFactory = cfg.buildSessionFactory();
+		
 		final Session saveSession = sessionFactory.openSession();
 		final Serializable id = saveSession.save(object);
 		saveSession.save(id);
@@ -131,39 +131,4 @@ public class ImportUniprotXML {
 		// Close the session
 		//loadSession.close();
 	}
-	
-
-	  private static Configuration addDirectory(final Configuration configuration,
-	                                     final File directory, final boolean recurse, final FilenameFilter filenameFilter)
-	      throws IOException, MappingException {
-	    Configuration extendedConfiguration = configuration;
-	    if (!directory.isDirectory()) {
-	      throw new IOException("Passed file handle [" +
-	          directory.getAbsolutePath() + "] is not a directory.");
-	    }
-	    final File[] files = directory.listFiles();
-	    for (int index = 0; index < files.length; index++) {
-	      final File file = files[index];
-	      if (recurse && file.isDirectory()) {
-	        extendedConfiguration = addDirectory(extendedConfiguration,
-	            file, recurse, filenameFilter);
-	      }
-	      else if (file.isFile() &&
-	          filenameFilter.accept(directory, file.getName())) {
-	        extendedConfiguration = extendedConfiguration.addFile(file);
-	      }
-	    }
-	    return configuration;
-	  }
-
-
-	  /**
-	   * Returns Hibernate properties file.
-	   *
-	   * @return Hibernate properties file.
-	   */
-	  public static File getHibernatePropertiesFile() {
-	    return new File("hibernate.properties");
-	  }
-	
 }

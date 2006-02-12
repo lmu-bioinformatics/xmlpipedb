@@ -29,11 +29,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.hibernate.MappingException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.xml.sax.SAXException;
 
 
 
@@ -46,10 +48,13 @@ public class ImportUniprotXML {
 	
 	public static void main(String[] args) {
 		try {
-			ImportUniprotXML.setXSD(new File("schema/uniprot.xsd"), "generated.java.org.uniprot.uniprot");
+			ImportUniprotXML.setXSD(new File("schema/uniprot.xsd"), "org.uniprot.uniprot");
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			System.out.println("1");
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -65,9 +70,9 @@ public class ImportUniprotXML {
     	
     }
 	
-	public static void setXSD(final File xsdFile, final String classesLocation) throws JAXBException {
+	public static void setXSD(final File xsdFile, final String classesLocation) throws JAXBException, SAXException {
 		
-		jaxbContext = JAXBContext.newInstance("generated.java.org.uniprot.uniprot");
+		jaxbContext = JAXBContext.newInstance("org.uniprot.uniprot");
 		unmarshaller = jaxbContext.createUnmarshaller();
 		
         // create a SchemaFactory that conforms to W3C XML Schema
@@ -151,14 +156,6 @@ public class ImportUniprotXML {
 	    return configuration;
 	  }
 
-	  /**
-	   * Returns the directory containing Hibernate mapping.
-	   *
-	   * @return Directory containing Hibernate mapping.
-	   */
-	  public static File getHibernateDirectory() {
-	    return new File("hibernate");
-	  }
 
 	  /**
 	   * Returns Hibernate properties file.
@@ -166,7 +163,7 @@ public class ImportUniprotXML {
 	   * @return Hibernate properties file.
 	   */
 	  public static File getHibernatePropertiesFile() {
-	    return new File(getHibernateDirectory(), "hibernate.properties");
+	    return new File("hibernate.properties");
 	  }
 	
 }

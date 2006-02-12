@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<project name="xmlpipedb" default="all">
+
+  <!-- Set to 'no' if schema should be exported into the database, set to 'yes' for text-only export -->
+  <property name="text" value="no"/>
+
+  <!-- Set name of the project here -->
+  <property name="name" value="xmlpipedb"/>
+
+  <property name="main.dir" value="${basedir}"/>
+  <property name ="generate.dir" value="${basedir}/lib"/>
+  <property name="main.lib.dir" location="${main.dir}/lib-build"/>
+  <property name="test.lib.dir" location="${basedir}/lib-build"/>
+  <property name="jaxb.version" value="1.4"/>
+
+  <property name="log4j.dir" location="${main.lib.dir}/log4j"/>
+  <property name="hyperjaxb.lib.dir" location="${main.lib.dir}/hyperjaxb"/>
+  <property name="jaxb.lib.dir" location="${main.lib.dir}/jaxb-${jaxb.version}"/>
+  <property name="junit.lib.dir" location="${main.lib.dir}/junit"/>
+  <property name="jakarta-commons.lib.dir" location="${main.lib.dir}/jakarta-commons"/>
+  <property name="log4j.lib.dir" location="${main.lib.dir}/log4j"/>
+  <property name="hibernate.lib.dir" location="${main.lib.dir}/hibernate"/>
+  <property name="qdox.lib.dir" location="${main.lib.dir}/qdox"/>
+  <property name="xdoclet.lib.dir" location="${main.lib.dir}/xdoclet"/>
+  <property name="dom4j.lib.dir" location="${main.lib.dir}/dom4j"/>
+  <property name="odmg.lib.dir" location="${main.lib.dir}/odmg"/>
+  <property name="cglib.lib.dir" location="${main.lib.dir}/cglib"/>
+  <property name="j2ee.lib.dir" location="${main.lib.dir}/j2ee"/>
+  <property name="pf.lib.dir" location="${main.lib.dir}/pf"/>
+  <property name="xmlunit.lib.dir" location="${main.lib.dir}/xmlunit"/>
+  <property name="postgresql.lib.dir" location="${main.lib.dir}/postgresql"/>
+
+  <property name="jar.name" value="${name}.jar"/>
+  <property name="dist.dir" location="${basedir}/dist"/>
+  <property name="sources" location="${basedir}/src"/>
+  <property name="classes" location="${generate.dir}/classes"/>
+  <property name="generated.sources" location="${generate.dir}/generated.sources"/>
+
+  <property name="hibernate" location="${main.lib.dir}/hibernate"/>
+  <property name="hibernate.mapping" location="${hibernate}/mapping"/>
+  <property name="hibernate.properties" location="${hibernate}/hibernate.properties"/>
+  <property name="database" location="${generate.dir}/database"/>
+
+  <path id="schemas.path">
+    <fileset dir="${basedir}/schema">
+      <include name="*.xsd"/>
+    </fileset>
+  </path>
+
+  <path id="xjc.lib.path">
+    <pathelement location="${log4j.dir}"/>
+    <fileset dir="${hyperjaxb.lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${jaxb.lib.dir}">
+      <include name="dom.jar"/>
+      <include name="jax-qname.jar"/>
+      <include name="jaxb-api.jar"/>
+      <include name="jaxb-impl.jar"/>
+      <include name="jaxb-libs.jar"/>
+      <include name="jaxb-xjc.jar"/>
+      <include name="jaxp-api.jar"/>
+      <include name="namespace.jar"/>
+      <include name="relaxngDatatype.jar"/>
+      <include name="sax.jar"/>
+      <include name="xalan.jar"/>
+      <include name="xercesImpl.jar"/>
+      <include name="xsdlib.jar"/>
+    </fileset>
+    <fileset dir="${jakarta-commons.lib.dir}">
+      <include name="commons-logging.jar"/>
+    </fileset>
+    <fileset dir="${log4j.lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${hibernate.lib.dir}">
+      <include name="hibernate2.jar"/>
+    </fileset>
+    <fileset dir="${qdox.lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="compile.lib.path">
+    <fileset dir="${jaxb.lib.dir}">
+      <include name="jax-qname.jar"/>
+      <include name="jaxb-api.jar"/>
+      <include name="jaxb-impl.jar"/>
+      <include name="jaxb-libs.jar"/>
+      <include name="namespace.jar"/>
+      <include name="relaxngDatatype.jar"/>
+      <include name="xsdlib.jar"/>
+    </fileset>
+    <fileset dir="${hibernate.lib.dir}">
+      <include name="hibernate2.jar"/>
+    </fileset>
+    <fileset dir="${pf.lib.dir}">
+      <include name="pf.jar"/>
+    </fileset>
+  </path>
+
+  <path id="hibernatedoclet.lib.path">
+    <fileset dir="${jakarta-commons.lib.dir}">
+      <include name="commons-collections.jar"/>
+      <include name="commons-logging.jar"/>
+    </fileset>
+    <fileset dir="${xdoclet.lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="schemaexport.lib.path">
+    <fileset dir="${hyperjaxb.lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${dom4j.lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${jakarta-commons.lib.dir}">
+      <include name="commons-collections.jar"/>
+      <include name="commons-logging.jar"/>
+    </fileset>
+    <fileset dir="${hibernate.lib.dir}">
+      <include name="hibernate2.jar"/>
+    </fileset>
+    <fileset dir="${jaxb.lib.dir}">
+      <include name="jaxb-api.jar"/>
+      <include name="jaxb-impl.jar"/>
+      <include name="jaxb-libs.jar"/>
+      <include name="namespace.jar"/>
+      <include name="relaxngDatatype.jar"/>
+      <include name="xsdlib.jar"/>
+    </fileset>
+    <fileset dir="${odmg.lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${dist.dir}">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${postgresql.lib.dir}">
+      <include name="postgresql-8.1-404.jdbc3.jar"/>
+    </fileset>
+  </path>
+
+  <target name="init"/>
+
+  <target name="clean" depends="init">
+    <delete dir="${generated.sources}"/>
+    <delete dir="${classes}"/>
+    <delete dir="${database}"/>
+    <delete dir="${hibernate.mapping}"/>
+  </target>
+
+  <target name="generate.sources">
+    <taskdef name="xjc"
+      classname="com.sun.tools.xjc.XJCTask"
+      classpathref="xjc.lib.path"/>
+    <mkdir dir="${generated.sources}"/>
+    <xjc target="${generated.sources}">
+      <arg line="-nv"/>
+      <arg line="-extension"/>
+      <arg line="-Xhibernate-xdoclets"/>
+      <binding dir="${basedir}">
+        <include name="binding/*.xml"/>
+      </binding>
+      <schema dir="${basedir}">
+        <include name="schema/**/*.xsd"/>
+      </schema>
+    </xjc>
+  </target>
+
+  <target name="compile" depends="generate.sources">
+    <mkdir dir="${classes}"/>
+    <javac destdir="${classes}" debug="true"
+      srcdir="${generated.sources}:${sources}"
+      classpathref="compile.lib.path">
+    </javac>
+    <copy todir="${classes}">
+      <fileset dir="${generated.sources}">
+        <exclude name="**/*.java"/>
+      </fileset>
+      <fileset dir="${sources}">
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jar" depends="compile">
+    <jar jarfile="${dist.dir}/${jar.name}" basedir="${classes}"/>
+  </target>
+
+  <target name="generate.hibernate.mapping" depends="jar">
+
+    <taskdef name="hibernatedoclet"
+      classname="xdoclet.modules.hibernate.HibernateDocletTask"
+      classpathref="hibernatedoclet.lib.path"/>
+
+    <tstamp>
+      <format property="TODAY" pattern="dd-MM-yy"/>
+    </tstamp>
+
+    <mkdir dir="${hibernate.mapping}"/>
+
+    <hibernatedoclet
+      destdir="${hibernate.mapping}"
+      mergedir="${generated.sources}"
+      excludedtags="@version,@author,@todo,@see,@throws"
+      addedtags="@xdoclet-generated at ${TODAY},@copyright The XDoclet Team,@author XDoclet"
+      force="false"
+      verbose="yes">
+
+      <fileset dir="${generated.sources}">
+        <include name="**/*.java"/>
+        <exclude name="**/runtime/*.java"/>
+      </fileset>
+
+      <hibernate version="2.0"/>
+    </hibernatedoclet>
+  </target>
+
+  <target name="export.database.schema" depends="generate.hibernate.mapping">
+
+    <taskdef name="schemaexport"
+      classname="net.sf.hibernate.tool.hbm2ddl.SchemaExportTask"
+      classpathref="schemaexport.lib.path"/>
+
+    <mkdir dir="${database}"/>
+
+    <schemaexport
+      properties="${hibernate.properties}"
+      quiet="yes"
+      text="${text}"
+      drop="no"
+      delimiter=";"
+      output="${database}/schema.sql">
+      <fileset dir="${hibernate.mapping}">
+        <include name="**/*.hbm.xml"/>
+      </fileset>
+    </schemaexport>
+
+  </target>
+
+  <target name="all" depends="export.database.schema"/>
+
+</project>

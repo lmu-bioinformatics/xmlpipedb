@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <project name="jaxbcommons.augment" default="jaxbcommons.augment">
 	<!-- ... -->
+	<import file="jaxbcommons.paths.xml" />
 	<target name="jaxbcommons.generate.sources">
 		<!-- Output code generation information -->
 		<echo message="[jaxbcommons] Generating sources."/>
@@ -8,8 +9,10 @@
 		<echo message="[jaxbcommons] Directory for generated sources:"/>
 		<echo message="[jaxbcommons] jaxbcommons.generated.src.dir=${jaxbcommons.generated.src.dir}"/>
 		<echo message="[jaxbcommons] Recreating directory for generated sources."/>
+		<!--
 		<delete dir="${jaxbcommons.generated.src.dir}"/>
 		<mkdir dir="${jaxbcommons.generated.src.dir}"/>
+		-->
 		<!-- XJC classpath -->
 		<echo message="[jaxbcommons] XJC classpath:"/>
 		<property name="jaxbcommons.xjc.classpath.property" refid="jaxbcommons.xjc.classpath"/>

@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <project name="hyperjaxb2.paths" default="hyperjaxb2.paths.set">
 	<!-- ... -->
-	<property file="${jaxbcommons.properties.file}"/>
+	<property file="jaxbcommons.properties"/>
+	<property file="hyperjaxb2.properties"/>
 	<import file="${jaxbcommons.paths.xml.file}"/>
 	<!-- ... -->
 	<condition property="hyperjaxb2.integrated">
@@ -54,9 +55,9 @@
 		</fileset>
 	</path>
 	
-	<path id="hsqldb.path">
-		<fileset dir="${hyperjaxb2.lib.dir}/hsqldb">
-			<include name="hsqldb.jar"/>
+	<path id="pgdb.path">
+		<fileset dir="${hyperjaxb2.lib.dir}/pgdb">
+			<include name="postgresql-8.1-405.jdbc3.jar"/>
 		</fileset>
 	</path>
 	

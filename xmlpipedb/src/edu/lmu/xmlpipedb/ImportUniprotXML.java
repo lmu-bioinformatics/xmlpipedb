@@ -43,15 +43,14 @@ public class ImportUniprotXML {
 	
 	private static Unmarshaller unmarshaller;
 	private static JAXBContext jaxbContext;
-	private static Schema schema;
 	private static SessionFactory sessionFactory;
 	
 	public static void main(String[] args) {
 		try {
-			ImportUniprotXML.setXSD(new File("schema/uniprot.xsd"), "org.uniprot.uniprot");
+			ImportUniprotXML.setXSD();
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
-			System.out.println("1");
+			System.out.println("Wrong package defined!");
 			e.printStackTrace();
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
@@ -62,7 +61,7 @@ public class ImportUniprotXML {
 			ImportUniprotXML.loadXML(new File("xmlFiles/109.P_putida.xml"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			System.out.println("2");
+			System.out.println("Tried to import improper XML File");
 			e.printStackTrace();
 		}
 		
@@ -70,29 +69,11 @@ public class ImportUniprotXML {
     	
     }
 	
-	public static void setXSD(final File xsdFile, final String classesLocation) throws JAXBException, SAXException {
+	public static void setXSD() throws JAXBException, SAXException {
 		
 		jaxbContext = JAXBContext.newInstance("org.uniprot.uniprot");
 		unmarshaller = jaxbContext.createUnmarshaller();
-		
-		
-		//
-		//	EVERYTHING BELOW HERE IN THIS METHOD IS FOR CREATING A SCHEMA VALIDATOR.
-		//	THIS IS NOT NEEDED FOR IMPORTING BUT MAY WANT TO IMPLEMENT LATER.
-		//
-		
-        // create a SchemaFactory that conforms to W3C XML Schema
-        //SchemaFactory sf = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-        // parse the purchase order schema
-        //schema = sf.newSchema(xsdFile);
-
-        //unmarshaller.setSchema(schema);
-        // set your error handler to catch errors during schema construction
-        // we can use custom validation event handler
-        //unmarshaller.setEventHandler(new MyValidationEventHandler());
-		
-		
+	
 	}
 	
 	
@@ -103,6 +84,8 @@ public class ImportUniprotXML {
 		
 		// Create a new configuration
 	    final Configuration cfg = new Configuration();
+	    
+	    cfg.addDirectory(new File("hbm/org/uniprot/uniprot"));
 
 	    // Create the properties for Hibernate
 	    final Properties properties = new Properties();
@@ -117,18 +100,10 @@ public class ImportUniprotXML {
 		sessionFactory = cfg.buildSessionFactory();
 		
 		final Session saveSession = sessionFactory.openSession();
-		final Serializable id = saveSession.save(object);
-		saveSession.save(id);
+		saveSession.saveOrUpdate(object);
 		saveSession.flush();
 		
 		// Close the session
 		saveSession.close();
-		
-		// Open the seesion, load the object
-		//final Session loadSession = sessionFactory.openSession();
-		//final Object loadedObject = loadSession.load(sampleClass, id);
-		
-		// Close the session
-		//loadSession.close();
 	}
 }

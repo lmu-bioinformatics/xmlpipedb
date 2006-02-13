@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <project name="jaxbcommons.paths" default="jaxbcommons.paths.set">
+	<property file="jaxbcommons.properties"/>
 	<!-- ... -->
 	<condition property="jaxbcommons.integrated">
 		<not>

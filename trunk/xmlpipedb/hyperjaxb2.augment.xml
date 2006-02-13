@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <project name="hyperjaxb2.augment" default="hyperjaxb2.augment">
+	<property file="jaxbcommons.properties"/>
 	<!-- ... -->
+	<import file="hyperjaxb2.paths.xml"/>
 	<import file="${jaxbcommons.augment.xml.file}"/>
 	<!-- ... -->
 	<target name="hyperjaxb2.move.hibernate.mapping">
@@ -15,6 +17,9 @@
 	<!-- ... -->
 	<target name="hyperjaxb2.export.schema">
 	<!-- ... -->
+		<path id="hyperjaxb2.db.path">
+			<path refid="pgdb.path"/>
+		</path>
 		<path id="hyperjaxb2.export.schema.classpath">
 			<path refid="hyperjaxb2.runtime.classpath"/>
 			<path refid="hyperjaxb2.db.path"/>

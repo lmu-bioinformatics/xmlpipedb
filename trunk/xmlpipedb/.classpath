@@ -6,7 +6,6 @@
 	<classpathentry kind="lib" path="lib/dom/dom.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j/dom4j.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/asm.jar"/>
-	<classpathentry kind="lib" path="lib/hsqldb/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/hyperjaxb2/hyperjaxb2.jar"/>
 	<classpathentry kind="lib" path="lib/j2ee/jta.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-beanutils.jar"/>
@@ -35,5 +34,6 @@
 	<classpathentry kind="lib" path="lib/jaxb/xsdlib.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/xsddoc/xsddoc.jar"/>
+	<classpathentry kind="lib" path="lib/pgdb/postgresql-8.1-405.jdbc3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

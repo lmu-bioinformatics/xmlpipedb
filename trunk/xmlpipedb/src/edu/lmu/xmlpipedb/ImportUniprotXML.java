@@ -61,7 +61,7 @@ public class ImportUniprotXML {
 			ImportUniprotXML.loadXML(new File("xmlFiles/109.P_putida.xml"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			System.out.println("Tried to import improper XML File");
+			System.out.println("Load XML file issue.");
 			e.printStackTrace();
 		}
 		

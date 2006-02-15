@@ -20,10 +20,11 @@
 		<!-- XJC arguments  -->
 		<echo message="[jaxbcommons] XJC arguments:"/>
 		<echo message="[jaxbcommons] jaxbcommons.xjc.args=${jaxbcommons.xjc.args}"/>
-		<!-- Bindings -->
+		<!-- Bindings 
 		<echo message="[jaxbcommons] Bindings:"/>
 		<property name="jaxbcommons.bindings.property" refid="jaxbcommons.bindings"/>
 		<echo message="[jaxbcommons] jaxbcommons.bindings=${jaxbcommons.bindings.property}"/>
+		-->
 		<!-- Schemas -->
 		<echo message="[jaxbcommons] Schemas:"/>
 		<property name="jaxbcommons.schemas.property" refid="jaxbcommons.schemas"/>
@@ -34,7 +35,7 @@
 		<echo message="[jaxbcommons] Running the jaxbcommons.xjc task."/>
 		<jaxbcommons.xjc target="${jaxbcommons.generated.src.dir}" extension="true">
 			<arg line="${jaxbcommons.xjc.args}"/>
-			<binding refid="jaxbcommons.bindings"/>
+			<!--<binding refid="jaxbcommons.bindings"/> -->
 			<schema refid="jaxbcommons.schemas"/>
 			<!--depends refid="jaxbcommons.schemas/-->
 			<!--produces dir="${jaxbcommons.generated.src.dir}"/-->

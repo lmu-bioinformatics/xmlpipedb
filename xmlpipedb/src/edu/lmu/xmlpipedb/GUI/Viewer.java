@@ -24,6 +24,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -137,8 +138,30 @@ public class Viewer extends JFrame {
 			}
 		};
 
+		JTabbedPane ribbon = new JTabbedPane();
+		
+		JToolBar fileRibbon = new JToolBar();
+		fileRibbon.setFloatable(false);
+		fileRibbon.add(openXMLFileAction);
+		ribbon.addTab("File", null, fileRibbon, "File");
+		
+		JToolBar editRibbon = new JToolBar();
+		editRibbon.setFloatable(false);
+		editRibbon.add(openXMLFileAction);
+		ribbon.addTab("Edit", null, editRibbon, "Edit");
+		
+		JToolBar databaseRibbon = new JToolBar();
+		databaseRibbon.setFloatable(false);
+		databaseRibbon.add(openXMLFileAction);
+		ribbon.addTab("Database", null, databaseRibbon, "Database");
+		
+		JToolBar debugRibbon = new JToolBar();
+		debugRibbon.setFloatable(false);
+		debugRibbon.add(openXMLFileAction);
+		ribbon.addTab("Debug", null, debugRibbon, "Debug");
+		
 		// Create the menu bar.
-		JMenuBar menuBar = new JMenuBar();
+/*		JMenuBar menuBar = new JMenuBar();
 
 		// Setup the "file" menu bar.
 		JMenu fileMenu = new JMenu("File");
@@ -156,7 +179,7 @@ public class Viewer extends JFrame {
 		menuBar.add(debugMenu);
 
 		// Add the menu bar to the frame.
-		setJMenuBar(menuBar);
+		setJMenuBar(menuBar);*/
 
 		// Create the "top" panel for importing a file.
 		JPanel importXMLFilePanel = new JPanel(new BorderLayout());
@@ -189,7 +212,7 @@ public class Viewer extends JFrame {
 
 		// ADD EVERYTHING TO CONTENT PANE
 		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(importXMLFilePanel, BorderLayout.NORTH);
+		getContentPane().add(ribbon, BorderLayout.NORTH);
 		getContentPane().add(consolePanel, BorderLayout.CENTER);
 		getContentPane().add(infoToolBar, BorderLayout.SOUTH);
 

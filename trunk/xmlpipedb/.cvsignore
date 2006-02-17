@@ -3,3 +3,5 @@ binding
 classes
 hbm
 sql
+lib-build
+dist

@@ -1,3 +1,5 @@
+README
+
 Here are the targets of the build process.  
 
 	* init - initializes before the build 
@@ -22,3 +24,23 @@ environment.  To resolve this issue, do the following:
 	* Go to Windows->Preferences->Ant->Runtime.  
 	* Add tools.jar to the Classpath (this is located in JAVA_HOME/jdk/lib
 This should resolve the problem.  
+
+
+INSTUCTIONS IN THE WORKS
+
+The main purpose of XMLPipeDB is to use it to load xml files into a database.
+After downloading the project follow the tasks below:
+
+(1) Place your .XSD file into the "schema" folder removing any other .XSD 
+files in the same folder.
+
+(2) Install and setup a database, with a username & password.
+
+(2) Run the build file using ant.  The default is a full build of the project.
+
+(3) Start up the application by running the "Viewer".
+
+(4) Configure your settings under the "database" tab.
+
+(5) Choose a file from the "Import" tab.
+	

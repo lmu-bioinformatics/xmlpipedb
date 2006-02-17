@@ -44,15 +44,13 @@ public class Viewer extends JFrame {
 
 	// Locally accessible compenents.
 	private static JTextArea console;
-
 	private static JLabel infoLabel;
-
 	private static JButton importButton;
-
 	private static JTextField xmlPathField;
-
+	private static JTextField connectionURLField;
+	private static JTextField usernameField;
+	private static JTextField passwordField;
 	private static File xmlImportFile = null;
-
 	private JFileChooser chooser = new JFileChooser(".");
 
 	/**
@@ -142,22 +140,31 @@ public class Viewer extends JFrame {
 		
 		JToolBar fileRibbon = new JToolBar();
 		fileRibbon.setFloatable(false);
-		fileRibbon.add(openXMLFileAction);
+		fileRibbon.add(quitAction);
 		ribbon.addTab("File", null, fileRibbon, "File");
 		
-		JToolBar editRibbon = new JToolBar();
-		editRibbon.setFloatable(false);
-		editRibbon.add(openXMLFileAction);
-		ribbon.addTab("Edit", null, editRibbon, "Edit");
+		JToolBar importRibbon = new JToolBar();
+		importRibbon.setFloatable(false);
+		importRibbon.add(openXMLFileAction);
+		xmlPathField = new JTextField("Use \"Open\" to choose an XML File...");
+		xmlPathField.setEditable(false);
+		importRibbon.add(xmlPathField);
+		importRibbon.add(importXMLFileAction);
+		ribbon.addTab("Import", null, importRibbon, "Import");
 		
 		JToolBar databaseRibbon = new JToolBar();
 		databaseRibbon.setFloatable(false);
-		databaseRibbon.add(openXMLFileAction);
+		connectionURLField = new JTextField("jdbc:postgresql://localhost:5432/uniprot");
+		databaseRibbon.add(connectionURLField);
+		usernameField = new JTextField("username");
+		databaseRibbon.add(usernameField);
+		passwordField = new JTextField("password");
+		databaseRibbon.add(passwordField);
 		ribbon.addTab("Database", null, databaseRibbon, "Database");
 		
 		JToolBar debugRibbon = new JToolBar();
 		debugRibbon.setFloatable(false);
-		debugRibbon.add(openXMLFileAction);
+		debugRibbon.add(openSchemaAction);
 		ribbon.addTab("Debug", null, debugRibbon, "Debug");
 		
 		// Create the menu bar.

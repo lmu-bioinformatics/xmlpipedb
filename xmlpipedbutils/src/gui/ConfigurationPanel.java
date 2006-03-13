@@ -11,8 +11,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 import app.ConfigurationController;
 
@@ -38,10 +39,11 @@ public class ConfigurationPanel extends JPanel {
         Box bx1 = new Box(BoxLayout.Y_AXIS);
         Box bx2 = new Box(BoxLayout.Y_AXIS);
         Box bxMain = new Box(BoxLayout.X_AXIS);
-        bx1.add(_testLabel);
-        bx2.add(_driverClass);
-        bxMain.add(bx1);
-        bxMain.add(bx2);
+        //bx1.add(_testLabel);
+        //bx2.add(_driverClass);
+        //bxMain.add(bx1);
+       // bxMain.add(bx2);
+        bxMain.add(new JScrollPane(_propsTable));
         add(bxMain, BorderLayout.CENTER);
         add(_save, BorderLayout.SOUTH);
         
@@ -51,9 +53,12 @@ public class ConfigurationPanel extends JPanel {
      * 
      */
     private void createComponents() {
-        _testLabel = new JLabel("Config");
+    	_propsTable = new JTable(_configControl.getHibProperties());
+    	//_testLabel = new JLabel("Config");
         //"org.postgresql.Driver"
-        _driverClass = new JTextArea(_configControl.loadHib_Conf() + "\n\n\n" + _configControl.loadHibProperties());
+        //String temp = _configControl.loadHib_Conf();
+        //String t2 = _configControl.loadHibProperties();
+        //_driverClass = new JTextArea( temp + "\n\n\n" + t2);
         _save = new JButton("Save");
         
     }
@@ -63,6 +68,7 @@ public class ConfigurationPanel extends JPanel {
     JLabel _testLabel;
     JTextArea _driverClass, _dialect, _url, _username, _password, _substitutions;
     JButton _save;
+    JTable _propsTable;
     /*
    hibernate.dialect net.sf.hibernate.dialect.PostgreSQLDialect
 hibernate.connection.driver_class org.postgresql.Driver

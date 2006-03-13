@@ -75,6 +75,7 @@ public class Main implements ActionListener {
 		public void run(){
 			_initialFrame = new JFrame(AppResources.messageString("str_title"));
 			_initialFrame.setJMenuBar(createMenuBar());
+			_initialFrame.setDefaultLookAndFeelDecorated(true);
 			//JFrame initialFrame = new JFrame("bob");
 			// no content, yet initialFrame.setContentPane();
 //			initialFrame.setContentPane(_importPanel);
@@ -89,12 +90,8 @@ public class Main implements ActionListener {
 	                  screenSize.height - inset);
 	        _initialFrame.setLocation( inset/2, inset/2);
 	        
-			
 			_initialFrame.setIconImage(createImage());
-			
-			
 			_initialFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			
 			_initialFrame.setVisible(true);
 			
 

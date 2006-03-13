@@ -1,15 +1,15 @@
 package app;
 
 import gui.ConfigurationPanel;
+import gui.HibernatePropertiesTableModel;
 
-import java.io.File;
+import java.util.List;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.MissingResourceException;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 public class ConfigurationController {
 
@@ -18,18 +18,12 @@ public class ConfigurationController {
 	}
 
 	
-	public String loadHibProperties(){
-		_props = new Properties();
-		String s = "";
+	public Properties loadHibProperties(){
+		Properties props = new Properties();
 		
 		try {
 			FileInputStream fis = new FileInputStream(_hibPropFilePath);
-			_props.load(fis);
-			Enumeration e = _props.propertyNames();
-			while(e.hasMoreElements()){
-				String key = (String)e.nextElement();
-				s += "\n" + key + " \t " + _props.getProperty(key);
-			}
+			props.load(fis);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -37,30 +31,23 @@ public class ConfigurationController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return s;
+		return props;
 	}
 	
+
 	public String loadHib_Conf() {
-//		ResourceBundle rb = ResourceBundle.getBundle("hib_conf");
 		Properties hib_conf = new Properties();
 		String s = "";
 		
 		try{
 			
-			FileInputStream fis = new FileInputStream("lib/hibernate/hib_conf.properties");
-			//FileInputStream fis = new FileInputStream("src/resources/hibernate.properties");
+			//FileInputStream fis = new FileInputStream(_hibPropFilePath);
+			FileInputStream fis = new FileInputStream("src/resources/hib_conf.properties");
 			hib_conf.load(fis);
 			Enumeration e = hib_conf.propertyNames();
 			while(e.hasMoreElements()){
 				String key = (String)e.nextElement();
-				if( key != null )
-				s += "\n" + key + " \t " ;
-				try{
-					s += _props.getProperty(key);
-				}catch( NullPointerException ex ){
-					ex.printStackTrace();
-				}
+				s += "\n" + key + " \t " + hib_conf.getProperty(key);
 			}
 		
 		} catch (FileNotFoundException e){
@@ -73,8 +60,22 @@ public class ConfigurationController {
 	}
 
 
-
-	Properties _props;
+	public HibernatePropertiesTableModel getHibProperties(){
+		HibernatePropertiesTableModel hptm = new HibernatePropertiesTableModel();
+		
+		Properties props = this.loadHibProperties();
+		Enumeration e = props.propertyNames();
+		while(e.hasMoreElements()){
+			String key = (String)e.nextElement();
+			Property p = new Property( key, props.getProperty(key));
+			hptm.addProperty(p);
+		}
+		
+		
+		return hptm;
+	}
+	
+	//Properties _props;
 	ConfigurationPanel _configPanel;
 	String _hibPropFilePath;
 	

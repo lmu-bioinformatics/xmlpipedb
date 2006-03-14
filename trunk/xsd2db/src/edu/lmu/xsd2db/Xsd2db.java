@@ -1,3 +1,5 @@
+package edu.lmu.xsd2db;
+
 
 
 public class Xsd2db {

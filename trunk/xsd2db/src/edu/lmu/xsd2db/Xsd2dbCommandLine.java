@@ -1,3 +1,5 @@
+package edu.lmu.xsd2db;
+
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

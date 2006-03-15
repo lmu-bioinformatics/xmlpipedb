@@ -23,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
@@ -37,18 +38,12 @@ public class Main implements ActionListener {
 	public Main(){
 		_initialFrame = null;
 		createComponents();
+		_cc = new ConfigurationController();
 				 
 	} // end no-arg constructor
 	
 	private void createComponents() {
-		ConfigurationController cc = new ConfigurationController(AppResources.optionString("hibernate_properties_url"));
 		
-		_importPanel = new ImportPanel();
-		_importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		_configPanel = new ConfigurationPanel(cc);
-		_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		_queryPanel = new HQLPanel();
-		_queryPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 		
 	}
@@ -76,11 +71,6 @@ public class Main implements ActionListener {
 			_initialFrame = new JFrame(AppResources.messageString("str_title"));
 			_initialFrame.setJMenuBar(createMenuBar());
 			_initialFrame.setDefaultLookAndFeelDecorated(true);
-			//JFrame initialFrame = new JFrame("bob");
-			// no content, yet initialFrame.setContentPane();
-//			initialFrame.setContentPane(_importPanel);
-//			initialFrame.setContentPane(_configPanel);
-//			initialFrame.setContentPane(_queryPanel);
 			
 			//Set initial size and location
 	        int inset = 400;
@@ -99,8 +89,6 @@ public class Main implements ActionListener {
 		
 	} // end inner classs UIStarter
 
-	// Below is some generic plumbing, which allows the application
-	// to use configurable options and messages
 	
 	
 	//	Creates an icon-worthy Image from scratch.
@@ -135,12 +123,12 @@ public class Main implements ActionListener {
 	    JMenuBar menuBar = new JMenuBar();
 	
 	    //Set up the lone menu.
-	    JMenu menu = new JMenu("Tools");
+	    JMenu menu = new JMenu(AppResources.messageString("menu_tools"));
 	    menu.setMnemonic(KeyEvent.VK_T);
 	    menuBar.add(menu);
 	
 	    //Set up the first menu item.
-	    JMenuItem menuItem = new JMenuItem("Configure");
+	    JMenuItem menuItem = new JMenuItem(AppResources.messageString("menu_tools_config"));
 	    menuItem.setMnemonic(KeyEvent.VK_C);
 	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
 	            KeyEvent.VK_C, ActionEvent.ALT_MASK));
@@ -150,7 +138,7 @@ public class Main implements ActionListener {
 	    
 	    
 	    //Set up the import menu item.
-	    menuItem = new JMenuItem("Import XML file to Database");
+	    menuItem = new JMenuItem(AppResources.messageString("menu_tools_import"));
 	    menuItem.setMnemonic(KeyEvent.VK_I);
 	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
 	            KeyEvent.VK_I, ActionEvent.ALT_MASK));
@@ -159,7 +147,7 @@ public class Main implements ActionListener {
 	    menu.add(menuItem);	
 	  
 	    //Set up the query menu item.
-	    menuItem = new JMenuItem("Query Database");
+	    menuItem = new JMenuItem(AppResources.messageString("menu_tools_query"));
 	    menuItem.setMnemonic(KeyEvent.VK_Q);
 	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
 	            KeyEvent.VK_Q, ActionEvent.ALT_MASK));
@@ -168,7 +156,7 @@ public class Main implements ActionListener {
 	    menu.add(menuItem);	
 	    
 	    //Set up the last menu item.
-	    menuItem = new JMenuItem("Quit");
+	    menuItem = new JMenuItem(AppResources.messageString("menu_tools_quit"));
 	    menuItem.setMnemonic(KeyEvent.VK_Q);
 	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
 	            KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
@@ -183,17 +171,28 @@ public class Main implements ActionListener {
 	//React to menu selections.
 	public void actionPerformed(ActionEvent e) {
 	    if ("configure".equals(e.getActionCommand())) { //new
+			_configPanel = new ConfigurationPanel(_cc, this);
+			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_configPanel);
 			_initialFrame.validate();
 	    } else if ("import".equals(e.getActionCommand())) { //new
+			_importPanel = new ImportPanel();
+			_importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_importPanel);
 			_initialFrame.validate();
 	    } else if ("query".equals(e.getActionCommand())) { //new
+			_queryPanel = new HQLPanel();
+			_queryPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_queryPanel);
 			_initialFrame.validate();
 	    } else { //quit
 	        System.exit(0);
 	    }
+	}
+	
+	public void cancelAction(){
+		_initialFrame.setContentPane(new JPanel());
+		_initialFrame.validate();
 	}
 	
 
@@ -204,6 +203,6 @@ public class Main implements ActionListener {
     ImportPanel _importPanel;
     ConfigurationPanel _configPanel;
     HQLPanel _queryPanel;
-    
+    ConfigurationController _cc; 
     
 } // end Main

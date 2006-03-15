@@ -5,47 +5,53 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 
+import resources.AppResources;
 import app.ConfigurationController;
+import app.Main;
 
 /**
  * @author J.Nicholas
  *
  */
-public class ConfigurationPanel extends JPanel {
+public class ConfigurationPanel extends JPanel implements ActionListener {
 	   
 	
-	public ConfigurationPanel(ConfigurationController cc  ){
+	public ConfigurationPanel(ConfigurationController cc, Main m  ){
 		_configControl = cc;
+		_main = m;
         createComponents();
         layoutComponents();
-
+        startListeningToUI();
     }
 	
 	
     private void layoutComponents() {
         this.setLayout(new BorderLayout());
-//        add(_testLabel, BorderLayout.CENTER);
-//        add(_driverClass, BorderLayout.CENTER);
-        Box bx1 = new Box(BoxLayout.Y_AXIS);
-        Box bx2 = new Box(BoxLayout.Y_AXIS);
+
         Box bxMain = new Box(BoxLayout.X_AXIS);
-        //bx1.add(_testLabel);
-        //bx2.add(_driverClass);
-        //bxMain.add(bx1);
-       // bxMain.add(bx2);
+        this.add(bxMain, BorderLayout.CENTER);
         bxMain.add(new JScrollPane(_propsTable));
-        add(bxMain, BorderLayout.CENTER);
-        add(_save, BorderLayout.SOUTH);
+        
+        Box buttonBox = Box.createHorizontalBox();
+        buttonBox.add(Box.createHorizontalGlue());
+        buttonBox.add(_defaultButton);
+        buttonBox.add(Box.createHorizontalStrut(5));
+        buttonBox.add(_revertButton);
+        buttonBox.add(Box.createHorizontalStrut(5));
+        buttonBox.add(_saveButton);
+        buttonBox.add(Box.createHorizontalStrut(5));
+        buttonBox.add(_cancelButton);
+        add(buttonBox, BorderLayout.SOUTH);
         
     }
 
@@ -53,24 +59,50 @@ public class ConfigurationPanel extends JPanel {
      * 
      */
     private void createComponents() {
-    	_propsTable = new JTable(_configControl.getHibProperties());
-    	//_testLabel = new JLabel("Config");
-        //"org.postgresql.Driver"
-        //String temp = _configControl.loadHib_Conf();
-        //String t2 = _configControl.loadHibProperties();
-        //_driverClass = new JTextArea( temp + "\n\n\n" + t2);
-        _save = new JButton("Save");
-        
+    	_propsTable = new JTable(_configControl.loadCurrentHibProps());
+        _saveButton = new JButton(AppResources.messageString("config_save"));
+        _cancelButton = new JButton(AppResources.messageString("config_cancel"));
+        _revertButton = new JButton(AppResources.messageString("config_revert"));
+        _revertButton.setToolTipText(AppResources.messageString("config_revert_tooltip"));
+        _defaultButton = new JButton(AppResources.messageString("config_default"));
+        _defaultButton.setToolTipText(AppResources.messageString("config_default_tooltip"));
+    } // end createComponents
+    
+
+    
+    /**
+     * Adds listeners to components of interest.
+     */
+    private void startListeningToUI() {
+        _saveButton.addActionListener(this);
+        _cancelButton.addActionListener(this);
+        _revertButton.addActionListener(this);
+        _defaultButton.addActionListener(this);
+    }
+    
+    /**
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent aevt) {
+        if (aevt.getSource() == _saveButton) {
+        	_configControl.storeHibProperties(_propsTable.getModel());
+        } else if (aevt.getSource() == _cancelButton) {
+        	_main.cancelAction();
+        } else if (aevt.getSource() == _revertButton) {
+            _propsTable.setModel(_configControl.loadRevertedHibProps());
+        } else if (aevt.getSource() == _defaultButton) {
+            _propsTable.setModel(_configControl.loadOriginalHibProps());
+        } 
     }
     
     //### DEFINE VARS ###
-    ConfigurationController _configControl;
-    JLabel _testLabel;
-    JTextArea _driverClass, _dialect, _url, _username, _password, _substitutions;
-    JButton _save;
-    JTable _propsTable;
+    private ConfigurationController _configControl;
+    private JButton _saveButton, _cancelButton, _revertButton, _defaultButton;
+    private JTable _propsTable;
+    private Main _main;
+
     /*
-   hibernate.dialect net.sf.hibernate.dialect.PostgreSQLDialect
+hibernate.dialect net.sf.hibernate.dialect.PostgreSQLDialect
 hibernate.connection.driver_class org.postgresql.Driver
 hibernate.connection.url jdbc:postgresql://localhost:5432/uniprot
 hibernate.connection.username username

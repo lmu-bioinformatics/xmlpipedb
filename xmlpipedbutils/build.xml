@@ -57,7 +57,7 @@
        </manifest>
      </jar>
     <copy todir="${dist.dir}/lib">
-      <fileset dir="${lib.dir}/" includes="**/*.jar"/>
+      <fileset dir="${lib.dir}/" includes="**/*.jar,**/*.properties"/>
     </copy>
   </target>
 
@@ -82,5 +82,5 @@
 	/>
   </target>
 -->
-  <target name="all" depends="javadoc, jar" description="Initializes, Compiles, makes Jar and creates JavaDocs"/>  
+  <target name="all" depends="clean, javadoc, jar" description="Initializes, Compiles, makes Jar and creates JavaDocs"/>  
 </project>

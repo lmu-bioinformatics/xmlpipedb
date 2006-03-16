@@ -1,8 +1,8 @@
 package app;
 
-import gui.ConfigurationPanel;
 import gui.HibernatePropertiesTableModel;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,6 +24,9 @@ public class ConfigurationController {
 	private Properties loadHibProperties(String propertiesPath){
 		Properties props = new Properties();
 		
+		File f = new File(propertiesPath);
+		System.out.printf("can read %s, absolute path %s\n", f.canRead(), f.getAbsolutePath() );
+		
 		try {
 			FileInputStream fis = new FileInputStream(propertiesPath);
 			props.load(fis);
@@ -33,10 +36,10 @@ public class ConfigurationController {
 				_firstHibPropLoad = false;
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			System.out.print(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.print(e.getMessage());
 			e.printStackTrace();
 		}
 		return props;

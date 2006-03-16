@@ -1,3 +1,10 @@
+/** Revision History
+ *  ??/??/?? Scott. File orignaly created. 
+ *  03/15/06 Adam Carasso.  Changed private option varibles to protected. 
+ */
+
+
+
 package edu.lmu.xsd2db;
 
 
@@ -39,14 +46,18 @@ public class Xsd2dbCommandLine {
 											"-" + updateXSD + "                -- " +
 											"Replaces the XSD being used with the new version\n" +
 											"-" + help + "                     -- Displays this help and exits\n";
+	protected static final int XSD_DIR = 0;
+	protected static final int SRC_DIR = 1;
+	protected static final int HBM_DIR = 2;
+	protected static final int SQL_DIR = 3; 
+	protected	String[] subDirs = {"xsd", "src", "hbm", "sql"};
 
-	private	String[] subDirs = {"xsd", "src", "hbm", "sql"};
-
-	private Options options;
-	private File dbSrcDir;
-	private String bindingsFile;
-	private String xsdurl;
-	private HashMap<String,String> map;
+	protected Options options;
+	protected File dbSrcDir;
+	protected String bindingsFile;
+	protected String xsdurl;
+	protected String xsdName;
+	protected HashMap<String,String> map;
 
 
 
@@ -118,6 +129,7 @@ public class Xsd2dbCommandLine {
 		createAbsoulutePaths();
 
 		if (!xsdurl.equals("")) {
+			xsdName = xsdurl.substring(xsdurl.lastIndexOf("/"));
 			try {
 				downLoadXsdFile();
 			} catch (IOException e) {

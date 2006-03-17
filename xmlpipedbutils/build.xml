@@ -15,11 +15,15 @@
     <delete dir="${build.dir}"/>
     <delete dir="${dist.dir}"/>
     <delete dir="${javadoc.dir}"/>
+   <!-- 
    <delete>
+   -->
       <!-- Delete temporary files from test dir 
       	e.g.: assembly, object, and executables from test dir -->
+   <!-- 
       <fileset dir="test" includes="*.asm,*.o,*.obj,*.exe"/>
     </delete>
+   --> 
   </target>
   
   <target name="init">

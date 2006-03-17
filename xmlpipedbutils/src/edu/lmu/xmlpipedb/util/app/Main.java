@@ -2,11 +2,12 @@
  * Created on May 29, 2005
  *
  */
-package app;
+package edu.lmu.xmlpipedb.util.app;
 
-import gui.ConfigurationPanel;
-import gui.HQLPanel;
-import gui.ImportPanel;
+import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
+import edu.lmu.xmlpipedb.util.gui.HQLPanel;
+import edu.lmu.xmlpipedb.util.gui.ImportPanel;
+import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,7 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import resources.AppResources;
 
 /**
  * @author J. Nicholas
@@ -70,7 +70,7 @@ public class Main implements ActionListener {
 		public void run(){
 			_initialFrame = new JFrame(AppResources.messageString("str_title"));
 			_initialFrame.setJMenuBar(createMenuBar());
-			_initialFrame.setDefaultLookAndFeelDecorated(true);
+			JFrame.setDefaultLookAndFeelDecorated(true);
 			
 			//Set initial size and location
 	        int inset = 400;
@@ -121,6 +121,7 @@ public class Main implements ActionListener {
     
 	protected JMenuBar createMenuBar() {
 	    JMenuBar menuBar = new JMenuBar();
+        int accelMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 	
 	    //Set up the lone menu.
 	    JMenu menu = new JMenu(AppResources.messageString("menu_tools"));
@@ -131,7 +132,7 @@ public class Main implements ActionListener {
 	    JMenuItem menuItem = new JMenuItem(AppResources.messageString("menu_tools_config"));
 	    menuItem.setMnemonic(KeyEvent.VK_C);
 	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_C, ActionEvent.ALT_MASK));
+	            KeyEvent.VK_C, accelMask));
 	    menuItem.setActionCommand("configure");
 	    menuItem.addActionListener(this);
 	    menu.add(menuItem);
@@ -141,16 +142,16 @@ public class Main implements ActionListener {
 	    menuItem = new JMenuItem(AppResources.messageString("menu_tools_import"));
 	    menuItem.setMnemonic(KeyEvent.VK_I);
 	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_I, ActionEvent.ALT_MASK));
+	            KeyEvent.VK_I, accelMask));
 	    menuItem.setActionCommand("import");
 	    menuItem.addActionListener(this);
 	    menu.add(menuItem);	
 	  
 	    //Set up the query menu item.
 	    menuItem = new JMenuItem(AppResources.messageString("menu_tools_query"));
-	    menuItem.setMnemonic(KeyEvent.VK_Q);
+	    menuItem.setMnemonic(KeyEvent.VK_U);
 	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_Q, ActionEvent.ALT_MASK));
+	            KeyEvent.VK_U, accelMask));
 	    menuItem.setActionCommand("query");
 	    menuItem.addActionListener(this);
 	    menu.add(menuItem);	
@@ -159,7 +160,7 @@ public class Main implements ActionListener {
 	    menuItem = new JMenuItem(AppResources.messageString("menu_tools_quit"));
 	    menuItem.setMnemonic(KeyEvent.VK_Q);
 	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+	            KeyEvent.VK_Q, accelMask));
 	    menuItem.setActionCommand("quit");
 	    menuItem.addActionListener(this);
 	    menu.add(menuItem);

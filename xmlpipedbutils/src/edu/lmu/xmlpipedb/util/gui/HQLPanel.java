@@ -1,4 +1,4 @@
-package gui;
+package edu.lmu.xmlpipedb.util.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

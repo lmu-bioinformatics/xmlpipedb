@@ -2,7 +2,7 @@
  * Created on May 21, 2005
  *
  */
-package resources;
+package edu.lmu.xmlpipedb.util.resources;
 
 
 import java.util.MissingResourceException;
@@ -35,7 +35,7 @@ public class AppResources {
         try{
         	message = _messageBundle.getString(key);
         } catch( MissingResourceException e){
-        	System.out.println("Opps. The key, " + key + " does not exist.");
+        	System.out.println("Oops. The key, " + key + " does not exist.");
         	return message;
         }
         return message;
@@ -66,7 +66,7 @@ public class AppResources {
     
     // options
     private static ResourceBundle _optionsBundle;
-    private static String _optionsBundlePrefix = "resources.options";
+    private static String _optionsBundlePrefix = "edu.lmu.xmlpipedb.util.resources.options";
 
     
     // label texts

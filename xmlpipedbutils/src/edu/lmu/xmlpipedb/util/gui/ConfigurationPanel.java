@@ -2,7 +2,7 @@
  * Created on May 29, 2005
  *
  */
-package gui;
+package edu.lmu.xmlpipedb.util.gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -15,9 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import resources.AppResources;
-import app.ConfigurationController;
-import app.Main;
+import edu.lmu.xmlpipedb.util.app.ConfigurationController;
+import edu.lmu.xmlpipedb.util.app.Main;
+import edu.lmu.xmlpipedb.util.resources.AppResources;
+
 
 /**
  * @author J.Nicholas

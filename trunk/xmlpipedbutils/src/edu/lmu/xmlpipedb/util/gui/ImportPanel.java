@@ -2,7 +2,7 @@
  * Created on May 29, 2005
  *
  */
-package gui;
+package edu.lmu.xmlpipedb.util.gui;
 
 import javax.swing.JPanel;
 
@@ -10,7 +10,7 @@ import javax.swing.JPanel;
  * @author J.Nicholas
  *
  */
-public class QueryPanel extends JPanel {
+public class ImportPanel extends JPanel {
 
 	
 	

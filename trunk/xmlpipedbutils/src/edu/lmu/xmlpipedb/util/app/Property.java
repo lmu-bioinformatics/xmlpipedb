@@ -1,4 +1,4 @@
-package app;
+package edu.lmu.xmlpipedb.util.app;
 
 public class Property {
 

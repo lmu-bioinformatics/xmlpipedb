@@ -1,8 +1,9 @@
-package gui;
+package edu.lmu.xmlpipedb.util.gui;
 
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
-import app.Property;
+
+import edu.lmu.xmlpipedb.util.app.Property;
 
 
 public class HibernatePropertiesTableModel extends AbstractTableModel {

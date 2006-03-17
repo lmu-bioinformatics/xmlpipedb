@@ -1,6 +1,7 @@
-package app;
+package edu.lmu.xmlpipedb.util.app;
 
-import gui.HibernatePropertiesTableModel;
+import edu.lmu.xmlpipedb.util.gui.HibernatePropertiesTableModel;
+import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +13,6 @@ import java.util.Properties;
 
 import javax.swing.table.TableModel;
 
-import resources.AppResources;
 
 public class ConfigurationController {
 

@@ -4,11 +4,6 @@
  */
 package edu.lmu.xmlpipedb.util.app;
 
-import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
-import edu.lmu.xmlpipedb.util.gui.HQLPanel;
-import edu.lmu.xmlpipedb.util.gui.ImportPanel;
-import edu.lmu.xmlpipedb.util.resources.AppResources;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -18,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -27,6 +23,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+
+import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
+import edu.lmu.xmlpipedb.util.gui.HQLPanel;
+import edu.lmu.xmlpipedb.util.gui.ImportPanel;
+import edu.lmu.xmlpipedb.util.resources.AppResources;
+import edu.lmu.xmlpipedb.util.utilities.ImportEngine;
 
 
 /**
@@ -89,7 +91,16 @@ public class Main implements ActionListener {
 		
 	} // end inner classs UIStarter
 
-	
+    public void importXml(File xmlFile) throws Exception
+    {
+        String context = AppResources.optionString("jaxbContextPath"); 
+        String hibernateProp = AppResources.optionString("hibernateProperties"); 
+        
+        String hibernateConfig = AppResources.optionString("hibernateConfigDir"); 
+        ImportEngine importEngine = new ImportEngine(context, hibernateConfig, hibernateProp); 
+        importEngine.loadToDB(xmlFile); 
+    }
+
 	
 	//	Creates an icon-worthy Image from scratch.
     protected static Image createImage() {
@@ -177,7 +188,7 @@ public class Main implements ActionListener {
 			_initialFrame.setContentPane(_configPanel);
 			_initialFrame.validate();
 	    } else if ("import".equals(e.getActionCommand())) { //new
-			_importPanel = new ImportPanel();
+			_importPanel = new ImportPanel(this);
 			_importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_importPanel);
 			_initialFrame.validate();

@@ -18,27 +18,65 @@ Loyola Marymount University
 \begin{document}
 \maketitle
 
+\pagebreak
+\tableofcontents
+\pagebreak
+
 \section{Overview}
 
 XMLPipeDB is a suite of tools for managing, querying, importing, and exporting information to/from XML data based on some specific XML schema (XSD).  While its applicability is fairly general, the original motivation for XMLPipeDB is the management of biological data from different sources.  Thus, XMLPipeDB's end-user applications are bioinformatics-oriented, although other applications may be developed using the project's underlying tools.
 
 \subsection{Who Should Read What Part of this Document}
 
-If you are a GenMAPP or other biological database user, you will want to read Section~\ref{for-end-users} ``For End-Users.''
+\begin{itemize}
+\item If you are a GenMAPP or other biological database user, you will want to read Section~\ref{endUserSoftware}.
 
-If you are a database administrator who is preparing an installation of one of XMLPipeDB's end-user applications, you will want to read Section~\ref{for-dba} ``For Database Administrators.''
+\item If you are a bioinformatics software developer, you may also be interested in Sections~\ref{dblib}.
 
-If you are a software developer or database designer who is interested in learning how XMLPipeDB's end-user applications were developed, you will want to read Section~\ref{for-dev} ``For Database Designers and Software Developers.''
+\item If you are a database administrator who is preparing an installation of one of XMLPipeDB's end-user applications, you will want to read Section~\ref{dbsetup}.
 
-\section{For End-Users}
-\label{for-end-users}
+\item If you are a software developer or database designer who is interested in learning how XMLPipeDB's end-user applications were developed, you will want to read Section~\ref{devtools}.
 
-\subsection{GenMAPP Exporter}
+\item Finally, if you are a software developer who wishes to participate in or contribute to the XMLPipeDB project, you will want to read Section~\ref{dev}.
+\end{itemize}
+
+\section{End-User Software}
+\label{endUserSoftware}
+
+\subsection{Pre-Built GenMAPP Files}
+
+If your primary interest is to use GenMAPP for a particular organism, please consult the following list for GenMAPP files that have already been created using GenMAPP Builder (Section~\ref{genmappBuilder}).  In many cases, you can simply download them and point GenMAPP to them, and you'll be ready to load up expression data sets.
+
+\begin{itemize}
+\item E.\ coli K12
+\item Pseudomonas putida
+\item Bacillus subtilis
+\end{itemize}
+
+\subsection{GenMAPP Builder}
+\label{genmappBuilder}
+
+GenMAPP Builder is an application for creating files compatible with GenMAPP.  The application works by first importing supported data files into a relational database.  The database can then be queried by organism in order to produce a GenMAPP file.
 
 \subsubsection{Usage}
 
+To use GenMAPP Builder, you need:
+\begin{itemize}
+\item A Java 5 runtime environment
+\item A relational database with an available JDBC 3 driver
+\item One or more data sets downloaded from the Internet, from data sources that are currently supported by GenMAPP Builder
+\end{itemize}
+Once these are properly installed and operational, you can perform these primary functions:
+\begin{enumerate}
+\item Import one or more supported data files into the GenMAPP Builder database
+\item Build a GenMAPP file based on an organism in the database
+\end{enumerate}
+The built files can then be read directly by GenMAPP.
+
 \subsubsection{Supported Data Sets}
 \label{supportedDataSets}
+
+At this writing: UniProt and GO.
 
 \subsubsection{Database Details}
 
@@ -78,30 +116,37 @@ To be complete with all of the other species GenMAPP Databases, we should eventu
 And we should probably make a systems table for Affymetrix chip IDs.  This will be a little bit of a pain.}
 \end{enumerate}
 
+\section{Database Libraries}
+\label{dblib}
+
+The database libraries in XMLPipeDB are based, in turn, on the JAXB and Hibernate libraries.  To use these libraries in other software, you will need the following in your Java classpath:
+\begin{itemize}
+\item the database library itself (UniProtDB, GoDB, etc.)
+\item Hibernate
+\item JAXB
+\item JDBC driver for your relational database
+\end{itemize}
+The libraries work like standard JAXB applications when importing XML files: the data in the loaded file gets converted into a set of corresponding objects.  The libraries then work like standard Hibernate applications when saving these objects to the database: configure Hibernate, then use its classes to save/update the objects or to perform HQL queries.
+
+To further assist in software development, you may want to look at XMLPipeDB Utilities (Section~\ref{xmlpipedbutils}), which provide frequently-used routines and GUI components that are usually needed by applications using these libraries.
+
 \subsection{UniProtDB}
 
 UniProtDB is the library of Java classes that allows UniProt XML files to be transferred into a relational database.  The GenMAPP Exporter uses the UniProtDB library; in turn, the UniProtDB library is semi-automatically generated from the XMLPipeDB project's XSD-to-DB tool.
 
-\section{For Database Administrators}
-\label{for-dba}
+\subsection{GODB}
+
+To be written\ldots
+
+\section{Database Administration and Setup}
+\label{dbsetup}
 
 The applications in XMLPipeDB require any relational database for which a JDBC driver exists.  Thus, they all require some degree of configuration, for specifying the database server, database name, username, password, etc.  To facilitate this, XMLPipeDB includes a common database configuration GUI in all of its applications.
 
-\section{For Database Designers and Software Developers}
-\label{for-dev}
+\section{Developer Tools}
+\label{devtools}
 
 Many components in XMLPipeDB's end-user applications are actually built semi-au\-to\-mat\-ic\-al\-ly.  The XMLPipeDB project includes these tools as well.  End-users don't need to know about these tools; instead, they use the \emph{output} generated by them.  This section is for database designers and software developers who are interested in creating their own XML-compatible database applications.
-
-\subsection{Use Case Model}
-
-Figure~\ref{usecase} shows the use case model for the various components of the XMLPipeDB project.  These use cases are the basis for the activities described in this manual.
-
-\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
-   \centering
-   \includegraphics[width=5.5in]{figures/use-cases.pdf} 
-   \caption{Use case model for the XMLPipeDB project.}
-   \label{usecase}
-\end{figure}
 
 \subsection{XSD-to-DB}
 
@@ -164,18 +209,19 @@ The actual filenames and contents of terms in angle brackets $(< >)$ depend on t
 
 The \texttt{xsd2db} command line application accepts the following arguments:
 \begin{description}
-\item[--outputDirectory=\emph{dir}] The directory to use when generating (or re-generating) the database source code and files; defaults to \texttt{db-gen}.  Specifying a non-existent or empty directory essentially counts as a ``first-time run'' of XSD-to-DB.
+\item[\texttt{--outputDirectory=\emph{dir}}] The directory to use when generating (or re-generating) the database source code and files; defaults to \texttt{db-gen}.  Specifying a non-existent or empty directory essentially counts as a ``first-time run'' of XSD-to-DB.
 
-\item[--xsdURL=\emph{url}] The URL for the XSD to convert; required when XSD-to-DB is run for the first time, or when \emph{updateXSD} (see below) is requested.
+\item[\texttt{--xsdURL=\emph{url}}] The URL for the XSD to convert; required when XSD-to-DB is run for the first time, or when \emph{updateXSD} (see below) is requested.
 
-\item[--bindings=\emph{filename}] The bindings file to use when generating the database source code and files for the first time; this file is then copied into the \texttt{xsd} subdirectory.  Defaults to a standard bindings file supplied by XSD-to-DB.
+\item[\texttt{--bindings=\emph{filename}}] The bindings file to use when generating the database source code and files for the first time; this file is then copied into the \texttt{xsd} subdirectory.  Defaults to a standard bindings file supplied by XSD-to-DB.
 
-\item[--updateXSD] Replaces the XSD being used with a new version; applicable only after XSD-to-DB has been run for the first time.
+\item[\texttt{-updateXSD}] Replaces the XSD being used with a new version; applicable only after XSD-to-DB has been run for the first time.
 
-\item[--help] Displays a help message for how to use \texttt{xsd2db}.
+\item[\texttt{-help}] Displays a help message for how to use \texttt{xsd2db}.
 \end{description}
 
 \subsection{XMLPipeDB Utilities}
+\label{xmlpipedbutils}
 
 The XMLPipeDB Utilities library is a suite of Java classes that provide functions that are common to most XMLPipeDB database applications.  Specifically, the library includes reusable classes for:
 \begin{itemize}
@@ -221,6 +267,20 @@ To ease the development and delivery of these functions to end-user applications
 \end{itemize}
 The demo application that comes with XMLPipeDB Utilities shows how these components are used, and how they interact with the underlying functionality.
 
+\section{Developer Documentation}
+\label{dev}
+
+\subsection{Use Case Model}
+
+Figure~\ref{usecase} shows the use case model for the various components of the XMLPipeDB project.  These use cases are the basis for the activities described in this manual.
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=5.5in]{figures/use-cases.pdf} 
+   \caption{Use case model for the XMLPipeDB project.}
+   \label{usecase}
+\end{figure}
+
 \subsection{Guide to the Repository}
 
 The XMLPipeDB project consists of a number of modules, listed hierarchically in Figure~\ref{cvs}.  They are related but intended to be standalone.
@@ -241,5 +301,15 @@ Similarly, output produced by XSD-to-DB (which defaults to \texttt{db-gen} in th
 \subsection{Building from Source}
 
 As mentioned, building fresh binaries of each XMLPipeDB module is a matter of downloading or checking out the source then invoking Apache Ant in each module's top-level directory.  Build products are placed in the \texttt{dist} subdirectory, and should not be committed to the repository.
+
+\subsection{Unit Tests}
+
+We need them\ldots'nuff said!
+
+\subsection{Third-Party Libraries}
+
+XMLPipeDB ``stands on the shoulders'' of a wide variety of third-party libraries.  These libraries are always stored in the \texttt{lib/} subdirectories of each XMLPipeDB module.  Most of these third-party libraries are themselves active open source projects that continue to be developed; thus, to avoid confusion and accidental incompatibilities, all third-party libraries committed to XMLPipeDB are appended with a version number.  For example, if an XMLPipeDB module uses Jakarta Commons Logging 1.0.4, then \texttt{-1.0.4} is appended to the standard library name, so that it is stored in \texttt{lib/} as \texttt{commons-logging-1.0.4.jar}.
+
+If a third-party library is to be updated with a new version --- and of course this new version has been verified to work with the existing code --- then its prior version should be deleted and a new file added with the appropriate version suffix.
 
 \end{document}

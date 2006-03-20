@@ -13,13 +13,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.classic.Session;
+
+import net.sf.hibernate.HibernateException;
+import net.sf.hibernate.Session;
+import net.sf.hibernate.SessionFactory;
+import net.sf.hibernate.Transaction;
+import net.sf.hibernate.cfg.Configuration;
+
 import org.xml.sax.SAXException;
 
 /**
@@ -27,51 +31,42 @@ import org.xml.sax.SAXException;
  * @author David Hoffman
  */
 public class ImportEngine {
-    private Unmarshaller unmarshaller; 
+    private Unmarshaller unmarshaller;
     private JAXBContext jaxbContext;
     private SessionFactory sessionFactory;
-    private Configuration hibernateConfiguration; 
+    private Configuration hibernateConfiguration;
 
-    
     /** Creates a new instance of ImportEngine */
-    public ImportEngine(String contextPath, String hibernateConfig, String hibernateProp) throws JAXBException, SAXException, IOException{
+    public ImportEngine(String contextPath, String hibernateConfig, String hibernateProp) throws JAXBException, SAXException, IOException, HibernateException {
         jaxbContext = JAXBContext.newInstance(contextPath);
-        unmarshaller = jaxbContext.createUnmarshaller(); 
-        setHibernateConfig(hibernateConfig, hibernateProp); 
-        
-        
+        unmarshaller = jaxbContext.createUnmarshaller();
+        setHibernateConfig(hibernateConfig, hibernateProp);
     }
-    private void setHibernateConfig(String hibernateConfig, String hibernateProp) throws IOException
-    {
+
+    private void setHibernateConfig(String hibernateConfig, String hibernateProp) throws IOException, HibernateException {
         hibernateConfiguration = new Configuration();
-        hibernateConfiguration.addDirectory(new File(hibernateConfig)); 
+        hibernateConfiguration.addDirectory(new File(hibernateConfig));
         Properties hibernateProperties = new Properties();
-        hibernateProperties.load(new FileInputStream(hibernateProp)); 
-        hibernateConfiguration.setProperties(hibernateProperties); 
-        sessionFactory = hibernateConfiguration.buildSessionFactory(); 
-        
+        hibernateProperties.load(new FileInputStream(hibernateProp));
+        hibernateConfiguration.setProperties(hibernateProperties);
+        sessionFactory = hibernateConfiguration.buildSessionFactory();
+
     }
-    public void loadToDB(File xmlFile)throws Exception
-    {
-        Object object = unmarshaller.unmarshal(xmlFile); 
+
+    public void loadToDB(File xmlFile) throws Exception {
+        Object object = unmarshaller.unmarshal(xmlFile);
         Session saveSession = sessionFactory.openSession();
-        Transaction transaction = null; 
-        try{
-        transaction = saveSession.beginTransaction(); 
-        saveSession.saveOrUpdate(object); 
-        transaction.commit(); 
-        }
-        catch(Exception ex)
-        {
-            if(transaction!=null)
+        Transaction transaction = null;
+        try {
+            transaction = saveSession.beginTransaction();
+            saveSession.saveOrUpdate(object);
+            transaction.commit();
+        } catch(Exception ex) {
+            if (transaction != null)
                 transaction.rollback();
-            throw ex; 
-        }
-        finally
-        {
-            saveSession.close(); 
+            throw ex;
+        } finally {
+            saveSession.close();
         }
     }
-   
-    
 }

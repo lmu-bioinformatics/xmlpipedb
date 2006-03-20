@@ -3,7 +3,7 @@
 <project name="XmlPipeDbUtilities" default="jar">
   <property name="jarfilename" value="xpdUtils"/>
   <property name="mainclass" value="app.XmlPipeDbUtils"/>
-  <property name="resources" value="resources"/>
+  <property name="resources" value="edu/lmu/xmlpipedb/util/resources"/>
   <property name="project.title" value="GUI to XML Pipe DB"/>
   <property name="src.dir" value="src"/>
   <property name="lib.dir" value="lib"/>	
@@ -11,6 +11,14 @@
   <property name="dist.dir" value="dist"/>
   <property name="javadoc.dir" value="javadocs"/>
   
+    <fileset id="lib.jars" dir="${lib.dir}">
+        <include name="**/*.jar"/>
+    </fileset>
+
+    <path id="lib.path">
+        <fileset refid="lib.jars"/>
+    </path>
+
   <target name="clean" description="Remove generated files">
     <delete dir="${build.dir}"/>
     <delete dir="${dist.dir}"/>
@@ -44,7 +52,7 @@
   </target>
   
   <target name="compile" depends="init">
-    <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+    <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path"/>
     <!-- Copy the resource file, since it is needed at runtime. -->
     <copy todir="${build.dir}/${resources}">
       <fileset dir="${src.dir}/${resources}" includes="**/*.properties"/>

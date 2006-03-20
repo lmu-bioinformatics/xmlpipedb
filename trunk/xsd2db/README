@@ -1,5 +1,5 @@
 XSD2DB
-ussage:
+usage:
 program_name [--outputDirectory=dirname] [--bindings=filename] [[-updateXSD] --xsdURL=url] [-help]
 
 --outputDirectory=dirname -- The directory when generating the source code and file; defaults to dg-gen

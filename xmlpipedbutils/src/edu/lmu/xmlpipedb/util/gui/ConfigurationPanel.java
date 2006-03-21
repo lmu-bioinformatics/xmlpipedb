@@ -27,12 +27,20 @@ import edu.lmu.xmlpipedb.util.resources.AppResources;
 public class ConfigurationPanel extends JPanel implements ActionListener {
 	   
 	
-	public ConfigurationPanel(ConfigurationController cc, Main m  ){
+	public ConfigurationPanel(ConfigurationController cc, Main m, String url, String currFile  ){
 		_configControl = cc;
 		_main = m;
-        createComponents();
+        createComponents(url, currFile);
         layoutComponents();
         startListeningToUI();
+        
+        //cc.getHibernateConfigPanel(AppResources.optionString("hibernate_conf_properties_url"));
+       /* 
+        hibernate_general_properties_url
+        hibernate_platforms_properties_url
+        hibernate_connection_pools_properties_url
+        hibernate_other_properties_url
+        */
     }
 	
 	
@@ -41,7 +49,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener {
 
         Box bxMain = new Box(BoxLayout.X_AXIS);
         this.add(bxMain, BorderLayout.CENTER);
-        bxMain.add(new JScrollPane(_propsTable));
+        bxMain.add(new JScrollPane(_panel));
+        //bxMain.add(new JScrollPane(_propsTable));
         
         Box buttonBox = Box.createHorizontalBox();
         buttonBox.add(Box.createHorizontalGlue());
@@ -59,8 +68,10 @@ public class ConfigurationPanel extends JPanel implements ActionListener {
     /**
      * 
      */
-    private void createComponents() {
-    	_propsTable = new JTable(_configControl.loadCurrentHibProps());
+    private void createComponents(String url, String currFile) {
+    	_panel = _configControl
+		.getHibernateConfigPanel(url, currFile);
+    	//_propsTable = new JTable(_configControl.loadCurrentHibProps());
         _saveButton = new JButton(AppResources.messageString("config_save"));
         _cancelButton = new JButton(AppResources.messageString("config_cancel"));
         _revertButton = new JButton(AppResources.messageString("config_revert"));
@@ -101,6 +112,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener {
     private JButton _saveButton, _cancelButton, _revertButton, _defaultButton;
     private JTable _propsTable;
     private Main _main;
+    private JPanel _panel;
 
     /*
 hibernate.dialect net.sf.hibernate.dialect.PostgreSQLDialect

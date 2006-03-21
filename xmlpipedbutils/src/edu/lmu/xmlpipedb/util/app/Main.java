@@ -40,7 +40,8 @@ public class Main implements ActionListener {
 	public Main(){
 		_initialFrame = null;
 		createComponents();
-		_cc = new ConfigurationController();
+		_cc = new ConfigurationController(AppResources
+				.optionString("hibernate_properties_url"));
 				 
 	} // end no-arg constructor
 	
@@ -134,10 +135,10 @@ public class Main implements ActionListener {
 	    JMenuBar menuBar = new JMenuBar();
         int accelMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 	
-	    //Set up the lone menu.
-	    JMenu menu = new JMenu(AppResources.messageString("menu_tools"));
-	    menu.setMnemonic(KeyEvent.VK_T);
-	    menuBar.add(menu);
+	    //Set up the tools menu.
+	    JMenu menuTools = new JMenu(AppResources.messageString("menu_tools"));
+	    menuTools.setMnemonic(KeyEvent.VK_T);
+	    menuBar.add(menuTools);
 	
 	    //Set up the first menu item.
 	    JMenuItem menuItem = new JMenuItem(AppResources.messageString("menu_tools_config"));
@@ -146,7 +147,7 @@ public class Main implements ActionListener {
 	            KeyEvent.VK_C, accelMask));
 	    menuItem.setActionCommand("configure");
 	    menuItem.addActionListener(this);
-	    menu.add(menuItem);
+	    menuTools.add(menuItem);
 	    
 	    
 	    //Set up the import menu item.
@@ -156,7 +157,7 @@ public class Main implements ActionListener {
 	            KeyEvent.VK_I, accelMask));
 	    menuItem.setActionCommand("import");
 	    menuItem.addActionListener(this);
-	    menu.add(menuItem);	
+	    menuTools.add(menuItem);	
 	  
 	    //Set up the query menu item.
 	    menuItem = new JMenuItem(AppResources.messageString("menu_tools_query"));
@@ -165,7 +166,7 @@ public class Main implements ActionListener {
 	            KeyEvent.VK_U, accelMask));
 	    menuItem.setActionCommand("query");
 	    menuItem.addActionListener(this);
-	    menu.add(menuItem);	
+	    menuTools.add(menuItem);	
 	    
 	    //Set up the last menu item.
 	    menuItem = new JMenuItem(AppResources.messageString("menu_tools_quit"));
@@ -174,7 +175,49 @@ public class Main implements ActionListener {
 	            KeyEvent.VK_Q, accelMask));
 	    menuItem.setActionCommand("quit");
 	    menuItem.addActionListener(this);
-	    menu.add(menuItem);
+	    menuTools.add(menuItem);
+	    
+	    
+//	  Set up the tools menu.
+	    JMenu menuConfig = new JMenu(AppResources.messageString("menu_config"));
+	    menuConfig.setMnemonic(KeyEvent.VK_T);
+	    menuBar.add(menuConfig);
+	
+	    //Set up menu item.
+	    menuItem = new JMenuItem(AppResources.messageString("menu_config_platform"));
+	    menuItem.setMnemonic(KeyEvent.VK_P);
+	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
+	            KeyEvent.VK_P, accelMask));
+	    menuItem.setActionCommand("config_platform");
+	    menuItem.addActionListener(this);
+	    menuConfig.add(menuItem);
+	    
+	    //Set up menu item.
+	    menuItem = new JMenuItem(AppResources.messageString("menu_config_connection_pool"));
+	    menuItem.setMnemonic(KeyEvent.VK_E);
+	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
+	            KeyEvent.VK_E, accelMask));
+	    menuItem.setActionCommand("config_connection_pool");
+	    menuItem.addActionListener(this);
+	    menuConfig.add(menuItem);
+	    
+	    //Set up menu item.
+	    menuItem = new JMenuItem(AppResources.messageString("menu_config_other"));
+	    menuItem.setMnemonic(KeyEvent.VK_O);
+	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
+	            KeyEvent.VK_O, accelMask));
+	    menuItem.setActionCommand("config_other");
+	    menuItem.addActionListener(this);
+	    menuConfig.add(menuItem);
+	    
+	    //Set up menu item.
+	    menuItem = new JMenuItem(AppResources.messageString("menu_config_general"));
+	    menuItem.setMnemonic(KeyEvent.VK_G);
+	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
+	            KeyEvent.VK_G, accelMask));
+	    menuItem.setActionCommand("config_general");
+	    menuItem.addActionListener(this);
+	    menuConfig.add(menuItem);
 	
 	    return menuBar;
 	} // end createMenuBar
@@ -182,24 +225,46 @@ public class Main implements ActionListener {
 
 	//React to menu selections.
 	public void actionPerformed(ActionEvent e) {
-	    if ("configure".equals(e.getActionCommand())) { //new
-			_configPanel = new ConfigurationPanel(_cc, this);
-			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			_initialFrame.setContentPane(_configPanel);
-			_initialFrame.validate();
-	    } else if ("import".equals(e.getActionCommand())) { //new
+		if ("import".equals(e.getActionCommand())) { //new
 			_importPanel = new ImportPanel(this);
 			_importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_importPanel);
-			_initialFrame.validate();
 	    } else if ("query".equals(e.getActionCommand())) { //new
 			_queryPanel = new HQLPanel();
 			_queryPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_queryPanel);
-			_initialFrame.validate();
+	    } else if ("config_platform".equals(e.getActionCommand())) { //new
+	    	_configPanel = new ConfigurationPanel(_cc, this, AppResources
+					.optionString("hibernate_platforms_properties_url"),
+					AppResources
+					.optionString("current_platform"));
+			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			_initialFrame.setContentPane(_configPanel);
+	    } else if ("config_connection_pool".equals(e.getActionCommand())) { //new
+	    	_configPanel = new ConfigurationPanel(_cc, this, AppResources
+					.optionString("hibernate_connection_pools_properties_url"),
+					AppResources
+					.optionString("current_connection_pool"));
+			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			_initialFrame.setContentPane(_configPanel);
+	    } else if ("config_other".equals(e.getActionCommand())) { //new
+	    	_configPanel = new ConfigurationPanel(_cc, this, AppResources
+					.optionString("hibernate_other_properties_url"),
+					AppResources
+					.optionString("current_other"));
+			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			_initialFrame.setContentPane(_configPanel);
+	    } else if ("config_general".equals(e.getActionCommand())) { //new
+	    	_configPanel = new ConfigurationPanel(_cc, this, AppResources
+					.optionString("hibernate_general_properties_url"),
+					AppResources
+					.optionString("current_general"));
+			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			_initialFrame.setContentPane(_configPanel);
 	    } else { //quit
 	        System.exit(0);
 	    }
+	    _initialFrame.validate();
 	}
 	
 	public void cancelAction(){

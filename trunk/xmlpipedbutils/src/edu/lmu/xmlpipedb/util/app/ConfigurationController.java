@@ -1,6 +1,9 @@
 package edu.lmu.xmlpipedb.util.app;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,15 +22,23 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.table.TableModel;
 
+import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HibernatePropertiesTableModel;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 
 public class ConfigurationController {
 
+	
 	public ConfigurationController(String currentPropsUrl) {
 		//getHibernateConfigPanel(null);
 		_currentHibProps = loadHibProperties(currentPropsUrl);
+	}
+	
+	public ConfigurationController(String currentPropsUrl, ConfigurationPanel cp) {
+		//getHibernateConfigPanel(null);
+		_currentHibProps = loadHibProperties(currentPropsUrl);
+		_callingPanel = cp;
 	}
 
 	
@@ -71,10 +82,13 @@ public class ConfigurationController {
 	
 	public JPanel getHibernateConfigPanel(String folderUrl, String currFile){
 		JPanel config = new JPanel();
+		_currFolder = folderUrl;
+		_currFile = currFile;
+		
 		config.setLayout(new BorderLayout());
 		
 		File f = new File(folderUrl);
-		System.out.printf("can read %s, absolute path %s\n", f.canRead(), f.getAbsolutePath() );
+		//System.out.printf("can read %s, absolute path %s\n", f.canRead(), f.getAbsolutePath() );
 		File[] files = f.listFiles(new PropertiesFileNameFilter());
 		if( files.length > 1 ){
 			ArrayList fileList = new ArrayList();
@@ -90,6 +104,7 @@ public class ConfigurationController {
 			}// end for
 			JComboBox head = new JComboBox(fileList.toArray());
 			head.setSelectedItem(selected);
+//			head.addItemListener(new MyItemListener());
 			config.add(head, BorderLayout.NORTH);
 			
 		}else{
@@ -99,6 +114,15 @@ public class ConfigurationController {
 		
 		return config;
 	}
+	
+//	private class MyItemListener implements ItemListener{
+//
+//		public void itemStateChanged(ItemEvent iEvent) {
+//			_callingPanel.reloadConfigPanel( iEvent.getItem() + ".properties");
+//			
+//		}
+//		
+//	}
 	
 	private void createConfigPanel(JPanel config, String path) {
 		Properties props = loadProperties(path);
@@ -124,25 +148,26 @@ public class ConfigurationController {
 			box.add(label);
 			box.add(value);
 			boxes.add(box);
+			boxes.add(Box.createVerticalStrut(5));
 //			Property p = new Property( key, props.getProperty(key));
 //			hptm.addProperty(p);
 		}
-		
+		boxes.add(Box.createVerticalGlue());
 		config.add(boxes, BorderLayout.CENTER);
 	} // end createConfigPanel
 
 
-	public void storeHibProperties( TableModel mod){
-		Properties props = new Properties();
+	public void storeHibProperties( Properties props){
+//		Properties props = new Properties();
 		
-		for( int i = 0; i < mod.getRowCount(); i++){
-			props.setProperty((String)mod.getValueAt(i, 0), (String)mod.getValueAt(i, 1));
-		}
+//		for( int i = 0; i < mod.getRowCount(); i++){
+//			props.setProperty((String)mod.getValueAt(i, 0), (String)mod.getValueAt(i, 1));
+//		}
 		
 		try{
 			FileOutputStream fis = new FileOutputStream(AppResources.optionString("hibernate_properties_url"));
 			props.store(fis, null);
-			
+			_currentHibProps = props;
 		}catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -152,6 +177,27 @@ public class ConfigurationController {
 		}
 		
 	}// end storeHibProperties
+	
+	public void saveProperties(JPanel config){
+		Properties props = _currentHibProps;
+		Component[] box = config.getComponents();
+		Box bx = (Box)box[0];
+		
+		//Component[] comps = box[0].();
+		for( int i = 0; i < bx.getComponentCount(); i++){
+			Box b = (Box)bx.getComponent(i);
+			boolean cb = ((JCheckBox)b.getComponent(0)).isSelected();
+			String label = ((JLabel)b.getComponent(1)).getText();
+			if( cb ){
+				String value = ((JTextField)b.getComponent(2)).getText();
+				props.setProperty(label, value);
+			}else{
+				props.remove(label);
+			}
+		}
+		storeHibProperties(props);
+		
+	}
 	
 	public TableModel loadOriginalHibProps(){
 		return getHibProperties(loadHibProperties(AppResources
@@ -214,5 +260,9 @@ public class ConfigurationController {
 	Properties _hibRevertProperties;
 	boolean _firstHibPropLoad = true;
 	Properties _currentHibProps;
+	private ConfigurationPanel _callingPanel;
+	
+	String _currFile;
+	String _currFolder;
 	
 } // end class

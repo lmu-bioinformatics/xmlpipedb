@@ -133,6 +133,7 @@ public class Main implements ActionListener {
     
 	protected JMenuBar createMenuBar() {
 	    JMenuBar menuBar = new JMenuBar();
+	    JMenuItem menuItem;
         int accelMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 	
 	    //Set up the tools menu.
@@ -140,16 +141,6 @@ public class Main implements ActionListener {
 	    menuTools.setMnemonic(KeyEvent.VK_T);
 	    menuBar.add(menuTools);
 	
-	    //Set up the first menu item.
-	    JMenuItem menuItem = new JMenuItem(AppResources.messageString("menu_tools_config"));
-	    menuItem.setMnemonic(KeyEvent.VK_C);
-	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_C, accelMask));
-	    menuItem.setActionCommand("configure");
-	    menuItem.addActionListener(this);
-	    menuTools.add(menuItem);
-	    
-	    
 	    //Set up the import menu item.
 	    menuItem = new JMenuItem(AppResources.messageString("menu_tools_import"));
 	    menuItem.setMnemonic(KeyEvent.VK_I);
@@ -265,6 +256,10 @@ public class Main implements ActionListener {
 	        System.exit(0);
 	    }
 	    _initialFrame.validate();
+	}
+	
+	public void validate(){
+		_initialFrame.validate();
 	}
 	
 	public void cancelAction(){

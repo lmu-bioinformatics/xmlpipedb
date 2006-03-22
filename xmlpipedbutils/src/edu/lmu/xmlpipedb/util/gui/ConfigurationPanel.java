@@ -7,10 +7,13 @@ package edu.lmu.xmlpipedb.util.gui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -27,9 +30,39 @@ import edu.lmu.xmlpipedb.util.resources.AppResources;
 public class ConfigurationPanel extends JPanel implements ActionListener {
 	   
 	
+	
+	
+	/**
+	 * @deprecated
+	 * 
+	 * @param cc
+	 * @param m
+	 * @param url
+	 * @param currFile
+	 */
 	public ConfigurationPanel(ConfigurationController cc, Main m, String url, String currFile  ){
 		_configControl = cc;
 		_main = m;
+		_url = url;
+        createComponents(url, currFile);
+        layoutComponents();
+        startListeningToUI();
+        
+        //cc.getHibernateConfigPanel(AppResources.optionString("hibernate_conf_properties_url"));
+       /* 
+        hibernate_general_properties_url
+        hibernate_platforms_properties_url
+        hibernate_connection_pools_properties_url
+        hibernate_other_properties_url
+        */
+    }
+	
+	
+	public ConfigurationPanel(Main m, String url, String currFile  ){
+		_configControl = new ConfigurationController(AppResources
+				.optionString("hibernate_properties_url"), this);
+		_main = m;
+		_url = url;
         createComponents(url, currFile);
         layoutComponents();
         startListeningToUI();
@@ -47,10 +80,11 @@ public class ConfigurationPanel extends JPanel implements ActionListener {
     private void layoutComponents() {
         this.setLayout(new BorderLayout());
 
-        Box bxMain = new Box(BoxLayout.X_AXIS);
-        this.add(bxMain, BorderLayout.CENTER);
-        bxMain.add(new JScrollPane(_panel));
+//        Box bxMain = new Box(BoxLayout.X_AXIS);
+//        this.add(bxMain, BorderLayout.CENTER);
+//        bxMain.add(new JScrollPane(_panel));
         //bxMain.add(new JScrollPane(_propsTable));
+        this.add(new JScrollPane(_panel), BorderLayout.CENTER);
         
         Box buttonBox = Box.createHorizontalBox();
         buttonBox.add(Box.createHorizontalGlue());
@@ -63,14 +97,21 @@ public class ConfigurationPanel extends JPanel implements ActionListener {
         buttonBox.add(_cancelButton);
         add(buttonBox, BorderLayout.SOUTH);
         
+        this.validate();
     }
 
     /**
      * 
      */
     private void createComponents(String url, String currFile) {
+    	_panel = null;
     	_panel = _configControl
 		.getHibernateConfigPanel(url, currFile);
+    	
+    	for( int i = 0; i < _panel.getComponentCount(); i++){
+    		if(_panel.getComponent(i).getClass().getName().contains("JComboBox"))
+    			((JComboBox)_panel.getComponent(i)).addItemListener(new MyItemListener());
+    	}
     	//_propsTable = new JTable(_configControl.loadCurrentHibProps());
         _saveButton = new JButton(AppResources.messageString("config_save"));
         _cancelButton = new JButton(AppResources.messageString("config_cancel"));
@@ -80,7 +121,32 @@ public class ConfigurationPanel extends JPanel implements ActionListener {
         _defaultButton.setToolTipText(AppResources.messageString("config_default_tooltip"));
     } // end createComponents
     
+//    public void reloadConfigPanel(String file){
+//    	_configControl.getHibernateConfigPanel(_url, file);	
+//    }
+    
+	private class MyItemListener implements ItemListener{
 
+		public void itemStateChanged(ItemEvent iEvent) {
+			reloadPanel((String)iEvent.getItem());
+		}
+		
+	}
+	
+	private void reloadPanel(String item){
+		remove(_panel);
+		validate();
+		_main.validate();
+		//_panel.removeAll();
+		_panel = _configControl
+			.getHibernateConfigPanel(_url, item + ".properties");
+		
+		//add(new JScrollPane(_panel), BorderLayout.CENTER);
+		_panel.validate();
+		_main.validate();
+		
+	}
+	
     
     /**
      * Adds listeners to components of interest.
@@ -97,7 +163,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener {
      */
     public void actionPerformed(ActionEvent aevt) {
         if (aevt.getSource() == _saveButton) {
-        	_configControl.storeHibProperties(_propsTable.getModel());
+        	_configControl.saveProperties(_panel);
+        	//_configControl.storeHibProperties(_propsTable.getModel());
         } else if (aevt.getSource() == _cancelButton) {
         	_main.cancelAction();
         } else if (aevt.getSource() == _revertButton) {
@@ -113,6 +180,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener {
     private JTable _propsTable;
     private Main _main;
     private JPanel _panel;
+    private String _url;
 
     /*
 hibernate.dialect net.sf.hibernate.dialect.PostgreSQLDialect

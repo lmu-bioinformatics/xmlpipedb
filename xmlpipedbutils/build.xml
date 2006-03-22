@@ -2,7 +2,7 @@
 
 <project name="XmlPipeDbUtilities" default="jar">
   <property name="jarfilename" value="xpdUtils"/>
-  <property name="mainclass" value="app.XmlPipeDbUtils"/>
+  <property name="mainclass" value="edu.lmu.xmlpipedb.util.app.XmlPipeDbUtils"/>
   <property name="resources" value="edu/lmu/xmlpipedb/util/resources"/>
   <property name="project.title" value="GUI to XML Pipe DB"/>
   <property name="src.dir" value="src"/>
@@ -87,12 +87,20 @@
 <!--
   <target name="viewer" depends="compile" description="Runs the GUI viewer">
 	<java 
-	  classname="hana.Viewer" 
-	  dir="${build.dir}" 
+	  classname="${mainclass}" 
+          classpath="${jarfilename}.jar"
+	  dir="${build.dir}"           
 	  fork="true" 
 	  failonerror="false"
 	/>
   </target>
 -->
+  <target name="run" depends="jar" description="Runs the application">
+    <java jar="${dist.dir}/${jarfilename}.jar"
+          fork="true"
+          failonerror="false"
+        />
+  </target>
+  
   <target name="all" depends="clean, javadoc, jar" description="Initializes, Compiles, makes Jar and creates JavaDocs"/>  
 </project>

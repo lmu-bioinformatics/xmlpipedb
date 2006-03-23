@@ -1,3 +1,16 @@
+/********************************************************
+ * Filename: UniprotXSDPostProcessor.java
+ * Author: LMU
+ * Program: uniprotdb
+ * Description: This file performs post processing on the
+ * sql and hibernate mappings files that are created for
+ * the uniprot database.   
+ * Revision History:
+ * 20060322: Initial Revision.    
+ * *****************************************************/
+ 
+package edu.lmu.xmlpipedb.uniprotdb;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,6 +21,13 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -15,49 +35,56 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.JFrame;
 
 /**
- * @author jjbarret
- *
- */
-/**
- * @author jjbarret
- *
+ * UniprotXSDPostProcessor does post processing for the uniprot
+ * database
+ * 
+ * @author   
+ * @version  
  */
 public class UniprotXSDPostProcessor extends JFrame {
 
 	/**
-	 * Hmmm. Comments?
+	 * Private variables 
 	 */
 	private static final long serialVersionUID = 1L;
 	
 	private static final String SQL_EXTENSION = ".sql";
 	private static final String XML_EXTENSION = ".xml";
 	
+	private static final String sqlFileString = "uniprotSQLFile";
+	private static final String hbmFileString = "citationTypeFile";
+	private static final String help = "help";
+	private static final String usage = "usage: uniprotdb [--" + sqlFileString + "=filename] " + "[--" + hbmFileString + "=filename] [-" + help + "]";
+	private static final String helpMsg = "--" + sqlFileString + "=filename -- " + "Full path to the uniprot sql file\n" + "--" + hbmFileString + "=filename -- " + "Full path to the CitationType.hbm.xml file\n" + "-" + help + " -- Displays this help and exits\n";
+	
 	private JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
 	private final File sqlFile;
 	private final File hbmFile;
+	
+	private static Options options;
 	
 	/**
 	 * A constructor for no sql file name given.
 	 */
 	public UniprotXSDPostProcessor() {
 		
-		//Notice for selecting the uniprot sql file.
+		// Notice for selecting the uniprot sql file.
 		JOptionPane.showMessageDialog(this,
 		    "Please locate the uniprot.sql file.",
 		    "Please select a file", 
 		    JOptionPane.INFORMATION_MESSAGE);
 
 		chooser.setFileFilter(new MyFilter(SQL_EXTENSION));
-        chooser.showOpenDialog(this);
-        sqlFile = chooser.getSelectedFile();
-        if (sqlFile == null) {
-        	//Error message
+      chooser.showOpenDialog(this);
+      sqlFile = chooser.getSelectedFile();
+      if (sqlFile == null) {
+        	// Error message
         	JOptionPane.showMessageDialog(this,
         	    "Must select the uniprot.sql file.\nSystem will exit.",
         	    "No File Selected",
         	    JOptionPane.ERROR_MESSAGE);
         	System.exit(0);
-        }
+      }
 		try {
 			processSQLFile();
 		} catch (IOException e) {
@@ -76,18 +103,18 @@ public class UniprotXSDPostProcessor extends JFrame {
 			    JOptionPane.INFORMATION_MESSAGE);
 		
 		chooser.setFileFilter(new MyFilter(XML_EXTENSION));
-        chooser.showOpenDialog(this);
-        hbmFile = chooser.getSelectedFile();
-        if (sqlFile == null) {
+      chooser.showOpenDialog(this);
+      hbmFile = chooser.getSelectedFile();
+      if (sqlFile == null) {
         	//Error message
         	JOptionPane.showMessageDialog(this,
         	    "Must select the CitationType.hbm.xml file.\nSystem will exit.",
         	    "No File Selected",
         	    JOptionPane.ERROR_MESSAGE);
         	System.exit(0);
-        }
-        try {
-			processHMBFile();
+      }
+      try {
+			processHBMFile();
 		} catch (IOException e) {
         	//Error message
         	JOptionPane.showMessageDialog(this,
@@ -105,16 +132,14 @@ public class UniprotXSDPostProcessor extends JFrame {
 	}
 
 	/**
-	 * A constructor with a given sql file name.  No checks made to insure
-	 * file exists.
+	 * A constructor with a given sql file name and hibernate mapping file name.  
 	 * @throws IOException 
 	 */
     public UniprotXSDPostProcessor(String sqlFile, String hbmFile) throws IOException {
 		this.sqlFile = new File(sqlFile);
 		this.hbmFile = new File(hbmFile);
-	
 		processSQLFile();
-		processHMBFile();
+		processHBMFile();
 	}
 
 	/**
@@ -147,7 +172,7 @@ public class UniprotXSDPostProcessor extends JFrame {
 	 * Make changes to HBM file.
 	 * @throws IOException 
 	 */
-	private void processHMBFile() throws IOException {
+	private void processHBMFile() throws IOException {
 		
 		//System.out.println("Opening file...");
 		String hbmFileBuffer = openFile(hbmFile);
@@ -213,6 +238,25 @@ public class UniprotXSDPostProcessor extends JFrame {
         in.close();
         return buffer.toString();
 	}
+
+    /**
+     * Prints error message and then exists the program
+     * @param s 	the message to print
+     */
+    private static void printErrorMsgAndExit(String s) {
+        System.out.print(s);
+        System.exit(0);
+    }
+	
+   /**
+   * Adds the acceptable command line options
+   * 
+   */
+   private static void addOptions() {
+      options.addOption(help, false, null);
+      options.addOption(OptionBuilder.withLongOpt(sqlFileString).withValueSeparator('=').hasArg().create());
+      options.addOption(OptionBuilder.withLongOpt(hbmFileString).withValueSeparator('=').hasArg().create());
+    }
 	
 	/**
      * A tester main method for running the processor.
@@ -224,6 +268,11 @@ public class UniprotXSDPostProcessor extends JFrame {
      * 
      */
 	public static void main(final String[] args) {
+      CommandLineParser parser = new PosixParser();
+      CommandLine line = null;
+      final String sqlFilePath;
+      final String hbmFilePath;
+        
 		if(args.length == 0) {
 	        SwingUtilities.invokeLater(new Runnable() {
 	            public void run() {
@@ -231,17 +280,39 @@ public class UniprotXSDPostProcessor extends JFrame {
 	            }
 	        });
 		} else {
-			//NO CHECKS FOR CORRECT COMMAND LINE PARAMETERS!!!
-	        SwingUtilities.invokeLater(new Runnable() {
-	            public void run() {
-	                try {
-						new UniprotXSDPostProcessor(args[0], args[1]);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-	            }
-	        });
+		      options = new Options();
+            addOptions(); 
+            
+            try {
+               line = parser.parse(options, args);
+            } catch(ParseException e) {
+               printErrorMsgAndExit(e.getMessage() + "\n\n" + usage);
+            }
+		
+            if(line.hasOption(help)) {
+               printErrorMsgAndExit(usage + "\n\n" + helpMsg);
+		      } else {
+		         if(args.length != 2) {
+		            printErrorMsgAndExit(usage + "\n\n" + helpMsg);
+		         }
+		         
+		         sqlFilePath = line.hasOption(sqlFileString) ? line.getOptionValue(sqlFileString) : "";
+		         hbmFilePath = line.hasOption(hbmFileString) ? line.getOptionValue(hbmFileString) : "";
+		         
+		         if(sqlFilePath.equals("") || hbmFilePath.equals(""))
+		            printErrorMsgAndExit(usage + "\n\n" + helpMsg);
+		        
+		         
+		         SwingUtilities.invokeLater(new Runnable() {
+		        	 public void run() {
+		        		 try {
+		        			 new UniprotXSDPostProcessor(sqlFilePath, hbmFilePath);
+		        		 } catch (IOException e) {
+		        			 e.printStackTrace();
+		        		 }
+		        	 }
+		         });
+		      }
 		}
-		System.exit(0);
-	}
+      }
 }

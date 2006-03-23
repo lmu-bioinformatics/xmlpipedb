@@ -1,0 +1,10 @@
+uniprotdb
+usage: uniprotdb
+
+Options:
+--uniprotSQLFile=filename   -- Full path to the uniprot sql file
+--citationTypeFile=filename -- Full path to the CitationType.hbm.xml file
+-help                       -- Displays help and exits
+
+Notes: This program creates everything needed for a Uniprot database.  
+It is up to the database administrator to setup the database.  

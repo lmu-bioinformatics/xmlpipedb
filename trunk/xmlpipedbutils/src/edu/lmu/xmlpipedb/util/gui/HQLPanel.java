@@ -15,6 +15,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
+
+import java.util.Iterator;
+
+import edu.lmu.xmlpipedb.util.app.HibernateUtil;
 
 
 public class HQLPanel extends JPanel{
@@ -60,7 +65,8 @@ public class HQLPanel extends JPanel{
 		execute.addActionListener( new ActionListener(){
 
 			public void actionPerformed( ActionEvent ae ){
-
+				Iterator iter = HibernateUtil.executeHQL( _hqlArea.getText().trim() );
+				populateTable( iter );				
 			}
 
 		} );
@@ -89,11 +95,20 @@ public class HQLPanel extends JPanel{
 
 		}
 
-		
 		_buttonPanel.add( _box );
 
 	}
-
+	
+	private void populateTable( Iterator iter )
+	{
+		DefaultTableModel tm = new DefaultTableModel();
+		
+		while( iter.hasNext() ){
+			tm.addRow( new Object[]{ iter.next() } );
+		}
+		
+		_results.setModel( tm );
+	}
 //	public static void main( String args[] ){
 //
 //		JFrame f = new JFrame( "HQL GUI Test" );

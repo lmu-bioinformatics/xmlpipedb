@@ -1,7 +1,7 @@
 package edu.lmu.xmlpipedb.util.app;
 
-import org.logicalcobwebs.logging.Log;
-import org.logicalcobwebs.logging.LogFactory;
+//import org.logicalcobwebs.logging.Log;
+//import org.logicalcobwebs.logging.LogFactory;
 
 import net.sf.hibernate.*;
 import net.sf.hibernate.cfg.*;
@@ -15,7 +15,7 @@ import java.util.Vector;
  */
 public class HibernateUtil {
 
-    private static Log log = LogFactory.getLog(HibernateUtil.class);
+    //private static Log log = LogFactory.getLog(HibernateUtil.class);
 
     private static final SessionFactory sessionFactory;
 
@@ -24,7 +24,8 @@ public class HibernateUtil {
             // Create the SessionFactory
             sessionFactory = new Configuration().configure().buildSessionFactory();
         } catch (Throwable ex) {
-            log.error("Initial SessionFactory creation failed.", ex);
+            //log.error("Initial SessionFactory creation failed.", ex);
+        	System.err.println( "Initial SessionFactory creation failed.\n" + ex );
             throw new ExceptionInInitializerError(ex);
         }
     }
@@ -48,6 +49,7 @@ public class HibernateUtil {
 
     /**
      * Closses the hibernate session. Modified by Babak Naffas to catch HibernateException within the method and handle it here. 
+     * 
      * @version 1.0 Originally downloaded implementation
      * @version 1.1 Modified by Babak Naffas to catch HibernateException within the method and handle it here.
      */

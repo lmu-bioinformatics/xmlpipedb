@@ -3,7 +3,10 @@
  *  03/15/06 Adam Carasso.  Added xjc and hyperjaxb2 addin exectution 
  *  03/23/06 Adam Carasso.  Added sql database generation by executing 
  *							Hibernate schemaExport.
- *
+ *  03/23/06 Adam Carasso   Removed Hardcoding for uniprot and refactored
+ *                          a couple functional parts such as movefiles 
+ *                          and adding hibernate files to the hibernate
+ *                          configure object.
  * Note: Please follow commenting convetions already in this file!
  */
 package edu.lmu.xmlpipedb.xsd2db;
@@ -37,6 +40,7 @@ public class Xsd2db {
 											"-XhashCode", 
 														//  hashCode extension is requred for hb2
 											"-Xhyperjaxb" };
+    public static final String HIB_PROPERTIES = "./hibernate.properties";
 
     /**
      * The execution entry point for the utility.
@@ -82,17 +86,22 @@ public class Xsd2db {
         } catch(Exception e) { // TODO: unsupress exception
             System.out.println(e.getMessage());
         }
+        File destDir = new File(cmdline.dbSrcDir, cmdline.subDirs[Xsd2dbCommandLine.HBM_DIR]);
+        File srcDir = new File(cmdline.dbSrcDir, cmdline.subDirs[Xsd2dbCommandLine.SRC_DIR]);
+        FilenameFilter hbmFilter = new HbmFilter();
+        movefilesRecursive(destDir, srcDir, hbmFilter);
 		Configuration cfg = new Configuration();
-		File hibPropertiesFile = new File("./hibernate.properties");
+		File hibPropertiesFile = new File(HIB_PROPERTIES);
 		Properties hibProperties = new Properties();
 		try {
 		hibProperties.load(new FileInputStream(hibPropertiesFile));
 		}
-		catch(Exception e) {}
+		catch(Exception e) {
+            System.out.println("Properties file failed to load.");
+        }
 		cfg.setProperties(hibProperties);
-		File hbmDir = new File("./db-gen/src/org/uniprot/uniprot");
-		HbmFilter hbmFilter = new HbmFilter();
-		File fileList[] = hbmDir.listFiles();
+		addHibFiles(cfg, destDir);
+        /*File fileList[] = hbmDir.listFiles(hbmFilter);
 		if (fileList.length==0)
 			System.out.println("No Files found");
 		for(int i = 0; i< fileList.length; i++)
@@ -103,15 +112,49 @@ public class Xsd2db {
 				cfg.addFile(fileList[i]);
 			}
 		}
+        */
+        
 		SchemaExport schemaExporter = new SchemaExport(cfg);
-		schemaExporter.setOutputFile("./schema.sql");
+		schemaExporter.setOutputFile(cmdline.dbSrcDir.getPath() + "/" + 
+                                     cmdline.subDirs[Xsd2dbCommandLine.SQL_DIR] + 
+                                     "/" + "schema.sql");
 		schemaExporter.setDelimiter(";");
 		schemaExporter.create(true, false);
+        
+        //File buildFile = new File("./CannedBuild.xml");
+        //File movedBuildFile = new File(cmdline.dbSrcDir, "build.xml");
+        //buildFile.renameTo(movedBuildFile);
         System.out.println("Build Finished!");
     }
+	
+	private static void addHibFiles(Configuration cfg, File hibDir)
+    {
+        HbmFilter hbmFilter = new HbmFilter();
+        File fileList[] = hibDir.listFiles(hbmFilter);
+        for(int i=0; i < fileList.length; i++)
+        {
+            if(!fileList[i].isDirectory())
+                cfg.addFile(fileList[i]);
+        }
+    }
+        
+	public static void movefilesRecursive(File destDir, File srcDir, FilenameFilter filter)
+	{
+		File filesToMove[] = srcDir.listFiles(filter);
+        for(int i=0; i < filesToMove.length; i++)
+        {
+            if (filesToMove[i].isDirectory())
+                movefilesRecursive(destDir, filesToMove[i], filter);
+            else
+            {
+                File newFile = new File(destDir, filesToMove[i].getName());
+                filesToMove[i].renameTo(newFile);
+            }
+        }
+    }
+	
 
-
-	    /**
+    /**
      * {@link ErrorReceiver} that produces messages
      * as Ant messages.
      */
@@ -136,9 +179,9 @@ public class Xsd2db {
 	private static  class HbmFilter implements FilenameFilter
 	{
 		public boolean accept(File dir,
-					   String name)
+							  String name)
 		{
-			if(name.endsWith("hbm"))
+			if(name.endsWith("hbm.xml") || (new File(dir+"/"+name)).isDirectory())
 				return true;
 			return false;
 		}

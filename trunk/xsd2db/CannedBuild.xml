@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="xsd2dbgen" default="jar" basedir=".">
+	<property name="src" location="src"/>
+	<property name="dist" location="dist"/>
+	<property name="bin" location="bin"/>
+	<property name="compile.debug" value="true">
+	<property name="jarfile" location="$\{dist\}/$\{ant.project.name\}.jar"/>
+	<target name="compile" description"=Compile code">
+		<mkdir dir="$\{bin\}"/>
+		<mkdir dir="$\{dist\}"/>
+		<javac srcdir="$\{bin\}" includeAntRuntime="no"
+			 debug="$\{compile.debug" \}">
+		</javac>
+	</target>
+	<target name="jar" depends="compile" description="Build jar">
+		<mkdir dir="$\{dist\}"/>
+		<jar jarfile="$\{jarfile\} basedir="$\{bin\}" manifest="Manifest">
+		</jar>
+	</target>
+</project>
+}

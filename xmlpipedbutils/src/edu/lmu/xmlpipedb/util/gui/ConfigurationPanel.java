@@ -27,7 +27,7 @@ import edu.lmu.xmlpipedb.util.resources.AppResources;
  */
 public class ConfigurationPanel extends JPanel implements ActionListener, ItemListener {
     /**
-     * @deprecated
+     * 
      * 
      * @param cc
      * @param m
@@ -50,6 +50,11 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
          */
     }
 
+    /**
+     * @param m
+     * @param url
+     * @param currFile
+     */
     public ConfigurationPanel(Main m, String url, String currFile) {
         _configControl = new ConfigurationController(AppResources.optionString("hibernate_properties_url"), this);
         _main = m;
@@ -66,6 +71,9 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
          */
     }
 
+    /**
+     * Lays out the components on the panel
+     */
     private void layoutComponents() {
         this.setLayout(new BorderLayout());
 
@@ -89,8 +97,10 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         this.validate();
     }
 
+
     /**
-     * 
+     * @param url
+     * @param currFile
      */
     private void createComponents(String url, String currFile) {
         _panel = null;
@@ -103,18 +113,25 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         _revertButton.setToolTipText(AppResources.messageString("config_revert_tooltip"));
         _defaultButton = new JButton(AppResources.messageString("config_default"));
         _defaultButton.setToolTipText(AppResources.messageString("config_default_tooltip"));
+        
+        _revertButton.setEnabled(false);
+        _defaultButton.setEnabled(false);
+
     } // end createComponents
 
-    // public void reloadConfigPanel(String file){
-    // _configControl.getHibernateConfigPanel(_url, file);
-    // }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+     */
     public void itemStateChanged(ItemEvent iEvent) {
         if (iEvent.getStateChange() == ItemEvent.SELECTED) {
             reloadPanel((String)iEvent.getItem());
         }
     }
 
+    /**
+     * @param item
+     */
     private void reloadPanel(String item) {
         stopListeningToUI();
         removeAll();
@@ -139,6 +156,9 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         _defaultButton.addActionListener(this);
     }
 
+    /**
+     * Stops the GUI listners
+     */
     private void stopListeningToUI() {
         for (int i = 0; i < _panel.getComponentCount(); i++) {
             if (_panel.getComponent(i).getClass().getName().contains("JComboBox"))
@@ -174,12 +194,5 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     private JPanel _panel;
     private String _url;
 
-    /*
-     * hibernate.dialect net.sf.hibernate.dialect.PostgreSQLDialect
-     * hibernate.connection.driver_class org.postgresql.Driver
-     * hibernate.connection.url jdbc:postgresql://localhost:5432/uniprot
-     * hibernate.connection.username username hibernate.connection.password
-     * password hibernate.query.substitutions yes 'Y', no 'N'
-     */
 
 } // end class ImportPanel

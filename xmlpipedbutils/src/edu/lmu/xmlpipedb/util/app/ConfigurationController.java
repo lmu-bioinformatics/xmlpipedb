@@ -27,14 +27,25 @@ import edu.lmu.xmlpipedb.util.gui.HibernatePropertiesTableModel;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 
+/**
+ * @author bob
+ *
+ */
 public class ConfigurationController {
 
 	
+	/**
+	 * @param currentPropsUrl
+	 */
 	public ConfigurationController(String currentPropsUrl) {
 		//getHibernateConfigPanel(null);
 		_currentHibProps = loadHibProperties(currentPropsUrl);
 	}
 	
+	/**
+	 * @param currentPropsUrl
+	 * @param cp
+	 */
 	public ConfigurationController(String currentPropsUrl, ConfigurationPanel cp) {
 		//getHibernateConfigPanel(null);
 		_currentHibProps = loadHibProperties(currentPropsUrl);
@@ -42,6 +53,10 @@ public class ConfigurationController {
 	}
 
 	
+	/**
+	 * @param propertiesPath
+	 * @return
+	 */
 	private Properties loadHibProperties(String propertiesPath){
 		Properties props = new Properties();
 		
@@ -63,6 +78,10 @@ public class ConfigurationController {
 		return props;
 	}
 	
+	/**
+	 * @param propertiesPath
+	 * @return
+	 */
 	private Properties loadProperties(String propertiesPath){
 		Properties props = new Properties();
 		
@@ -80,6 +99,11 @@ public class ConfigurationController {
 		return props;
 	}
 	
+	/**
+	 * @param folderUrl
+	 * @param currFile
+	 * @return
+	 */
 	public JPanel getHibernateConfigPanel(String folderUrl, String currFile){
 		JPanel config = new JPanel();
 		_currFolder = folderUrl;
@@ -124,6 +148,10 @@ public class ConfigurationController {
 //		
 //	}
 	
+	/**
+	 * @param config
+	 * @param path
+	 */
 	private void createConfigPanel(JPanel config, String path) {
 		Properties props = loadProperties(path);
 		Box boxes = new Box(BoxLayout.Y_AXIS);
@@ -157,6 +185,9 @@ public class ConfigurationController {
 	} // end createConfigPanel
 
 
+	/**
+	 * @param props
+	 */
 	public void storeHibProperties( Properties props){
 //		Properties props = new Properties();
 		
@@ -178,6 +209,9 @@ public class ConfigurationController {
 		
 	}// end storeHibProperties
 	
+	/**
+	 * @param config
+	 */
 	public void saveProperties(JPanel config){
 		Properties props = _currentHibProps;
 		Component[] box = config.getComponents();
@@ -199,16 +233,28 @@ public class ConfigurationController {
 		
 	}
 	
+	/**
+	 * @deprecated
+	 * @return
+	 */
 	public TableModel loadOriginalHibProps(){
 		return getHibProperties(loadHibProperties(AppResources
 				.optionString("original_hibernate_properties_url")));
 	}
 
+	/**
+	 * @deprecated
+	 * @return
+	 */
 	public TableModel loadCurrentHibProps(){
 		return getHibProperties(loadHibProperties(AppResources
 				.optionString("hibernate_properties_url")));
 	}
 
+	/**
+	 * @deprecated
+	 * @return
+	 */
 	public TableModel loadRevertedHibProps(){
 		return getHibProperties(_hibRevertProperties);
 	}
@@ -240,6 +286,11 @@ public class ConfigurationController {
 //	}
 
 
+	/**
+	 * @deprecated
+	 * @param props
+	 * @return
+	 */
 	private HibernatePropertiesTableModel getHibProperties( Properties props ){
 		HibernatePropertiesTableModel hptm = new HibernatePropertiesTableModel();
 		

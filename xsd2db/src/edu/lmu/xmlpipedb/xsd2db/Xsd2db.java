@@ -1,6 +1,10 @@
 /** Revision History
  *  ??/??/?? Scott. File orignaly created. 
  *  03/15/06 Adam Carasso.  Added xjc and hyperjaxb2 addin exectution 
+ *  03/23/06 Adam Carasso.  Added sql database generation by executing 
+ *							Hibernate schemaExport.
+ *
+ * Note: Please follow commenting convetions already in this file!
  */
 package edu.lmu.xmlpipedb.xsd2db;
 
@@ -18,14 +22,21 @@ import com.sun.tools.xjc.GrammarLoader;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.generator.GeneratorContext;
 import com.sun.tools.xjc.grammar.AnnotatedGrammar;
-
+import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.hibernate.cfg.Configuration;
+import java.io.FilenameFilter;
+import java.util.Properties;
+import java.io.FileInputStream;
 public class Xsd2db {
-    public static final String xjcArgs[] = { "-debug", //  HyperJaxb invokes xjc in debug mode for 
-            //  ..some reason 
-            "-nv", "-extension", //  Enables extensions so we can use hyperjaxb2
-            "-Xequals", //  equals extension is required for hyperjaxb2
-            "-XhashCode", //  hashCode extension is requred for hb2
-            "-Xhyperjaxb" };
+    public static final String xjcArgs[] = { "-debug",	//  HyperJaxb invokes xjc in debug mode for 
+														//  ..some reason 
+											"-nv",
+											"-extension", 
+														//  Enables extensions so we can use hyperjaxb2
+											"-Xequals", //  equals extension is required for hyperjaxb2
+											"-XhashCode", 
+														//  hashCode extension is requred for hb2
+											"-Xhyperjaxb" };
 
     /**
      * The execution entry point for the utility.
@@ -67,14 +78,40 @@ public class Xsd2db {
             codeAugmenter.run(grammar, generatorContext, options, errorHandler);
             // Must run before building the code model.
             grammar.codeModel.build(Driver.createCodeWriter(options.targetDir, options.readOnly));
-
+	
         } catch(Exception e) { // TODO: unsupress exception
             System.out.println(e.getMessage());
         }
+		Configuration cfg = new Configuration();
+		File hibPropertiesFile = new File("./hibernate.properties");
+		Properties hibProperties = new Properties();
+		try {
+		hibProperties.load(new FileInputStream(hibPropertiesFile));
+		}
+		catch(Exception e) {}
+		cfg.setProperties(hibProperties);
+		File hbmDir = new File("./db-gen/src/org/uniprot/uniprot");
+		HbmFilter hbmFilter = new HbmFilter();
+		File fileList[] = hbmDir.listFiles();
+		if (fileList.length==0)
+			System.out.println("No Files found");
+		for(int i = 0; i< fileList.length; i++)
+		{
+			System.out.println(fileList[i].toString());
+			if (fileList[i].toString().endsWith(".hbm.xml"))
+			{
+				cfg.addFile(fileList[i]);
+			}
+		}
+		SchemaExport schemaExporter = new SchemaExport(cfg);
+		schemaExporter.setOutputFile("./schema.sql");
+		schemaExporter.setDelimiter(";");
+		schemaExporter.create(true, false);
         System.out.println("Build Finished!");
     }
 
-    /**
+
+	    /**
      * {@link ErrorReceiver} that produces messages
      * as Ant messages.
      */
@@ -95,4 +132,19 @@ public class Xsd2db {
             System.out.println("info: " + e);
         }
     }
+
+	private static  class HbmFilter implements FilenameFilter
+	{
+		public boolean accept(File dir,
+					   String name)
+		{
+			if(name.endsWith("hbm"))
+				return true;
+			return false;
+		}
+	}
+
+
 }
+
+

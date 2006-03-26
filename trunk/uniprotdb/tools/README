@@ -1,0 +1,7 @@
+uniprotdb
+usage: uniprotdb
+
+Options:
+--uniprotSQLFile=filename   -- Full path to the uniprot sql file
+--citationTypeFile=filename -- Full path to the CitationType.hbm.xml file
+-help                       -- Displays help and exits

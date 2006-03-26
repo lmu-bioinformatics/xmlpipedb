@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="uniprotdb" default="compile" basedir=".">
+    <property name="src" location="src"/>
+    <property name="bin" location="bin"/>
+    <property name="lib" location="lib"/>
+
+    <property name="compile.debug" value="true"/>
+
+    <fileset id="lib.jars" dir="${lib}">
+        <include name="**/*.jar"/>
+    </fileset>
+
+    <path id="lib.path">
+        <fileset refid="lib.jars"/>
+    </path>
+
+    <target name="compile" description="Compile code">
+        <mkdir dir="${bin}"/>
+        <javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no"
+               classpathref="lib.path" debug="${compile.debug}">
+        </javac>
+    </target>
+
+    <target name="clean" description="Remove build directory">
+        <delete dir="${bin}"/>
+    </target>
+</project>

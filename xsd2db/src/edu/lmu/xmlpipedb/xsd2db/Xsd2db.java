@@ -7,6 +7,7 @@
  *                          a couple functional parts such as movefiles 
  *                          and adding hibernate files to the hibernate
  *                          configure object.
+ *  03/27/06 Adam Carasso   Added inschema schema option...
  * Note: Please follow commenting convetions already in this file!
  */
 package edu.lmu.xmlpipedb.xsd2db;
@@ -53,7 +54,10 @@ public class Xsd2db {
         Options options = new Options();
         options.targetDir = new File(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.SRC_DIR]);
         //  TODO:  need to add the bindings file
-        options.setSchemaLanguage(Options.SCHEMA_XMLSCHEMA);
+        if (cmdline.getSchemaType() == Xsd2dbCommandLine.DTD_SCHEMA)
+            options.setSchemaLanguage(Options.SCHEMA_DTD);
+        else
+            options.setSchemaLanguage(Options.SCHEMA_XMLSCHEMA);
         //  Set the schema language to XSD
         System.out.println(cmdline.dbSrcDir.getPath());
         options.addGrammar(new org.xml.sax.InputSource(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.XSD_DIR] + File.separator + cmdline.xsdName));

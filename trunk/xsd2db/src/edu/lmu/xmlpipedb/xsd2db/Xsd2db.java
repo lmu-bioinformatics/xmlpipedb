@@ -54,7 +54,7 @@ public class Xsd2db {
         Options options = new Options();
         options.targetDir = new File(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.SRC_DIR]);
         //  TODO:  need to add the bindings file
-        if (cmdline.getSchemaType() == Xsd2dbCommandLine.DTD_SCHEMA)
+        if (cmdline.getSchemaType() == Xsd2dbCommandLine.Schema.DTD)
             options.setSchemaLanguage(Options.SCHEMA_DTD);
         else
             options.setSchemaLanguage(Options.SCHEMA_XMLSCHEMA);

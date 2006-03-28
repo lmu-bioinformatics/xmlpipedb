@@ -45,11 +45,9 @@ public class Xsd2dbCommandLine {
     protected String xsdName;
     protected HashMap<String, String> map;
 
-    private static final int DTD_SCHEMA = 0;
-    private static final int XSD_SCHEMA = 1;
+    public enum Schema { DTD, XSD }
 
-    private int schemaType;
-
+    private Schema schemaType;
 
     /**
      * Constructor
@@ -74,14 +72,11 @@ public class Xsd2dbCommandLine {
     }
 
     /**
-     * Returns the absolute path for the the database source output directory
-     * and any child directories
-     *
-     * @param dir
-     *            directory name
-     * @return absoulte path of the requested directory
+     * Returns the type of schema file to process.
+     * 
+     * @return DTD or XSD
      */
-    public int getSchemaType() {
+    public Schema getSchemaType() {
         return schemaType;
     }
 
@@ -112,7 +107,7 @@ public class Xsd2dbCommandLine {
 
         xsdurl = line.hasOption(xsdURL) ? line.getOptionValue(xsdURL) : "";
         
-        schemaType = line.hasOption(dtdSchema) ? DTD_SCHEMA : XSD_SCHEMA;
+        schemaType = line.hasOption(dtdSchema) ? Schema.DTD : Schema.XSD;
         
         if (line.hasOption(updateXSD) && xsdurl.equals("")) {
             printErrorMsgAndExit(usage + "\n\n--" + xsdURL + "=url must be specified when using -" + updateXSD);

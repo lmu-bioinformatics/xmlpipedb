@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false" default-cascade="all-delete-orphan" default-lazy="false">
+<class name="org.uniprot.uniprot.ProteinType$ComponentType" table="ProteinType_ComponentType">
+<id name="Hjid" type="org.hibernate.type.LongType">
+<generator class="native"/>
+</id>
+<discriminator type="org.hibernate.type.StringType">
+<column name="Hjtype"/>
+</discriminator>
+<version name="Hjversion" type="org.hibernate.type.LongType"/>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Name" table="ProteinType_ComponentType_Name">
+<key>
+<column name="ProteinType_ComponentType_Name_Hjid"/>
+</key>
+<list-index>
+<column name="ProteinType_ComponentType_Name_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.ProteinNameType"/>
+</list>
+<subclass discriminator-value="org.uniprot.uniprot.ProteinType.ComponentType" name="org.uniprot.uniprot.impl.ProteinTypeImpl$ComponentTypeImpl"/>
+</class>
+</hibernate-mapping>

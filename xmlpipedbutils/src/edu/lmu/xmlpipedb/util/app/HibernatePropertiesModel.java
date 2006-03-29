@@ -1,5 +1,7 @@
 package edu.lmu.xmlpipedb.util.app;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -13,16 +15,17 @@ public class HibernatePropertiesModel {
 	 * 
 	 * @return
 	 */
-	public String[] getCategories(){
-		Vector cats = new Vector();
+	public Set getCategories(){
+		HashMap cats = new HashMap();
 		Set keys = _properties.keySet();
 		Iterator iter = keys.iterator();
 		while( iter.hasNext() ){
-			HibernateProperty hp = (HibernateProperty)iter.next();
-			cats.add(hp.getCategory());
+			String key = (String) iter.next();
+			HibernateProperty hp = (HibernateProperty)_properties.get(key);
+			cats.put(hp.getCategory(), "");
 		}
 		
-		return (String[])cats.toArray();
+		return cats.keySet();
 	}
 	
 	/**
@@ -31,39 +34,50 @@ public class HibernatePropertiesModel {
 	 * @param category
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public String[] getTypes(String category){
-		Vector types = new Vector();
+		HashMap types = new HashMap();
 		Set keys = _properties.keySet();
 		Iterator iter = keys.iterator();
 		while( iter.hasNext() ){
-			HibernateProperty hp = (HibernateProperty)iter.next();
+			String key = (String) iter.next();
+			HibernateProperty hp = (HibernateProperty)_properties.get(key);
 			if( hp.getCategory().equals(category))
-				types.add(hp.getType());
+				types.put(hp.getType(), hp.getType());
 		}
 		
-		return (String[])types.toArray();
+		//String[] test =  (String[])types.toArray();
+		String[] ret = new String[types.size()];
+		//types.toArray(ret);
+		Set s = types.keySet();
+		s.toArray(ret);
+		
+		return ret;
 	}
 	
-	public String[] getPropertyNames(String category, String type){
+	public Enumeration getPropertyNames(String category, String type){
 		Vector props = new Vector();
 		Set keys = _properties.keySet();
 		Iterator iter = keys.iterator();
 		while( iter.hasNext() ){
-			HibernateProperty hp = (HibernateProperty)iter.next();
+			String key = (String) iter.next();
+			HibernateProperty hp = (HibernateProperty)_properties.get(key);
 			if( hp.getCategory().equals(category) && hp.getType().equals(type))
 				props.add(hp.getName());
 		}
 		
-		return (String[])props.toArray();
+		return props.elements();
 	}
 	
-	public void setProperty( HibernateProperty hp ){
+	public void add( HibernateProperty hp ){
 		_properties.put(hp.getFullyQualifiedName(), hp);
 	}
 	
 	public HibernateProperty getProperty( String propName ){
 		return (HibernateProperty)_properties.get(propName);
 	}
+	
+	
 	
 	
 	//### DEFINE VARS ###

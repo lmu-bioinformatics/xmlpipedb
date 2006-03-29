@@ -26,44 +26,41 @@ import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HibernatePropertiesTableModel;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 
-
 /**
  * @author bob
- *
+ * 
  */
 public class ConfigurationController {
 
-	
 	/**
 	 * @param currentPropsUrl
 	 */
 	public ConfigurationController(String currentPropsUrl) {
-		//getHibernateConfigPanel(null);
+		// getHibernateConfigPanel(null);
 		_currentHibProps = loadHibProperties(currentPropsUrl);
 	}
-	
+
 	/**
 	 * @param currentPropsUrl
 	 * @param cp
 	 */
 	public ConfigurationController(String currentPropsUrl, ConfigurationPanel cp) {
-		//getHibernateConfigPanel(null);
+		// getHibernateConfigPanel(null);
 		_currentHibProps = loadHibProperties(currentPropsUrl);
 		_callingPanel = cp;
 	}
 
-	
 	/**
 	 * @param propertiesPath
 	 * @return
 	 */
-	private Properties loadHibProperties(String propertiesPath){
+	private Properties loadHibProperties(String propertiesPath) {
 		Properties props = new Properties();
-		
+
 		try {
 			FileInputStream fis = new FileInputStream(propertiesPath);
 			props.load(fis);
-			if( _firstHibPropLoad ){
+			if (_firstHibPropLoad) {
 				_hibRevertProperties = new Properties();
 				_hibRevertProperties = props;
 				_firstHibPropLoad = false;
@@ -77,14 +74,77 @@ public class ConfigurationController {
 		}
 		return props;
 	}
-	
+
+	private void loadModelProperties(String url, String category, String type,
+			HibernatePropertiesModel model) {
+		Properties props = new Properties();
+
+		try {
+			FileInputStream fis = new FileInputStream(url);
+			props.load(fis);
+
+			Enumeration e = props.keys();
+			while (e.hasMoreElements()) {
+				String name = (String) e.nextElement();
+				String value = (String) props.getProperty(name);
+				HibernateProperty hp = new HibernateProperty(category, type,
+						name, value);
+				model.add(hp);
+			}
+		} catch (FileNotFoundException e) {
+			System.out.print(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.print(e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Iterates through all folders and files under the URL supplied and creates
+	 * a HibernatePropertiesModel.
+	 * 
+	 * @param folderUrl
+	 * @return
+	 */
+	public HibernatePropertiesModel getConfigurationModel(String folderUrl) {
+		HibernatePropertiesModel model = new HibernatePropertiesModel();
+
+		File folders = new File(folderUrl);
+		File[] folderList = folders.listFiles();
+		// System.out.printf("can read %s, absolute path %s\n",
+		// folders.canRead(), folders.getAbsolutePath() );
+
+		for (int i = 0; i < folderList.length; i++) {
+			if (folderList[i].isDirectory()) {
+				String category = folderList[i].getName();
+				// System.out.printf("folderName = %s, absolute path %s\n",
+				// folders.getName(), folders.getParent() );
+				File[] files = folderList[i]
+						.listFiles(new PropertiesFileNameFilter());
+
+				// ArrayList fileList = new ArrayList();
+
+				for (int j = 0; j < files.length; j++) {
+					String type = files[j].getName();
+					loadModelProperties(files[j].getAbsolutePath(), category,
+							type, model);
+
+					//System.out.printf("filename = %s, in folder %s\n", files[j]
+					//		.getName(), files[j].getParent());
+				}// end for
+			}
+		}
+		return model;
+	}
+
 	/**
 	 * @param propertiesPath
 	 * @return
 	 */
-	private Properties loadProperties(String propertiesPath){
+	private Properties loadProperties(String propertiesPath) {
 		Properties props = new Properties();
-		
+
 		try {
 			FileInputStream fis = new FileInputStream(propertiesPath);
 			props.load(fis);
@@ -98,146 +158,63 @@ public class ConfigurationController {
 		}
 		return props;
 	}
-	
-	/**
-	 * @param folderUrl
-	 * @param currFile
-	 * @return
-	 */
-	public JPanel getHibernateConfigPanel(String folderUrl, String currFile){
-		JPanel config = new JPanel();
-		_currFolder = folderUrl;
-		_currFile = currFile;
-		
-		config.setLayout(new BorderLayout());
-		
-		File f = new File(folderUrl);
-		//System.out.printf("can read %s, absolute path %s\n", f.canRead(), f.getAbsolutePath() );
-		File[] files = f.listFiles(new PropertiesFileNameFilter());
-		if( files.length > 1 ){
-			ArrayList fileList = new ArrayList();
-			String selected = null;
-						
-			for( int i = 0; i < files.length; i++){
-				String filename = files[i].getName();
-				fileList.add(filename.substring(0, filename.lastIndexOf(".")));
-				if( filename.equals(currFile)){
-					createConfigPanel(config, files[i].getPath());
-					selected = filename.substring(0, filename.lastIndexOf("."));
-				}
-			}// end for
-			JComboBox head = new JComboBox(fileList.toArray());
-			head.setSelectedItem(selected);
-//			head.addItemListener(new MyItemListener());
-			config.add(head, BorderLayout.NORTH);
-			
-		}else{
-			if( files[0].isFile())
-				createConfigPanel(config, files[0].getPath());
-		}
-		
-		return config;
-	}
-	
-//	private class MyItemListener implements ItemListener{
-//
-//		public void itemStateChanged(ItemEvent iEvent) {
-//			_callingPanel.reloadConfigPanel( iEvent.getItem() + ".properties");
-//			
-//		}
-//		
-//	}
-	
-	/**
-	 * @param config
-	 * @param path
-	 */
-	private void createConfigPanel(JPanel config, String path) {
-		Properties props = loadProperties(path);
-		Box boxes = new Box(BoxLayout.Y_AXIS);
-		
-		Enumeration e = props.propertyNames();
-		while(e.hasMoreElements()){
-			String key = (String)e.nextElement();
-			Enumeration eCur = _currentHibProps.propertyNames();
-			JCheckBox isSaved = new JCheckBox();
-			JLabel label = new JLabel(key);
-			JTextField value = new JTextField();
-			while(eCur.hasMoreElements()){
-				String curKey = (String)eCur.nextElement();
-				if( key.equals(curKey)){
-					isSaved.setSelected(true);
-					value.setText(_currentHibProps.getProperty(curKey));
-					break;
-				}
-			}
-			Box box = new Box(BoxLayout.X_AXIS);
-			box.add(isSaved);
-			box.add(label);
-			box.add(value);
-			boxes.add(box);
-			boxes.add(Box.createVerticalStrut(5));
-//			Property p = new Property( key, props.getProperty(key));
-//			hptm.addProperty(p);
-		}
-		boxes.add(Box.createVerticalGlue());
-		config.add(boxes, BorderLayout.CENTER);
-	} // end createConfigPanel
 
 
 	/**
 	 * @param props
 	 */
-	public void storeHibProperties( Properties props){
-//		Properties props = new Properties();
-		
-//		for( int i = 0; i < mod.getRowCount(); i++){
-//			props.setProperty((String)mod.getValueAt(i, 0), (String)mod.getValueAt(i, 1));
-//		}
-		
-		try{
-			FileOutputStream fis = new FileOutputStream(AppResources.optionString("hibernate_properties_url"));
+	public void storeHibProperties(Properties props) {
+		// Properties props = new Properties();
+
+		// for( int i = 0; i < mod.getRowCount(); i++){
+		// props.setProperty((String)mod.getValueAt(i, 0),
+		// (String)mod.getValueAt(i, 1));
+		// }
+
+		try {
+			FileOutputStream fis = new FileOutputStream(AppResources
+					.optionString("hibernate_properties_url"));
 			props.store(fis, null);
 			_currentHibProps = props;
-		}catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}// end storeHibProperties
-	
+
 	/**
 	 * @param config
 	 */
-	public void saveProperties(JPanel config){
+	public void saveProperties(JPanel config) {
 		Properties props = _currentHibProps;
 		Component[] box = config.getComponents();
-		Box bx = (Box)box[0];
-		
-		//Component[] comps = box[0].();
-		for( int i = 0; i < bx.getComponentCount(); i++){
-			Box b = (Box)bx.getComponent(i);
-			boolean cb = ((JCheckBox)b.getComponent(0)).isSelected();
-			String label = ((JLabel)b.getComponent(1)).getText();
-			if( cb ){
-				String value = ((JTextField)b.getComponent(2)).getText();
+		Box bx = (Box) box[0];
+
+		// Component[] comps = box[0].();
+		for (int i = 0; i < bx.getComponentCount(); i++) {
+			Box b = (Box) bx.getComponent(i);
+			boolean cb = ((JCheckBox) b.getComponent(0)).isSelected();
+			String label = ((JLabel) b.getComponent(1)).getText();
+			if (cb) {
+				String value = ((JTextField) b.getComponent(2)).getText();
 				props.setProperty(label, value);
-			}else{
+			} else {
 				props.remove(label);
 			}
 		}
 		storeHibProperties(props);
-		
+
 	}
-	
+
 	/**
 	 * @deprecated
 	 * @return
 	 */
-	public TableModel loadOriginalHibProps(){
+	public TableModel loadOriginalHibProps() {
 		return getHibProperties(loadHibProperties(AppResources
 				.optionString("original_hibernate_properties_url")));
 	}
@@ -246,7 +223,7 @@ public class ConfigurationController {
 	 * @deprecated
 	 * @return
 	 */
-	public TableModel loadCurrentHibProps(){
+	public TableModel loadCurrentHibProps() {
 		return getHibProperties(loadHibProperties(AppResources
 				.optionString("hibernate_properties_url")));
 	}
@@ -255,65 +232,66 @@ public class ConfigurationController {
 	 * @deprecated
 	 * @return
 	 */
-	public TableModel loadRevertedHibProps(){
+	public TableModel loadRevertedHibProps() {
 		return getHibProperties(_hibRevertProperties);
 	}
-	
-	
-//	public String loadHib_Conf() {
-//		Properties hib_conf = new Properties();
-//		String s = "";
-//		
-//		try{
-//			
-//			//FileInputStream fis = new FileInputStream(_hibPropFilePath);
-//			FileInputStream fis = new FileInputStream(AppResources
-//					.optionString("hibernate_conf_properties_url"));
-//			hib_conf.load(fis);
-//			Enumeration e = hib_conf.propertyNames();
-//			while(e.hasMoreElements()){
-//				String key = (String)e.nextElement();
-//				s += "\n" + key + " \t " + hib_conf.getProperty(key);
-//			}
-//		
-//		} catch (FileNotFoundException e){
-//			e.printStackTrace();
-//			
-//		} catch (IOException e){
-//			
-//		}
-//		return s;
-//	}
 
+	// public String loadHib_Conf() {
+	// Properties hib_conf = new Properties();
+	// String s = "";
+	//		
+	// try{
+	//			
+	// //FileInputStream fis = new FileInputStream(_hibPropFilePath);
+	// FileInputStream fis = new FileInputStream(AppResources
+	// .optionString("hibernate_conf_properties_url"));
+	// hib_conf.load(fis);
+	// Enumeration e = hib_conf.propertyNames();
+	// while(e.hasMoreElements()){
+	// String key = (String)e.nextElement();
+	// s += "\n" + key + " \t " + hib_conf.getProperty(key);
+	// }
+	//		
+	// } catch (FileNotFoundException e){
+	// e.printStackTrace();
+	//			
+	// } catch (IOException e){
+	//			
+	// }
+	// return s;
+	// }
 
 	/**
 	 * @deprecated
 	 * @param props
 	 * @return
 	 */
-	private HibernatePropertiesTableModel getHibProperties( Properties props ){
+	private HibernatePropertiesTableModel getHibProperties(Properties props) {
 		HibernatePropertiesTableModel hptm = new HibernatePropertiesTableModel();
-		
+
 		Enumeration e = props.propertyNames();
-		while(e.hasMoreElements()){
-			String key = (String)e.nextElement();
-			Property p = new Property( key, props.getProperty(key));
+		while (e.hasMoreElements()) {
+			String key = (String) e.nextElement();
+			Property p = new Property(key, props.getProperty(key));
 			hptm.addProperty(p);
 		}
-		
-		
+
 		return hptm;
 	}
-	
-	//#### DEFINE VARS ####
-	
-	//Properties _props;
+
+	// #### DEFINE VARS ####
+
+	// Properties _props;
 	Properties _hibRevertProperties;
+
 	boolean _firstHibPropLoad = true;
+
 	Properties _currentHibProps;
+
 	private ConfigurationPanel _callingPanel;
-	
+
 	String _currFile;
+
 	String _currFolder;
-	
+
 } // end class

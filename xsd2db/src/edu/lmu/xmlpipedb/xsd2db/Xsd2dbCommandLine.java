@@ -46,9 +46,7 @@ public class Xsd2dbCommandLine {
     protected String xsdName;
     protected HashMap<String, String> map;
 
-    protected int schemaType;
-
-    public enum Schema { DTD, XSD }
+    public static enum Schema { DTD, XSD }
 
     private Schema schemaType;
 
@@ -110,7 +108,7 @@ public class Xsd2dbCommandLine {
 
         xsdurl = line.hasOption(xsdURL) ? line.getOptionValue(xsdURL) : "";
         
-        schemaType = line.hasOption(dtdSchema) ? Schema.DTD : Schema.XSD;
+        schemaType = line.hasOption(dtdSchema) ?  Xsd2dbCommandLine.Schema.DTD: Xsd2dbCommandLine.Schema.XSD;
         
         if (line.hasOption(updateXSD) && xsdurl.equals("")) {
             printErrorMsgAndExit(usage + "\n\n--" + xsdURL + "=url must be specified when using -" + updateXSD);

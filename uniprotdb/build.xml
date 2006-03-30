@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="uniprotdb" default="jar" basedir=".">
+    <property name="src" location="src"/>
+	<property name="hbm" location="hbm"/>
+    <property name="bin" location="bin"/>
+    <property name="lib" location="lib"/>
+    <property name="dist" location="dist"/>
+    <property name="jarfile" location="${dist}/${ant.project.name}.jar"/>
+    <property name="zipfile" location="${dist}/${ant.project.name}.zip"/>
+    <property name="compile.debug" value="true"/>
+
+    <fileset id="lib.jars" dir="${lib}">
+        <include name="**/*.jar"/>
+    </fileset>
+
+    <path id="lib.path">
+        <fileset refid="lib.jars"/>
+    </path>
+
+    <target name="compile" description="Compile code">
+        <mkdir dir="${bin}"/>
+        <mkdir dir="${lib}"/>
+        <javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no"
+               classpathref="lib.path" debug="${compile.debug}">
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile" description="Build distribution">
+        <mkdir dir="${dist}"/>
+	    <jar jarfile="${jarfile}">                 
+			<fileset dir="${bin}"/>
+			<fileset dir="${hbm}"/>
+        </jar>
+    	<copy todir="${dist}">
+    		<fileset dir="." includes="README"/>
+    		<fileset dir="sql" includes="schema.sql"/>
+    	</copy>
+	</target>
+
+	<target name="release" depends="jar" description="Zipped release">
+		<zip destfile="${zipfile}" basedir="${dist}"/>
+	</target>
+	
+    <target name="clean" description="Remove build and dist directories">
+        <delete dir="${bin}"/>
+        <delete dir="${dist}"/>
+    </target>
+	
+</project>

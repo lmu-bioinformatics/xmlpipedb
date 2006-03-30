@@ -1,6 +1,7 @@
 /** Revision History
  *  ??/??/?? Scott. File orignaly created.
  *  03/15/06 Adam Carasso.  Changed private option varibles to protected.
+ *  03/28/06 Scott.  Changed DTD constant to public enum.
  */
 
 package edu.lmu.xmlpipedb.xsd2db;
@@ -44,6 +45,8 @@ public class Xsd2dbCommandLine {
     protected String xsdurl;
     protected String xsdName;
     protected HashMap<String, String> map;
+
+    protected int schemaType;
 
     public enum Schema { DTD, XSD }
 

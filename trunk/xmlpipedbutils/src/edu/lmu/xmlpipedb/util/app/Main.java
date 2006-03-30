@@ -14,6 +14,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -30,251 +32,256 @@ import edu.lmu.xmlpipedb.util.gui.ImportPanel;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 import edu.lmu.xmlpipedb.util.utilities.ImportEngine;
 
-
 /**
  * @author J. Nicholas
- *
+ * 
  */
 public class Main implements ActionListener {
-	
-	public Main(){
+
+	public Main() {
 		_initialFrame = null;
-		createComponents();
+
 		_cc = new ConfigurationController(AppResources
 				.optionString("hibernate_properties_url"));
-				 
-	} // end no-arg constructor
-	
-	private void createComponents() {
-		
+		// _cc.getConfigurationModel(AppResources
+		// .optionString("hibernate_general_properties_url"));
 
-		
+		createComponents();
+	} // end no-arg constructor
+
+	private void createComponents() {
+
 	}
 
 	/**
-	 * Having a distinct start() method allows us to separate
-	 * initialization from execution cleanly
+	 * Having a distinct start() method allows us to separate initialization
+	 * from execution cleanly
 	 */
-	public void start(){
+	public void start() {
 		SwingUtilities.invokeLater(new UIStarter());
 	} // end start
-	
-	
+
 	/**
-	 * Wrap the UI-related startup sequence in a Runnable
-	 * so that we can use it within SwingUtilities.invokelater().
+	 * Wrap the UI-related startup sequence in a Runnable so that we can use it
+	 * within SwingUtilities.invokelater().
 	 * 
 	 * NOTE: don't know why, yet. took this code from Dondi.
 	 */
-	private class UIStarter implements Runnable{
+	private class UIStarter implements Runnable {
 		/**
-		 * @see java.lang.Runnable#run() 
+		 * @see java.lang.Runnable#run()
 		 */
-		public void run(){
+		public void run() {
 			_initialFrame = new JFrame(AppResources.messageString("str_title"));
 			_initialFrame.setJMenuBar(createMenuBar());
 			JFrame.setDefaultLookAndFeelDecorated(true);
-			
-			//Set initial size and location
-	        int inset = 400;
-	        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	        _initialFrame.setBounds(inset, inset,
-	                  screenSize.width  - inset,
-	                  screenSize.height - inset);
-	        _initialFrame.setLocation( inset/2, inset/2);
-	        
+
+			// Set initial size and location
+			int inset = 400;
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			_initialFrame.setBounds(inset, inset, screenSize.width - inset,
+					screenSize.height - inset);
+			_initialFrame.setLocation(inset / 2, inset / 2);
+
 			_initialFrame.setIconImage(createImage());
 			_initialFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			_initialFrame.setVisible(true);
-			
 
 		} // end run
-		
+
 	} // end inner classs UIStarter
 
-    public void importXml(File xmlFile) throws Exception
-    {
-        String context = AppResources.optionString("jaxbContextPath"); 
-        String hibernateProp = AppResources.optionString("hibernateProperties"); 
-        
-        String hibernateConfig = AppResources.optionString("hibernateConfigDir"); 
-        ImportEngine importEngine = new ImportEngine(context, hibernateConfig, hibernateProp); 
-        importEngine.loadToDB(xmlFile); 
-    }
+	public void importXml(File xmlFile) throws Exception {
+		String context = AppResources.optionString("jaxbContextPath");
+		String hibernateProp = AppResources.optionString("hibernateProperties");
 
-	
-	//	Creates an icon-worthy Image from scratch.
-    protected static Image createImage() {
-        //Create a 16x16 pixel image.
-        BufferedImage bi = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
+		String hibernateConfig = AppResources
+				.optionString("hibernateConfigDir");
+		ImportEngine importEngine = new ImportEngine(context, hibernateConfig,
+				hibernateProp);
+		importEngine.loadToDB(xmlFile);
+	}
 
-        //Draw into it.
-        Graphics g = bi.getGraphics();
-        g.setColor(Color.BLUE);
-        g.fillRect(0, 0, 15, 15);
-        g.setColor(Color.YELLOW);
-        g.fillOval(2, 2, 14, 14);
-//        g.drawLine(1, 1, 13, 13 );
-//        g.drawLine(1, 13, 13, 1 );
-//        g.drawLine(5, 10, 5, 12 );
-//        g.drawLine(7, 10, 7, 12 );
-//        g.drawLine(9, 10, 9, 12 );
-        g.setColor(Color.RED);
-        g.fillRect(6, 6, 1, 2 );
-        g.fillRect(9, 6, 1, 2 );
-        g.drawLine(4, 10, 12, 10 );
+	// Creates an icon-worthy Image from scratch.
+	protected static Image createImage() {
+		// Create a 16x16 pixel image.
+		BufferedImage bi = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
 
-        //Clean up.
-        g.dispose();
+		// Draw into it.
+		Graphics g = bi.getGraphics();
+		g.setColor(Color.BLUE);
+		g.fillRect(0, 0, 15, 15);
+		g.setColor(Color.YELLOW);
+		g.fillOval(2, 2, 14, 14);
+		// g.drawLine(1, 1, 13, 13 );
+		// g.drawLine(1, 13, 13, 1 );
+		// g.drawLine(5, 10, 5, 12 );
+		// g.drawLine(7, 10, 7, 12 );
+		// g.drawLine(9, 10, 9, 12 );
+		g.setColor(Color.RED);
+		g.fillRect(6, 6, 1, 2);
+		g.fillRect(9, 6, 1, 2);
+		g.drawLine(4, 10, 12, 10);
 
-        //Return it.
-        return bi;
-    } // end createFDImage
-    
+		// Clean up.
+		g.dispose();
+
+		// Return it.
+		return bi;
+	} // end createFDImage
+
 	protected JMenuBar createMenuBar() {
-	    JMenuBar menuBar = new JMenuBar();
-	    JMenuItem menuItem;
-        int accelMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-	
-	    //Set up the tools menu.
-	    JMenu menuTools = new JMenu(AppResources.messageString("menu_tools"));
-	    menuTools.setMnemonic(KeyEvent.VK_T);
-	    menuBar.add(menuTools);
-	
-	    //Set up the import menu item.
-	    menuItem = new JMenuItem(AppResources.messageString("menu_tools_import"));
-	    menuItem.setMnemonic(KeyEvent.VK_I);
-	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_I, accelMask));
-	    menuItem.setActionCommand("import");
-	    menuItem.addActionListener(this);
-	    menuTools.add(menuItem);	
-	  
-	    //Set up the query menu item.
-	    menuItem = new JMenuItem(AppResources.messageString("menu_tools_query"));
-	    menuItem.setMnemonic(KeyEvent.VK_U);
-	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_U, accelMask));
-	    menuItem.setActionCommand("query");
-	    menuItem.addActionListener(this);
-	    menuTools.add(menuItem);	
-	    
-	    //Set up the last menu item.
-	    menuItem = new JMenuItem(AppResources.messageString("menu_tools_quit"));
-	    menuItem.setMnemonic(KeyEvent.VK_Q);
-	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_Q, accelMask));
-	    menuItem.setActionCommand("quit");
-	    menuItem.addActionListener(this);
-	    menuTools.add(menuItem);
-	    
-	    
-//	  Set up the tools menu.
-	    JMenu menuConfig = new JMenu(AppResources.messageString("menu_config"));
-	    menuConfig.setMnemonic(KeyEvent.VK_T);
-	    menuBar.add(menuConfig);
-	
-	    //Set up menu item.
-	    menuItem = new JMenuItem(AppResources.messageString("menu_config_platform"));
-	    menuItem.setMnemonic(KeyEvent.VK_P);
-	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_P, accelMask));
-	    menuItem.setActionCommand("config_platform");
-	    menuItem.addActionListener(this);
-	    menuConfig.add(menuItem);
-	    
-	    //Set up menu item.
-	    menuItem = new JMenuItem(AppResources.messageString("menu_config_connection_pool"));
-	    menuItem.setMnemonic(KeyEvent.VK_E);
-	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_E, accelMask));
-	    menuItem.setActionCommand("config_connection_pool");
-	    menuItem.addActionListener(this);
-	    menuConfig.add(menuItem);
-	    
-	    //Set up menu item.
-	    menuItem = new JMenuItem(AppResources.messageString("menu_config_other"));
-	    menuItem.setMnemonic(KeyEvent.VK_O);
-	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_O, accelMask));
-	    menuItem.setActionCommand("config_other");
-	    menuItem.addActionListener(this);
-	    menuConfig.add(menuItem);
-	    
-	    //Set up menu item.
-	    menuItem = new JMenuItem(AppResources.messageString("menu_config_general"));
-	    menuItem.setMnemonic(KeyEvent.VK_G);
-	    menuItem.setAccelerator(KeyStroke.getKeyStroke(
-	            KeyEvent.VK_G, accelMask));
-	    menuItem.setActionCommand("config_general");
-	    menuItem.addActionListener(this);
-	    menuConfig.add(menuItem);
-	
-	    return menuBar;
+		JMenuBar menuBar = new JMenuBar();
+		JMenuItem menuItem;
+		int accelMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+
+		// Set up the tools menu.
+		JMenu menuTools = new JMenu(AppResources.messageString("menu_tools"));
+		menuTools.setMnemonic(KeyEvent.VK_T);
+		menuBar.add(menuTools);
+
+		// Set up the import menu item.
+		menuItem = new JMenuItem(AppResources
+				.messageString("menu_tools_import"));
+		menuItem.setMnemonic(KeyEvent.VK_I);
+		menuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_I, accelMask));
+		menuItem.setActionCommand("import");
+		menuItem.addActionListener(this);
+		menuTools.add(menuItem);
+
+		// Set up the query menu item.
+		menuItem = new JMenuItem(AppResources.messageString("menu_tools_query"));
+		menuItem.setMnemonic(KeyEvent.VK_U);
+		menuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_U, accelMask));
+		menuItem.setActionCommand("query");
+		menuItem.addActionListener(this);
+		menuTools.add(menuItem);
+
+		// Set up the last menu item.
+		menuItem = new JMenuItem(AppResources.messageString("menu_tools_quit"));
+		menuItem.setMnemonic(KeyEvent.VK_Q);
+		menuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_Q, accelMask));
+		menuItem.setActionCommand("quit");
+		menuItem.addActionListener(this);
+		menuTools.add(menuItem);
+
+		// Set up the tools menu.
+		JMenu menuConfig = new JMenu(AppResources.messageString("menu_config"));
+		menuConfig.setMnemonic(KeyEvent.VK_T);
+		menuBar.add(menuConfig);
+
+		// Set up menu item.
+		menuItem = new JMenuItem(AppResources
+				.messageString("menu_config_platform"));
+		menuItem.setMnemonic(KeyEvent.VK_P);
+		menuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_P, accelMask));
+		menuItem.setActionCommand("config_platform");
+		menuItem.addActionListener(this);
+		menuConfig.add(menuItem);
+
+		// Set up menu item.
+		menuItem = new JMenuItem(AppResources
+				.messageString("menu_config_connection_pool"));
+		menuItem.setMnemonic(KeyEvent.VK_E);
+		menuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_E, accelMask));
+		menuItem.setActionCommand("config_connection_pool");
+		menuItem.addActionListener(this);
+		menuConfig.add(menuItem);
+
+		// Set up menu item.
+		menuItem = new JMenuItem(AppResources
+				.messageString("menu_config_other"));
+		menuItem.setMnemonic(KeyEvent.VK_O);
+		menuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_O, accelMask));
+		menuItem.setActionCommand("config_other");
+		menuItem.addActionListener(this);
+		menuConfig.add(menuItem);
+
+		// Set up menu item.
+		menuItem = new JMenuItem(AppResources
+				.messageString("menu_config_general"));
+		menuItem.setMnemonic(KeyEvent.VK_G);
+		menuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_G, accelMask));
+		menuItem.setActionCommand("config_general");
+		menuItem.addActionListener(this);
+		menuConfig.add(menuItem);
+
+		return menuBar;
 	} // end createMenuBar
 
-
-	//React to menu selections.
+	// React to menu selections.
 	public void actionPerformed(ActionEvent e) {
-		if ("import".equals(e.getActionCommand())) { //new
+		if ("import".equals(e.getActionCommand())) { // new
 			_importPanel = new ImportPanel(this);
 			_importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_importPanel);
-	    } else if ("query".equals(e.getActionCommand())) { //new
+		} else if ("query".equals(e.getActionCommand())) { // new
 			_queryPanel = new HQLPanel();
 			_queryPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_queryPanel);
-	    } else if ("config_platform".equals(e.getActionCommand())) { //new
-	    	_configPanel = new ConfigurationPanel(_cc, this, AppResources
-					.optionString("hibernate_platforms_properties_url"),
-					AppResources
-					.optionString("current_platform"));
+		} else if ("config_platform".equals(e.getActionCommand())) { // new
+			_configPanel = new ConfigurationPanel(_cc
+					.getConfigurationModel(AppResources
+							.optionString("hibernate_general_properties_url")),
+					new Properties());
+
+			// _configPanel = new ConfigurationPanel(_cc, this, AppResources
+			// .optionString("hibernate_platforms_properties_url"),
+			// AppResources
+			// .optionString("current_platform"));
 			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_configPanel);
-	    } else if ("config_connection_pool".equals(e.getActionCommand())) { //new
-	    	_configPanel = new ConfigurationPanel(_cc, this, AppResources
-					.optionString("hibernate_connection_pools_properties_url"),
-					AppResources
-					.optionString("current_connection_pool"));
-			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			_initialFrame.setContentPane(_configPanel);
-	    } else if ("config_other".equals(e.getActionCommand())) { //new
-	    	_configPanel = new ConfigurationPanel(_cc, this, AppResources
-					.optionString("hibernate_other_properties_url"),
-					AppResources
-					.optionString("current_other"));
-			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			_initialFrame.setContentPane(_configPanel);
-	    } else if ("config_general".equals(e.getActionCommand())) { //new
-	    	_configPanel = new ConfigurationPanel(_cc, this, AppResources
-					.optionString("hibernate_general_properties_url"),
-					AppResources
-					.optionString("current_general"));
-			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			_initialFrame.setContentPane(_configPanel);
-	    } else { //quit
-	        System.exit(0);
-	    }
-	    _initialFrame.validate();
-	}
-	
-	public void validate(){
+		}/*
+			 * else if ("config_connection_pool".equals(e.getActionCommand())) {
+			 * //new _configPanel = new ConfigurationPanel(_cc, this,
+			 * AppResources
+			 * .optionString("hibernate_connection_pools_properties_url"),
+			 * AppResources .optionString("current_connection_pool"));
+			 * _configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5,
+			 * 5)); _initialFrame.setContentPane(_configPanel); } else if
+			 * ("config_other".equals(e.getActionCommand())) { //new
+			 * _configPanel = new ConfigurationPanel(_cc, this, AppResources
+			 * .optionString("hibernate_other_properties_url"), AppResources
+			 * .optionString("current_other"));
+			 * _configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5,
+			 * 5)); _initialFrame.setContentPane(_configPanel); } else if
+			 * ("config_general".equals(e.getActionCommand())) { //new
+			 * _configPanel = new ConfigurationPanel(_cc, this, AppResources
+			 * .optionString("hibernate_general_properties_url"), AppResources
+			 * .optionString("current_general"));
+			 * _configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5,
+			 * 5)); _initialFrame.setContentPane(_configPanel); }
+			 */else { // quit
+			System.exit(0);
+		}
 		_initialFrame.validate();
 	}
-	
-	public void cancelAction(){
+
+	public void validate() {
+		_initialFrame.validate();
+	}
+
+	public void cancelAction() {
 		_initialFrame.setContentPane(new JPanel());
 		_initialFrame.validate();
 	}
-	
 
-    
-    
-    // ### DEFINE VARS ###
-    JFrame _initialFrame;
-    ImportPanel _importPanel;
-    ConfigurationPanel _configPanel;
-    HQLPanel _queryPanel;
-    ConfigurationController _cc; 
-    
+	// ### DEFINE VARS ###
+	JFrame _initialFrame;
+
+	ImportPanel _importPanel;
+
+	ConfigurationPanel _configPanel;
+
+	HQLPanel _queryPanel;
+
+	ConfigurationController _cc;
+
 } // end Main

@@ -229,8 +229,8 @@ public class Main implements ActionListener {
 		} else if ("config_platform".equals(e.getActionCommand())) { // new
 			_configPanel = new ConfigurationPanel(_cc
 					.getConfigurationModel(AppResources
-							.optionString("hibernate_general_properties_url")),
-					new Properties());
+							.optionString("hibernate_properties_folder_url")),
+					new Properties(), _cc);
 
 			// _configPanel = new ConfigurationPanel(_cc, this, AppResources
 			// .optionString("hibernate_platforms_properties_url"),

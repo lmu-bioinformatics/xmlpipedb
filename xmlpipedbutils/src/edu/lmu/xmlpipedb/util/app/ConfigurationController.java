@@ -1,25 +1,14 @@
 package edu.lmu.xmlpipedb.util.app;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Properties;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.table.TableModel;
 
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
@@ -33,6 +22,8 @@ import edu.lmu.xmlpipedb.util.resources.AppResources;
 public class ConfigurationController {
 
 	/**
+	 * Creates an instance of the ConfigurationController and loads the current
+	 * properties file at the file URL passed.
 	 * @param currentPropsUrl
 	 */
 	public ConfigurationController(String currentPropsUrl) {
@@ -40,17 +31,11 @@ public class ConfigurationController {
 		_currentHibProps = loadHibProperties(currentPropsUrl);
 	}
 
-	/**
-	 * @param currentPropsUrl
-	 * @param cp
-	 */
-	public ConfigurationController(String currentPropsUrl, ConfigurationPanel cp) {
-		// getHibernateConfigPanel(null);
-		_currentHibProps = loadHibProperties(currentPropsUrl);
-		_callingPanel = cp;
-	}
 
 	/**
+	 * Loads the properties file and stores a copy in _firstHibPropLoad
+	 * for later reversion, if necessary 
+	 * 
 	 * @param propertiesPath
 	 * @return
 	 */
@@ -87,8 +72,12 @@ public class ConfigurationController {
 			while (e.hasMoreElements()) {
 				String name = (String) e.nextElement();
 				String value = (String) props.getProperty(name);
+				
+				String isMatch = _currentHibProps.getProperty(name);
+				// if isMatch == null, set the param isSaved to false,
+				// otherwise set it to true
 				HibernateProperty hp = new HibernateProperty(category, type,
-						name, value);
+						name, value, (isMatch!=null)?true:false);
 				model.add(hp);
 			}
 		} catch (FileNotFoundException e) {
@@ -118,20 +107,17 @@ public class ConfigurationController {
 		for (int i = 0; i < folderList.length; i++) {
 			if (folderList[i].isDirectory()) {
 				String category = folderList[i].getName();
-				// System.out.printf("folderName = %s, absolute path %s\n",
-				// folders.getName(), folders.getParent() );
+				
+				// get an array of files in the folder
 				File[] files = folderList[i]
 						.listFiles(new PropertiesFileNameFilter());
 
-				// ArrayList fileList = new ArrayList();
-
+				// iterate through the array of files
 				for (int j = 0; j < files.length; j++) {
 					String type = files[j].getName();
 					loadModelProperties(files[j].getAbsolutePath(), category,
 							type, model);
 
-					//System.out.printf("filename = %s, in folder %s\n", files[j]
-					//		.getName(), files[j].getParent());
 				}// end for
 			}
 		}
@@ -161,9 +147,10 @@ public class ConfigurationController {
 
 
 	/**
+	 * Stores the properties object passed to the properties file
 	 * @param props
 	 */
-	public void storeHibProperties(Properties props) {
+	private void storeHibProperties(Properties props) {
 		// Properties props = new Properties();
 
 		// for( int i = 0; i < mod.getRowCount(); i++){
@@ -187,24 +174,19 @@ public class ConfigurationController {
 	}// end storeHibProperties
 
 	/**
-	 * @param config
+	 * Merges the properties from the model passed with those in the current properties
+	 * @param saveModel
 	 */
-	public void saveProperties(JPanel config) {
-		Properties props = _currentHibProps;
-		Component[] box = config.getComponents();
-		Box bx = (Box) box[0];
+	public void saveProperties(HibernatePropertiesModel saveModel) {
+		//Properties props = _currentHibProps;
+		Properties props = new Properties();
+		Iterator namesIter = saveModel.getPropertyNames();
 
-		// Component[] comps = box[0].();
-		for (int i = 0; i < bx.getComponentCount(); i++) {
-			Box b = (Box) bx.getComponent(i);
-			boolean cb = ((JCheckBox) b.getComponent(0)).isSelected();
-			String label = ((JLabel) b.getComponent(1)).getText();
-			if (cb) {
-				String value = ((JTextField) b.getComponent(2)).getText();
-				props.setProperty(label, value);
-			} else {
-				props.remove(label);
-			}
+		while( namesIter.hasNext() ){
+			String propName = (String)namesIter.next();
+			HibernateProperty hp = saveModel.getProperty(propName);
+			if( hp.isSaved() )
+				props.setProperty(hp.getName(), hp.getValue());
 		}
 		storeHibProperties(props);
 

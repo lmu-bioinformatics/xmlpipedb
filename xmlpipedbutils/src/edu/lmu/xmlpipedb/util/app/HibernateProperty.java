@@ -3,11 +3,12 @@ package edu.lmu.xmlpipedb.util.app;
 public class HibernateProperty {
 
 	public HibernateProperty(String category, String type, String name,
-			String value) {
+			String value, boolean isSaved) {
 		_category = category;
 		_type = type;
 		_name = name;
 		_value = value;
+		_isSaved = isSaved;
 	}
 
 	/* (non-Javadoc)
@@ -100,14 +101,28 @@ public class HibernateProperty {
 	public void setValue(String value) {
 		this._value = value;
 	}
+	
+	/**
+	 * @return Returns the isSaved.
+	 */
+	public boolean isSaved() {
+		return _isSaved;
+	}
+
+	/**
+	 * @param isSaved The isSaved to set.
+	 */
+	public void setSaved(boolean isSaved) {
+		this._isSaved = isSaved;
+	}
+	
 
 	// ### DEFINE VARS ###
 	private String _category;
-
 	private String _type;
-
 	private String _name;
-
 	private String _value;
+	private boolean _isSaved;
+
 
 } // end class

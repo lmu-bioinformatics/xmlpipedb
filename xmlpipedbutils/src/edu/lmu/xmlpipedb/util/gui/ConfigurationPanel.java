@@ -5,6 +5,7 @@
 package edu.lmu.xmlpipedb.util.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -26,6 +27,7 @@ import javax.swing.JTextField;
 
 import edu.lmu.xmlpipedb.util.app.ConfigurationController;
 import edu.lmu.xmlpipedb.util.app.HibernatePropertiesModel;
+import edu.lmu.xmlpipedb.util.app.HibernateProperty;
 import edu.lmu.xmlpipedb.util.app.Main;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 
@@ -42,9 +44,10 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * @param url
      * @param currFile
      */
-    public ConfigurationPanel(HibernatePropertiesModel model, Properties props) {
+    public ConfigurationPanel(HibernatePropertiesModel model, Properties props, ConfigurationController configController) {
     	_model = model;
-    	_props = props;
+//    	_props = props;
+    	_configController = configController;
     	
         createComponents();
         layoutComponents();
@@ -271,10 +274,10 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * Stops the GUI listners
      */
     private void stopListeningToUI() {
-        for (int i = 0; i < _panel.getComponentCount(); i++) {
+/*        for (int i = 0; i < _panel.getComponentCount(); i++) {
             if (_panel.getComponent(i).getClass().getName().contains("JComboBox"))
                 ((JComboBox)_panel.getComponent(i)).removeItemListener(this);
-        }
+        }*/
         _saveButton.removeActionListener(this);
         _cancelButton.removeActionListener(this);
         _revertButton.removeActionListener(this);
@@ -286,29 +289,65 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      */
     public void actionPerformed(ActionEvent aevt) {
         if (aevt.getSource() == _saveButton) {
-            _configControl.saveProperties(_panel);
-            // _configControl.storeHibProperties(_propsTable.getModel());
+            // get current info
+        	//FIXME get category for real
+        	String category = STRCAT;
+        	String type = (String)_typeCombo.getSelectedItem();
+            Box centerBox = (Box) this.getComponent(1);
+            //_centerBox
+            Component[] fieldBoxes = ((Box)centerBox.getComponent(1)).getComponents();
+            HibernatePropertiesModel saveModel = new HibernatePropertiesModel();
+           	Iterator modelIter = _model.getPropertyNames();
+           	while( modelIter.hasNext() ){
+           		HibernateProperty hp = _model.getProperty((String)modelIter.next());
+           		// if it is this category, don't add it no matter what
+           		if( hp.getCategory().equals(category) )
+           			continue;
+           		if( hp.isSaved() )
+           			saveModel.add(hp);
+           	}
+            
+            for(int i = 0; i < fieldBoxes.length; i++ ){
+            	// check to see if the component is a box
+    			if( !("javax.swing.Box".equals(fieldBoxes[i].getClass().getName())) )
+    				continue;
+            	Box b = (Box) fieldBoxes[i];
+    			boolean cb = ((JCheckBox) b.getComponent(0)).isSelected();
+    			String name = ((JLabel) b.getComponent(1)).getText();
+    			if (cb) {
+    				// if it is checked, add, which will add a new or replace an existing property
+    				String value = ((JTextField) b.getComponent(2)).getText();
+    				saveModel.add(new HibernateProperty(category, type, name, value, true ));
+    			} /*else {
+    				// removes this property from the model - the value arguement is irrelevant for this purpose
+    				saveModel.remove(new HibernateProperty(category, type, name, "", false ));
+    			}*/
+    				
+   			}
+            
+            _configController.saveProperties(saveModel);
+
+            //_configControl.saveProperties(_panel);
+            //_configControl.storeHibProperties(_propsTable.getModel());
         } else if (aevt.getSource() == _cancelButton) {
-            _main.cancelAction();
-        } else if (aevt.getSource() == _revertButton) {
+            //_main.cancelAction();
+        	this.setVisible(false);
+        	this.validate();
+        	
+        } /*else if (aevt.getSource() == _revertButton) {
             _propsTable.setModel(_configControl.loadRevertedHibProps());
         } else if (aevt.getSource() == _defaultButton) {
             _propsTable.setModel(_configControl.loadOriginalHibProps());
-        }
+        }*/
     }
 
     // ### DEFINE VARS ###
-    private ConfigurationController _configControl;
     private JButton _saveButton, _cancelButton, _revertButton, _defaultButton;
-    private JTable _propsTable;
-    private Main _main;
-    private JPanel _panel;
-    private String _url;
     private JComboBox _typeCombo;
     private HibernatePropertiesModel _model;
-    private Properties _props;
     private JButton _catButton;
     private Box _centerBox;
     private Box _topBox;
+    private ConfigurationController _configController;
 
 } // end class ImportPanel

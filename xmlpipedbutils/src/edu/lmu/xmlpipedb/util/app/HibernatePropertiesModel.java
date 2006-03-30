@@ -55,6 +55,11 @@ public class HibernatePropertiesModel {
 		return ret;
 	}
 	
+	/**
+	 * @param category
+	 * @param type
+	 * @return
+	 */
 	public Enumeration getPropertyNames(String category, String type){
 		Vector props = new Vector();
 		Set keys = _properties.keySet();
@@ -69,15 +74,35 @@ public class HibernatePropertiesModel {
 		return props.elements();
 	}
 	
+	/**
+	 * Returns an Enumeration with all the property names in the model
+	 * @return
+	 */
+	public Iterator getPropertyNames(){
+		Set keys = _properties.keySet();
+		return keys.iterator();
+
+	}
+	
+	/**
+	 * @param hp
+	 */
 	public void add( HibernateProperty hp ){
 		_properties.put(hp.getFullyQualifiedName(), hp);
 	}
 	
+	/**
+	 * Gets the HibernateProperty object for the given property name
+	 * @param propName
+	 * @return
+	 */
 	public HibernateProperty getProperty( String propName ){
 		return (HibernateProperty)_properties.get(propName);
 	}
 	
-	
+	public void remove( HibernateProperty hp ){
+		_properties.remove(hp.getFullyQualifiedName());
+	}
 	
 	
 	//### DEFINE VARS ###

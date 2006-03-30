@@ -7,7 +7,7 @@ import net.sf.hibernate.*;
 import net.sf.hibernate.cfg.*;
 
 import java.util.Iterator;
-import java.util.Vector;
+
 /**
  * This class maintains a set of hibernate utilities. The initial class and the closeSession() and currentSession() methods were downloaded from <a href="http://www.hibernate.org/hib_docs/reference/en/html_single/">http://www.hibernate.org/hib_docs/reference/en/html_single/</a>
  * @author Babak Naffas
@@ -70,19 +70,17 @@ public class HibernateUtil {
      * @param hql	The query to execute.
      * @return	A java.util.Vector<Object> storing each returned object. 
      */
-    public static Vector<Object> executeHQL( String hql ){
+    public static Iterator executeHQL( String hql ){
     	
     	Session session = null;
     	Query query = null;
-    	Vector<Object> ret = new Vector<Object>(0);
+    	Iterator ret = null;
     	try{
     		session = currentSession();
     		query = session.createQuery( hql );
     		
-    		Iterator it = query.iterate();
-     		while( it.hasNext() ){
-    			ret.addElement( it.next() );
-    		}
+    		ret = query.iterate();
+
     	}
     	catch( HibernateException he ){
     		System.err.println( he.getMessage() );

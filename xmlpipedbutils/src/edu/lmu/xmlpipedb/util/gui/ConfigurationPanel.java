@@ -132,9 +132,9 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         }
     }
 
-    /**
+/*    *//**
      * @param item
-     */
+     *//*
     private void reloadPanel(String item) {
         stopListeningToUI();
         removeAll();
@@ -142,7 +142,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         layoutComponents();
         revalidate();
         startListeningToUI();
-    }
+    }*/
     
     
     
@@ -370,7 +370,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     private JButton _saveButton, _cancelButton, _revertButton, _defaultButton;
     private JComboBox _typeCombo;
     private HibernatePropertiesModel _model;
-    private JButton _catButton;
+    /*private JButton _catButton;*/
     private JRadioButton _categoryRB;
     private Box _centerBox;
     private Box _topBox;

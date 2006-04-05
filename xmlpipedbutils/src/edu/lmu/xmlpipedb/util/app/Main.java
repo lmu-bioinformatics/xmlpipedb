@@ -113,11 +113,6 @@ public class Main implements ActionListener {
 		g.fillRect(0, 0, 15, 15);
 		g.setColor(Color.YELLOW);
 		g.fillOval(2, 2, 14, 14);
-		// g.drawLine(1, 1, 13, 13 );
-		// g.drawLine(1, 13, 13, 1 );
-		// g.drawLine(5, 10, 5, 12 );
-		// g.drawLine(7, 10, 7, 12 );
-		// g.drawLine(9, 10, 9, 12 );
 		g.setColor(Color.RED);
 		g.fillRect(6, 6, 1, 2);
 		g.fillRect(9, 6, 1, 2);
@@ -159,6 +154,22 @@ public class Main implements ActionListener {
 		menuItem.addActionListener(this);
 		menuTools.add(menuItem);
 
+
+		// Set up the tools menu.
+//		JMenu menuConfig = new JMenu(AppResources.messageString("menu_config"));
+//		menuConfig.setMnemonic(KeyEvent.VK_T);
+//		menuBar.add(menuConfig);
+
+		// Set up menu item.
+		menuItem = new JMenuItem(AppResources
+				.messageString("menu_tools_config"));
+		menuItem.setMnemonic(KeyEvent.VK_C);
+		menuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_C, accelMask));
+		menuItem.setActionCommand("config_platform");
+		menuItem.addActionListener(this);
+		menuTools.add(menuItem);
+		
 		// Set up the last menu item.
 		menuItem = new JMenuItem(AppResources.messageString("menu_tools_quit"));
 		menuItem.setMnemonic(KeyEvent.VK_Q);
@@ -167,51 +178,6 @@ public class Main implements ActionListener {
 		menuItem.setActionCommand("quit");
 		menuItem.addActionListener(this);
 		menuTools.add(menuItem);
-
-		// Set up the tools menu.
-		JMenu menuConfig = new JMenu(AppResources.messageString("menu_config"));
-		menuConfig.setMnemonic(KeyEvent.VK_T);
-		menuBar.add(menuConfig);
-
-		// Set up menu item.
-		menuItem = new JMenuItem(AppResources
-				.messageString("menu_config_platform"));
-		menuItem.setMnemonic(KeyEvent.VK_P);
-		menuItem.setAccelerator(KeyStroke
-				.getKeyStroke(KeyEvent.VK_P, accelMask));
-		menuItem.setActionCommand("config_platform");
-		menuItem.addActionListener(this);
-		menuConfig.add(menuItem);
-
-		// Set up menu item.
-		menuItem = new JMenuItem(AppResources
-				.messageString("menu_config_connection_pool"));
-		menuItem.setMnemonic(KeyEvent.VK_E);
-		menuItem.setAccelerator(KeyStroke
-				.getKeyStroke(KeyEvent.VK_E, accelMask));
-		menuItem.setActionCommand("config_connection_pool");
-		menuItem.addActionListener(this);
-		menuConfig.add(menuItem);
-
-		// Set up menu item.
-		menuItem = new JMenuItem(AppResources
-				.messageString("menu_config_other"));
-		menuItem.setMnemonic(KeyEvent.VK_O);
-		menuItem.setAccelerator(KeyStroke
-				.getKeyStroke(KeyEvent.VK_O, accelMask));
-		menuItem.setActionCommand("config_other");
-		menuItem.addActionListener(this);
-		menuConfig.add(menuItem);
-
-		// Set up menu item.
-		menuItem = new JMenuItem(AppResources
-				.messageString("menu_config_general"));
-		menuItem.setMnemonic(KeyEvent.VK_G);
-		menuItem.setAccelerator(KeyStroke
-				.getKeyStroke(KeyEvent.VK_G, accelMask));
-		menuItem.setActionCommand("config_general");
-		menuItem.addActionListener(this);
-		menuConfig.add(menuItem);
 
 		return menuBar;
 	} // end createMenuBar

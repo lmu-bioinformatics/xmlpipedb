@@ -63,21 +63,45 @@ public class ConfigurationController {
 	private void loadModelProperties(String url, String category, String type,
 			HibernatePropertiesModel model) {
 		Properties props = new Properties();
+		boolean isSavedDialect = false;
 
 		try {
+			// open this properties file and read it in
 			FileInputStream fis = new FileInputStream(url);
 			props.load(fis);
 
-			Enumeration e = props.keys();
-			while (e.hasMoreElements()) {
-				String name = (String) e.nextElement();
+			String savedDialect = _currentHibProps.getProperty("hibernate.dialect");
+			String dialect = props.getProperty("hibernate.dialect");
+			if( savedDialect != null && dialect != null && dialect.equals(savedDialect) )
+				isSavedDialect = true;
+			
+			// exception for general properties
+			if( category.equals("general") ) isSavedDialect = true;
+			
+			// walk through the list of properties
+			Enumeration propsEnum = props.keys();
+			while (propsEnum.hasMoreElements()) {
+				String name = (String) propsEnum.nextElement();
 				String value = (String) props.getProperty(name);
 				
-				String isMatch = _currentHibProps.getProperty(name);
-				// if isMatch == null, set the param isSaved to false,
-				// otherwise set it to true
-				HibernateProperty hp = new HibernateProperty(category, type,
-						name, value, (isMatch!=null)?true:false);
+				HibernateProperty hp;
+				
+				if( isSavedDialect ){
+					String altVal = _currentHibProps.getProperty(name);
+					boolean isSaved = true;
+					
+					if( altVal == null ){
+						altVal = value;
+						isSaved = false;
+					}
+					
+					hp = new HibernateProperty(category, type,
+						name, altVal, isSaved);
+				} else {
+					hp = new HibernateProperty(category, type,
+						name, value, false);
+				}
+				
 				model.add(hp);
 			}
 		} catch (FileNotFoundException e) {
@@ -112,7 +136,7 @@ public class ConfigurationController {
 				File[] files = folderList[i]
 						.listFiles(new PropertiesFileNameFilter());
 
-				// iterate through the array of files
+				// iterate through the array of files, adding them to model
 				for (int j = 0; j < files.length; j++) {
 					String type = files[j].getName();
 					loadModelProperties(files[j].getAbsolutePath(), category,
@@ -180,7 +204,7 @@ public class ConfigurationController {
 	public void saveProperties(HibernatePropertiesModel saveModel) {
 		//Properties props = _currentHibProps;
 		Properties props = new Properties();
-		Iterator namesIter = saveModel.getPropertyNames();
+		Iterator namesIter = saveModel.getProperties();
 
 		while( namesIter.hasNext() ){
 			String propName = (String)namesIter.next();

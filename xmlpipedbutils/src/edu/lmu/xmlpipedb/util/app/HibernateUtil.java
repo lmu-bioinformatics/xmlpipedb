@@ -3,11 +3,13 @@ package edu.lmu.xmlpipedb.util.app;
 //import org.logicalcobwebs.logging.Log;
 //import org.logicalcobwebs.logging.LogFactory;
 
-import net.sf.hibernate.*;
-import net.sf.hibernate.cfg.*;
-
 import java.util.Iterator;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 /**
  * This class maintains a set of hibernate utilities. The initial class and the closeSession() and currentSession() methods were downloaded from <a href="http://www.hibernate.org/hib_docs/reference/en/html_single/">http://www.hibernate.org/hib_docs/reference/en/html_single/</a>
  * @author Babak Naffas
@@ -68,26 +70,23 @@ public class HibernateUtil {
     /**
      * Executes an HQL (Hibernate Wuery Language) query.
      * @param hql	The query to execute.
-     * @return	A java.util.Vector<Object> storing each returned object. 
+     * @return	The resulting java.util.Iterator referencing the results of the query.  
      */
     public static Iterator executeHQL( String hql ){
     	
     	Session session = null;
     	Query query = null;
-    	Iterator ret = null;
+    	Iterator iter = null;
     	try{
     		session = currentSession();
     		query = session.createQuery( hql );
-    		
-    		ret = query.iterate();
-
+    		iter = query.iterate();
     	}
     	catch( HibernateException he ){
     		System.err.println( he.getMessage() );
     	}
     	
     	closeSession();
-    	return ret;
-    	
+    	return iter;
     }
 }

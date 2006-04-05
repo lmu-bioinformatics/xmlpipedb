@@ -162,6 +162,7 @@ public class UniprotXSDPostProcessor extends JFrame {
 			    "The files were processed and saved successfully!",
 			    "Please select a file", 
 			    JOptionPane.INFORMATION_MESSAGE);
+		System.exit(0);
 	}
 
 	/**
@@ -175,6 +176,7 @@ public class UniprotXSDPostProcessor extends JFrame {
 		processSQLFile();
 		processHBMFile1();
 		processHBMFile2();
+		System.exit(0);
 	}
 
 	/**

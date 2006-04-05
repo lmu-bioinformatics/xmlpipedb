@@ -1,10 +1,10 @@
 package edu.lmu.xmlpipedb.util.app;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.Vector;
 
 public class HibernatePropertiesModel {
@@ -52,6 +52,7 @@ public class HibernatePropertiesModel {
 		Set s = types.keySet();
 		s.toArray(ret);
 		
+		
 		return ret;
 	}
 	
@@ -78,11 +79,34 @@ public class HibernatePropertiesModel {
 	 * Returns an Enumeration with all the property names in the model
 	 * @return
 	 */
-	public Iterator getPropertyNames(){
+	public Iterator getProperties(){
 		Set keys = _properties.keySet();
 		return keys.iterator();
-
 	}
+	
+	public Enumeration getProperties(String category, String type){
+		Vector props = new Vector();
+		Set keys = _properties.keySet();
+		Iterator iter = keys.iterator();
+		while( iter.hasNext() ){
+			String key = (String) iter.next();
+			HibernateProperty hp = (HibernateProperty)_properties.get(key);
+			if( hp.getCategory().equals(category) && hp.getType().equals(type))
+				props.add(hp);
+		}
+		
+		return props.elements();
+	}
+	
+//	/**
+//	 * Returns an Enumeration with all the property names in the model
+//	 * @return
+//	 */
+//	public Iterator getProperties(){
+//		Set keys = _properties.keySet();
+//		return keys.iterator();
+//
+//	}
 	
 	/**
 	 * @param hp

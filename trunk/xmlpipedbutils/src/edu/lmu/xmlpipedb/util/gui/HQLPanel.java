@@ -65,7 +65,7 @@ public class HQLPanel extends JPanel{
 		execute.addActionListener( new ActionListener(){
 
 			public void actionPerformed( ActionEvent ae ){
-				Iterator<Object> iter = HibernateUtil.executeHQL( _hqlArea.getText().trim() );
+				Iterator iter = HibernateUtil.executeHQL( _hqlArea.getText().trim() );
 				populateTable( iter );				
 			}
 

@@ -1,10 +1,12 @@
 package edu.lmu.xmlpipedb.util.app;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.Vector;
 
 public class HibernatePropertiesModel {
@@ -30,6 +32,7 @@ public class HibernatePropertiesModel {
 	
 	/**
 	 * Returns a string array of type names for the category passed in.
+	 * The returned array is sorted alphabetically.
 	 * 
 	 * @param category
 	 * @return
@@ -47,10 +50,17 @@ public class HibernatePropertiesModel {
 		}
 		
 		//String[] test =  (String[])types.toArray();
-		String[] ret = new String[types.size()];
+		// sort the list
+		ArrayList l = new ArrayList();
+		l.addAll(types.values());
+		Collections.sort(l);
+		
+		
+		String[] ret = new String[l.size()];
+		l.toArray(ret);
 		//types.toArray(ret);
-		Set s = types.keySet();
-		s.toArray(ret);
+		//Set s = types.keySet();
+		//s.toArray(ret);
 		
 		
 		return ret;

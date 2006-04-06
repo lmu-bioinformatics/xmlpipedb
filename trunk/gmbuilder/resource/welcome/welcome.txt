@@ -1,0 +1,8 @@
+Welcome to GMBuilder!                             
+                                                   
+You can use this tool to create GenMaPP database  
+files from XML Uniprot XML files.                 
+                                                   
+Written by BIOL 498/CMSI 698 Spring 2006          
+Loyola Marymount University.                      
+ 

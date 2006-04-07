@@ -45,7 +45,7 @@ public class XmlPipeDbUtils {
 			e.printStackTrace();
 		}
 		
-		(new Main()).start();
+		(new MainController()).start();
 		
 
 	} // end main

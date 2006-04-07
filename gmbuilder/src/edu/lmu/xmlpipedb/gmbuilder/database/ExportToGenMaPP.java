@@ -77,10 +77,7 @@ public class ExportToGenMaPP {
         s.close();
 	}
 	
-	public void createAndFillUniProtTable(String id, 
-			String entryName, String geneName, String proteinName, 
-			String function, String species, String date, 
-			String remarks) throws SQLException {
+	public void createUniProtTable() throws SQLException {
 		
         Statement s = connection.createStatement();
         s.execute("CREATE TABLE UniProt (" +
@@ -93,7 +90,16 @@ public class ExportToGenMaPP {
         		"Date DATE," +
         		"Remarks MEMO)");
         s.execute("ALTER TABLE UniProt ADD CONSTRAINT UniProt_constraint PRIMARY KEY(ID)"); 
-        
+
+        s.close();
+	}
+	
+    public void fillUniProtTable(String id, 
+    			String entryName, String geneName, String proteinName, 
+    			String function, String species, String date, 
+    			String remarks) throws SQLException {
+    	
+    	Statement s = connection.createStatement();
         s.execute("INSERT INTO UniProt (" +
         		"ID," +
         		"EntryName," +

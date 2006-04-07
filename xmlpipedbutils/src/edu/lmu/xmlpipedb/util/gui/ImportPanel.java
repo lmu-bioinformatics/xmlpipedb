@@ -163,6 +163,7 @@ public class ImportPanel extends JPanel{
     }
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
         JFileChooser fc = new JFileChooser();
+        fc.setCurrentDirectory(new File(".")); 
         if(fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
         {
             _xmlFile = fc.getSelectedFile(); 

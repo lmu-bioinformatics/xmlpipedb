@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false" default-cascade="all-delete-orphan" default-lazy="false">
+<class name="generated.BookType" table="BookType">
+<id name="Hjid" type="org.hibernate.type.LongType">
+<generator class="native"/>
+</id>
+<discriminator type="org.hibernate.type.StringType">
+<column name="Hjtype"/>
+</discriminator>
+<version name="Hjversion" type="org.hibernate.type.LongType"/>
+<property name="Price">
+<column name="Price"/>
+<type name="org.hibernate.type.BigDecimalType"/>
+</property>
+<property name="Genre">
+<column name="Genre"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<many-to-one class="generated.AuthorName" name="Author">
+<column name="Author"/>
+</many-to-one>
+<property name="Title">
+<column name="Title"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<subclass discriminator-value="generated.BookType" name="generated.impl.BookTypeImpl"/>
+</class>
+</hibernate-mapping>

@@ -1,17 +1,3 @@
-/** 
- * ExportToGenMaPP.java
- * 
- * Description:  This class functions as a communication interface
- * to the GenMaPP MS Access database. To create a complete MS Access
- * file, each of the methods must be called with complete data. 
- * 
- * Revision History
- *  04/06/06 Joey J Barrett. File orignaly created. 
- * 
- * Note: Please follow commenting convetions already in this file!
- */
-
-
 package edu.lmu.xmlpipedb.gmbuilder.database;
 
 import java.io.File;
@@ -39,20 +25,7 @@ public class ExportToGenMaPP {
 		copyFile(new File(templateFile), new File(outputFile));
 	}
 	
-	public void openConnection() throws ClassNotFoundException, SQLException {
-		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-		   
-        String database = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
-        database += outputFile.trim() + ";DriverID=22;READONLY=false}"; 
-        
-        connection = DriverManager.getConnection(database ,"","");
-	}
-	
-	public void closeConnection() throws SQLException {
-		connection.close();
-	}
-
-	public void copyFile(File fileIn, File fileOut) throws IOException {
+	private void copyFile(File fileIn, File fileOut) throws IOException {
 		InputStream in = new FileInputStream(fileIn);
 		OutputStream out = new FileOutputStream(fileOut);
 	    
@@ -66,6 +39,18 @@ public class ExportToGenMaPP {
         out.close();
     }
 	
+	public void openConnection() throws ClassNotFoundException, SQLException {
+		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+		   
+        String database = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
+        database += outputFile.trim() + ";DriverID=22;READONLY=false}"; 
+        
+        connection = DriverManager.getConnection(database ,"","");
+	}
+	
+	public void closeConnection() throws SQLException {
+		connection.close();
+	}
 	
 	public void updateInfoTable(String owner, 
 			String version, String modSystem, String species,
@@ -171,8 +156,8 @@ public class ExportToGenMaPP {
         		"Related VARCHAR(50) NOT NULL," +
         		"Bridge VARCHAR(3) NOT NULL)");
         
-        //KEEP! Primary and related are foriegn keys, the bridge is the value S
-        //s.execute("ALTER TABLE " + table + " ADD CONSTRAINT " + table + "_constraint PRIMARY KEY(ID)"); 
+        //Primary and related are foriegn keys, the bridge is the value S
+       // s.execute("ALTER TABLE " + table + " ADD CONSTRAINT " + table + "_constraint PRIMARY KEY(ID)"); 
 
         for(String related : relatedList) {
             s.execute("CREATE TABLE " + table +" (" +

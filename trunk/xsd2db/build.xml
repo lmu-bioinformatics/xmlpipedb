@@ -6,13 +6,17 @@
     <property name="dist" location="dist"/>
     <property name="jarfile" location="${dist}/${ant.project.name}.jar"/>
     <property name="compile.debug" value="true"/>
-
     <fileset id="lib.jars" dir="${lib}">
         <include name="**/*.jar"/>
     </fileset>
 
     <path id="lib.path">
         <fileset refid="lib.jars"/>
+    </path>
+    
+    <path id="test.path">
+        <pathelement location="${bin}" />
+        <path refid="lib.path"/>
     </path>
 
     <!-- Stub install target.  Install should depend on the 'jar' target,
@@ -38,6 +42,14 @@
 
     <target name="run" depends="jar" description="Run jar file">
         <java jar="${jarfile}" fork="yes" failonerror="true"/>
+    </target>
+
+    <target name="test" depends="compile">
+        <junit>
+            <classpath refid="test.path" />
+            <formatter type="brief" usefile="false" />
+            <test name="TestXsd2dbCommandLine" />
+        </junit>
     </target>
 
     <target name="clean" description="Remove build and dist directories">

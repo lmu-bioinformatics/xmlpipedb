@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="godb" default="jar" basedir=".">
+	<property name="src" location="src"/>
+    <property name="lib" location="lib"/>
+	<property name="dist" location="dist"/>
+	<property name="bin" location="bin"/>
+	<property name="compile.debug" value="true"/>
+	<property name="jarfile" location="${dist}/${ant.project.name}.jar"/>
+
+    <fileset id="lib.jars" dir="${lib}">
+        <include name="**/*.jar"/>
+    </fileset>
+	
+    <path id="lib.path">
+        <fileset refid="lib.jars"/>
+    </path>
+
+    <target name="clean" description="Remove build products">
+        <delete dir="${bin}"/>
+        <delete dir="${dist}"/>
+    </target>
+                                
+	<target name="compile" description="Compile code">
+		<mkdir dir="${bin}"/>
+		<mkdir dir="${dist}"/>
+		<javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no"
+            debug="${compile.debug}" classpathref="lib.path">
+		</javac>
+	</target>
+	<target name="jar" depends="compile" description="Build jar">
+		<mkdir dir="${dist}"/>
+		<jar jarfile="${jarfile}" basedir="${bin}">
+		</jar>
+	</target>
+</project>

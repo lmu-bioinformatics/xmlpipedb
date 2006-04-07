@@ -63,7 +63,6 @@ public class AppResources {
     }
 
     // ### DEFINE VARS ###
-    
     // options
     private static ResourceBundle _optionsBundle;
     private static String _optionsBundlePrefix = "edu.lmu.xmlpipedb.util.resources.options";

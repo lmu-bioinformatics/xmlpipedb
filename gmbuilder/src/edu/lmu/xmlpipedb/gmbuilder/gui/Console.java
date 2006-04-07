@@ -10,7 +10,7 @@
  * Note: Please follow commenting convetions already in this file!
  */
 
-package gui;
+package edu.lmu.xmlpipedb.gmbuilder.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

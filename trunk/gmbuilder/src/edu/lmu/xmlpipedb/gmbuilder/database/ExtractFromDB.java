@@ -126,9 +126,11 @@ public class ExtractFromDB {
 			
 			export.updateSystemsTable(systemCodeList, "20060406");
 			
+			export.createUniProtTable();
+			
 			for(String id : uniprotTable_ID.keySet()) {
 				
-				export.createAndFillUniProtTable(uniprotTable_ID.get(id), 
+				export.fillUniProtTable(uniprotTable_ID.get(id), 
 						uniprotTable_EntryName.get(id), 
 						uniprotTable_GeneName.get(id),
 						uniprotTable_ProteinName.get(id),

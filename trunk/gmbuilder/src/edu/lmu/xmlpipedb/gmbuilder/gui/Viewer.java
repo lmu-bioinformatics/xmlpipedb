@@ -11,12 +11,6 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.gui;
 
-import gui.wizard.Wizard;
-import gui.wizard.WizardPanelDescriptor;
-import gui.wizard.xmltodb.XMLToDBPanel1Descriptor;
-import gui.wizard.xmltodb.XMLToDBPanel2Descriptor;
-import gui.wizard.xmltodb.XMLToDBPanel3Descriptor;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -328,23 +322,23 @@ public class Viewer extends JFrame {
 	}
 	
 	protected void xmlToDB() {
-        Wizard wizard = new Wizard();
-        wizard.getDialog().setTitle("XML to Database Wizard");
+//        Wizard wizard = new Wizard();
+//        wizard.getDialog().setTitle("XML to Database Wizard");
+//        
+//        WizardPanelDescriptor descriptor1 = new XMLToDBPanel1Descriptor();
+//        wizard.registerWizardPanel(XMLToDBPanel1Descriptor.IDENTIFIER, descriptor1);
+//
+//        WizardPanelDescriptor descriptor2 = new XMLToDBPanel2Descriptor();
+//        wizard.registerWizardPanel(XMLToDBPanel2Descriptor.IDENTIFIER, descriptor2);
+//
+//        WizardPanelDescriptor descriptor3 = new XMLToDBPanel3Descriptor();
+//        wizard.registerWizardPanel(XMLToDBPanel3Descriptor.IDENTIFIER, descriptor3);
+//        
+//        wizard.setCurrentPanel(XMLToDBPanel1Descriptor.IDENTIFIER);
+//        
+//        int ret = wizard.showModalDialog();
         
-        WizardPanelDescriptor descriptor1 = new XMLToDBPanel1Descriptor();
-        wizard.registerWizardPanel(XMLToDBPanel1Descriptor.IDENTIFIER, descriptor1);
-
-        WizardPanelDescriptor descriptor2 = new XMLToDBPanel2Descriptor();
-        wizard.registerWizardPanel(XMLToDBPanel2Descriptor.IDENTIFIER, descriptor2);
-
-        WizardPanelDescriptor descriptor3 = new XMLToDBPanel3Descriptor();
-        wizard.registerWizardPanel(XMLToDBPanel3Descriptor.IDENTIFIER, descriptor3);
-        
-        wizard.setCurrentPanel(XMLToDBPanel1Descriptor.IDENTIFIER);
-        
-        int ret = wizard.showModalDialog();
-        
-        System.out.println("Dialog return code is (0=Finish,1=Cancel,2=Error): " + ret);
+//        System.out.println("Dialog return code is (0=Finish,1=Cancel,2=Error): " + ret);
       //  System.out.println("Second panel selection is: " + 
       //      (((TestPanel2)descriptor2.getPanelComponent()).getRadioButtonSelected()));
 		

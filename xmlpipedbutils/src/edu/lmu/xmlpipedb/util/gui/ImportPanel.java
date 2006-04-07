@@ -53,7 +53,9 @@ public class ImportPanel extends JPanel{
     private void createComponents()
     {
         _previewButton = new JButton("preview");
+        _previewButton.setEnabled(false);
         _importButton = new JButton("import");
+        _importButton.setEnabled(false);
         _openButton = new JButton("open");
         _textFieldPath = new JTextField();
         _xmlView = new JTextArea();
@@ -130,6 +132,7 @@ public class ImportPanel extends JPanel{
     
     private void TextFieldPathKeyTyped(java.awt.event.KeyEvent evt) {                                       
          _previewButton.setEnabled(true); 
+         _importButton.setEnabled(true); 
     } 
     private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
         if(_xmlFile == null)
@@ -169,6 +172,7 @@ public class ImportPanel extends JPanel{
             _xmlFile = fc.getSelectedFile(); 
             _textFieldPath.setText(_xmlFile.getAbsolutePath()); 
             _previewButton.setEnabled(true); 
+            _importButton.setEnabled(true); 
         }
         
     }    

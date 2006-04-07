@@ -15,6 +15,8 @@ import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HibernatePropertiesTableModel;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 
+
+
 /**
  * @author bob
  * 

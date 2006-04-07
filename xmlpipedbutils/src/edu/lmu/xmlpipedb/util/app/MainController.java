@@ -36,9 +36,9 @@ import edu.lmu.xmlpipedb.util.utilities.ImportEngine;
  * @author J. Nicholas
  * 
  */
-public class Main implements ActionListener {
+public class MainController implements ActionListener {
 
-	public Main() {
+	public MainController() {
 		_initialFrame = null;
 
 		_cc = new ConfigurationController(AppResources

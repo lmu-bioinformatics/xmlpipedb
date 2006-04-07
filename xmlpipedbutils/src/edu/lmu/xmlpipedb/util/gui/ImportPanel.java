@@ -10,7 +10,7 @@
 
 package edu.lmu.xmlpipedb.util.gui;
 
-import edu.lmu.xmlpipedb.util.app.Main;
+import edu.lmu.xmlpipedb.util.app.MainController;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,9 +42,9 @@ public class ImportPanel extends JPanel{
     private JButton _openButton;
     private JProgressBar _progressBar;
     private File _xmlFile; 
-    private Main _main; 
+    private MainController _main; 
     /** Creates a new instance of ImportPanel2 */
-    public ImportPanel(Main main) {
+    public ImportPanel(MainController main) {
         _main = main; 
         createComponents();
         createActions(); 

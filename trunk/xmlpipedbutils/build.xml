@@ -19,6 +19,12 @@
         <fileset refid="lib.jars"/>
     </path>
 
+    <path id="run.path">
+        <fileset dir="${dist.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+        
   <target name="clean" description="Remove generated files">
     <delete dir="${build.dir}"/>
     <delete dir="${dist.dir}"/>
@@ -96,10 +102,10 @@
   </target>
 -->
   <target name="run" depends="jar" description="Runs the application">
-    <java jar="${dist.dir}/${jarfilename}.jar"
+    <java classname="edu.lmu.xmlpipedb.util.app.XmlPipeDbUtils"
           fork="true"
           failonerror="false"
-          classpathref="lib.path"
+          classpathref="run.path"
         />
   </target>
   

@@ -4,10 +4,14 @@
     <property name="bin" location="bin"/>
     <property name="lib" location="lib"/>
     <property name="dist" location="dist"/>
+    <property name="resources" location="resources"/>
     <property name="jarfile" location="${dist}/${ant.project.name}.jar"/>
     <property name="compile.debug" value="true"/>
     <fileset id="lib.jars" dir="${lib}">
         <include name="**/*.jar"/>
+    </fileset>
+    <fileset id="resourceFiles" dir="${resources}">
+        <include name="**/*"/>
     </fileset>
 
     <path id="lib.path">
@@ -37,6 +41,7 @@
         <jar jarfile="${jarfile}" basedir="${bin}" manifest="Manifest">
             <!-- Merge library jars into final jar file -->
             <zipgroupfileset refid="lib.jars"/>
+            <fileset refid="resourceFiles"/>
         </jar>
     </target>
 

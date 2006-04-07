@@ -25,16 +25,23 @@ public class TestXsd2dbCommandLine extends TestCase {
     }
 
     public void testGetSchemaType() {
-        Schema expectedReturn = null;
+        String[] args = {""};
+        xsd2dbCommandLine.parse(args);
+        Schema expectedReturn = Xsd2dbCommandLine.Schema.XSD;
         Schema actualReturn = xsd2dbCommandLine.getSchemaType();
         assertEquals("return value", expectedReturn, actualReturn);
-        /**@todo fill in the test code*/
     }
 
     public void testParse() {
-        String[] args = null;
+        String[] args = {"--outputdirectory=gen", 
+                         "--bindings=bindings.xml", 
+                         "--xsdURL=http://books.xsd",
+                         "-dtdSchema"};
         xsd2dbCommandLine.parse(args);
-        /**@todo fill in the test code*/
+        assertEquals("output directory", xsd2dbCommandLine.dbSrcDir.getName(), "gen");
+        assertEquals("bindings file", xsd2dbCommandLine.bindingsFile, "bindings.xml");
+        assertEquals("xsd url", xsd2dbCommandLine.xsdurl, "http://books.xsd");
+        assertEquals("dtd Schema", xsd2dbCommandLine.getSchemaType(), xsd2dbCommandLine.schemaType);
     }
 
 }

@@ -99,6 +99,7 @@
     <java jar="${dist.dir}/${jarfilename}.jar"
           fork="true"
           failonerror="false"
+          classpathref="lib.path"
         />
   </target>
   

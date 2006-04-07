@@ -33,8 +33,8 @@ public class ExtractFromDB {
         String database = "jdbc:postgresql://database"; 
         
         try {
-			connection = DriverManager.getConnection("jdbc:postgresql://database"
-					,"jjbarret","tu00ylyI");
+			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/uniprot"
+					,"postgres","password");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

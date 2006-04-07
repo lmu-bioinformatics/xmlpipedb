@@ -87,7 +87,7 @@ public class ExportToGenMaPP {
         		"ProteinName MEMO," +
         		"Function MEMO," +
         		"Species MEMO," +
-        		"Date DATE," +
+        		"\"Date\" DATE," +
         		"Remarks MEMO)");
         s.execute("ALTER TABLE UniProt ADD CONSTRAINT UniProt_constraint PRIMARY KEY(ID)"); 
 
@@ -107,7 +107,7 @@ public class ExportToGenMaPP {
         		"ProteinName," +
         		"Function," +
         		"Species," +
-        		"Date," +
+        		"\"Date\"," +
         		"Remarks)" +
         		"VALUES (" +
         		"'" + id + "'," +
@@ -116,7 +116,7 @@ public class ExportToGenMaPP {
         		"'" + proteinName + "'," +
         		"'" + function + "'," +
         		"'" + species + "'," +
-        		"'" + date + "'," +
+        		"'04/06/2006'," +
         		"'" + remarks + "')");
         
         s.close();
@@ -185,7 +185,7 @@ public class ExportToGenMaPP {
 		
 		for(String systemCode : systemCodeList) {
             s.execute("UPDATE Systems " +
-            		"SET Date='" + date + "'" +
+            		"SET \"Date\"='04/06/2006'" +
             		"WHERE SystemCode='" + systemCode + "'");
 		}
         s.close();

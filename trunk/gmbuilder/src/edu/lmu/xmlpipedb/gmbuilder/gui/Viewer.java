@@ -9,7 +9,7 @@
  * Note: Please follow commenting convetions already in this file!
  */
 
-package gui;
+package edu.lmu.xmlpipedb.gmbuilder.gui;
 
 import gui.wizard.Wizard;
 import gui.wizard.WizardPanelDescriptor;

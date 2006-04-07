@@ -12,7 +12,7 @@
  */
 
 
-package database;
+package edu.lmu.xmlpipedb.gmbuilder.database;
 
 import java.io.File;
 import java.io.FileInputStream;

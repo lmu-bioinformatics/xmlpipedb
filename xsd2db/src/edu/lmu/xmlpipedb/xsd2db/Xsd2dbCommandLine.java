@@ -48,7 +48,7 @@ public class Xsd2dbCommandLine {
 
     public static enum Schema { DTD, XSD }
 
-    private Schema schemaType;
+    protected Schema schemaType;
 
     /**
      * Constructor

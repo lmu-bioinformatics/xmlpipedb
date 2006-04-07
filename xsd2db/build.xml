@@ -44,11 +44,11 @@
         <java jar="${jarfile}" fork="yes" failonerror="true"/>
     </target>
 
-    <target name="test" depends="compile">
-        <junit>
-            <classpath refid="test.path" />
-            <formatter type="brief" usefile="false" />
-            <test name="TestXsd2dbCommandLine" />
+    <target name="test" depends="compile" description="Runs the unit tests for xsd2db.">
+        <junit printsummary="on">
+            <classpath refid="test.path" />   
+            <formatter type="plain" usefile="false" />
+            <test name="edu.lmu.xmlpipedb.xsd2db.TestXsd2dbCommandLine" />
         </junit>
     </target>
 

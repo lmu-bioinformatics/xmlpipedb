@@ -68,4 +68,6 @@ public class ImportEngine {
             saveSession.close();
         }
     }
+    
+    public SessionFactory getSessionFactory(){	return sessionFactory;	}
 }

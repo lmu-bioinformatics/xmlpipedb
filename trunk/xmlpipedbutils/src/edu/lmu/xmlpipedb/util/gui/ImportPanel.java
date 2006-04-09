@@ -16,9 +16,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -28,6 +31,8 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ProgressMonitorInputStream;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -60,6 +65,7 @@ public class ImportPanel extends JPanel{
         _textFieldPath = new JTextField();
         _xmlView = new JTextArea();
         _xmlScrollArea = new JScrollPane(_xmlView);
+        _progressBar = new JProgressBar(); 
         
     }
     private void createActions()
@@ -95,11 +101,19 @@ public class ImportPanel extends JPanel{
         openBox.add(_openButton);
         this.add(openBox, BorderLayout.NORTH); 
         
+        
+        Box southBox = Box.createVerticalBox();
+        _progressBar.setVisible(false);        
+        southBox.add(_progressBar);
+        southBox.add(Box.createVerticalStrut(5)); 
+        
         Box importBox = Box.createHorizontalBox();
         importBox.add(_previewButton);
         importBox.add(Box.createHorizontalGlue());
         importBox.add(_importButton);
-        this.add(importBox, BorderLayout.SOUTH);
+        southBox.add(importBox);
+        
+        this.add(southBox, BorderLayout.SOUTH);
         
         this.add(_xmlScrollArea, BorderLayout.CENTER);
         
@@ -126,7 +140,6 @@ public class ImportPanel extends JPanel{
 
         }
         (new Thread(new filePreview(_xmlFile, _xmlView))).start(); 
-        //SwingUtilities.invokeLater(new filePreview(_xmlFile, XmlView)); 
         
     }
     
@@ -155,6 +168,7 @@ public class ImportPanel extends JPanel{
 
         }
         try{
+
             _main.importXml(_xmlFile);
             
         }
@@ -187,11 +201,17 @@ public class ImportPanel extends JPanel{
         public void run()
         {
             try{
-                BufferedReader reader = new BufferedReader(new FileReader(myFile)); 
 
-               
-                String line; 
+                //does the progress monitor popup
+                InputStream in = new BufferedInputStream(
+                                 new ProgressMonitorInputStream(
+                                 myArea.getParent(),
+                                  "Reading " + myFile,
+                                  new FileInputStream(myFile)));
+                 
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in)); 
                 
+                String line; 
                 while((line = reader.readLine())!=null)
                 {
                     myArea.append(line+"\n");
@@ -199,7 +219,6 @@ public class ImportPanel extends JPanel{
                     if(line.length() > myArea.getColumns())
                         myArea.setColumns(line.length()); 
                 }
-
             }
             catch(Exception e)
             {

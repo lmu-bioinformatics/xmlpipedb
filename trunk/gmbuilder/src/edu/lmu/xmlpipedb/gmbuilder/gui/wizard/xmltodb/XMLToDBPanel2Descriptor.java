@@ -1,6 +1,6 @@
-package gui.wizard.xmltodb;
+package edu.lmu.xmlpipedb.gmbuilder.gui.wizard.xmltodb;
 
-import gui.wizard.WizardPanelDescriptor;
+import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.WizardPanelDescriptor;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

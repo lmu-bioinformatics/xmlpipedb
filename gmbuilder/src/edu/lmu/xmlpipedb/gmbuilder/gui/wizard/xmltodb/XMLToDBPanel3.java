@@ -1,4 +1,4 @@
-package gui.wizard.xmltodb;
+package edu.lmu.xmlpipedb.gmbuilder.gui.wizard.xmltodb;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

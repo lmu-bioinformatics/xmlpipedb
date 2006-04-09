@@ -1,4 +1,4 @@
-package gui.wizard;
+package edu.lmu.xmlpipedb.gmbuilder.gui.wizard;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;

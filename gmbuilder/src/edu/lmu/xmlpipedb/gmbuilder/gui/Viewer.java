@@ -49,23 +49,23 @@ public class Viewer extends JFrame {
     private JFileChooser chooser = new JFileChooser(".");
 	
 
-	private static final String IMAGE1 = System.getProperty("user.dir")+ "/resource/images/xmltodb.png";
-	private static final String IMAGE2 = System.getProperty("user.dir")+ "/resource/images/dbtogenmapp.png";
-	private static final String IMAGE3 = System.getProperty("user.dir")+ "/resource/images/xmltogenmapp.png";
+	private static final String IMAGE1 = System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/images/xmltodb.png";
+	private static final String IMAGE2 = System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/images/dbtogenmapp.png";
+	private static final String IMAGE3 = System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/images/xmltogenmapp.png";
 	
-	private static final String IMAGE4 = System.getProperty("user.dir")+ "/resource/images/dbinspect.png";
-	private static final String IMAGE5 = System.getProperty("user.dir")+ "/resource/images/dbsettings.png";
+	private static final String IMAGE4 = System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/images/dbinspect.png";
+	private static final String IMAGE5 = System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/images/dbsettings.png";
 	
-	private static final String IMAGE6 = System.getProperty("user.dir")+ "/resource/images/quit.png";
-	private static final String IMAGE7 = System.getProperty("user.dir")+ "/resource/images/preferences.png";
+	private static final String IMAGE6 = System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/images/quit.png";
+	private static final String IMAGE7 = System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/images/preferences.png";
 	
-	private static final String WELCOME_FILE = System.getProperty("user.dir")+ "/resource/welcome/welcome.txt";
+	//private static final String WELCOME_FILE = System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/resource/welcome/welcome.txt";
 	
 	public Viewer() {
 		
 		super("GMBuilder - Loyola Marymount University");
 		
-		SplashWindow splashWindow = new SplashWindow(System.getProperty("user.dir")+ "/resource/images/splash.jpg", this, 3000);
+		SplashWindow splashWindow = new SplashWindow(System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/images/splash.jpg", this, 3000);
 
         // Setup the main window.
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -261,7 +261,6 @@ public class Viewer extends JFrame {
         Console console = null;
 		try {
 			console = new Console();
-			displayWelcome();
 		} catch (IOException e1) {		
 			e1.printStackTrace();
 			System.exit(0);
@@ -284,22 +283,6 @@ public class Viewer extends JFrame {
 
         pack();
         setVisible(true);
-	}
-	
-    private void displayWelcome() {
-        StringBuffer buffer = new StringBuffer();
-        try {
-            BufferedReader in = new BufferedReader(
-                new FileReader(WELCOME_FILE));
-            String line;
-            while ((line = in.readLine()) != null) {
-                buffer.append(line).append("\n");
-            }
-            in.close();
-        } catch (IOException ignored) {
-        }
-        System.out.println(buffer.toString());
-		
 	}
 
 	protected void dbSettings() {

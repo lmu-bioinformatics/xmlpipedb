@@ -23,6 +23,9 @@
         <javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no"
                classpathref="lib.path" debug="${compile.debug}">
         </javac>
+    	<copy todir="${bin}/org/uniprot/uniprot">
+    		<fileset dir="${src}/org/uniprot/uniprot" includes="jaxb.properties"/>
+    	</copy>
     </target>
 
     <target name="jar" depends="compile" description="Build distribution">

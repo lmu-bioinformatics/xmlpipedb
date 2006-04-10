@@ -13,7 +13,9 @@
 package edu.lmu.xmlpipedb.xsd2db;
 
 import java.io.File;
-
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import org.jvnet.hyperjaxb2.addon.AddOn;
 import org.jvnet.jaxbcommons.addon.AbstractParameterizableCodeAugmenter;
 import org.xml.sax.ErrorHandler;
@@ -60,7 +62,10 @@ public class Xsd2db {
             options.setSchemaLanguage(Options.SCHEMA_XMLSCHEMA);
         //  Set the schema language to XSD
         System.out.println(cmdline.dbSrcDir.getPath());
-        options.addGrammar(new org.xml.sax.InputSource(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.XSD_DIR] + File.separator + cmdline.xsdName));
+        options.addGrammar(new org.xml.sax.InputSource(cmdline.dbSrcDir.getPath() + 
+                           File.separator + 
+                           cmdline.subDirs[Xsd2dbCommandLine.XSD_DIR] + 
+                           File.separator + cmdline.xsdName));
         //  Sets the schema.
 
         try {
@@ -105,19 +110,7 @@ public class Xsd2db {
         }
 		cfg.setProperties(hibProperties);
 		addHibFiles(cfg, destDir);
-        /*File fileList[] = hbmDir.listFiles(hbmFilter);
-		if (fileList.length==0)
-			System.out.println("No Files found");
-		for(int i = 0; i< fileList.length; i++)
-		{
-			System.out.println(fileList[i].toString());
-			if (fileList[i].toString().endsWith(".hbm.xml"))
-			{
-				cfg.addFile(fileList[i]);
-			}
-		}
-        */
-        
+    
 		SchemaExport schemaExporter = new SchemaExport(cfg);
 		schemaExporter.setOutputFile(cmdline.dbSrcDir.getPath() + "/" + 
                                      cmdline.subDirs[Xsd2dbCommandLine.SQL_DIR] + 
@@ -125,9 +118,23 @@ public class Xsd2db {
 		schemaExporter.setDelimiter(";");
 		schemaExporter.create(true, false);
         
-        //File buildFile = new File("./CannedBuild.xml");
-        //File movedBuildFile = new File(cmdline.dbSrcDir, "build.xml");
-        //buildFile.renameTo(movedBuildFile);
+        InputStreamReader buildFileReader;
+        Class cmdlineClass = cmdline.getClass();
+        InputStream buildFileStream = cmdlineClass.getResourceAsStream("build.xml");
+        buildFileReader = new InputStreamReader(buildFileStream);
+        try {
+            System.out.println("found build file");
+            File cannedBuildfile = new File(cmdline.dbSrcDir, "build.xml");
+            cannedBuildfile.createNewFile();
+            FileWriter buildFileWriter = new FileWriter(cannedBuildfile);
+            int streamedChar = 0;
+            while (((streamedChar = buildFileReader.read()) != -1))
+                buildFileWriter.write(streamedChar);
+            buildFileWriter.close();
+        } catch (java.io.IOException ioException) {
+            System.out.println("Error writing canned build file: " + ioException.getMessage());
+        }
+            
         System.out.println("Build Finished!");
     }
 	

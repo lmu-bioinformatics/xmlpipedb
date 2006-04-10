@@ -14,16 +14,16 @@
         <fileset refid="lib.jars"/>
     </path>
     
-	<target name="compile" description"=Compile code">
+	<target name="compile" description="Compile code">
 		<mkdir dir="${bin}"/>
 		<mkdir dir="${dist}"/>
 		<javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no"
-            debug="${compile.debug"}" classpathref="lib.path">
+            debug="${compile.debug}" classpathref="lib.path">
 		</javac>
 	</target>
 	<target name="jar" depends="compile" description="Build jar">
 		<mkdir dir="${dist}"/>
-		<jar jarfile="${jarfile}" basedir="${bin}" manifest="Manifest">
+		<jar jarfile="${jarfile}" basedir="${bin}">
 		</jar>
 	</target>
 </project>

@@ -5,7 +5,10 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.util.LinkedList;
+import java.util.Vector;
+import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -17,15 +20,19 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.commons.beanutils.BeanUtils;
+
 import java.util.Iterator;
 
 import edu.lmu.xmlpipedb.util.app.HibernateUtil;
+import generated.BookType;
 
 
 public class HQLPanel extends JPanel{
 
 	private JTextArea _hqlArea;
 	private JTable _results;
+	private DefaultTableModel _tableModel;
 	private JSplitPane _split;
 	private JPanel _buttonPanel;
 	private Box _box = new Box(BoxLayout.Y_AXIS);
@@ -42,8 +49,10 @@ public class HQLPanel extends JPanel{
 
 	private void initComponents(){
 		_hqlArea = new JTextArea();
-		_results = new JTable( 1, 2 );
-
+		_tableModel = new DefaultTableModel(1, 10);
+		_results = new JTable( _tableModel );
+		_results.setVisible( true );
+		
 		_split = new JSplitPane( JSplitPane.VERTICAL_SPLIT, _hqlArea, new JScrollPane( _results) );
 		_split.setDividerLocation( 0.25 );
 
@@ -66,7 +75,8 @@ public class HQLPanel extends JPanel{
 
 			public void actionPerformed( ActionEvent ae ){
 				Iterator iter = HibernateUtil.executeHQL( _hqlArea.getText().trim() );
-				populateTable( iter );				
+				populateTable( iter );
+				HibernateUtil.closeSession();
 			}
 
 		} );
@@ -80,7 +90,7 @@ public class HQLPanel extends JPanel{
 		clear.addActionListener( new ActionListener(){
 
 			public void actionPerformed( ActionEvent ae ){
-
+				_hqlArea.setText( "" );
 			}
 
 		} );
@@ -96,18 +106,45 @@ public class HQLPanel extends JPanel{
 		}
 
 		_buttonPanel.add( _box );
-
 	}
 	
 	private void populateTable( Iterator iter )
 	{
-		DefaultTableModel tm = new DefaultTableModel();
+		//try{
+		Object temp = null;
+		Map map = null;
+		Vector data = null;
 		
 		while( iter.hasNext() ){
-			tm.addRow( new Object[]{ iter.next() } );
+			temp = iter.next();
+			
+			try{
+				map = BeanUtils.describe( temp );
+				data = new Vector();
+				for( Object o: map.values() ){
+					data.addElement( o );
+				}
+			}
+			catch( Exception e){
+				System.err.println( e.getMessage() );
+			}
+			
+			
+			
+			
+			/*Vector data = new Vector();
+			Class c = bt.getClass();
+			for( java.lang.reflect.Field f: c.getFields() )
+				data.addElement( f.get( bt ) );*/
+			
+			//Object[] data = {bt};//new Object[]{ bt.getAuthor(), bt.getGenre(), bt.getPrice(), bt.getTitle() };
+			
+			_tableModel.setColumnCount( map.size() );
+			_tableModel.addRow( data  );
 		}
 		
-		_results.setModel( tm );
+		//_results.setVisible(true);
+		//_results.validate();
 	}
 //	public static void main( String args[] ){
 //

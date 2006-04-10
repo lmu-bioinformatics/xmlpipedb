@@ -6,10 +6,14 @@ package edu.lmu.xmlpipedb.util.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
@@ -60,15 +64,31 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      */
     private void layoutComponents() {
         this.setLayout(new BorderLayout());
-
         this.add(_topBox, BorderLayout.NORTH);
+        
+        
+		_promptGBC = new GridBagConstraints();
+		_fieldGBC = new GridBagConstraints();
+//		_buttonGBC = new GridBagConstraints();
+		_panelGBC = new GridBagConstraints();
+
+		setPromptConstraints( _promptGBC );
+		setFieldConstraints( _fieldGBC );
+//		setButtonConstraints( _buttonGBC );
+		setPanelConstraints(_panelGBC);
+
+        
         // Box bxMain = new Box(BoxLayout.X_AXIS);
         // this.add(bxMain, BorderLayout.CENTER);
         // bxMain.add(new JScrollPane(_panel));
         // bxMain.add(new JScrollPane(_propsTable));
         //this.add(new JScrollPane(_panel), BorderLayout.CENTER);
         
-        this.add(_centerBox, BorderLayout.CENTER);
+		
+		
+		
+		// add fields
+        this.add(_centerPanel, BorderLayout.CENTER);
         
         Box buttonBox = Box.createHorizontalBox();
         buttonBox.add(Box.createHorizontalGlue());
@@ -90,18 +110,28 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * @param currFile
      */
     private void createComponents() {
-        _topBox = getTopBox();
     	
-		// add entries to combo
-        String strCat = STRCAT;
-		_typeCombo = getComboBox(strCat, null);
-		_centerBox = new Box(BoxLayout.Y_AXIS);
-		_centerBox.add(_typeCombo);
-		
-		// add fields
-		_centerBox.add(getFields(strCat, (String)_typeCombo.getSelectedItem()));
+		_promptGBC = new GridBagConstraints();
+		_fieldGBC = new GridBagConstraints();
+		_comboGBC = new GridBagConstraints();
+		_panelGBC = new GridBagConstraints();
 
-    	
+		setPromptConstraints( _promptGBC );
+		setFieldConstraints( _fieldGBC );
+		setComboConstraints( _comboGBC );
+		setPanelConstraints(_panelGBC);
+		
+		
+        _topBox = getTopBox();
+        _centerPanel = new JPanel(new GridBagLayout());
+		// add entries to combo
+		getComboBox(STRCAT, null);
+		getFields(STRCAT, (String)_typeCombo.getSelectedItem());
+		
+		//_centerBox = new Box(BoxLayout.Y_AXIS);
+		//_centerBox.add(_typeCombo);
+		// add fields
+		//_centerBox.add(getFields(strCat, (String)_typeCombo.getSelectedItem()));
     	
 /*    	_panel = null;
         _panel = _configControl.getHibernateConfigPanel(url, currFile);
@@ -125,10 +155,12 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      */
     public void itemStateChanged(ItemEvent iEvent) {
         if (iEvent.getStateChange() == ItemEvent.SELECTED) {
-        	//FIXME get the category STRCAT from the tabs / radio buttons
-            _centerBox.remove(1);
-            _centerBox.add(getFields(STRCAT, (String)iEvent.getItem()));
-        	this.validate();
+        	//FIXME make sure this is doing the right thing here
+            _centerPanel.removeAll();
+            getComboBox(STRCAT, (String)iEvent.getItem());
+            getFields(STRCAT, (String)iEvent.getItem());
+        	_centerPanel.validate();
+            this.validate();
         }
     }
 
@@ -210,7 +242,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 	}
 
 
-	private JComboBox getComboBox( String category, String selected ){
+	private void getComboBox( String category, String selected ){
 
 		String[] types = _model.getTypes(category);
 		_typeCombo = new JComboBox( types );
@@ -219,51 +251,95 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 		else
 			_typeCombo.setSelectedIndex(0);
 		_typeCombo.addItemListener(this);
-		return  _typeCombo;
+		_centerPanel.add(_typeCombo, _comboGBC);
 	}
 	
 	/**
 	 * @param config
 	 * @param path
 	 */
-	private Box getFields(String category, String type) {
+	private void getFields(String category, String type) {
 		//Properties props = loadProperties(path);
-		Box boxes = new Box(BoxLayout.Y_AXIS);
+		//Box boxes = new Box(BoxLayout.Y_AXIS);
 
-		Enumeration props = _model.getProperties(category, type);
-		while (props.hasMoreElements()) {
-			HibernateProperty hp = (HibernateProperty) props.nextElement();
+		ArrayList propsArray = _model.getProperties(category, type);
+		Iterator props = propsArray.iterator();
+		//Enumeration props = _model.getProperties(category, type);
+		_propSelected = new JCheckBox[propsArray.size()];
+		_propName  = new JLabel[propsArray.size()];
+		_propValue  = new JTextField[propsArray.size()];
+		int i = 0;
+		while (props.hasNext()) {
+			HibernateProperty hp = (HibernateProperty) props.next();
 			
-			//Enumeration eCur = _currentHibProps.propertyNames();
-			JCheckBox isSaved = new JCheckBox();
-			JLabel label = new JLabel(hp.getName());
-			JTextField value = new JTextField(hp.getValue());
-			if( hp.isSaved())
-				isSaved.setSelected(true);
+			_propSelected[i] = new JCheckBox();
+			_propName[i] = new JLabel( hp.getName() );
+			_propValue[i] = new JTextField( hp.getValue() );
 			
-			/*while (eCur.hasMoreElements()) {
-				String curKey = (String) eCur.nextElement();
-				if (key.equals(curKey)) {
-					isSaved.setSelected(true);
-					value.setText(_currentHibProps.getProperty(curKey));
-					break;
-				}
-			}*/
-			Box box = new Box(BoxLayout.X_AXIS);
-			box.add(isSaved);
-			box.add(label);
-			box.add(value);
+			if( hp.isSaved() ){
+				_propSelected[i].setSelected(true);
+			}
+			
+			_centerPanel.add(_propSelected[i], _promptGBC);
+			_centerPanel.add(_propName[i], _promptGBC);
+			_centerPanel.add(_propValue[i], _fieldGBC);
+			
+			/*Box box = new Box(BoxLayout.X_AXIS);
+			box.add(_propSelected[i]);
+			box.add(_propName[i]);
+			box.add(_propValue[i]);
 			boxes.add(box);
-			boxes.add(Box.createVerticalStrut(5));
+			boxes.add(Box.createVerticalStrut(5));*/
 			// Property p = new Property( key, props.getProperty(key));
 			// hptm.addProperty(p);
+			i++;
 		}
-		boxes.add(Box.createVerticalGlue());
+		//boxes.add(Box.createVerticalGlue());
 		//config.add(boxes, BorderLayout.CENTER);
-		return boxes;
+		//return boxes;
 	} // end createConfigPanel
 
 
+	private void setPromptConstraints(GridBagConstraints gbc) {
+		gbc.insets = PROMPT_INSETS;
+		gbc.gridwidth = 1;
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.weightx = 0.0;
+	}
+	
+	private void setFieldConstraints(GridBagConstraints gbc) {
+		gbc.insets = FIELD_INSETS;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weightx = 1.0;
+	}
+	
+	private void setComboConstraints(GridBagConstraints gbc) {
+		gbc.insets = FIELD_INSETS;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weightx = 1.0;
+	}
+	
+	private void setButtonConstraints(GridBagConstraints gbc) {
+		gbc.gridwidth = 1;
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.weightx = 0.0;
+	}
+	
+	private void setPanelConstraints(GridBagConstraints gbc) {
+	//	gbc.insets = FIELD_INSETS;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1.0;
+		gbc.weighty = 1.0;
+	}
+	
     /**
      * Adds listeners to components of interest.
      */
@@ -353,9 +429,9 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         } else {
        	
         	STRCAT = aevt.getActionCommand(); 
-            _centerBox.removeAll();
-            _centerBox.add( getComboBox(STRCAT, null) );
-            _centerBox.add(getFields(STRCAT, (String)_typeCombo.getSelectedItem()));
+            _centerPanel.removeAll();
+            getComboBox(STRCAT, null);
+            getFields(STRCAT, (String)_typeCombo.getSelectedItem());
         	this.validate();
         }
         
@@ -371,9 +447,23 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     private JComboBox _typeCombo;
     private HibernatePropertiesModel _model;
     /*private JButton _catButton;*/
+    // control arrays
+    private JCheckBox[] _propSelected;
+    private JLabel[] _propName;
+    private JTextField[] _propValue;
+    
     private JRadioButton _categoryRB;
-    private Box _centerBox;
+    //private Box _centerBox;
+    private JPanel _centerPanel;
     private Box _topBox;
     private ConfigurationController _configController;
-
+    
+    // gridbag vars
+	private static final Insets PROMPT_INSETS = new Insets(0,0,5,5);
+	private static final Insets FIELD_INSETS = new Insets(0,0,5,0);
+	
+	private GridBagConstraints _promptGBC;
+	private GridBagConstraints _fieldGBC;
+	private GridBagConstraints _comboGBC;
+	private GridBagConstraints _panelGBC;
 } // end class ImportPanel

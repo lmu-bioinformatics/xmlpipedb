@@ -10,6 +10,10 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+
+import edu.lmu.xmlpipedb.util.resources.AppResources;
+import edu.lmu.xmlpipedb.util.utilities.ImportEngine;
+import generated.BookType;
 /**
  * This class maintains a set of hibernate utilities. The initial class and the closeSession() and currentSession() methods were downloaded from <a href="http://www.hibernate.org/hib_docs/reference/en/html_single/">http://www.hibernate.org/hib_docs/reference/en/html_single/</a>
  * @author Babak Naffas
@@ -24,7 +28,19 @@ public class HibernateUtil {
     static {
         try {
             // Create the SessionFactory
-            sessionFactory = new Configuration().configure().buildSessionFactory();
+            //sessionFactory = new Configuration().configure().buildSessionFactory();
+	    	
+//        	Since the ImportEngine is working fine, let's use it's hibernate settings for now.
+        	String context = AppResources.optionString("jaxbContextPath");
+			String hibernateProp = AppResources.optionString("hibernateProperties");
+	
+			String hibernateConfig = AppResources
+					.optionString("hibernateConfigDir");
+			ImportEngine ie = new ImportEngine(context, hibernateConfig,
+					hibernateProp);
+			
+			sessionFactory = ie.getSessionFactory();        	
+        	
         } catch (Throwable ex) {
             //log.error("Initial SessionFactory creation failed.", ex);
         	System.err.println( "Initial SessionFactory creation failed.\n" + ex );
@@ -77,6 +93,7 @@ public class HibernateUtil {
     	Session session = null;
     	Query query = null;
     	Iterator iter = null;
+    	
     	try{
     		session = currentSession();
     		query = session.createQuery( hql );
@@ -85,8 +102,12 @@ public class HibernateUtil {
     	catch( HibernateException he ){
     		System.err.println( he.getMessage() );
     	}
+		catch( Exception e){
+			System.err.println( e.getMessage() );
+			
+		}
     	
-    	closeSession();
+    	//closeSession();
     	return iter;
     }
 }

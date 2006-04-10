@@ -94,8 +94,8 @@ public class HibernatePropertiesModel {
 		return keys.iterator();
 	}
 	
-	public Enumeration getProperties(String category, String type){
-		Vector props = new Vector();
+	public ArrayList getProperties(String category, String type){
+		ArrayList props = new ArrayList();
 		Set keys = _properties.keySet();
 		Iterator iter = keys.iterator();
 		while( iter.hasNext() ){
@@ -105,7 +105,8 @@ public class HibernatePropertiesModel {
 				props.add(hp);
 		}
 		
-		return props.elements();
+		//return props.elements();
+		return props;
 	}
 	
 //	/**

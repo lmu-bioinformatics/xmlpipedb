@@ -73,6 +73,27 @@ public class Xsd2dbCommandLine {
     }
 
     /**
+     * @return Returns the bindingsFile.
+     */
+    public String getBindingsFile() {
+        return bindingsFile;
+    }
+
+    /**
+     * @return Returns the dbSrcDir.
+     */
+    public File getDBSrcDir() {
+        return dbSrcDir;
+    }
+
+    /**
+     * @return Returns the xsdurl.
+     */
+    public String getXSDURL() {
+        return xsdurl;
+    }
+
+    /**
      * Returns the type of schema file to process.
      * 
      * @return DTD or XSD

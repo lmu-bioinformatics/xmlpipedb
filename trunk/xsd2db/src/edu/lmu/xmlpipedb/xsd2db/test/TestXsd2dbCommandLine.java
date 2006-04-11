@@ -1,6 +1,7 @@
-package edu.lmu.xmlpipedb.xsd2db;
+package edu.lmu.xmlpipedb.xsd2db.test;
 
 import junit.framework.*;
+import edu.lmu.xmlpipedb.xsd2db.Xsd2dbCommandLine;
 import edu.lmu.xmlpipedb.xsd2db.Xsd2dbCommandLine.*;
 
 public class TestXsd2dbCommandLine extends TestCase {
@@ -38,10 +39,10 @@ public class TestXsd2dbCommandLine extends TestCase {
                          "--xsdURL=http://books.xsd",
                          "-dtdSchema"};
         xsd2dbCommandLine.parse(args);
-        assertEquals("output directory", xsd2dbCommandLine.dbSrcDir.getName(), "gen");
-        assertEquals("bindings file", xsd2dbCommandLine.bindingsFile, "bindings.xml");
-        assertEquals("xsd url", xsd2dbCommandLine.xsdurl, "http://books.xsd");
-        assertEquals("dtd Schema", xsd2dbCommandLine.getSchemaType(), xsd2dbCommandLine.schemaType);
+        assertEquals("output directory", xsd2dbCommandLine.getDBSrcDir().getName(), "gen");
+        assertEquals("bindings file", xsd2dbCommandLine.getBindingsFile(), "bindings.xml");
+        assertEquals("xsd url", xsd2dbCommandLine.getXSDURL(), "http://books.xsd");
+        assertEquals("dtd Schema", xsd2dbCommandLine.getSchemaType(), Xsd2dbCommandLine.Schema.XSD);
     }
 
 }

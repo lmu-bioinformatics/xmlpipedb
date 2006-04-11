@@ -9,11 +9,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import org.hibernate.dialect.Dialect;
 
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 import edu.lmu.xmlpipedb.util.utilities.ImportEngine;
-import generated.BookType;
 /**
  * This class maintains a set of hibernate utilities. The initial class and the closeSession() and currentSession() methods were downloaded from <a href="http://www.hibernate.org/hib_docs/reference/en/html_single/">http://www.hibernate.org/hib_docs/reference/en/html_single/</a>
  * @author Babak Naffas
@@ -27,10 +26,8 @@ public class HibernateUtil {
 
     static {
         try {
-            // Create the SessionFactory
-            //sessionFactory = new Configuration().configure().buildSessionFactory();
-	    	
-//        	Since the ImportEngine is working fine, let's use it's hibernate settings for now.
+     	
+        	//Since the ImportEngine is working fine, let's use it's hibernate settings for now.
         	String context = AppResources.optionString("jaxbContextPath");
 			String hibernateProp = AppResources.optionString("hibernateProperties");
 	
@@ -41,8 +38,8 @@ public class HibernateUtil {
 			
 			sessionFactory = ie.getSessionFactory();        	
         	
-        } catch (Throwable ex) {
-            //log.error("Initial SessionFactory creation failed.", ex);
+        }
+        catch (Throwable ex) {
         	System.err.println( "Initial SessionFactory creation failed.\n" + ex );
             throw new ExceptionInInitializerError(ex);
         }
@@ -110,4 +107,8 @@ public class HibernateUtil {
     	//closeSession();
     	return iter;
     }
+    
+    /*public Dialect getDialect(){
+    	sessionFactory.
+    }*/
 }

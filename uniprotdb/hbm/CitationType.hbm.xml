@@ -42,10 +42,10 @@
 <column name="Locator"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<any id-type="org.hibernate.type.LongType" meta-type="org.hibernate.type.StringType" name="Date">
+<property name="Date">
 <column name="Date_Hjclass"/>
-<column name="Date_Hjid"/>
-</any>
+<type name="org.hibernate.type.StringType"/>
+</property>
 <property name="City">
 <column name="City"/>
 <type name="org.hibernate.type.StringType"/>

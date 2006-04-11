@@ -20,7 +20,7 @@
 <column name="Position"/>
 </many-to-one>
 <many-to-one class="org.uniprot.uniprot.PositionType" name="End">
-<column name="EndPosition"/>
+<column name="End"/>
 </many-to-one>
 <subclass discriminator-value="org.uniprot.uniprot.LocationType" name="org.uniprot.uniprot.impl.LocationTypeImpl"/>
 </class>

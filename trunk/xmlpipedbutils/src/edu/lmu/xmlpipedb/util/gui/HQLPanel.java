@@ -6,28 +6,28 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.Vector;
 import java.util.Map;
+import java.util.Iterator;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
+import java.sql.*;
+
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.beanutils.BeanUtils;
 
-import java.util.Iterator;
-
 import edu.lmu.xmlpipedb.util.app.HibernateUtil;
-import generated.BookType;
 
-
+/**
+ * This panel displays a text area for the user to input an HQL or SQL query and view the results.
+ * 
+ * @version	1.1
+ * @author Babak Naffas
+ *
+ */
 public class HQLPanel extends JPanel{
 
 	private JTextArea _hqlArea;
@@ -36,7 +36,16 @@ public class HQLPanel extends JPanel{
 	private JSplitPane _split;
 	private JPanel _buttonPanel;
 	private Box _box = new Box(BoxLayout.Y_AXIS);
+	
+	private JRadioButton _sql;
+	private JRadioButton _hql;
+	private ButtonGroup _radioGroup;
+	private String _queryActionCommand;
 
+	/**
+	 * Default constructor. Adds the query area and the results table below it. All buttons will be displayed along the right edge of the UI.
+	 *
+	 */
 	public HQLPanel(){
 		super();
 
@@ -57,9 +66,44 @@ public class HQLPanel extends JPanel{
 		_split.setDividerLocation( 0.25 );
 
 		setSize( 25, 10 );
+		
+		initQueryChooser();
 		initButtonPanel();
 	}
+	
+	private void initQueryChooser(){
+		_sql = new JRadioButton( "SQL" );
+		//_sql.setEnabled( false );
+		
+		
+		_sql.addActionListener( new ActionListener(){
+			public void actionPerformed( ActionEvent ae ){
+				_queryActionCommand = "SQL";
+			}
+		} );
+		
+		
+		_hql = new JRadioButton( "HQL", true );
+		_hql.addActionListener( new ActionListener(){
+			public void actionPerformed( ActionEvent ae ){
+				_queryActionCommand = "HQL";
+			}
+		} );		
+		
+		_radioGroup = new ButtonGroup();
+		_radioGroup.add( _sql );
+		_radioGroup.add( _hql );		
+		
+		_box.add( _sql );
+		_box.add( _hql );
+	}
 
+	/**
+	 * Initializes the button panel. The following buttons are added along the right edge of the panel:
+	 * 		Execute Query
+	 * 		Clear 
+	 *
+	 */
 	private void initButtonPanel(){
 
 		_buttonPanel = new JPanel();
@@ -67,20 +111,11 @@ public class HQLPanel extends JPanel{
 
 		LinkedList<JButton> buttons = new LinkedList<JButton>();
 
-		JButton execute = new JButton( "Execute Query" );
-
+		//Execute Query Button
+		JButton execute = initExecuteQueryButton();
 		buttons.add( execute );
 
-		execute.addActionListener( new ActionListener(){
-
-			public void actionPerformed( ActionEvent ae ){
-				Iterator iter = HibernateUtil.executeHQL( _hqlArea.getText().trim() );
-				populateTable( iter );
-				HibernateUtil.closeSession();
-			}
-
-		} );
-
+		//Clear Button.
 		JButton clear = new JButton( "Clear" );
 		clear.setMinimumSize(new Dimension(100, 25));
 		clear.setPreferredSize(new Dimension(100, 25));
@@ -95,9 +130,8 @@ public class HQLPanel extends JPanel{
 
 		} );
 
-		//_buttonPanel.setLayout( new GridLayout( buttons.size(), 1 ) );
 
-
+		//Eases the process of adding new buttons.
 		for( JButton jb: buttons ){
 			_box.add(Box.createVerticalStrut(10));
 			_box.add(Box.createHorizontalGlue());
@@ -108,52 +142,89 @@ public class HQLPanel extends JPanel{
 		_buttonPanel.add( _box );
 	}
 	
+	private JButton initExecuteQueryButton(){
+		
+		JButton execute = new JButton( "Execute Query" );
+		final JComponent _this = this;
+		execute.addActionListener( new ActionListener(){
+
+			public void actionPerformed( ActionEvent ae ){
+				
+				if( "SQL".equals(_queryActionCommand) ){
+					/*Dialect d = new PostgreSQLDialect();
+					Select query = new Select(d);
+					query.setSelectClause()*/
+					Connection conn = HibernateUtil.currentSession().connection();
+					
+					try{
+						PreparedStatement query = conn.prepareStatement( _hqlArea.getText() );
+						ResultSet results = query.executeQuery();
+						ResultSetMetaData meta = results.getMetaData();
+						
+						int numColumns = meta.getColumnCount();
+						String[] columnNames = new String[numColumns];
+						for( int i = 0; i < numColumns; i++ ){
+							columnNames[i] = meta.getColumnLabel(i+1);
+						}
+						_tableModel.setColumnIdentifiers( columnNames );
+						
+						while( results.next() ){
+							Vector data = new Vector();
+							for( int i = 1; i <= numColumns; i++ ){
+								data.addElement( results.getObject(i) );	
+							}
+
+							
+							_tableModel.addRow( data );
+						}
+						
+					}
+					catch( SQLException sqle ){
+						JOptionPane.showMessageDialog( _this, sqle.getMessage() );
+					}
+										
+					
+				}
+				else if( "HQL".equals(_queryActionCommand) ){
+					Iterator iter = HibernateUtil.executeHQL( _hqlArea.getText().trim() );
+					populateTable( iter );
+					HibernateUtil.closeSession();
+				}
+			}
+
+		} );
+		
+		return execute;
+	}
+	
 	private void populateTable( Iterator iter )
 	{
-		//try{
-		Object temp = null;
+		Object temp = null;	
 		Map map = null;
 		Vector data = null;
 		
+		//Iterate over the set of object generated from our query.
 		while( iter.hasNext() ){
 			temp = iter.next();
 			
 			try{
+				//Get each field for the object...
+				
 				map = BeanUtils.describe( temp );
 				data = new Vector();
+				
+				//...and add it's value to our table.
 				for( Object o: map.values() ){
 					data.addElement( o );
 				}
 			}
 			catch( Exception e){
+				JOptionPane.showMessageDialog( this, e.getMessage(), "Error in Query", JOptionPane.ERROR_MESSAGE );
 				System.err.println( e.getMessage() );
 			}
-			
-			
-			
-			
-			/*Vector data = new Vector();
-			Class c = bt.getClass();
-			for( java.lang.reflect.Field f: c.getFields() )
-				data.addElement( f.get( bt ) );*/
-			
-			//Object[] data = {bt};//new Object[]{ bt.getAuthor(), bt.getGenre(), bt.getPrice(), bt.getTitle() };
 			
 			_tableModel.setColumnCount( map.size() );
 			_tableModel.addRow( data  );
 		}
-		
-		//_results.setVisible(true);
-		//_results.validate();
 	}
-//	public static void main( String args[] ){
-//
-//		JFrame f = new JFrame( "HQL GUI Test" );
-//		f.setSize( 800, 600 );
-//		f.getContentPane().add( new HQLPanel() );
-//		f.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-//		f.setVisible(true);
-//
-//	}
-
 }

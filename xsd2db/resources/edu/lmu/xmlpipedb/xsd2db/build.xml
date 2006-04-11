@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="xsd2dbgen" default="jar" basedir=".">
 	<property name="src" location="src"/>
+	<property name="rsrc" location="src"/>
 	<property name="dist" location="dist"/>
 	<property name="bin" location="bin"/>
 	<property name="compile.debug" value="true"/>
-    <property name="megajar" location="../dist"/>
+	<property name="megajar" location="../dist"/>
 	<property name="jarfile" location="${dist}/${ant.project.name}.jar"/>
-    <fileset id="lib.jars" dir="${megajar}">
-        <include name="**/*.jar"/>
-    </fileset>
-	
-    <path id="lib.path">
-        <fileset refid="lib.jars"/>
-    </path>
-    
+
+	<fileset id="lib.jars" dir="${megajar}">
+		<include name="**/*.jar"/>
+	</fileset>
+
+	<path id="lib.path">
+		<fileset refid="lib.jars"/>
+	</path>
+
+	<fileset id="rsrc.files" dir="${rsrc}">
+		<exclude name="**/*.java"/>
+	</fileset>
+
+	<target name="clean" description="Eliminates build products.">
+		<delete dir="${bin}"/>
+		<delete dir="${dist}"/>
+	</target>
+
 	<target name="compile" description="Compile code">
 		<mkdir dir="${bin}"/>
 		<mkdir dir="${dist}"/>
@@ -21,9 +32,11 @@
             debug="${compile.debug}" classpathref="lib.path">
 		</javac>
 	</target>
+
 	<target name="jar" depends="compile" description="Build jar">
 		<mkdir dir="${dist}"/>
 		<jar jarfile="${jarfile}" basedir="${bin}">
+            <fileset refid="rsrc.files"/>
 		</jar>
 	</target>
 </project>

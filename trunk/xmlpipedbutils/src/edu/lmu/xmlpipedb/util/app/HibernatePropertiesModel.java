@@ -49,21 +49,39 @@ public class HibernatePropertiesModel {
 				types.put(hp.getType(), hp.getType());
 		}
 		
-		//String[] test =  (String[])types.toArray();
 		// sort the list
 		ArrayList l = new ArrayList();
 		l.addAll(types.values());
 		Collections.sort(l);
 		
-		
 		String[] ret = new String[l.size()];
 		l.toArray(ret);
-		//types.toArray(ret);
-		//Set s = types.keySet();
-		//s.toArray(ret);
-		
 		
 		return ret;
+	}
+	
+
+	/**
+	 * This method determines what type is saved as the selected type for the
+	 * category given.
+	 * 
+	 * @param category
+	 * @return String - the type selected for this category, if there is one otherwise null.
+	 */
+	public String getSelectedType(String category) {
+		String selectedType = null;
+		Set keys = _properties.keySet();
+		Iterator iter = keys.iterator();
+		while( iter.hasNext() ){
+			String key = (String) iter.next();
+			HibernateProperty hp = (HibernateProperty)_properties.get(key);
+			if( hp.getCategory().equals(category) && hp.isSaved() ){
+				selectedType = hp.getType();
+				break;
+			}
+		}
+		
+		return selectedType;
 	}
 	
 	/**
@@ -84,6 +102,7 @@ public class HibernatePropertiesModel {
 		
 		return props.elements();
 	}
+	
 	
 	/**
 	 * Returns an Enumeration with all the property names in the model
@@ -142,5 +161,7 @@ public class HibernatePropertiesModel {
 	
 	//### DEFINE VARS ###
 	private HashMap _properties = new HashMap();
+
+
 
 }

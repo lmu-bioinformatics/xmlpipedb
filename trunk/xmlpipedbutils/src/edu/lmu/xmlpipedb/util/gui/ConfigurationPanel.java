@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -27,6 +26,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
@@ -248,8 +248,13 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 		_typeCombo = new JComboBox( types );
 		if( selected != null)
 			_typeCombo.setSelectedItem(selected);
-		else
-			_typeCombo.setSelectedIndex(0);
+		else{
+			String selectedType = _model.getSelectedType( category );
+			if( selectedType == null )
+				_typeCombo.setSelectedIndex(0);
+			else
+				 _typeCombo.setSelectedItem(selectedType);
+		}
 		_typeCombo.addItemListener(this);
 		_centerPanel.add(_typeCombo, _comboGBC);
 	}
@@ -274,7 +279,11 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 			
 			_propSelected[i] = new JCheckBox();
 			_propName[i] = new JLabel( hp.getName() );
-			_propValue[i] = new JTextField( hp.getValue() );
+			// check if the field is a password field
+			if( hp.getName().indexOf("password") != -1 )
+				_propValue[i] = new JPasswordField( hp.getValue(), 30 );
+			else
+				_propValue[i] = new JTextField( hp.getValue(), 30 );
 			
 			if( hp.isSaved() ){
 				_propSelected[i].setSelected(true);
@@ -372,12 +381,18 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     
     private void saveAction(){
 //    	 get current info
-    	//FIXME get category for real
+
     	String category = STRCAT;
     	String type = (String)_typeCombo.getSelectedItem();
-        Box centerBox = (Box) this.getComponent(1);
-        //_centerBox
-        Component[] fieldBoxes = ((Box)centerBox.getComponent(1)).getComponents();
+
+    	
+    	//Box centerBox = (Box) this.getComponent(1);
+        //Component[] fieldBoxes = ((Box)centerBox.getComponent(1)).getComponents();
+    	
+    	
+    	// Prepare a new model object, which will be used to save the properties.
+    	// Add all the other saved properties to the saveModel, except the properties
+    	// of this category, which will be overwritten.
         HibernatePropertiesModel saveModel = new HibernatePropertiesModel();
        	Iterator modelIter = _model.getProperties();
        	while( modelIter.hasNext() ){
@@ -388,7 +403,18 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
        		if( hp.isSaved() )
        			saveModel.add(hp);
        	}
-        
+       	
+       	for(int i = 0; i < _propValue.length; i++ ){
+       		if( _propSelected[i].isSelected() ){
+//       		 if it is checked, add, which will add a new or replace an existing property
+				saveModel.add(new HibernateProperty(category, type, _propName[i].getText(), _propValue[i].getText(), true ));
+       		}else{
+       			// not sure we need an else
+       		}
+       		
+       	}
+       	
+        /*
         for(int i = 0; i < fieldBoxes.length; i++ ){
         	// check to see if the component is a box
 			if( !("javax.swing.Box".equals(fieldBoxes[i].getClass().getName())) )
@@ -400,18 +426,14 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 				// if it is checked, add, which will add a new or replace an existing property
 				String value = ((JTextField) b.getComponent(2)).getText();
 				saveModel.add(new HibernateProperty(category, type, name, value, true ));
-			} /*else {
+			} else {
 				// removes this property from the model - the value arguement is irrelevant for this purpose
 				saveModel.remove(new HibernateProperty(category, type, name, "", false ));
-			}*/
-				
 			}
+				
+			}*/
         
         _configController.saveProperties(saveModel);
-
-        //_configControl.saveProperties(_panel);
-        //_configControl.storeHibProperties(_propsTable.getModel());
-
 
     }
 

@@ -243,7 +243,9 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 
 
 	private void getComboBox( String category, String selected ){
-
+		if(_typeCombo != null )
+			_typeCombo.removeItemListener(this);
+		
 		String[] types = _model.getTypes(category);
 		_typeCombo = new JComboBox( types );
 		if( selected != null)

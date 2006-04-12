@@ -155,11 +155,14 @@ public class HQLPanel extends JPanel{
 					Select query = new Select(d);
 					query.setSelectClause()*/
 					Connection conn = HibernateUtil.currentSession().connection();
+					PreparedStatement query = null;
+					ResultSet results = null;
+					ResultSetMetaData meta = null;
 					
 					try{
-						PreparedStatement query = conn.prepareStatement( _hqlArea.getText() );
-						ResultSet results = query.executeQuery();
-						ResultSetMetaData meta = results.getMetaData();
+						query = conn.prepareStatement( _hqlArea.getText() );
+						results = query.executeQuery();
+						meta = results.getMetaData();
 						
 						int numColumns = meta.getColumnCount();
 						String[] columnNames = new String[numColumns];
@@ -179,8 +182,17 @@ public class HQLPanel extends JPanel{
 						}
 						
 					}
-					catch( SQLException sqle ){
+					catch( SQLException sqle ){ 
 						JOptionPane.showMessageDialog( _this, sqle.getMessage() );
+					}
+					finally{
+						try{
+							results.close();
+							query.close();
+							conn.close();
+						}
+						catch( SQLException sqle ){}	//Ignore the errors here, nothing we can do anyways.
+						
 					}
 										
 					

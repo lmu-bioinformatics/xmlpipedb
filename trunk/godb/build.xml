@@ -18,18 +18,42 @@
     <target name="clean" description="Remove build products">
         <delete dir="${bin}"/>
         <delete dir="${dist}"/>
+    	<delete file="${lib}/${ant.project.name}.jar"/>
     </target>
                                 
 	<target name="compile" description="Compile code">
 		<mkdir dir="${bin}"/>
-		<mkdir dir="${dist}"/>
 		<javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no"
             debug="${compile.debug}" classpathref="lib.path">
 		</javac>
 	</target>
+
+	
 	<target name="jar" depends="compile" description="Build jar">
 		<mkdir dir="${dist}"/>
+    	<copy todir="${bin}">
+    		<fileset dir="${src}/generated" includes="jaxb.properties"/>
+		</copy>
+    	<copy todir="${bin}/generated">
+    		<fileset dir="${src}/generated" includes="jaxb.properties"/>
+		</copy>
+    	<copy todir="${bin}/generated/impl">
+    		<fileset dir="${src}/generated" includes="jaxb.properties"/>
+		</copy>
+    	<copy todir="${bin}/generated/impl/runtime">
+    		<fileset dir="${src}/generated" includes="jaxb.properties"/>
+		</copy>
 		<jar jarfile="${jarfile}" basedir="${bin}">
 		</jar>
+    	<copy todir="${lib}" file="${jarfile}"/>
 	</target>
+	
+	<target name="run" depends="jar" description="Runs the application">
+	    <java classname="edu.lmu.xmlpipedb.util.app.XmlPipeDbUtils"
+	          fork="true"
+	          failonerror="false"
+	          classpathref="lib.path"
+	        />
+	</target>
+	 	
 </project>

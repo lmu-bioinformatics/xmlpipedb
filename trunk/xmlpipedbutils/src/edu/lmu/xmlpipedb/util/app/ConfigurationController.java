@@ -45,6 +45,11 @@ public class ConfigurationController {
 		Properties props = new Properties();
 
 		try {
+			File f = new File(propertiesPath);
+			if(!f.exists()){
+				if( !f.createNewFile() )
+					throw new FileNotFoundException("File " + propertiesPath + " did not exist. Attempt to create the file failed. Please check the settings for this file.");
+			}
 			FileInputStream fis = new FileInputStream(propertiesPath);
 			props.load(fis);
 			if (_firstHibPropLoad) {

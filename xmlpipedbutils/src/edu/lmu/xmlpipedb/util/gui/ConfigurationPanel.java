@@ -66,7 +66,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         this.setLayout(new BorderLayout());
         this.add(_topBox, BorderLayout.NORTH);
         
-        
+/*        
 		_promptGBC = new GridBagConstraints();
 		_fieldGBC = new GridBagConstraints();
 //		_buttonGBC = new GridBagConstraints();
@@ -77,15 +77,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 //		setButtonConstraints( _buttonGBC );
 		setPanelConstraints(_panelGBC);
 
-        
-        // Box bxMain = new Box(BoxLayout.X_AXIS);
-        // this.add(bxMain, BorderLayout.CENTER);
-        // bxMain.add(new JScrollPane(_panel));
-        // bxMain.add(new JScrollPane(_propsTable));
-        //this.add(new JScrollPane(_panel), BorderLayout.CENTER);
-        
-		
-		
+*/        
 		
 		// add fields
         this.add(_centerPanel, BorderLayout.CENTER);
@@ -121,22 +113,12 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 		setComboConstraints( _comboGBC );
 		setPanelConstraints(_panelGBC);
 		
-		
         _topBox = getTopBox();
         _centerPanel = new JPanel(new GridBagLayout());
 		// add entries to combo
 		getComboBox(STRCAT, null);
 		getFields(STRCAT, (String)_typeCombo.getSelectedItem());
-		
-		//_centerBox = new Box(BoxLayout.Y_AXIS);
-		//_centerBox.add(_typeCombo);
-		// add fields
-		//_centerBox.add(getFields(strCat, (String)_typeCombo.getSelectedItem()));
-    	
-/*    	_panel = null;
-        _panel = _configControl.getHibernateConfigPanel(url, currFile);
-*/
-        // _propsTable = new JTable(_configControl.loadCurrentHibProps());
+
         _saveButton = new JButton(AppResources.messageString("config_save"));
         _cancelButton = new JButton(AppResources.messageString("config_cancel"));
         _revertButton = new JButton(AppResources.messageString("config_revert"));
@@ -159,8 +141,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
             _centerPanel.removeAll();
             getComboBox(STRCAT, (String)iEvent.getItem());
             getFields(STRCAT, (String)iEvent.getItem());
-        	_centerPanel.validate();
             this.validate();
+            this.repaint();
         }
     }
 
@@ -322,7 +304,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 	private void setFieldConstraints(GridBagConstraints gbc) {
 		gbc.insets = FIELD_INSETS;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.anchor = GridBagConstraints.WEST;
+		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1.0;
 	}
@@ -330,7 +312,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 	private void setComboConstraints(GridBagConstraints gbc) {
 		gbc.insets = FIELD_INSETS;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.anchor = GridBagConstraints.NORTH;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1.0;
 	}
@@ -345,7 +327,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 	private void setPanelConstraints(GridBagConstraints gbc) {
 	//	gbc.insets = FIELD_INSETS;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.anchor = GridBagConstraints.NORTH;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1.0;
 		gbc.weighty = 1.0;
@@ -457,6 +439,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
             getComboBox(STRCAT, null);
             getFields(STRCAT, (String)_typeCombo.getSelectedItem());
         	this.validate();
+        	this.repaint();
         }
         
         /*else if (aevt.getSource() == _revertButton) {

@@ -42,9 +42,8 @@ public class MainController implements ActionListener {
 		_initialFrame = null;
 
 		_cc = new ConfigurationController(AppResources
-				.optionString("hibernate_properties_url"));
-		// _cc.getConfigurationModel(AppResources
-		// .optionString("hibernate_general_properties_url"));
+				.optionString("hibernate_properties_url"), AppResources
+				.optionString("hibernate_properties_default_url"));
 
 		createComponents();
 	} // end no-arg constructor
@@ -193,38 +192,11 @@ public class MainController implements ActionListener {
 			_queryPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_queryPanel);
 		} else if ("config_platform".equals(e.getActionCommand())) { // new
-			_configPanel = new ConfigurationPanel(_cc
-					.getConfigurationModel(AppResources
-							.optionString("hibernate_properties_folder_url")),
+			_configPanel = new ConfigurationPanel(_cc.getConfigurationModel(),
 					new Properties(), _cc);
-
-			// _configPanel = new ConfigurationPanel(_cc, this, AppResources
-			// .optionString("hibernate_platforms_properties_url"),
-			// AppResources
-			// .optionString("current_platform"));
 			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_configPanel);
-		}/*
-			 * else if ("config_connection_pool".equals(e.getActionCommand())) {
-			 * //new _configPanel = new ConfigurationPanel(_cc, this,
-			 * AppResources
-			 * .optionString("hibernate_connection_pools_properties_url"),
-			 * AppResources .optionString("current_connection_pool"));
-			 * _configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5,
-			 * 5)); _initialFrame.setContentPane(_configPanel); } else if
-			 * ("config_other".equals(e.getActionCommand())) { //new
-			 * _configPanel = new ConfigurationPanel(_cc, this, AppResources
-			 * .optionString("hibernate_other_properties_url"), AppResources
-			 * .optionString("current_other"));
-			 * _configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5,
-			 * 5)); _initialFrame.setContentPane(_configPanel); } else if
-			 * ("config_general".equals(e.getActionCommand())) { //new
-			 * _configPanel = new ConfigurationPanel(_cc, this, AppResources
-			 * .optionString("hibernate_general_properties_url"), AppResources
-			 * .optionString("current_general"));
-			 * _configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5,
-			 * 5)); _initialFrame.setContentPane(_configPanel); }
-			 */else { // quit
+		}else { // quit
 			System.exit(0);
 		}
 		_initialFrame.validate();

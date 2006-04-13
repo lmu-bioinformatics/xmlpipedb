@@ -88,8 +88,12 @@ public class HQLPanel extends JPanel{
 			public void actionPerformed( ActionEvent ae ){
 				_queryActionCommand = "HQL";
 			}
-		} );		
-		
+		} );
+        
+        // Since the HQL radio button starts out as the selected one,
+        // we initialize _queryActionCommand accordingly.
+		_queryActionCommand = "HQL";
+        
 		_radioGroup = new ButtonGroup();
 		_radioGroup.add( _sql );
 		_radioGroup.add( _hql );		
@@ -172,7 +176,7 @@ public class HQLPanel extends JPanel{
 						_tableModel.setColumnIdentifiers( columnNames );
 						
 						while( results.next() ){
-							Vector data = new Vector();
+							Vector<Object> data = new Vector<Object>();
 							for( int i = 1; i <= numColumns; i++ ){
 								data.addElement( results.getObject(i) );	
 							}
@@ -213,7 +217,7 @@ public class HQLPanel extends JPanel{
 	{
 		Object temp = null;	
 		Map map = null;
-		Vector data = null;
+		Vector<Object> data = null;
 		
 		//Iterate over the set of object generated from our query.
 		while( iter.hasNext() ){
@@ -223,7 +227,7 @@ public class HQLPanel extends JPanel{
 				//Get each field for the object...
 				
 				map = BeanUtils.describe( temp );
-				data = new Vector();
+				data = new Vector<Object>();
 				
 				//...and add it's value to our table.
 				for( Object o: map.values() ){

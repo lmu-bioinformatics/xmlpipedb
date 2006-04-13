@@ -23,13 +23,15 @@ import edu.lmu.xmlpipedb.util.resources.AppResources;
  */
 public class ConfigurationController {
 
+
 	/**
 	 * Creates an instance of the ConfigurationController and loads the current
 	 * properties file at the file URL passed.
 	 * @param currentPropsUrl
 	 */
-	public ConfigurationController(String currentPropsUrl) {
-		// getHibernateConfigPanel(null);
+	public ConfigurationController(String currentPropsUrl, String defaultPropsUrl) {
+		_hibernatePropertiesUrl = currentPropsUrl;
+		_defaultPropertiesUrl = defaultPropsUrl;
 		_currentHibProps = loadHibProperties(currentPropsUrl);
 	}
 
@@ -127,30 +129,74 @@ public class ConfigurationController {
 	 * @param folderUrl
 	 * @return
 	 */
-	public HibernatePropertiesModel getConfigurationModel(String folderUrl) {
+	public HibernatePropertiesModel getConfigurationModel() {
 		HibernatePropertiesModel model = new HibernatePropertiesModel();
+		// used to determine if this is saved
+		String savedType = null;
 
-		File folders = new File(folderUrl);
-		File[] folderList = folders.listFiles();
-		// System.out.printf("can read %s, absolute path %s\n",
-		// folders.canRead(), folders.getAbsolutePath() );
+		_defaultProperties = new Properties();
 
-		for (int i = 0; i < folderList.length; i++) {
-			if (folderList[i].isDirectory()) {
-				String category = folderList[i].getName();
-				
-				// get an array of files in the folder
-				File[] files = folderList[i]
-						.listFiles(new PropertiesFileNameFilter());
-
-				// iterate through the array of files, adding them to model
-				for (int j = 0; j < files.length; j++) {
-					String type = files[j].getName();
-					loadModelProperties(files[j].getAbsolutePath(), category,
-							type, model);
-
-				}// end for
+		try {
+			File f = new File(_defaultPropertiesUrl);
+			if(!f.exists()){
+				throw new FileNotFoundException("File " + f.getAbsolutePath() + " did not exist. A file containing the default Hibernate Properties and structure must be provided.");
 			}
+			FileInputStream fis = new FileInputStream(_defaultPropertiesUrl);
+			_defaultProperties.load(fis);
+		} catch (FileNotFoundException e) {
+			System.out.print(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.print(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		savedType = _defaultProperties.getProperty(SAVED_TYPE_NAME);
+		_defaultProperties.remove(SAVED_TYPE_NAME);
+		_defaultProperties.remove(SAVED_CATEGORY_NAME);
+		Enumeration propsEnum = _defaultProperties.keys();
+		
+		
+		while(propsEnum.hasMoreElements()) {
+			String key = (String) propsEnum.nextElement();
+			boolean isSavedDialect = false;
+			int categoryMarker = key.indexOf("|");
+			int typeMarker = key.indexOf("|", categoryMarker+1);
+			
+			String category = key.substring(0, categoryMarker);
+			category = category.replace(".", " "); // replaces . with spaces
+			String type = key.substring(categoryMarker+1, typeMarker);
+			type = type.replace(".", " "); // replaces . with spaces
+			String name = key.substring(typeMarker+1);
+			String value = _defaultProperties.getProperty(key);
+			
+			// used to determine if a property is 'saved' or not
+			if( savedType != null && savedType.equals(type) )
+				isSavedDialect = true;
+			// exception for general properties
+			if( category.equalsIgnoreCase("general") ) isSavedDialect = true;
+
+			
+			HibernateProperty hp;
+			// figure out what value to put in model
+			if( isSavedDialect ){
+				String altVal = _currentHibProps.getProperty(name);
+				boolean isSaved = true;
+				
+				if( altVal == null ){
+					altVal = value;
+					isSaved = false;
+				}
+				
+				hp = new HibernateProperty(category, type,
+					name, altVal, isSaved);
+			} else {
+				hp = new HibernateProperty(category, type,
+					name, value, false);
+			}
+			
+			model.add(hp);
+			
 		}
 		return model;
 	}
@@ -182,16 +228,8 @@ public class ConfigurationController {
 	 * @param props
 	 */
 	private void storeHibProperties(Properties props) {
-		// Properties props = new Properties();
-
-		// for( int i = 0; i < mod.getRowCount(); i++){
-		// props.setProperty((String)mod.getValueAt(i, 0),
-		// (String)mod.getValueAt(i, 1));
-		// }
-
 		try {
-			FileOutputStream fis = new FileOutputStream(AppResources
-					.optionString("hibernate_properties_url"));
+			FileOutputStream fis = new FileOutputStream(_hibernatePropertiesUrl);
 			props.store(fis, null);
 			_currentHibProps = props;
 		} catch (FileNotFoundException e) {
@@ -249,31 +287,6 @@ public class ConfigurationController {
 		return getHibProperties(_hibRevertProperties);
 	}
 
-	// public String loadHib_Conf() {
-	// Properties hib_conf = new Properties();
-	// String s = "";
-	//		
-	// try{
-	//			
-	// //FileInputStream fis = new FileInputStream(_hibPropFilePath);
-	// FileInputStream fis = new FileInputStream(AppResources
-	// .optionString("hibernate_conf_properties_url"));
-	// hib_conf.load(fis);
-	// Enumeration e = hib_conf.propertyNames();
-	// while(e.hasMoreElements()){
-	// String key = (String)e.nextElement();
-	// s += "\n" + key + " \t " + hib_conf.getProperty(key);
-	// }
-	//		
-	// } catch (FileNotFoundException e){
-	// e.printStackTrace();
-	//			
-	// } catch (IOException e){
-	//			
-	// }
-	// return s;
-	// }
-
 	/**
 	 * @deprecated
 	 * @param props
@@ -291,20 +304,78 @@ public class ConfigurationController {
 
 		return hptm;
 	}
+	
+	public void saveSettings(String category, String type) {
+		if( !category.equalsIgnoreCase("general")){
+			_defaultProperties.setProperty(SAVED_TYPE_NAME, type);
+			_defaultProperties.setProperty(SAVED_CATEGORY_NAME, category);
+			FileOutputStream fis;
+			try {
+				fis = new FileOutputStream(_defaultPropertiesUrl);
+				_defaultProperties.store(fis, null);
+				
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
 
 	// #### DEFINE VARS ####
 
+	/**
+	 * Iterates through all folders and files under the URL supplied and creates
+	 * a HibernatePropertiesModel.
+	 * 
+	 * @param folderUrl
+	 * @return
+	 */
+/*	public HibernatePropertiesModel getConfigurationModel(String folderUrl) {
+		HibernatePropertiesModel model = new HibernatePropertiesModel();
+	
+		File folders = new File(folderUrl);
+		File[] folderList = folders.listFiles();
+		// System.out.printf("can read %s, absolute path %s\n",
+		// folders.canRead(), folders.getAbsolutePath() );
+	
+		for (int i = 0; i < folderList.length; i++) {
+			if (folderList[i].isDirectory()) {
+				String category = folderList[i].getName();
+				
+				// get an array of files in the folder
+				File[] files = folderList[i]
+						.listFiles(new PropertiesFileNameFilter());
+	
+				// iterate through the array of files, adding them to model
+				for (int j = 0; j < files.length; j++) {
+					String type = files[j].getName();
+					loadModelProperties(files[j].getAbsolutePath(), category,
+							type, model);
+				}// end for
+			}
+		}
+		return model;
+	}*/
+
 	// Properties _props;
 	Properties _hibRevertProperties;
-
 	boolean _firstHibPropLoad = true;
 
 	Properties _currentHibProps;
+	Properties _defaultProperties;
 
 	private ConfigurationPanel _callingPanel;
 
 	String _currFile;
-
 	String _currFolder;
 
+	private String _hibernatePropertiesUrl;
+	private String _defaultPropertiesUrl;
+	private static String SAVED_TYPE_NAME = "xmlpipedb.type";
+	private static String SAVED_CATEGORY_NAME = "xmlpipedb.category";
+	
 } // end class

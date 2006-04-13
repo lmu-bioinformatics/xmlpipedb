@@ -50,13 +50,11 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      */
     public ConfigurationPanel(HibernatePropertiesModel model, Properties props, ConfigurationController configController) {
     	_model = model;
-//    	_props = props;
     	_configController = configController;
     	
         createComponents();
         layoutComponents();
         startListeningToUI();
-
     }
 
     /**
@@ -66,19 +64,6 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         this.setLayout(new BorderLayout());
         this.add(_topBox, BorderLayout.NORTH);
         
-/*        
-		_promptGBC = new GridBagConstraints();
-		_fieldGBC = new GridBagConstraints();
-//		_buttonGBC = new GridBagConstraints();
-		_panelGBC = new GridBagConstraints();
-
-		setPromptConstraints( _promptGBC );
-		setFieldConstraints( _fieldGBC );
-//		setButtonConstraints( _buttonGBC );
-		setPanelConstraints(_panelGBC);
-
-*/        
-		
 		// add fields
         this.add(_centerPanel, BorderLayout.CENTER);
         
@@ -137,7 +122,6 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      */
     public void itemStateChanged(ItemEvent iEvent) {
         if (iEvent.getStateChange() == ItemEvent.SELECTED) {
-        	//FIXME make sure this is doing the right thing here
             _centerPanel.removeAll();
             getComboBox(STRCAT, (String)iEvent.getItem());
             getFields(STRCAT, (String)iEvent.getItem());
@@ -146,32 +130,14 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         }
     }
 
-/*    *//**
-     * @param item
-     *//*
-    private void reloadPanel(String item) {
-        stopListeningToUI();
-        removeAll();
-        //_panel = _configControl.getHibernateConfigPanel(_url, item + ".properties");
-        layoutComponents();
-        revalidate();
-        startListeningToUI();
-    }*/
-    
-    
     
 	/**
 	 * @param folderUrl
 	 * @param currFile
 	 */
 	private Box getTopBox() {
-//		JPanel config = new JPanel();
-//		config.setLayout(new BorderLayout());
 		Box topBox = new Box(BoxLayout.X_AXIS);
 
-//		File f = new File(folderUrl);
-//		File[] files = f.listFiles(new PropertiesFileNameFilter());
-		
 		Set catSet = _model.getCategories();
 		Iterator catIter = catSet.iterator();
 		ButtonGroup bg = new ButtonGroup();
@@ -193,34 +159,6 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 		}
 
 		return topBox;
-		//this.add(centerBox, BorderLayout.CENTER);
-		
-		
-		
-		
-/*		if (files.length > 1) {
-			ArrayList fileList = new ArrayList();
-			String selected = null;
-
-			for (int i = 0; i < files.length; i++) {
-				String filename = files[i].getName();
-				fileList.add(filename.substring(0, filename.lastIndexOf(".")));
-				if (filename.equals(currFile)) {
-					createConfigPanel(config, files[i].getPath());
-					selected = filename.substring(0, filename.lastIndexOf("."));
-				}
-			}// end for
-			JComboBox head = new JComboBox(fileList.toArray());
-			head.setSelectedItem(selected);
-			// head.addItemListener(new MyItemListener());
-			config.add(head, BorderLayout.NORTH);
-
-		} else {
-			if (files[0].isFile())
-				createConfigPanel(config, files[0].getPath());
-		}
-
-		return config;*/
 	}
 
 
@@ -248,12 +186,9 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 	 * @param path
 	 */
 	private void getFields(String category, String type) {
-		//Properties props = loadProperties(path);
-		//Box boxes = new Box(BoxLayout.Y_AXIS);
-
 		ArrayList propsArray = _model.getProperties(category, type);
 		Iterator props = propsArray.iterator();
-		//Enumeration props = _model.getProperties(category, type);
+
 		_propSelected = new JCheckBox[propsArray.size()];
 		_propName  = new JLabel[propsArray.size()];
 		_propValue  = new JTextField[propsArray.size()];
@@ -277,19 +212,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 			_centerPanel.add(_propName[i], _promptGBC);
 			_centerPanel.add(_propValue[i], _fieldGBC);
 			
-			/*Box box = new Box(BoxLayout.X_AXIS);
-			box.add(_propSelected[i]);
-			box.add(_propName[i]);
-			box.add(_propValue[i]);
-			boxes.add(box);
-			boxes.add(Box.createVerticalStrut(5));*/
-			// Property p = new Property( key, props.getProperty(key));
-			// hptm.addProperty(p);
 			i++;
 		}
-		//boxes.add(Box.createVerticalGlue());
-		//config.add(boxes, BorderLayout.CENTER);
-		//return boxes;
 	} // end createConfigPanel
 
 
@@ -338,41 +262,17 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      */
     private void startListeningToUI() {
         // FIXME This is a very fragile binding...must redesign...
-     /*   for (int i = 0; i < _panel.getComponentCount(); i++) {
-            if (_panel.getComponent(i).getClass().getName().contains("JComboBox"))
-                ((JComboBox)_panel.getComponent(i)).addItemListener(this);
-        }*/
-        
         _saveButton.addActionListener(this);
         _cancelButton.addActionListener(this);
         _revertButton.addActionListener(this);
         _defaultButton.addActionListener(this);
     }
 
-    /**
-     * Stops the GUI listners
-     */
-    private void stopListeningToUI() {
-/*        for (int i = 0; i < _panel.getComponentCount(); i++) {
-            if (_panel.getComponent(i).getClass().getName().contains("JComboBox"))
-                ((JComboBox)_panel.getComponent(i)).removeItemListener(this);
-        }*/
-        _saveButton.removeActionListener(this);
-        _cancelButton.removeActionListener(this);
-        _revertButton.removeActionListener(this);
-        _defaultButton.removeActionListener(this);
-    }
     
     private void saveAction(){
 //    	 get current info
-
     	String category = STRCAT;
     	String type = (String)_typeCombo.getSelectedItem();
-
-    	
-    	//Box centerBox = (Box) this.getComponent(1);
-        //Component[] fieldBoxes = ((Box)centerBox.getComponent(1)).getComponents();
-    	
     	
     	// Prepare a new model object, which will be used to save the properties.
     	// Add all the other saved properties to the saveModel, except the properties
@@ -397,28 +297,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
        		}
        		
        	}
-       	
-        /*
-        for(int i = 0; i < fieldBoxes.length; i++ ){
-        	// check to see if the component is a box
-			if( !("javax.swing.Box".equals(fieldBoxes[i].getClass().getName())) )
-				continue;
-        	Box b = (Box) fieldBoxes[i];
-			boolean cb = ((JCheckBox) b.getComponent(0)).isSelected();
-			String name = ((JLabel) b.getComponent(1)).getText();
-			if (cb) {
-				// if it is checked, add, which will add a new or replace an existing property
-				String value = ((JTextField) b.getComponent(2)).getText();
-				saveModel.add(new HibernateProperty(category, type, name, value, true ));
-			} else {
-				// removes this property from the model - the value arguement is irrelevant for this purpose
-				saveModel.remove(new HibernateProperty(category, type, name, "", false ));
-			}
-				
-			}*/
-        
+       	_configController.saveSettings(category, type);
         _configController.saveProperties(saveModel);
-
     }
 
     /**
@@ -429,7 +309,6 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         	saveAction();
         	
         } else if (aevt.getSource() == _cancelButton) {
-            //_main.cancelAction();
         	this.setVisible(false);
         	this.validate();         	
         } else {
@@ -441,25 +320,19 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         	this.validate();
         	this.repaint();
         }
-        
-        /*else if (aevt.getSource() == _revertButton) {
-            _propsTable.setModel(_configControl.loadRevertedHibProps());
-        } else if (aevt.getSource() == _defaultButton) {
-            _propsTable.setModel(_configControl.loadOriginalHibProps());
-        }*/
     }
 
     // ### DEFINE VARS ###
     private JButton _saveButton, _cancelButton, _revertButton, _defaultButton;
     private JComboBox _typeCombo;
     private HibernatePropertiesModel _model;
-    /*private JButton _catButton;*/
+
     // control arrays
     private JCheckBox[] _propSelected;
     private JLabel[] _propName;
     private JTextField[] _propValue;
-    
     private JRadioButton _categoryRB;
+
     //private Box _centerBox;
     private JPanel _centerPanel;
     private Box _topBox;
@@ -473,4 +346,5 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 	private GridBagConstraints _fieldGBC;
 	private GridBagConstraints _comboGBC;
 	private GridBagConstraints _panelGBC;
+	
 } // end class ImportPanel

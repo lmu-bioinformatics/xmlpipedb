@@ -31,16 +31,24 @@ import edu.lmu.xmlpipedb.util.app.HibernateUtil;
 public class HQLPanel extends JPanel{
 
 	private JTextArea _hqlArea;
-	private JTable _results;
+	private JTable _resultsTable;
+	private HQLResultTree _resultsTree;
+	
 	private DefaultTableModel _tableModel;
 	private JSplitPane _split;
 	private JPanel _buttonPanel;
+	private JPanel _dataViewPanel;
 	private Box _box = new Box(BoxLayout.Y_AXIS);
 	
 	private JRadioButton _sql;
 	private JRadioButton _hql;
 	private ButtonGroup _radioGroup;
 	private String _queryActionCommand;
+	
+	private final static String 
+		HQL_COMMAND = "HQL",
+		SQL_COMMAND = "SQL";
+	
 
 	/**
 	 * Default constructor. Adds the query area and the results table below it. All buttons will be displayed along the right edge of the UI.
@@ -58,11 +66,20 @@ public class HQLPanel extends JPanel{
 
 	private void initComponents(){
 		_hqlArea = new JTextArea();
-		_tableModel = new DefaultTableModel(1, 10);
-		_results = new JTable( _tableModel );
-		_results.setVisible( true );
 		
-		_split = new JSplitPane( JSplitPane.VERTICAL_SPLIT, _hqlArea, new JScrollPane( _results) );
+		_tableModel = new DefaultTableModel(1, 10);
+		
+		_resultsTable = new JTable( _tableModel );
+		_resultsTable.setVisible( true );
+		
+		_resultsTree = new HQLResultTree();
+		
+		_dataViewPanel = new JPanel( new BorderLayout() );
+		JScrollPane tableScroll = new JScrollPane( _resultsTable);
+		JScrollPane treeScroll = new JScrollPane( _resultsTree );
+		_dataViewPanel.add( new JSplitPane( JSplitPane.HORIZONTAL_SPLIT, tableScroll, treeScroll ) );
+		
+		_split = new JSplitPane( JSplitPane.VERTICAL_SPLIT, _hqlArea, _dataViewPanel );
 		_split.setDividerLocation( 0.25 );
 
 		setSize( 25, 10 );
@@ -72,32 +89,31 @@ public class HQLPanel extends JPanel{
 	}
 	
 	private void initQueryChooser(){
-		_sql = new JRadioButton( "SQL" );
-		//_sql.setEnabled( false );
-		
+		_sql = new JRadioButton( SQL_COMMAND );
 		
 		_sql.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent ae ){
-				_queryActionCommand = "SQL";
+				_queryActionCommand = SQL_COMMAND;
 			}
 		} );
 		
 		
-		_hql = new JRadioButton( "HQL", true );
+		_hql = new JRadioButton( HQL_COMMAND, true );
 		_hql.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent ae ){
-				_queryActionCommand = "HQL";
+				_queryActionCommand = HQL_COMMAND;
 			}
 		} );
-        
-        // Since the HQL radio button starts out as the selected one,
-        // we initialize _queryActionCommand accordingly.
-		_queryActionCommand = "HQL";
-        
+		
+		//We will initially set the action command to 'HQL'
+		_queryActionCommand = HQL_COMMAND;
+		
+		//We need to add each set of mutually exclusive Radio Buttons to a ButtonGroup instance.
 		_radioGroup = new ButtonGroup();
 		_radioGroup.add( _sql );
 		_radioGroup.add( _hql );		
 		
+		//...then add the actual buttons to the UI.
 		_box.add( _sql );
 		_box.add( _hql );
 	}
@@ -155,9 +171,6 @@ public class HQLPanel extends JPanel{
 			public void actionPerformed( ActionEvent ae ){
 				
 				if( "SQL".equals(_queryActionCommand) ){
-					/*Dialect d = new PostgreSQLDialect();
-					Select query = new Select(d);
-					query.setSelectClause()*/
 					Connection conn = HibernateUtil.currentSession().connection();
 					PreparedStatement query = null;
 					ResultSet results = null;
@@ -176,7 +189,7 @@ public class HQLPanel extends JPanel{
 						_tableModel.setColumnIdentifiers( columnNames );
 						
 						while( results.next() ){
-							Vector<Object> data = new Vector<Object>();
+							Vector data = new Vector();
 							for( int i = 1; i <= numColumns; i++ ){
 								data.addElement( results.getObject(i) );	
 							}
@@ -217,7 +230,7 @@ public class HQLPanel extends JPanel{
 	{
 		Object temp = null;	
 		Map map = null;
-		Vector<Object> data = null;
+		Vector data = null;
 		
 		//Iterate over the set of object generated from our query.
 		while( iter.hasNext() ){
@@ -227,7 +240,7 @@ public class HQLPanel extends JPanel{
 				//Get each field for the object...
 				
 				map = BeanUtils.describe( temp );
-				data = new Vector<Object>();
+				data = new Vector();
 				
 				//...and add it's value to our table.
 				for( Object o: map.values() ){

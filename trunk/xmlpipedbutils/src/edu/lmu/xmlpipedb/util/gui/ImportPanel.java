@@ -179,6 +179,7 @@ public class ImportPanel extends JPanel{
         }
         catch(Exception e)
         {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
         }
         

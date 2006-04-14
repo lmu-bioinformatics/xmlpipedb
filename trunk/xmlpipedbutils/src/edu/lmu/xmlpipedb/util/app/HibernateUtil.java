@@ -32,7 +32,7 @@ public class HibernateUtil {
 			String hibernateProp = AppResources.optionString("hibernateProperties");
 	
 			String hibernateConfig = AppResources
-					.optionString("hibernateConfigDir");
+					.optionString("hibernateMappingDir");
 			ImportEngine ie = new ImportEngine(context, hibernateConfig,
 					hibernateProp);
 			

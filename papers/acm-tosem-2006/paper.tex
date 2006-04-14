@@ -1,0 +1,68 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{url}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\title{XMLPipeDB: A Reusable Tool Chain for Building Relational Databases from XML Sources}
+\author{
+John David N. Dionisio \and
+Joey Barrett \and
+Joe Boyle \and
+Adam Carasso \and
+David Hoffman \and
+Babak Naffas \and
+Jeffrey Nicholas \and
+Roberto Ruiz \and
+Scott Spicer \and
+Kam D. Dahlquist\\
+\\
+Loyola Marymount University
+}
+%\date{}                                           % Activate to display a given date or no date
+
+\begin{document}
+
+\maketitle
+
+\abstract{
+The abstract should be 150 to 200 words long and should consist of short, direct, and complete sentences. It should state the objectives of the work, summarize the results, and give the principal conclusions and recommendations. It should indicate clearly whether the focus is on theoretical developments or on practical questions and whether subject or method is emphasized. The title need not be repeated. Work planned but not done should not be described in the abstract.
+}
+
+\section{Introduction}
+
+\section{Background and Motivation}
+
+\cite{genmapp:ng} \cite{mappfinder:gb} \cite{genmapp:bax}
+
+\section{Overall Design and Approach}
+
+\subsection{Database Generation with \emph{xsd2db}}
+
+\subsection{Performing Common Operations with \emph{xmlpipedbutils}}
+
+\subsubsection{Client Configuration}
+
+\subsubsection{XML Import}
+
+\subsubsection{Ad Hoc Queries}
+
+\section{Application to Biological Databases}
+
+\subsection{UniProt}
+
+\subsection{Gene Ontology}
+
+\subsection{GenMAPP Builder}
+
+\section{Conclusion}
+
+\bibliography{../xmlpipedb-refs}
+\bibliographystyle{alpha}
+
+\end{document}  

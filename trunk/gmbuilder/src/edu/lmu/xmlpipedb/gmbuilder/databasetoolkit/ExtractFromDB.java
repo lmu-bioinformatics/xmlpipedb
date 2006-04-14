@@ -41,11 +41,9 @@ public class ExtractFromDB {
 			e.printStackTrace();
 		}
 		   
-        String database = "jdbc:postgresql://database"; 
-        
         try {
-			connection = DriverManager.getConnection("jdbc:postgresql://database"
-					,"jjbarret","tu00ylyI");
+			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/gmbuilder", "gmuser", "gmuser");
+//					,"jjbarret","tu00ylyI");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,11 +86,13 @@ public class ExtractFromDB {
 	        //
 	        //  uniprotTable_GeneName <UID> <Uniprot Table GeneName>
 	        //
-	       
+	       /*
 	        result = s.executeQuery("SELECT value " +
 	        		"FROM genenametype " +
 	        		"WHERE entrytype_genetype_name_hjid='" + id + "' " +
 	        		"AND type='ordered locus'");
+                    */
+            result = s.executeQuery("select value from genenametype inner join entrytype_genetype on(entrytype_genetype_name_hjid = entrytype_genetype.hjid) where entrytype_gene_hjid = '" + id + "' and type = 'primary'");
 	        while(result.next()) {
 	        	uniprotTable_GeneName.put(id, result.getString(1));
 	        	System.out.println("FOUND: " + result.getString(1));
@@ -101,23 +101,28 @@ public class ExtractFromDB {
 	        //
 	        //  uniprotTable_ProteinName <UID> <Uniprot Table ProteinName>
 	        //
-	        
+	        /*
 	        result = s.executeQuery("SELECT value " +
 	        		"FROM proteinnametype " +
 	        		"WHERE proteintype_name_hjid='" + id + "' " +
 	        		"AND proteintype_name_hjindex='0'");
+                    */
+            result = s.executeQuery("select value from entrytype inner join proteinnametype on(protein = proteintype_name_hjid) where entrytype.hjid = '" + id + "' and proteintype_name_hjindex = 0;");
+            
 	        while(result.next()) {
 	        	uniprotTable_ProteinName.put(id, result.getString(1));
 	        	System.out.println("FOUND: " + result.getString(1));
 	        }
         }
         
+        /*
         result = s.executeQuery("SELECT value " +
         		"FROM genenametype ");
 
         
         result = s.executeQuery("SELECT type, id " +
 		"FROM dbreferencetype ");
+        */
 
         s.close();
         
@@ -173,49 +178,49 @@ public class ExtractFromDB {
 		
 		
 
-		  try{
-				// Create a new configuration
-			    final Configuration cfg = new Configuration();
-			    
-			   // cfg.addDirectory(new File("hbm/org/uniprot/uniprot"));
-
-			    // Create the properties for Hibernate
-			    final Properties properties = new Properties();
-			    properties.load(new FileInputStream(System.getProperty(
-			    		"user.dir") + System.getProperty("file.separator") +
-			    		"src" + System.getProperty("file.separator") +
-			    		"edu" + System.getProperty("file.separator") +
-			    		"lmu" + System.getProperty("file.separator") + 
-			    		"xmlpipedb" + System.getProperty("file.separator") +
-			    		"gmbuilder" + System.getProperty("file.separator") + 
-			    		"resource" + System.getProperty("file.separator") + 
-			    		"properties" + System.getProperty("file.separator") + 
-			    		"hibernate.properties"));
-			    
-			    cfg.setProperties(properties);
-			    
-			    
-		    // This step will read hibernate.cfg.xml and prepare hibernate for use
-			 SessionFactory sessionFactory = cfg.buildSessionFactory();
-			 Session session = sessionFactory.openSession();
-			 Transaction tx = session.beginTransaction();
-		     
-		      //Using from Clause
-		      String SQL_QUERY ="from Insurance insurance";	      
-		      Query query = session.createQuery(SQL_QUERY);
-		      
-		       for(Iterator it=query.iterate();it.hasNext();){
-		         Object o = it.next();
-		         System.out.println("ID: " + o.toString());
-		         System.out.println("First Name: " + o.toString());
-		       }
-		       
-		       tx.commit();
-		       session.close();
-		  }catch(Exception e){
-		    System.out.println(e.getMessage());
-		  }finally{
-	}
+//		  try{
+//				// Create a new configuration
+//			    final Configuration cfg = new Configuration();
+//			    
+//			   // cfg.addDirectory(new File("hbm/org/uniprot/uniprot"));
+//
+//			    // Create the properties for Hibernate
+//			    final Properties properties = new Properties();
+//			    properties.load(new FileInputStream(System.getProperty(
+//			    		"user.dir") + System.getProperty("file.separator") +
+//			    		"src" + System.getProperty("file.separator") +
+//			    		"edu" + System.getProperty("file.separator") +
+//			    		"lmu" + System.getProperty("file.separator") + 
+//			    		"xmlpipedb" + System.getProperty("file.separator") +
+//			    		"gmbuilder" + System.getProperty("file.separator") + 
+//			    		"resource" + System.getProperty("file.separator") + 
+//			    		"properties" + System.getProperty("file.separator") + 
+//			    		"hibernate.properties"));
+//			    
+//			    cfg.setProperties(properties);
+//			    
+//			    
+//		    // This step will read hibernate.cfg.xml and prepare hibernate for use
+//			 SessionFactory sessionFactory = cfg.buildSessionFactory();
+//			 Session session = sessionFactory.openSession();
+//			 Transaction tx = session.beginTransaction();
+//		     
+//		      //Using from Clause
+//		      String SQL_QUERY ="from Insurance insurance";	      
+//		      Query query = session.createQuery(SQL_QUERY);
+//		      
+//		       for(Iterator it=query.iterate();it.hasNext();){
+//		         Object o = it.next();
+//		         System.out.println("ID: " + o.toString());
+//		         System.out.println("First Name: " + o.toString());
+//		       }
+//		       
+//		       tx.commit();
+//		       session.close();
+//		  }catch(Exception e){
+//		    System.out.println(e.getMessage());
+//		  }finally{
+//	}
 		
 		
 		
@@ -225,17 +230,17 @@ public class ExtractFromDB {
 		
 		
 		
-//		ExtractFromDB extract = new ExtractFromDB();
-//		System.out.println("CREATED POSTGRESQL CONNECTION...");
-//		try {
-//			extract.ExtractUniprotTableData();
-//			System.out.println("EXTRACTED DATA...");
+		ExtractFromDB extract = new ExtractFromDB();
+		System.out.println("CREATED POSTGRESQL CONNECTION...");
+		try {
+			extract.ExtractUniprotTableData();
+			System.out.println("EXTRACTED DATA...");
 //			extract.PushToAccessDB();
 //			System.out.println("SAVED ACCESS DATABASE");
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		

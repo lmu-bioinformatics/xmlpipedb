@@ -158,9 +158,39 @@ public class HibernatePropertiesModel {
 		_properties.remove(hp.getFullyQualifiedName());
 	}
 	
+	/**
+	 * @return Returns the currentCategory.
+	 */
+	public String getCurrentCategory() {
+		return currentCategory;
+	}
+
+	/**
+	 * @param currentCategory The currentCategory to set.
+	 */
+	public void setCurrentCategory(String currentCategory) {
+		this.currentCategory = currentCategory;
+	}
+
+	/**
+	 * @return Returns the currentType.
+	 */
+	public String getCurrentType() {
+		return currentType;
+	}
+
+	/**
+	 * @param currentType The currentType to set.
+	 */
+	public void setCurrentType(String currentType) {
+		this.currentType = currentType;
+	}
+	
 	
 	//### DEFINE VARS ###
 	private HashMap _properties = new HashMap();
+	private String currentType = null;
+	private String currentCategory = null;
 
 
 

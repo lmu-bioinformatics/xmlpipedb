@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
@@ -295,10 +296,18 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
        		}else{
        			// not sure we need an else
        		}
-       		
        	}
-       	_configController.saveSettings(category, type);
+       	saveModel.setCurrentType( type);
+       	saveModel.setCurrentCategory(category);
+       	
         _configController.saveProperties(saveModel);
+        
+        //update the model to reflect what is now saved.
+        try {
+			_model = _configController.getConfigurationModel();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
     }
 
     /**

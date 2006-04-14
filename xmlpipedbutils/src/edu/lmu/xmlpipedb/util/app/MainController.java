@@ -100,16 +100,18 @@ public class MainController implements ActionListener {
 				hibernateProp);
 		importEngine.loadToDB(xmlFile);
 	}
-	public void importXml(InputStream xmlFile) throws Exception {
+
+    public void importXml(InputStream xmlFile) throws Exception {
 		String context = AppResources.optionString("jaxbContextPath");
 		String hibernateProp = AppResources.optionString("hibernateProperties");
 
 		String hibernateConfig = AppResources
-				.optionString("hibernateConfigDir");
+				.optionString("hibernateMappingDir");
 		ImportEngine importEngine = new ImportEngine(context, hibernateConfig,
 				hibernateProp);
 		importEngine.loadToDB(xmlFile);
 	}
+    
 	// Creates an icon-worthy Image from scratch.
 	protected static Image createImage() {
 		// Create a 16x16 pixel image.

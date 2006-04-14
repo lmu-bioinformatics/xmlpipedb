@@ -23,8 +23,10 @@ import edu.lmu.xmlpipedb.util.app.HibernateUtil;
 
 /**
  * This panel displays a text area for the user to input an HQL or SQL query and view the results.
+ * As of version 1.1, the UI displays all data in a table.
+ * As of version 1.2, a tree has been added. All data will be displayed in both the tree and the table fow now.
  * 
- * @version	1.1
+ * @version	1.2
  * @author Babak Naffas
  *
  */
@@ -77,17 +79,22 @@ public class HQLPanel extends JPanel{
 		_dataViewPanel = new JPanel( new BorderLayout() );
 		JScrollPane tableScroll = new JScrollPane( _resultsTable);
 		JScrollPane treeScroll = new JScrollPane( _resultsTree );
-		_dataViewPanel.add( new JSplitPane( JSplitPane.HORIZONTAL_SPLIT, tableScroll, treeScroll ) );
+		_dataViewPanel.add( new JSplitPane( JSplitPane.HORIZONTAL_SPLIT, tableScroll, treeScroll ), BorderLayout.CENTER );
 		
 		_split = new JSplitPane( JSplitPane.VERTICAL_SPLIT, _hqlArea, _dataViewPanel );
 		_split.setDividerLocation( 0.25 );
 
-		setSize( 25, 10 );
-		
 		initQueryChooser();
 		initButtonPanel();
 	}
 	
+	/**
+	 * Initializes the set of radio buttons. One button is created for each query type. 
+	 * Currently these buttons are as follow:
+	 * 	SQL
+	 * 	HQL
+	 *
+	 */
 	private void initQueryChooser(){
 		_sql = new JRadioButton( SQL_COMMAND );
 		
@@ -111,7 +118,7 @@ public class HQLPanel extends JPanel{
 		//We need to add each set of mutually exclusive Radio Buttons to a ButtonGroup instance.
 		_radioGroup = new ButtonGroup();
 		_radioGroup.add( _sql );
-		_radioGroup.add( _hql );		
+		_radioGroup.add( _hql );
 		
 		//...then add the actual buttons to the UI.
 		_box.add( _sql );
@@ -143,11 +150,9 @@ public class HQLPanel extends JPanel{
 		
 		buttons.add( clear );
 		clear.addActionListener( new ActionListener(){
-
 			public void actionPerformed( ActionEvent ae ){
 				_hqlArea.setText( "" );
 			}
-
 		} );
 
 
@@ -162,62 +167,75 @@ public class HQLPanel extends JPanel{
 		_buttonPanel.add( _box );
 	}
 	
+	private void reportException( Exception e ){
+		JOptionPane.showMessageDialog( this, e.getMessage() );
+	}
+	
+	private void runSQL(){
+		Connection conn = HibernateUtil.currentSession().connection();
+		PreparedStatement query = null;
+		ResultSet results = null;
+
+		try{
+			query = conn.prepareStatement( _hqlArea.getText() );
+			
+			results = query.executeQuery();
+			
+			populateTable( results );
+			//results.beforeFirst(); 
+			//populateTree( results );
+		}
+		catch( SQLException sqle ){ 
+			JOptionPane.showMessageDialog( this, sqle.getMessage() );
+		}
+		catch( Exception e ){
+			reportException( e );
+		}
+		
+		finally{
+			try{
+				results.close();
+				query.close();
+				conn.close();
+				HibernateUtil.closeSession();
+			}
+			catch( Exception e ){
+				reportException( e );
+			}	//Ignore the errors here, nothing we can do anyways.
+			
+		}
+	}
+	
+	private void runHQL(){
+		
+		try{
+			Iterator iter = HibernateUtil.executeHQL( _hqlArea.getText().trim() );
+			LinkedList data = new LinkedList();
+			while( iter.hasNext() ){
+				data.add( iter.next() );
+			}
+			HibernateUtil.closeSession();
+			
+			populateTable( data );
+		}
+		catch( Exception e ){
+			reportException( e );
+		}
+		
+	}
+	
 	private JButton initExecuteQueryButton(){
 		
 		JButton execute = new JButton( "Execute Query" );
-		final JComponent _this = this;
 		execute.addActionListener( new ActionListener(){
 
 			public void actionPerformed( ActionEvent ae ){
 				
 				if( "SQL".equals(_queryActionCommand) ){
-					Connection conn = HibernateUtil.currentSession().connection();
-					PreparedStatement query = null;
-					ResultSet results = null;
-					ResultSetMetaData meta = null;
-					
-					try{
-						query = conn.prepareStatement( _hqlArea.getText() );
-						results = query.executeQuery();
-						meta = results.getMetaData();
-						
-						int numColumns = meta.getColumnCount();
-						String[] columnNames = new String[numColumns];
-						for( int i = 0; i < numColumns; i++ ){
-							columnNames[i] = meta.getColumnLabel(i+1);
-						}
-						_tableModel.setColumnIdentifiers( columnNames );
-						
-						while( results.next() ){
-							Vector data = new Vector();
-							for( int i = 1; i <= numColumns; i++ ){
-								data.addElement( results.getObject(i) );	
-							}
-
-							
-							_tableModel.addRow( data );
-						}
-						
-					}
-					catch( SQLException sqle ){ 
-						JOptionPane.showMessageDialog( _this, sqle.getMessage() );
-					}
-					finally{
-						try{
-							results.close();
-							query.close();
-							conn.close();
-						}
-						catch( SQLException sqle ){}	//Ignore the errors here, nothing we can do anyways.
-						
-					}
-										
-					
+					runSQL();					
 				}
 				else if( "HQL".equals(_queryActionCommand) ){
-					Iterator iter = HibernateUtil.executeHQL( _hqlArea.getText().trim() );
-					populateTable( iter );
-					HibernateUtil.closeSession();
+					runHQL();
 				}
 			}
 
@@ -226,20 +244,47 @@ public class HQLPanel extends JPanel{
 		return execute;
 	}
 	
-	private void populateTable( Iterator iter )
+	private void populateTree( ResultSet results ) throws SQLException{
+		_resultsTree.removeAll();
+	}
+	
+	private void populateTree( Iterator iter ){
+		_resultsTree.removeAll();
+	}
+	
+	private void populateTable( ResultSet results ) throws SQLException{
+		ResultSetMetaData meta = null;
+		meta = results.getMetaData();
+		
+		int numColumns = meta.getColumnCount();
+		String[] columnNames = new String[numColumns];
+		for( int i = 0; i < numColumns; i++ ){
+			columnNames[i] = meta.getColumnLabel(i+1);
+		}
+		_tableModel.setColumnIdentifiers( columnNames );
+		
+		while( results.next() ){
+			Vector data = new Vector();
+			for( int i = 1; i <= numColumns; i++ ){
+				data.addElement( results.getObject(i) );	
+			}
+			_tableModel.addRow( data );
+		}
+	}
+	
+	private void populateTable( LinkedList list )
 	{
 		Object temp = null;	
 		Map map = null;
 		Vector data = null;
 		
 		//Iterate over the set of object generated from our query.
-		while( iter.hasNext() ){
-			temp = iter.next();
+		for( Object object: list )
 			
 			try{
 				//Get each field for the object...
 				
-				map = BeanUtils.describe( temp );
+				map = BeanUtils.describe( object );
 				data = new Vector();
 				
 				//...and add it's value to our table.
@@ -256,4 +301,3 @@ public class HQLPanel extends JPanel{
 			_tableModel.addRow( data  );
 		}
 	}
-}

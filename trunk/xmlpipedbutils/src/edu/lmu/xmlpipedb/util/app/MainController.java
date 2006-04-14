@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -31,6 +30,7 @@ import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 import edu.lmu.xmlpipedb.util.utilities.ImportEngine;
+import java.io.InputStream;
 
 /**
  * @author J. Nicholas
@@ -95,12 +95,21 @@ public class MainController implements ActionListener {
 		String hibernateProp = AppResources.optionString("hibernateProperties");
 
 		String hibernateConfig = AppResources
+				.optionString("hibernateMappingDir");
+		ImportEngine importEngine = new ImportEngine(context, hibernateConfig,
+				hibernateProp);
+		importEngine.loadToDB(xmlFile);
+	}
+	public void importXml(InputStream xmlFile) throws Exception {
+		String context = AppResources.optionString("jaxbContextPath");
+		String hibernateProp = AppResources.optionString("hibernateProperties");
+
+		String hibernateConfig = AppResources
 				.optionString("hibernateConfigDir");
 		ImportEngine importEngine = new ImportEngine(context, hibernateConfig,
 				hibernateProp);
 		importEngine.loadToDB(xmlFile);
 	}
-
 	// Creates an icon-worthy Image from scratch.
 	protected static Image createImage() {
 		// Create a 16x16 pixel image.

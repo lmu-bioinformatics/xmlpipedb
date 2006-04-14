@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -203,8 +204,13 @@ public class MainController implements ActionListener {
 			_queryPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_queryPanel);
 		} else if ("config_platform".equals(e.getActionCommand())) { // new
-			_configPanel = new ConfigurationPanel(_cc.getConfigurationModel(),
-					new Properties(), _cc);
+			try {
+				_configPanel = new ConfigurationPanel(_cc.getConfigurationModel(),
+						new Properties(), _cc);
+			} catch (FileNotFoundException e1) {
+				// a proper handling of this exeption is left to the implementor
+				e1.printStackTrace();
+			}
 			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_configPanel);
 		}else { // quit

@@ -5,15 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 
-import javax.swing.table.TableModel;
-
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
-import edu.lmu.xmlpipedb.util.gui.HibernatePropertiesTableModel;
-import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 
 
@@ -129,7 +126,7 @@ public class ConfigurationController {
 	 * @param folderUrl
 	 * @return
 	 */
-	public HibernatePropertiesModel getConfigurationModel() {
+	public HibernatePropertiesModel getConfigurationModel() throws FileNotFoundException{
 		HibernatePropertiesModel model = new HibernatePropertiesModel();
 		// used to determine if this is saved
 		String savedType = null;
@@ -137,25 +134,26 @@ public class ConfigurationController {
 		_defaultProperties = new Properties();
 
 		try {
-			File f = new File(_defaultPropertiesUrl);
-			if(!f.exists()){
-				throw new FileNotFoundException("File " + f.getAbsolutePath() + " did not exist. A file containing the default Hibernate Properties and structure must be provided.");
+			InputStream iStream = getClass().getResourceAsStream(_defaultPropertiesUrl);
+			if(iStream != null ){ // iStream will be null if the file was not found
+				_defaultProperties.load(iStream);
+			} else {
+				File f = new File(_defaultPropertiesUrl);
+				if(!f.exists()){
+					throw new FileNotFoundException( "The defaultHibernate.properties file was not found at " + _defaultPropertiesUrl);
+				}
+				FileInputStream fis = new FileInputStream(_defaultPropertiesUrl);
+				_defaultProperties.load(fis);	
 			}
-			FileInputStream fis = new FileInputStream(_defaultPropertiesUrl);
-			_defaultProperties.load(fis);
-		} catch (FileNotFoundException e) {
-			System.out.print(e.getMessage());
-			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.print(e.getMessage());
 			e.printStackTrace();
 		}
 		
-		savedType = _defaultProperties.getProperty(SAVED_TYPE_NAME);
-		_defaultProperties.remove(SAVED_TYPE_NAME);
-		_defaultProperties.remove(SAVED_CATEGORY_NAME);
+		savedType = _currentHibProps.getProperty(SAVED_TYPE_NAME);
+		_currentHibProps.remove(SAVED_TYPE_NAME);
+		_currentHibProps.remove(SAVED_CATEGORY_NAME);
 		Enumeration propsEnum = _defaultProperties.keys();
-		
 		
 		while(propsEnum.hasMoreElements()) {
 			String key = (String) propsEnum.nextElement();
@@ -257,58 +255,24 @@ public class ConfigurationController {
 			if( hp.isSaved() )
 				props.setProperty(hp.getName(), hp.getValue());
 		}
+		
+		// add these two "static" properties to the Properties obj.
+		props.setProperty(SAVED_TYPE_NAME, saveModel.getCurrentType());
+		props.setProperty(SAVED_CATEGORY_NAME, saveModel.getCurrentCategory());
+		
 		storeHibProperties(props);
-
+		_currentHibProps = props;
 	}
 
 	/**
 	 * @deprecated
-	 * @return
+	 * @param category
+	 * @param type
 	 */
-	public TableModel loadOriginalHibProps() {
-		return getHibProperties(loadHibProperties(AppResources
-				.optionString("original_hibernate_properties_url")));
-	}
-
-	/**
-	 * @deprecated
-	 * @return
-	 */
-	public TableModel loadCurrentHibProps() {
-		return getHibProperties(loadHibProperties(AppResources
-				.optionString("hibernate_properties_url")));
-	}
-
-	/**
-	 * @deprecated
-	 * @return
-	 */
-	public TableModel loadRevertedHibProps() {
-		return getHibProperties(_hibRevertProperties);
-	}
-
-	/**
-	 * @deprecated
-	 * @param props
-	 * @return
-	 */
-	private HibernatePropertiesTableModel getHibProperties(Properties props) {
-		HibernatePropertiesTableModel hptm = new HibernatePropertiesTableModel();
-
-		Enumeration e = props.propertyNames();
-		while (e.hasMoreElements()) {
-			String key = (String) e.nextElement();
-			Property p = new Property(key, props.getProperty(key));
-			hptm.addProperty(p);
-		}
-
-		return hptm;
-	}
-	
 	public void saveSettings(String category, String type) {
 		if( !category.equalsIgnoreCase("general")){
-			_defaultProperties.setProperty(SAVED_TYPE_NAME, type);
-			_defaultProperties.setProperty(SAVED_CATEGORY_NAME, category);
+			_currentHibProps.setProperty(SAVED_TYPE_NAME, type);
+			_currentHibProps.setProperty(SAVED_CATEGORY_NAME, category);
 			FileOutputStream fis;
 			try {
 				fis = new FileOutputStream(_defaultPropertiesUrl);
@@ -375,7 +339,7 @@ public class ConfigurationController {
 
 	private String _hibernatePropertiesUrl;
 	private String _defaultPropertiesUrl;
-	private static String SAVED_TYPE_NAME = "xmlpipedb.type";
-	private static String SAVED_CATEGORY_NAME = "xmlpipedb.category";
+	public static String SAVED_TYPE_NAME = "xmlpipedb.type";
+	public static String SAVED_CATEGORY_NAME = "xmlpipedb.category";
 	
 } // end class

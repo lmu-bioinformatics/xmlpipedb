@@ -12,6 +12,7 @@ package edu.lmu.xmlpipedb.util.utilities;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.xml.bind.JAXBContext;
@@ -36,23 +37,39 @@ public class ImportEngine {
     private Configuration hibernateConfiguration;
 
     /** Creates a new instance of ImportEngine */
-    public ImportEngine(String contextPath, String hibernateConfig, String hibernateProp) throws JAXBException, SAXException, IOException, HibernateException {
-        jaxbContext = JAXBContext.newInstance(contextPath);
+    public ImportEngine(String jaxbContextPath, String hibernateMappingDirectory, String hibernatePropertiesFileName) throws JAXBException, SAXException, IOException, HibernateException {
+        jaxbContext = JAXBContext.newInstance(jaxbContextPath);
         unmarshaller = jaxbContext.createUnmarshaller();
-        setHibernateConfig(hibernateConfig, hibernateProp);
+        setHibernateConfig(hibernateMappingDirectory, hibernatePropertiesFileName);
     }
 
-    private void setHibernateConfig(String hibernateConfig, String hibernateProp) throws IOException, HibernateException {
+    private void setHibernateConfig(String hibernateMappingDirectory, String hibernatePropertiesFileName) throws IOException, HibernateException {
         hibernateConfiguration = new Configuration();
-        hibernateConfiguration.addDirectory(new File(hibernateConfig));
+        hibernateConfiguration.addDirectory(new File(hibernateMappingDirectory));
         Properties hibernateProperties = new Properties();
-        hibernateProperties.load(new FileInputStream(hibernateProp));
+        hibernateProperties.load(new FileInputStream(hibernatePropertiesFileName));
         hibernateConfiguration.setProperties(hibernateProperties);
         sessionFactory = hibernateConfiguration.buildSessionFactory();
 
     }
 
     public void loadToDB(File xmlFile) throws Exception {
+        Object object = unmarshaller.unmarshal(xmlFile);
+        Session saveSession = sessionFactory.openSession();
+        Transaction transaction = null;
+        try {
+            transaction = saveSession.beginTransaction();
+            saveSession.saveOrUpdate(object);
+            transaction.commit();
+        } catch(Exception ex) {
+            if (transaction != null)
+                transaction.rollback();
+            throw ex;
+        } finally {
+            saveSession.close();
+        }
+    }
+    public void loadToDB(InputStream xmlFile) throws Exception {
         Object object = unmarshaller.unmarshal(xmlFile);
         Session saveSession = sessionFactory.openSession();
         Transaction transaction = null;

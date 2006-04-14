@@ -168,8 +168,13 @@ public class ImportPanel extends JPanel{
 
         }
         try{
-
-            _main.importXml(_xmlFile);
+           //does the progress monitor popup
+           InputStream in = new BufferedInputStream(
+                                new ProgressMonitorInputStream(
+                                  this,
+                                  "Reading " + _xmlFile,
+                                  new FileInputStream(_xmlFile)));
+            _main.importXml(in);
             
         }
         catch(Exception e)
@@ -187,8 +192,7 @@ public class ImportPanel extends JPanel{
             _textFieldPath.setText(_xmlFile.getAbsolutePath()); 
             _previewButton.setEnabled(true); 
             _importButton.setEnabled(true); 
-        }
-        
+        }   
     }    
     private class filePreview implements Runnable
     {
@@ -226,5 +230,4 @@ public class ImportPanel extends JPanel{
             }
         }
     }
-
 }

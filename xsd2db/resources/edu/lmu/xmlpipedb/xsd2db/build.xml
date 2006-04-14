@@ -4,6 +4,7 @@
 	<property name="rsrc" location="src"/>
 	<property name="dist" location="dist"/>
 	<property name="bin" location="bin"/>
+	<property name="hbm" location="hbm"/>
 	<property name="compile.debug" value="true"/>
 	<property name="megajar" location="../dist"/>
 	<property name="jarfile" location="${dist}/${ant.project.name}.jar"/>
@@ -19,7 +20,8 @@
 	<fileset id="rsrc.files" dir="${rsrc}">
 		<exclude name="**/*.java"/>
 	</fileset>
-
+	<fileset id="hbm.files" dir="${hbm}"/>
+	
 	<target name="clean" description="Eliminates build products.">
 		<delete dir="${bin}"/>
 		<delete dir="${dist}"/>
@@ -37,6 +39,7 @@
 		<mkdir dir="${dist}"/>
 		<jar jarfile="${jarfile}" basedir="${bin}">
             <fileset refid="rsrc.files"/>
+	    <fileset refid="hbm.files"/>
 		</jar>
 	</target>
 </project>

@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -99,8 +100,47 @@ public class ExportToGenMaPP {
     			String function, String species, String date, 
     			String remarks) throws SQLException {
     	
+    	System.out.println("INSERT INTO UniProt (" +
+        		"ID," +
+        		"EntryName," +
+        		"GeneName," +
+        		"ProteinName," +
+        		"Function," +
+        		"Species," +
+        		"\"Date\"," +
+        		"Remarks)" +
+        		"VALUES (" +
+        		"'" + id + "'," +
+        		"'" + entryName + "'," +
+        		"'" + geneName!=null?geneName:"" + "'," +
+        		"'" + proteinName + "'," +
+        		"'" + function + "'," +
+        		"'" + species + "'," +
+        		"'04/06/2006'," +
+        		"'" + remarks + "')");
+    	
+    	PreparedStatement ps = connection.prepareStatement("INSERT INTO UniProt (" +
+        		"ID," +
+        		"EntryName," +
+        		"GeneName," +
+        		"ProteinName," +
+        		"Function," +
+        		"Species," +
+        		"\"Date\"," +
+        		"Remarks)" +
+        		"VALUES (?, ?, ?, ?, ?, ?, '04/06/2006', ?)");
+    	ps.setString(1, id);
+    	ps.setString(2, entryName);
+    	ps.setString(3, geneName);
+    	ps.setString(4, proteinName);
+    	ps.setString(5, function);
+    	ps.setString(6, species);
+    	ps.setString(7, remarks);
+    	ps.executeUpdate();
+    	ps.close();
+    	/*
     	Statement s = connection.createStatement();
-        s.execute("INSERT INTO UniProt (" +
+    	System.out.println("INSERT INTO UniProt (" +
         		"ID," +
         		"EntryName," +
         		"GeneName," +
@@ -118,8 +158,26 @@ public class ExportToGenMaPP {
         		"'" + species + "'," +
         		"'04/06/2006'," +
         		"'" + remarks + "')");
-        
+        s.executeUpdate("INSERT INTO UniProt (" +
+        		"ID," +
+        		"EntryName," +
+        		"GeneName," +
+        		"ProteinName," +
+        		"Function," +
+        		"Species," +
+        		"\"Date\"," +
+        		"Remarks)" +
+        		"VALUES (" +
+        		"'" + id + "'," +
+        		"'" + entryName + "'," +
+        		"'" + geneName + "'," +
+        		"'" + proteinName + "'," +
+        		"'" + function + "'," +
+        		"'" + species + "'," +
+        		"'04/06/2006'," +
+        		"'" + remarks + "')");
         s.close();
+        */
 	}
 	
 	public void createAndFillSystemTable(String table, 

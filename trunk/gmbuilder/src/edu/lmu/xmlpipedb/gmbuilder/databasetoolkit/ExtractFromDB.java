@@ -42,7 +42,7 @@ public class ExtractFromDB {
 		}
 		   
         try {
-			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/gmbuilder", "gmuser", "gmuser");
+			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/uniprot", "postgres", "password");
 //					,"jjbarret","tu00ylyI");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -80,7 +80,7 @@ public class ExtractFromDB {
 	        		"WHERE entrytype_name_hjid='" + id + "'");
 	        while(result.next()) {
 	        	uniprotTable_EntryName.put(id, result.getString(1));
-	        	System.out.println("FOUND: " + result.getString(1));
+	        	//System.out.println("FOUND: " + result.getString(1));
 	        }
 	        
 	        //
@@ -94,8 +94,13 @@ public class ExtractFromDB {
                     */
             result = s.executeQuery("select value from genenametype inner join entrytype_genetype on(entrytype_genetype_name_hjid = entrytype_genetype.hjid) where entrytype_gene_hjid = '" + id + "' and type = 'primary'");
 	        while(result.next()) {
-	        	uniprotTable_GeneName.put(id, result.getString(1));
-	        	System.out.println("FOUND: " + result.getString(1));
+	        	if(result.getString(1) != null) {
+	        		uniprotTable_GeneName.put(id, result.getString(1));
+	        	} else {
+	                result = s.executeQuery("select value from genenametype inner join entrytype_genetype on(entrytype_genetype_name_hjid = entrytype_genetype.hjid) where entrytype_gene_hjid = '" + id + "' and type = 'ordered locus'");
+	                uniprotTable_GeneName.put(id, result.getString(1));
+	        	}
+	        	//System.out.println("FOUND: " + result.getString(1));
 	        }
 	        
 	        //
@@ -111,7 +116,7 @@ public class ExtractFromDB {
             
 	        while(result.next()) {
 	        	uniprotTable_ProteinName.put(id, result.getString(1));
-	        	System.out.println("FOUND: " + result.getString(1));
+	        	//System.out.println("FOUND: " + result.getString(1));
 	        }
         }
         
@@ -132,7 +137,7 @@ public class ExtractFromDB {
 		
 		try {
 			ExportToGenMaPP export = new ExportToGenMaPP(
-					System.getProperty("user.dir")+ "/dbFiles/GeneDBTmpl.mdb", System.getProperty("user.dir")+ "/dbFiles/output.mdb");
+					System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/dbFiles/GeneDBTmpl.mdb", System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/dbFiles/output.mdb");
 		
 			export.openConnection();
 			
@@ -235,8 +240,8 @@ public class ExtractFromDB {
 		try {
 			extract.ExtractUniprotTableData();
 			System.out.println("EXTRACTED DATA...");
-//			extract.PushToAccessDB();
-//			System.out.println("SAVED ACCESS DATABASE");
+			extract.PushToAccessDB();
+			System.out.println("SAVED ACCESS DATABASE");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

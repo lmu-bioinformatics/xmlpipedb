@@ -34,34 +34,32 @@ Loyola Marymount University
 The abstract should be 150 to 200 words long and should consist of short, direct, and complete sentences. It should state the objectives of the work, summarize the results, and give the principal conclusions and recommendations. It should indicate clearly whether the focus is on theoretical developments or on practical questions and whether subject or method is emphasized. The title need not be repeated. Work planned but not done should not be described in the abstract.
 }
 
-\section{Introduction}
-  The approach we propose to automaticcly migrate existing databases to a relational database and then use genmap builder to export a GenMapp gene database allows us to use virtually any existing bioinformatics database that provides exports of there database in xml.  This allows us to expand GenMapp to analyse plant and bacteria organisms.  
+\include{introduction.tex}
+
+\include{background.tex}
 
 
 
-\section{Background and Motivation}
-With the introduction of DNA micro arrays.  the need for tools to aid in the processing of large amounts of Bioinformatic data are needed.  Data can now be collected in larger sizes than ever before and would be nearly impossible to analyze by hand.  GenMapp is a widely used tool in bioinformatics in order to visualize the changes in known pathways using data collected from DNA micro arrays.  However GenMapp has one severe  limitation.  It can only be used on organizms for which a GenMapp gene database already exist.  The current process for GenMapp gene database creation is to use ensamble as a base database.   The problem with this approach is that ensemble database is very limited and only covers mammalian organisms.  By creating a process by which 
-\cite{genmapp:ng} \cite{mappfinder:gb} \cite{genmapp:bax}
+\include{design.tex}
 
-\section{Overall Design and Approach}
+\include{xsd2db.tex}
 
-\subsection{Database Generation with \emph{xsd2db}}
+\include{xmlpipedbutils.tex}
 
-\subsection{Performing Common Operations with \emph{xmlpipedbutils}}
+\include{clientconfiguration.tex}
 
-\subsubsection{Client Configuration}
+\include{xmlimport.tex}
 
-\subsubsection{XML Import}
+\include{adhocqueries.tex}
 
-\subsubsection{Ad Hoc Queries}
 
-\section{Application to Biological Databases}
+\include{biodatabases.tex}
 
-\subsection{UniProt}
+\include{uniprot.tex}
 
-\subsection{Gene Ontology}
+\include{geneontology.tex}
 
-\subsection{GenMAPP Builder}
+\include{genmappbuilder.tex}
 
 \section{Conclusion}
 

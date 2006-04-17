@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -33,6 +34,10 @@ public class ExtractFromDB {
 	
 	private Connection connection = null;
 	
+	private int count =0;
+	
+	private static StringBuffer errorList = new StringBuffer();
+	
 	public ExtractFromDB() {
 		try {
 			Class.forName("org.postgresql.Driver");
@@ -42,7 +47,7 @@ public class ExtractFromDB {
 		}
 		   
         try {
-			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/uniprot", "postgres", "password");
+			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "password");
 //					,"jjbarret","tu00ylyI");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -92,16 +97,39 @@ public class ExtractFromDB {
 	        		"WHERE entrytype_genetype_name_hjid='" + id + "' " +
 	        		"AND type='ordered locus'");
                     */
-            result = s.executeQuery("select value from genenametype inner join entrytype_genetype on(entrytype_genetype_name_hjid = entrytype_genetype.hjid) where entrytype_gene_hjid = '" + id + "' and type = 'primary'");
-	        while(result.next()) {
-	        	if(result.getString(1) != null) {
-	        		uniprotTable_GeneName.put(id, result.getString(1));
-	        	} else {
-	                result = s.executeQuery("select value from genenametype inner join entrytype_genetype on(entrytype_genetype_name_hjid = entrytype_genetype.hjid) where entrytype_gene_hjid = '" + id + "' and type = 'ordered locus'");
-	                uniprotTable_GeneName.put(id, result.getString(1));
-	        	}
+//	        PreparedStatement ps = connection.prepareStatement("select value from genenametype " +
+//	        		"inner join entrytype_genetype on" +
+//	        		"(entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
+//	        		"where entrytype_gene_hjid = '" + id + "' and type = 'primary'");
+//	        result = ps.executeQuery();
+	    	
+	        
+	        result = s.executeQuery("select value from genenametype inner join entrytype_genetype on(entrytype_genetype_name_hjid = entrytype_genetype.hjid) where entrytype_gene_hjid = '" + id + "' and type = 'primary'");
+
+            while(result.next()) {
+            	uniprotTable_GeneName.put(id, result.getString(1));
+            	String trying = uniprotTable_GeneName.get(id);
+            	if(trying == null) {
+            		System.out.println("***********NULL");
+            	}
+//	        	String theResult = result.getString(1);
+//	        	if(result.wasNull()) {
+//	        		System.out.println("***********NULL");
+//	        	}
+//
+//	        	if(!result.wasNull()) {
+//	        		System.out.println("NOT NULL");
+//	        		
+//	        	} else {
+//	        		
+//	                result = s.executeQuery("select value from genenametype inner join entrytype_genetype on(entrytype_genetype_name_hjid = entrytype_genetype.hjid) where entrytype_gene_hjid = '" + id + "' and type = 'ordered locus'");
+//	                uniprotTable_GeneName.put(id, theResult);
+//	                System.exit(0);
+//	        	}
 	        	//System.out.println("FOUND: " + result.getString(1));
 	        }
+            
+            //ps.close();
 	        
 	        //
 	        //  uniprotTable_ProteinName <UID> <Uniprot Table ProteinName>
@@ -159,6 +187,7 @@ public class ExtractFromDB {
 						uniprotTable_GeneName.get(id),
 						uniprotTable_ProteinName.get(id),
 						"", "|Escherichia coli K12|", "20060406", "");
+				count++;
 				
 			}
 
@@ -167,16 +196,24 @@ public class ExtractFromDB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
+			SQLException s;
+			while((s = e.getNextException()) != null) {
+				s.printStackTrace();
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		System.out.println("COUNT: " + count);
 		
 		
-		
+	}
+	
+	public static void insertIntoErrorList(String error) {
+		errorList.append(error).append("\n");
 	}
 	
 	public static void main(String args[]) {
@@ -234,14 +271,18 @@ public class ExtractFromDB {
 		
 		
 		
-		
+		long time1 = System.currentTimeMillis();
 		ExtractFromDB extract = new ExtractFromDB();
-		System.out.println("CREATED POSTGRESQL CONNECTION...");
+		long time2 = System.currentTimeMillis();
+		System.out.println("START: " + time1 + " CREATED POSTGRESQL CONNECTION... " + time2);
 		try {
 			extract.ExtractUniprotTableData();
-			System.out.println("EXTRACTED DATA...");
+			long time3 = System.currentTimeMillis();
+			System.out.println("EXTRACTED DATA..." + time3);
 			extract.PushToAccessDB();
-			System.out.println("SAVED ACCESS DATABASE");
+			long time4 = System.currentTimeMillis();
+			System.out.println("SAVED ACCESS DATABASE" + time4);
+			System.out.println(errorList.toString());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

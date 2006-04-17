@@ -1,0 +1,10 @@
+uniprotdb
+usage: uniprotdb
+
+Options:
+--godbSQLFile=filename   -- Full path to the godb sql file
+--locationTypeFile=filename -- Full path to the To.hbm.xml file
+-help                       -- Displays help and exits
+
+Note: The file options, if used, must all be used in the 
+order specified.  

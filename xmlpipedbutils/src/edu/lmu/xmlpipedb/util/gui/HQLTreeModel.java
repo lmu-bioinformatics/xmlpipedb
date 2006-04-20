@@ -1,5 +1,6 @@
 package edu.lmu.xmlpipedb.util.gui;
 
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
@@ -15,6 +16,11 @@ public class HQLTreeModel extends DefaultTreeModel {
 		super(root);
 		// TODO Auto-generated constructor stub
 	}
+	
+	public HQLTreeModel(Object o) {
+		this( new DefaultMutableTreeNode(o) );
+		// TODO Auto-generated constructor stub
+	} 
 
 
 

@@ -10,6 +10,12 @@ package edu.lmu.xmlpipedb.util.utilities;
  */
 public class PipeDBBeanUtils {
 	
+	/**
+	 * Determines if the passed object is a reference to a primitive type.
+	 * 
+	 * @param o
+	 * @return	True, if o references a primitive; false otherwise.
+	 */
 	public static boolean isPrimitive( Object o ){
 		Class oClass = o.getClass();
 		return(
@@ -26,10 +32,25 @@ public class PipeDBBeanUtils {
 		);
 	}
 	
+	/**
+	 * Determines if the passed object is neither a reference to a primitive or a collection.
+	 * 
+	 * @param o
+	 * @return	True, if o references a primitive; false otherwise.
+	 */
 	public static boolean isObject( Object o ){
-		return false;
+		return(
+			!isPrimitive(o) &&
+			!isCollection(o)
+		);
 	}
 	
+	/**
+	 * Determines if the passed object is a reference to a collection.
+	 * 
+	 * @param o
+	 * @return	True, if o references a primitive; false otherwise.
+	 */
 	public static boolean isCollection( Object o ){
 		return false;
 	}

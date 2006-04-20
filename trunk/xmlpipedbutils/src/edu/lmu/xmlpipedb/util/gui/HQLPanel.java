@@ -16,10 +16,13 @@ import java.sql.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 import org.apache.commons.beanutils.BeanUtils;
 
 import edu.lmu.xmlpipedb.util.app.HibernateUtil;
+import edu.lmu.xmlpipedb.util.utilities.PipeDBBeanUtils;
 
 /**
  * This panel displays a text area for the user to input an HQL or SQL query and view the results.
@@ -32,7 +35,7 @@ import edu.lmu.xmlpipedb.util.app.HibernateUtil;
  */
 public class HQLPanel extends JPanel{
 
-	private JTextArea _hqlArea;
+	private JTextArea _queryTextArea;
 	private JTable _resultsTable;
 	private HQLResultTree _resultsTree;
 	
@@ -67,21 +70,21 @@ public class HQLPanel extends JPanel{
 	}
 
 	private void initComponents(){
-		_hqlArea = new JTextArea();
+		_queryTextArea = new JTextArea();
 		
 		_tableModel = new DefaultTableModel(1, 10);
 		
 		_resultsTable = new JTable( _tableModel );
 		_resultsTable.setVisible( true );
 		
-		_resultsTree = new HQLResultTree();
+		_resultsTree = new HQLResultTree( new HQLTreeModel( "Our Tree" ) );
 		
 		_dataViewPanel = new JPanel( new BorderLayout() );
 		JScrollPane tableScroll = new JScrollPane( _resultsTable);
 		JScrollPane treeScroll = new JScrollPane( _resultsTree );
 		_dataViewPanel.add( new JSplitPane( JSplitPane.HORIZONTAL_SPLIT, tableScroll, treeScroll ), BorderLayout.CENTER );
 		
-		_split = new JSplitPane( JSplitPane.VERTICAL_SPLIT, _hqlArea, _dataViewPanel );
+		_split = new JSplitPane( JSplitPane.VERTICAL_SPLIT, _queryTextArea, _dataViewPanel );
 		_split.setDividerLocation( 0.25 );
 
 		initQueryChooser();
@@ -151,11 +154,10 @@ public class HQLPanel extends JPanel{
 		buttons.add( clear );
 		clear.addActionListener( new ActionListener(){
 			public void actionPerformed( ActionEvent ae ){
-				_hqlArea.setText( "" );
+				_queryTextArea.setText( "" );
 			}
 		} );
-
-
+		
 		//Eases the process of adding new buttons.
 		for( JButton jb: buttons ){
 			_box.add(Box.createVerticalStrut(10));
@@ -171,15 +173,20 @@ public class HQLPanel extends JPanel{
 		JOptionPane.showMessageDialog( this, e.getMessage() );
 	}
 	
+	/**
+	 * Executes the query in text area at the top of the panel. The results (if any) are displayed in the data view panel.
+	 *
+	 */
 	private void runSQL(){
 		Connection conn = HibernateUtil.currentSession().connection();
 		PreparedStatement query = null;
 		ResultSet results = null;
 
 		try{
-			query = conn.prepareStatement( _hqlArea.getText() );
-			
+			query = conn.prepareStatement( _queryTextArea.getText() );
 			results = query.executeQuery();
+			
+			LinkedList<Object[]> list = new LinkedList<Object[]>();
 			
 			populateTable( results );
 			//results.beforeFirst(); 
@@ -197,7 +204,7 @@ public class HQLPanel extends JPanel{
 				results.close();
 				query.close();
 				conn.close();
-				HibernateUtil.closeSession();
+				//HibernateUtil.closeSession();
 			}
 			catch( Exception e ){
 				reportException( e );
@@ -209,14 +216,23 @@ public class HQLPanel extends JPanel{
 	private void runHQL(){
 		
 		try{
-			Iterator iter = HibernateUtil.executeHQL( _hqlArea.getText().trim() );
-			LinkedList data = new LinkedList();
+			Iterator iter = HibernateUtil.executeHQL( _queryTextArea.getText().trim() );
+			final LinkedList data = new LinkedList();
 			while( iter.hasNext() ){
 				data.add( iter.next() );
 			}
 			HibernateUtil.closeSession();
 			
 			populateTable( data );
+			
+			Runnable thread = new Runnable(){
+				public void run(){
+					_resultsTree.populateTree( data );
+				}
+			};
+			new Thread(thread).start();
+			
+			
 		}
 		catch( Exception e ){
 			reportException( e );
@@ -244,14 +260,16 @@ public class HQLPanel extends JPanel{
 		return execute;
 	}
 	
-	private void populateTree( ResultSet results ) throws SQLException{
-		_resultsTree.removeAll();
-	}
+	/*private void populateTree( ResultSet results ) throws SQLException{
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode)_resultsTree.getModel().getRoot();
+		root.removeAllChildren();
+	}*/
 	
-	private void populateTree( Iterator iter ){
-		_resultsTree.removeAll();
-	}
-	
+	/**
+	 * Populates the table on the bottom of the panel with the results of the executed SQL query. 
+	 * @param results
+	 * @throws SQLException
+	 */
 	private void populateTable( ResultSet results ) throws SQLException{
 		ResultSetMetaData meta = null;
 		meta = results.getMetaData();
@@ -263,6 +281,7 @@ public class HQLPanel extends JPanel{
 		}
 		_tableModel.setColumnIdentifiers( columnNames );
 		
+		_tableModel.setRowCount(0);		
 		while( results.next() ){
 			Vector data = new Vector();
 			for( int i = 1; i <= numColumns; i++ ){
@@ -272,18 +291,23 @@ public class HQLPanel extends JPanel{
 		}
 	}
 	
-	private void populateTable( LinkedList list )
+	/**
+	 * Populates the table based on the contents of the list. 
+	 * @param list	The list of objects to we are populating onto the table.
+	 */
+	private void populateTable( LinkedList<Object> list )
 	{
 		Object temp = null;	
 		Map map = null;
 		Vector data = null;
 		
 		//Iterate over the set of object generated from our query.
+		
+		_tableModel.setRowCount(0);
 		for( Object object: list )
 			
 			try{
 				//Get each field for the object...
-				
 				map = BeanUtils.describe( object );
 				data = new Vector();
 				

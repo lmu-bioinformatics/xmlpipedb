@@ -18,17 +18,9 @@ public class PipeDBBeanUtils {
 	 */
 	public static boolean isPrimitive( Object o ){
 		Class oClass = o.getClass();
+		String className =oClass.toString(); 
 		return(
-			oClass.equals( int.class 	) ||
-			oClass.equals( float.class 	) ||
-			oClass.equals( double.class ) ||
-			oClass.equals( boolean.class) ||
-			oClass.equals( byte.class 	) ||
-			oClass.equals( float.class 	) ||
-			oClass.equals( float.class 	) ||
-			oClass.equals( short.class 	) ||
-			oClass.equals( long.class 	) ||
-			oClass.equals( char.class 	)		
+			className.startsWith( "class java" )
 		);
 	}
 	
@@ -52,6 +44,7 @@ public class PipeDBBeanUtils {
 	 * @return	True, if o references a primitive; false otherwise.
 	 */
 	public static boolean isCollection( Object o ){
+		//FIXME	Implement checker for collections.
 		return false;
 	}
 

@@ -20,7 +20,8 @@
     </path>
 
     <path id="run.path">
-        <fileset dir="${dist.dir}">
+        <!--<fileset dir="${dist.dir}">-->
+    	<fileset dir=".">
             <include name="**/*.jar"/>
         </fileset>
     </path>
@@ -77,6 +78,9 @@
     <copy todir="${dist.dir}/lib">
       <fileset dir="${lib.dir}/" includes="**/*.jar,**/*.properties"/>
     </copy>
+  	<copy todir="${dist.dir}">
+  	      <fileset dir="." includes="build.xml"/>
+  	</copy>
   </target>
 
 <!-- BUILD APPLICATION SPECIFIC TESTERS, VIEWERS, ETC. -->
@@ -101,7 +105,7 @@
 	/>
   </target>
 -->
-  <target name="run" depends="jar" description="Runs the application">
+  <target name="run" depends="compile" description="Runs the application">
     <java classname="edu.lmu.xmlpipedb.util.app.XmlPipeDbUtils"
           fork="true"
           failonerror="false"

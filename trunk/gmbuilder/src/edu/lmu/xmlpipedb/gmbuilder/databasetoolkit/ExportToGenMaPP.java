@@ -18,16 +18,15 @@ public class ExportToGenMaPP {
 	private Connection connection = null;
 	private String outputFile = null;
 	
-	public ExportToGenMaPP(String templateFile, String outputFile) throws ClassNotFoundException, SQLException, IOException {
-		
+	public ExportToGenMaPP(String templateFile, String outputFile) throws IOException {
 		this.outputFile = outputFile;
 		
 		//make a copy of the template file.
-		copyFile(new File(templateFile), new File(outputFile));
+		copyFile(templateFile, new File(outputFile));
 	}
 	
-	private void copyFile(File fileIn, File fileOut) throws IOException {
-		InputStream in = new FileInputStream(fileIn);
+	private void copyFile(String templateFile, File fileOut) throws IOException {
+		InputStream in = getClass().getResourceAsStream(templateFile);
 		OutputStream out = new FileOutputStream(fileOut);
 	    
         // Transfer bytes from in to out
@@ -99,7 +98,7 @@ public class ExportToGenMaPP {
     			String entryName, String geneName, String proteinName, 
     			String function, String species, String date, 
     			String remarks) throws SQLException {
-    	if(id.equals("P31458") || id.equals("Q47585") || id.equals("P07652") || id.equals("P76654") || id.equals("P27856")) {
+    /*	if(id.equals("P31458") || id.equals("Q47585") || id.equals("P07652") || id.equals("P76654") || id.equals("P27856")) {
     		ExtractFromDB.insertIntoErrorList("*********INSERT INTO UniProt (" +
 	        		"ID," +
 	        		"EntryName," +
@@ -118,8 +117,8 @@ public class ExportToGenMaPP {
 	        		"'" + species + "'," +
 	        		"'04/06/2006'," +
 	        		"'" + remarks + "')");
-    	} else {
-	    	if(geneName == null) {
+    	} else {*/
+	    	/*if(geneName == null) {
 	    		geneName = "*****";
 	    	}
 	    	System.out.println("INSERT INTO UniProt (" +
@@ -140,7 +139,7 @@ public class ExportToGenMaPP {
 	        		"'" + species + "'," +
 	        		"'04/06/2006'," +
 	        		"'" + remarks + "')");
-	
+	*/
 	    	PreparedStatement ps = connection.prepareStatement("INSERT INTO UniProt (" +
 	        		"ID," +
 	        		"EntryName," +
@@ -202,7 +201,7 @@ public class ExportToGenMaPP {
         		"'" + remarks + "')");
         s.close();
         */
-	}
+	//}
 	
 	public void createAndFillSystemTable(String table, 
 			List<String> idList, String species, String date, 

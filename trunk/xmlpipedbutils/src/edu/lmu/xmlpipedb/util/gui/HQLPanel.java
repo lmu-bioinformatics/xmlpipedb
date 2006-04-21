@@ -6,7 +6,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.Vector;
 import java.util.Map;
@@ -16,13 +15,10 @@ import java.sql.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 
 import org.apache.commons.beanutils.BeanUtils;
 
 import edu.lmu.xmlpipedb.util.app.HibernateUtil;
-import edu.lmu.xmlpipedb.util.utilities.PipeDBBeanUtils;
 
 /**
  * This panel displays a text area for the user to input an HQL or SQL query and view the results.
@@ -33,7 +29,7 @@ import edu.lmu.xmlpipedb.util.utilities.PipeDBBeanUtils;
  * @author Babak Naffas
  *
  */
-public class HQLPanel extends JPanel{
+public class HQLPanel extends JPanel {
 
 	private JTextArea _queryTextArea;
 	private JTable _resultsTable;
@@ -64,6 +60,8 @@ public class HQLPanel extends JPanel{
 
 		initComponents();
 		setLayout( new 	BorderLayout() );
+		
+		_queryTextArea.setText( "from generated.BookType" );
 
 		add( _buttonPanel, BorderLayout.EAST );
 		add( _split, BorderLayout.CENTER );
@@ -203,7 +201,7 @@ public class HQLPanel extends JPanel{
 			try{
 				results.close();
 				query.close();
-				conn.close();
+				//conn.close();
 				//HibernateUtil.closeSession();
 			}
 			catch( Exception e ){

@@ -3,7 +3,7 @@
  */
 package edu.lmu.xmlpipedb.util.gui;
 
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
@@ -12,6 +12,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import edu.lmu.xmlpipedb.util.utilities.PipeDBBeanUtils;
 
@@ -33,40 +34,10 @@ public class HQLResultTree extends JTree {
 		super(newModel);
 		_treeModel = newModel;
 		_treeModel.setAsksAllowsChildren(true);
+		getSelectionModel().setSelectionMode( javax.swing.tree.TreeSelectionModel.SINGLE_TREE_SELECTION );
+		putClientProperty("JTree.lineStyle", "Angled");
 	}
 	
-	/**
-	 * Add child to the currently selected node. 
-	 * If no parent is explicitly stated, use the currently selected node
-	 * 
-	 * @param child The user object of the new DefaultMutableTreeNode being added
-	 * @param allowsChildren	Whether or not this node can have children. For the purposes of Papercut, true means the node is a file group and false means it is a file node.
-	 * 
-	 * @return The newly added DEfaultMutableTreeNode object.
-	 */
-	public DefaultMutableTreeNode addObject(Object child, boolean allowsChildren) {
-		DefaultMutableTreeNode parentNode = null;
-		TreePath parentPath = getSelectionPath();
-		
-		if (parentPath == null)
-			parentNode = (DefaultMutableTreeNode)_treeModel.getRoot();
-		else
-			parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
-		
-		return addObject(parentNode, child, true, allowsChildren);
-	}
-	
-	/**
-	 * Add's a new subnode to the specified tree node.
-	 * 
-	 * @param parent	The node to which we are adding 
-	 * @param child		The data we are adding to <b>parent</b>
-	 * @param allowsChildren	
-	 * @return	The added node
-	 */
-	public DefaultMutableTreeNode addObject(DefaultMutableTreeNode parent, Object child, boolean allowsChildren ) {
-		return addObject(parent, child, true, allowsChildren);
-	}
 	
 	/**
 	 * Add's a new subnode to the specified tree node.
@@ -96,11 +67,14 @@ public class HQLResultTree extends JTree {
 		return childNode;
 	}
 	
+
 	/**
-	 * Displays the list of object maintained in list in the tree.
+	 * 	 * Displays the list of object maintained in list in the tree.
 	 * Primitive fields are rendered as lead nodes, objects are rendered as parent nodes.
+	 * 
+	 * @param list	The list of objects 
 	 */
-	public void populateTree( LinkedList<Object> list ){
+	public void populateTree( List<Object> list ){
 		
 		//First empty out the tree
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode)_treeModel.getRoot();
@@ -110,13 +84,21 @@ public class HQLResultTree extends JTree {
 		
 		try{
 			for( Object o: list ){
-				map = BeanUtils.describe(o);
-				DefaultMutableTreeNode addedNode =  addObject( root, o, true, true );
-				for( Object field: map.values() ){
-					populateObjects( field, addedNode );
-					//if field is a primitive, add it as a child node
+				//map = BeanUtils.describe(o);
+				if( PipeDBBeanUtils.isPrimitive(o) ){
+					addObject( root, o, false, true );
 				}
-				
+				else if( PipeDBBeanUtils.isCollection(o) ){
+					//TODO	Add code to populate Collections
+				}
+				else{
+					map = PropertyUtils.describe(o);
+					DefaultMutableTreeNode addedNode =  addObject( root, o, true, true );
+					for( Object key: map.keySet() ){
+						populateObjects( key, map.get(key), addedNode );
+						//if field is a primitive, add it as a child node
+					}
+				}
 			}
 		}
 		catch( Exception e ){
@@ -125,27 +107,31 @@ public class HQLResultTree extends JTree {
 		
 	}
 	
-	private void populateObjects( Object o, DefaultMutableTreeNode root ){
+	private void populateObjects( Object property, Object value, DefaultMutableTreeNode root ){
 		
-System.out.println( o.getClass() + ":\t" + o );	
+System.out.println( value.getClass() + ":\t" + value );	
 		//Primitives are designated as simple leaf nodes.
-		if( PipeDBBeanUtils.isPrimitive(o) ){
-			addObject( root, o, false );
+		String label = property.toString() + "[" + value + "]";
+		if( PipeDBBeanUtils.isPrimitive(value) ){
+			addObject( root, label, false, true );
 		}
 		//if field is a collection, add each of it's entries seperately.
-		else if( PipeDBBeanUtils.isCollection(o) ){
+		else if( PipeDBBeanUtils.isCollection(value) ){
 			
 		}
 		//if field is an object, add it recursively
 		else{
 			try{
-				DefaultMutableTreeNode addedNode = addObject( root, o, true, true );
+				DefaultMutableTreeNode addedNode = addObject( root, label, true, true );
 				
-				Map map = BeanUtils.describe(o);
-				java.util.Collection fields = map.values();
-				for( Object field: fields )
-					addObject( addedNode, field, true, true );
+				//Map map = BeanUtils.describe(o);
+				Map map = PropertyUtils.describe(value);
+				//java.util.Collection fields = map.values();
+				for( Object key: map.keySet() ){
+					String label2 = key + "[" + map.get(key) + "]";
+					addObject( addedNode, label2, true, true );
 					//populateObjects( field, addedNode );
+				}
 			}
 			catch( Exception e ){
 				reportException( e );

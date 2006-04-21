@@ -47,7 +47,7 @@ public class ExtractFromDB {
 		}
 		   
         try {
-			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "password");
+			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/uniprot", "postgres", "password");
 //					,"jjbarret","tu00ylyI");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -67,7 +67,7 @@ public class ExtractFromDB {
         ResultSet result = s.executeQuery("SELECT " +
         		"entrytype_accession_hjid, " +
         		"hjvalue " +
-        		"FROM entrytype_accession");
+        		"FROM entrytype_accession where entrytype_accession_hjindex = 0");
         
         while(result.next()) {
         	uniprotTable_ID.put(result.getString(1), result.getString(2));
@@ -162,11 +162,9 @@ public class ExtractFromDB {
 	}
 	
 	public void PushToAccessDB() {
-		
+		ExportToGenMaPP export = null;
 		try {
-			ExportToGenMaPP export = new ExportToGenMaPP(
-					System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/dbFiles/GeneDBTmpl.mdb", System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/dbFiles/output.mdb");
-		
+			export = new ExportToGenMaPP("/edu/lmu/xmlpipedb/gmbuilder/resource/dbFiles/GeneDBTmpl.mdb", "output.mdb");
 			export.openConnection();
 			
 			export.updateInfoTable("Loyola Marymount University",
@@ -190,13 +188,10 @@ public class ExtractFromDB {
 				count++;
 				
 			}
-
-		
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
-			
 			e.printStackTrace();
 			SQLException s;
 			while((s = e.getNextException()) != null) {
@@ -205,6 +200,12 @@ public class ExtractFromDB {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+    			export.closeConnection();
+			} catch(Exception exc) {
+				
+			}
 		}
 		
 		System.out.println("COUNT: " + count);

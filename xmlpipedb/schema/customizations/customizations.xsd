@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:extensionBindingPrefixes="hj" version="1.0" xmlns:hj="http://hyperjaxb2.jvnet.org/customizations" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  
-
-</jaxb:bindings>

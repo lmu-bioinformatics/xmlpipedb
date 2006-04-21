@@ -38,6 +38,10 @@ public class HQLResultTree extends JTree {
 		putClientProperty("JTree.lineStyle", "Angled");
 	}
 	
+	public DefaultMutableTreeNode addObject(DefaultMutableTreeNode parent, Object child, boolean shouldBeVisible ){
+		boolean allowsChildren = PipeDBBeanUtils.isPrimitive(child) ? false : true;
+		return addObject( parent, child, allowsChildren, shouldBeVisible );
+	}
 	
 	/**
 	 * Add's a new subnode to the specified tree node.
@@ -109,7 +113,7 @@ public class HQLResultTree extends JTree {
 	
 	private void populateObjects( Object property, Object value, DefaultMutableTreeNode root ){
 		
-System.out.println( value.getClass() + ":\t" + value );	
+System.out.println( property + "\t[" + value.getClass() + "]" + ":\t" + value );	
 		//Primitives are designated as simple leaf nodes.
 		String label = property.toString() + "[" + value + "]";
 		if( PipeDBBeanUtils.isPrimitive(value) ){
@@ -129,7 +133,7 @@ System.out.println( value.getClass() + ":\t" + value );
 				//java.util.Collection fields = map.values();
 				for( Object key: map.keySet() ){
 					String label2 = key + "[" + map.get(key) + "]";
-					addObject( addedNode, label2, true, true );
+					addObject( addedNode, label2, true );
 					//populateObjects( field, addedNode );
 				}
 			}

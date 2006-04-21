@@ -42,7 +42,7 @@ public class Xsd2db {
 											"-Xequals", //  equals extension is required for hyperjaxb2
 											"-XhashCode", 
 														//  hashCode extension is requred for hb2
-											"-Xhyperjaxb" };
+											 };
     public static final String HIB_PROPERTIES = "./hibernate.properties";
 
     /**

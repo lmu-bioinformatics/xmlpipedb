@@ -21,8 +21,7 @@
 		<exclude name="**/*.java"/>
 	</fileset>
 	<fileset id="hbm.files" dir="${hbm}"/>
-	
-	<target name="clean" description="Eliminates build products.">
+        <target name="clean" description="Eliminates build products.">
 		<delete dir="${bin}"/>
 		<delete dir="${dist}"/>
 	</target>
@@ -37,9 +36,12 @@
 
 	<target name="jar" depends="compile" description="Build jar">
 		<mkdir dir="${dist}"/>
+        <mkdir dir="${bin}/hbm"/>
+        <copy todir="${bin}/hbm">
+            <fileset refid="hbm.files"/>
+        </copy>
 		<jar jarfile="${jarfile}" basedir="${bin}">
             <fileset refid="rsrc.files"/>
-	    <fileset refid="hbm.files"/>
 		</jar>
 	</target>
 </project>

@@ -1,46 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="xsd2db" default="jar" basedir=".">
+<project name="xsd2db" default="dist" basedir=".">
     <property name="src" location="src"/>
     <property name="bin" location="bin"/>
     <property name="lib" location="lib"/>
     <property name="dist" location="dist"/>
     <property name="resources" location="resources"/>
+    <property name="scripts" location="scripts"/>
     <property name="jarfile" location="${dist}/${ant.project.name}.jar"/>
     <property name="compile.debug" value="true"/>
-    <fileset id="lib.jars" dir="${lib}">
-        <include name="**/*.jar"/>
+
+    <fileset id="lib-build.jars" dir="${lib}">
+        <include name="cli.jar" />
+        <include name="hibernate3.jar" />
+        <include name="hyperjaxb2.jar" />
+        <include name="jaxb-xjc.jar" />
+        <include name="jaxbcommons.jar" />
+        <include name="log4j.jar" />
     </fileset>
+
+    <fileset id="lib-run.jars" dir="${lib}">
+        <include name="commons-collections.jar" />
+        <include name="commons-logging.jar" />
+        <include name="dom4j.jar" />
+        <include name="jaxb-api.jar" />
+        <include name="jaxb-impl.jar" />
+        <include name="jaxb-libs.jar" />
+        <include name="jta.jar" />
+        <include name="relaxngDatatype.jar" />
+        <include name="xsdlib.jar" />
+    </fileset>
+
+    <fileset id="lib-dep.jars" dir="${lib}">
+        <include name="jaxb-api.jar" />
+        <include name="jaxb-impl.jar" />
+        <include name="jaxb-libs.jar" />
+        <include name="relaxngDatatype.jar" />
+    </fileset>
+
     <fileset id="resourceFiles" dir="${resources}">
         <include name="**/*"/>
     </fileset>
 
     <path id="lib.path">
-        <fileset refid="lib.jars"/>
+        <fileset refid="lib-build.jars"/>
     </path>
-    
+
     <path id="test.path">
         <pathelement location="${bin}" />
         <path refid="lib.path"/>
     </path>
 
-    <!-- Stub install target.  Install should depend on the 'jar' target,
-         and copy the built objects to the 'dist' directory. -->
-    <target name="install" description="Install jar" depends="jar">
+    <!-- Copies built and other objects to the dist directory. -->
+    <target name="dist" description="Creates distribution directory" depends="jar">
+        <copy todir="${dist}">
+            <fileset dir="${scripts}"/>
+            <fileset dir="${basedir}">
+                <include name="hibernate.properties"/>
+            </fileset>
+        </copy>
+        <chmod perm="+x" file="${dist}/${ant.project.name}"/>
     </target>
 
     <target name="compile" description="Compile code">
         <mkdir dir="${bin}"/>
         <mkdir dir="${lib}"/>
-        <javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no"
-               classpathref="lib.path" debug="${compile.debug}">
-        </javac>
+        <javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no" classpathref="lib.path" debug="${compile.debug}"/>
     </target>
 
     <target name="jar" depends="compile" description="Build jar">
         <mkdir dir="${dist}"/>
         <jar jarfile="${jarfile}" basedir="${bin}" manifest="Manifest">
             <!-- Merge library jars into final jar file -->
-            <zipgroupfileset refid="lib.jars"/>
+            <zipgroupfileset refid="lib-build.jars"/>
+            <zipgroupfileset refid="lib-run.jars"/>
+            <fileset refid="lib-dep.jars"/>
             <fileset refid="resourceFiles"/>
         </jar>
     </target>
@@ -51,7 +84,7 @@
 
     <target name="test" depends="compile" description="Runs the unit tests for xsd2db.">
         <junit printsummary="on">
-            <classpath refid="test.path" />   
+            <classpath refid="test.path" />
             <formatter type="plain" usefile="false" />
             <test name="edu.lmu.xmlpipedb.xsd2db.TestXsd2dbCommandLine" />
         </junit>

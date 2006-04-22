@@ -24,20 +24,22 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 public class Xsd2dbCommandLine {
-    private final String bindings = "bindings";
-    private final String outputDirectory = "outputDirectory";
-    private final String updateXSD = "updateXSD";
-    private final String xsdURL = "xsdURL";
-    private final String dtdSchema = "dtdSchema";
-    private final String help = "help";
+    private static final String bindings = "bindings";
+    private static final String outputDirectory = "outputDirectory";
+    private static final String updateXSD = "updateXSD";
+    private static final String xsdURL = "xsdURL";
+    private static final String dtdSchema = "dtdSchema";
+    private static final String help = "help";
 
-    private final String usage = "usage: program_name [--" + outputDirectory + "=dirname] " + "[--" + bindings + "=filename] [[-" + updateXSD + "] --" + xsdURL + "=url] [-" + dtdSchema + "] [-" + help + "]";
-    private final String helpMsg = "--" + outputDirectory + "=dirname -- " + "The directory when generating the source code and file; defaults to db-gen\n" + "--" + bindings + "=filename       -- "  + "The binding file used when generation the database source code and files\n"+ "                             for the time.  Defaults to standard binding file supplied by XSD-To-DB\n" + "--" + xsdURL + "=url              -- " + "The URL of the XSD to convert\n" + "-" + updateXSD  + "                -- "  + "Replaces the XSD being used with the new version\n" + "-" + dtdSchema + "                -- Sets schema type to DTD; defaults to XSD\n" + "-" + help + "                     -- Displays this help and exits\n";
+    private static final String usage = "usage: xsd2db [--" + outputDirectory + "=dirname] " + "[--" + bindings + "=filename] [[-" + updateXSD + "] --" + xsdURL + "=url] [-" + dtdSchema + "] [-" + help + "]";
+    private static final String helpMsg = "--" + outputDirectory + "=dirname -- " + "The directory when generating the source code and file; defaults to db-gen\n" + "--" + bindings + "=filename       -- " + "The binding file used when generation the database source code and files\n" + "                             for the time.  Defaults to standard binding file supplied by XSD-To-DB\n" + "--" + xsdURL + "=url              -- " + "The URL of the XSD to convert\n" + "-" + updateXSD + "                -- " + "Replaces the XSD being used with the new version\n" + "-" + dtdSchema + "                -- Sets schema type to DTD; defaults to XSD\n" + "-" + help + "                     -- Displays this help and exits\n";
+
     protected static final int XSD_DIR = 0;
     protected static final int SRC_DIR = 1;
     protected static final int HBM_DIR = 2;
     protected static final int SQL_DIR = 3;
-    protected String[] subDirs = { "xsd", "src", "hbm", "sql" };
+    protected static final int LIB_DIR = 4;
+    protected String[] subDirs = { "xsd", "src", "hbm", "sql", "lib" };
 
     protected Options options;
     protected File dbSrcDir;
@@ -46,13 +48,14 @@ public class Xsd2dbCommandLine {
     protected String xsdName;
     protected HashMap<String, String> map;
 
-    public static enum Schema { DTD, XSD }
+    public static enum Schema {
+        DTD, XSD
+    }
 
     protected Schema schemaType;
 
     /**
      * Constructor
-     *
      */
     public Xsd2dbCommandLine() {
         options = new Options();
@@ -112,6 +115,11 @@ public class Xsd2dbCommandLine {
         CommandLineParser parser = new PosixParser();
         CommandLine line = null;
 
+        // Bail out helpfully if no arguments were found.
+        if (args.length == 0) {
+            printErrorMsgAndExit(usage + "\n\n" + helpMsg);
+        }
+
         try {
             line = parser.parse(options, args);
         } catch(ParseException e) {
@@ -120,7 +128,6 @@ public class Xsd2dbCommandLine {
 
         if (line.hasOption(help)) {
             printErrorMsgAndExit(usage + "\n\n" + helpMsg);
-
         }
 
         dbSrcDir = new File(line.hasOption(outputDirectory) ? line.getOptionValue(outputDirectory) : "db-gen");
@@ -128,9 +135,9 @@ public class Xsd2dbCommandLine {
         bindingsFile = line.hasOption(bindings) ? line.getOptionValue(bindings) : "";
 
         xsdurl = line.hasOption(xsdURL) ? line.getOptionValue(xsdURL) : "";
-        
-        schemaType = line.hasOption(dtdSchema) ?  Xsd2dbCommandLine.Schema.DTD: Xsd2dbCommandLine.Schema.XSD;
-        
+
+        schemaType = line.hasOption(dtdSchema) ? Xsd2dbCommandLine.Schema.DTD : Xsd2dbCommandLine.Schema.XSD;
+
         if (line.hasOption(updateXSD) && xsdurl.equals("")) {
             printErrorMsgAndExit(usage + "\n\n--" + xsdURL + "=url must be specified when using -" + updateXSD);
 
@@ -221,7 +228,7 @@ public class Xsd2dbCommandLine {
         File xsdfile = new File(getAbsolutePath("xsd") + xsdurl.substring(xsdurl.lastIndexOf("/")));
         URL url = null;
 
-        System.out.println("\nDownloading " + xsdfile.getName() + " ...");
+        System.out.println("\nDownloading " + xsdfile.getName() + "...");
 
         try {
             url = new URL(xsdurl);
@@ -248,16 +255,13 @@ public class Xsd2dbCommandLine {
 
     /**
      * Adds the acceptable command line options
-     *
      */
     private void addXsd2dbOptions() {
         options.addOption(help, false, null);
         options.addOption(updateXSD, false, null);
         options.addOption(dtdSchema, false, null);
         options.addOption(OptionBuilder.withLongOpt(outputDirectory).withValueSeparator('=').hasArg().create());
-
         options.addOption(OptionBuilder.withLongOpt(bindings).withValueSeparator('=').hasArg().create());
-
         options.addOption(OptionBuilder.withLongOpt(xsdURL).withValueSeparator('=').hasArg().create());
     }
 

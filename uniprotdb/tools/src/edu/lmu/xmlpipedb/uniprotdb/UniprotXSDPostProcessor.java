@@ -1,3 +1,12 @@
+/********************************************************
+ * Filename: UniprotXSDPostProcesor.java
+ * Author: LMU
+ * Program: TUnit
+ * Description: Post processes uniprotdb files.  
+ * Revision History:
+ * 20060422: Initial Revision.
+ * *****************************************************/
+
 package edu.lmu.xmlpipedb.uniprotdb;
 
 import java.io.BufferedReader;
@@ -232,6 +241,10 @@ public class UniprotXSDPostProcessor extends JFrame {
 		writeFile(hbmFileBuffer, hbmFile2);
 	}
 
+	/**
+	 * Make changes to Java file.
+	 * @throws IOException 
+	 */
 	private void processJavaFile1()  throws IOException {
 		
 		String javaFileBuffer = openFile(javaFile1);
@@ -247,6 +260,10 @@ public class UniprotXSDPostProcessor extends JFrame {
 		writeFile(javaFileBuffer, javaFile1);
 	}
 	
+	/**
+	 * Make changes to the Java file.
+	 * @throws IOException 
+	 */
 	private void processJavaFile2()  throws IOException {
 		
 		String javaFileBuffer = openFile(javaFile2);
@@ -304,13 +321,22 @@ public class UniprotXSDPostProcessor extends JFrame {
 		writeFile(javaFileBuffer, javaFile2);
 	}
 	
+	/**
+	 * Asks the user to locate a particular file to post process
+	 * @param fileName
+	 */
 	private void locateFileDialog(String fileName) {
+		// Message dialog
 		JOptionPane.showMessageDialog(this,
 			    "Please locate the " + fileName + " file.",
 			    "Please select a file", 
 			    JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	/**
+	 * Error handling when no file is selected to post process
+	 * @param fileName
+	 */
 	private void handleNoFileSelectedError(String fileName) {
     	// Error message
     	JOptionPane.showMessageDialog(this,
@@ -319,6 +345,10 @@ public class UniprotXSDPostProcessor extends JFrame {
     	    JOptionPane.ERROR_MESSAGE);
 	}
 	
+	/**
+	 * Exception handling for file errors
+	 * @param e
+	 */
 	private void handleIOException(IOException e) {
     	//Error message
     	JOptionPane.showMessageDialog(this,
@@ -345,13 +375,26 @@ public class UniprotXSDPostProcessor extends JFrame {
      */
     private static class MyFilter extends FileFilter {
     	private final String EXTENSION;
+    	
+    	/**
+    	 * File filtering
+    	 * @param extension
+    	 */
     	public MyFilter(String extension) {
     		this.EXTENSION = extension;
     	}
+    	
+    	/**
+    	 * Gets the files with the appropriate extension
+    	 */
 		public boolean accept(File pathname) {			
 		    if (pathname.isDirectory()) return true;
 			return pathname.getName().endsWith(this.EXTENSION);
 		}
+		
+		/**
+		 * Gets the file with the appropriate extension
+		 */
 	    public String getDescription() {
 	        return this.EXTENSION;
 	    }

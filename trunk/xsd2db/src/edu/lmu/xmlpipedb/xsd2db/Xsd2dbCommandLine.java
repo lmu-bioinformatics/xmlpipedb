@@ -256,6 +256,7 @@ public class Xsd2dbCommandLine {
     /**
      * Adds the acceptable command line options
      */
+    @SuppressWarnings("static-access")
     private void addXsd2dbOptions() {
         options.addOption(help, false, null);
         options.addOption(updateXSD, false, null);

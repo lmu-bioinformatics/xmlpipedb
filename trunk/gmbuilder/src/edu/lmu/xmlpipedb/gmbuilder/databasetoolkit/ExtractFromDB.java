@@ -1,29 +1,33 @@
+/********************************************************
+ * Filename: ExportFromDB.java
+ * Author: LMU
+ * Program: gmBuilder
+ * Description: Extract the data from the Postgresql 
+ * database.    
+ * Revision History:
+ * 20060422: Initial Revision.
+ * *****************************************************/
+
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.hibernate.Query;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.Session;
-
-
-
+/**
+ * Class to extract from the database
+ * @author LMU
+ *
+ */
 public class ExtractFromDB {
 
 	
@@ -33,11 +37,13 @@ public class ExtractFromDB {
 	private Map<String, String> uniprotTable_ProteinName = new HashMap<String, String>();
 	
 	private Connection connection = null;
-	
 	private int count =0;
-	
 	private static StringBuffer errorList = new StringBuffer();
 	
+	/**
+	 * Constructor
+	 *
+	 */
 	public ExtractFromDB() {
 		try {
 			Class.forName("org.postgresql.Driver");
@@ -48,22 +54,22 @@ public class ExtractFromDB {
 		   
         try {
 			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/uniprot", "postgres", "password");
-//					,"jjbarret","tu00ylyI");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 		
-		
+	/**
+	 * Extract the Uniprot table data
+	 * @throws SQLException
+	 */
 	public void ExtractUniprotTableData() throws SQLException {
-		
         Statement s = connection.createStatement();
         
         //
         //  uniprotTable_ID <UID> <Uniprot Table ID>
         //
-        
         ResultSet result = s.executeQuery("SELECT " +
         		"entrytype_accession_hjid, " +
         		"hjvalue " +
@@ -75,35 +81,19 @@ public class ExtractFromDB {
         
 
         for(String id : uniprotTable_ID.keySet()) {
- 
             //
             //  uniprotTable_EntryName <UID> <Uniprot Table EntryName>
-            //
-            
+            //  
 	        result = s.executeQuery("SELECT hjvalue " +
 	        		"FROM entrytype_name " +
 	        		"WHERE entrytype_name_hjid='" + id + "'");
 	        while(result.next()) {
 	        	uniprotTable_EntryName.put(id, result.getString(1));
-	        	//System.out.println("FOUND: " + result.getString(1));
 	        }
 	        
 	        //
 	        //  uniprotTable_GeneName <UID> <Uniprot Table GeneName>
 	        //
-	       /*
-	        result = s.executeQuery("SELECT value " +
-	        		"FROM genenametype " +
-	        		"WHERE entrytype_genetype_name_hjid='" + id + "' " +
-	        		"AND type='ordered locus'");
-                    */
-//	        PreparedStatement ps = connection.prepareStatement("select value from genenametype " +
-//	        		"inner join entrytype_genetype on" +
-//	        		"(entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
-//	        		"where entrytype_gene_hjid = '" + id + "' and type = 'primary'");
-//	        result = ps.executeQuery();
-	    	
-	        
 	        result = s.executeQuery("select value from genenametype inner join entrytype_genetype on(entrytype_genetype_name_hjid = entrytype_genetype.hjid) where entrytype_gene_hjid = '" + id + "' and type = 'primary'");
 
             while(result.next()) {
@@ -112,81 +102,50 @@ public class ExtractFromDB {
             	if(trying == null) {
             		System.out.println("***********NULL");
             	}
-//	        	String theResult = result.getString(1);
-//	        	if(result.wasNull()) {
-//	        		System.out.println("***********NULL");
-//	        	}
-//
-//	        	if(!result.wasNull()) {
-//	        		System.out.println("NOT NULL");
-//	        		
-//	        	} else {
-//	        		
-//	                result = s.executeQuery("select value from genenametype inner join entrytype_genetype on(entrytype_genetype_name_hjid = entrytype_genetype.hjid) where entrytype_gene_hjid = '" + id + "' and type = 'ordered locus'");
-//	                uniprotTable_GeneName.put(id, theResult);
-//	                System.exit(0);
-//	        	}
-	        	//System.out.println("FOUND: " + result.getString(1));
 	        }
             
-            //ps.close();
-	        
 	        //
 	        //  uniprotTable_ProteinName <UID> <Uniprot Table ProteinName>
 	        //
-	        /*
-	        result = s.executeQuery("SELECT value " +
-	        		"FROM proteinnametype " +
-	        		"WHERE proteintype_name_hjid='" + id + "' " +
-	        		"AND proteintype_name_hjindex='0'");
-                    */
             result = s.executeQuery("select value from entrytype inner join proteinnametype on(protein = proteintype_name_hjid) where entrytype.hjid = '" + id + "' and proteintype_name_hjindex = 0;");
             
 	        while(result.next()) {
 	        	uniprotTable_ProteinName.put(id, result.getString(1));
-	        	//System.out.println("FOUND: " + result.getString(1));
 	        }
         }
-        
-        /*
-        result = s.executeQuery("SELECT value " +
-        		"FROM genenametype ");
-
-        
-        result = s.executeQuery("SELECT type, id " +
-		"FROM dbreferencetype ");
-        */
-
         s.close();
-        
 	}
 	
+	/**
+	 * Start pushing the data to the access database output file
+	 *
+	 */
 	public void PushToAccessDB() {
 		ExportToGenMaPP export = null;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		Date date = new Date();
+		String dateString = dateFormat.format(date);
 		try {
 			export = new ExportToGenMaPP("/edu/lmu/xmlpipedb/gmbuilder/resource/dbFiles/GeneDBTmpl.mdb", "output.mdb");
 			export.openConnection();
 			
 			export.updateInfoTable("Loyola Marymount University",
-					"20060406", "UniProt", "|Escherichia coli K12|",
-					"", "20060406", "");
+					dateString, "UniProt", "|Escherichia coli K12|",
+					"", dateString, "");
 			
 			List<String> systemCodeList = new ArrayList<String>();
 			systemCodeList.add("S");
 			
-			export.updateSystemsTable(systemCodeList, "20060406");
-			
+			export.updateSystemsTable(systemCodeList, dateString);
 			export.createUniProtTable();
 			
 			for(String id : uniprotTable_ID.keySet()) {
-				
 				export.fillUniProtTable(uniprotTable_ID.get(id), 
 						uniprotTable_EntryName.get(id), 
 						uniprotTable_GeneName.get(id),
 						uniprotTable_ProteinName.get(id),
-						"", "|Escherichia coli K12|", "20060406", "");
+						"", "|Escherichia coli K12|", dateString, "");
 				count++;
-				
 			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -219,8 +178,6 @@ public class ExtractFromDB {
 	
 	public static void main(String args[]) {
 		
-		
-
 //		  try{
 //				// Create a new configuration
 //			    final Configuration cfg = new Configuration();
@@ -264,14 +221,7 @@ public class ExtractFromDB {
 //		    System.out.println(e.getMessage());
 //		  }finally{
 //	}
-		
-		
-		
-		
-		
-		
-		
-		
+				
 		long time1 = System.currentTimeMillis();
 		ExtractFromDB extract = new ExtractFromDB();
 		long time2 = System.currentTimeMillis();

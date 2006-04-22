@@ -15,6 +15,7 @@
         <include name="hyperjaxb2.jar" />
         <include name="jaxb-xjc.jar" />
         <include name="jaxbcommons.jar" />
+        <include name="junit.jar" />
         <include name="log4j.jar" />
     </fileset>
 
@@ -86,7 +87,7 @@
         <junit printsummary="on">
             <classpath refid="test.path" />
             <formatter type="plain" usefile="false" />
-            <test name="edu.lmu.xmlpipedb.xsd2db.TestXsd2dbCommandLine" />
+            <test name="edu.lmu.xmlpipedb.xsd2db.test.TestXsd2dbCommandLine" />
         </junit>
     </target>
 

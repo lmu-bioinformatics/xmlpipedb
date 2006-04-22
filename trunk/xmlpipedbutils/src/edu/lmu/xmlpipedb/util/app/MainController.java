@@ -43,7 +43,7 @@ public class MainController implements ActionListener {
 		_initialFrame = null;
 
 		_cc = new ConfigurationController(AppResources
-				.optionString("hibernate_properties_url"), AppResources
+				.optionString("hibernateProperties"), AppResources
 				.optionString("hibernate_properties_default_url"));
 
 		createComponents();

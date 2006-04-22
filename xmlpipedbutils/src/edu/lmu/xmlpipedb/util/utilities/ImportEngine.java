@@ -45,7 +45,7 @@ public class ImportEngine {
 
     private void setHibernateConfig(String hibernateMappingDirectory, String hibernatePropertiesFileName) throws IOException, HibernateException {
         hibernateConfiguration = new Configuration();
-        hibernateConfiguration.addDirectory(new File(hibernateMappingDirectory));
+        hibernateConfiguration.addJar(new File(hibernateMappingDirectory));
         Properties hibernateProperties = new Properties();
         hibernateProperties.load(new FileInputStream(hibernatePropertiesFileName));
         hibernateConfiguration.setProperties(hibernateProperties);

@@ -1,7 +1,7 @@
 /********************************************************
  * Filename: UniprotXSDPostProcesor.java
  * Author: LMU
- * Program: TUnit
+ * Program: uniprotdb
  * Description: Post processes uniprotdb files.  
  * Revision History:
  * 20060422: Initial Revision.

@@ -33,7 +33,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ProgressMonitorInputStream;
 
-import edu.lmu.xmlpipedb.util.app.MainController;
+import edu.lmu.xmlpipedb.util.demo.MainController;
 
 /**
  *

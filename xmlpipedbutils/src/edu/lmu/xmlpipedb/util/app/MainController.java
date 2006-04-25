@@ -43,20 +43,13 @@ import org.hibernate.cfg.Configuration;
  */
 public class MainController implements ActionListener {
 
-        Configuration hibernateConfiguration; 
+    Configuration hibernateConfiguration;
+    
 	public MainController() {
 		_initialFrame = null;
 
-		_cc = new ConfigurationController(AppResources
-				.optionString("hibernateProperties"), AppResources
-				.optionString("hibernate_properties_default_url"));
-
-		createComponents();
 	} // end no-arg constructor
 
-	private void createComponents() {
-
-	}
 
 	/**
 	 * Having a distinct start() method allows us to separate initialization
@@ -211,23 +204,21 @@ public class MainController implements ActionListener {
 	// React to menu selections.
 	public void actionPerformed(ActionEvent e) {
 		if ("import".equals(e.getActionCommand())) { // new
+			_queryPanel = null;
+			_configPanel = null;
 			_importPanel = new ImportPanel(this);
 			_importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_importPanel);
 		} else if ("query".equals(e.getActionCommand())) { // new
+			_importPanel = null;
+			_configPanel = null;
 			_queryPanel = new HQLPanel();
 			_queryPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 			_initialFrame.setContentPane(_queryPanel);
-		} else if ("config_platform".equals(e.getActionCommand())) { // new
-			try {
-				_configPanel = new ConfigurationPanel(_cc.getConfigurationModel(),
-						new Properties(), _cc);
-			} catch (FileNotFoundException e1) {
-				// a proper handling of this exeption is left to the implementor
-				e1.printStackTrace();
-			}
-			_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			_initialFrame.setContentPane(_configPanel);
+		} else if ("config_platform".equals(e.getActionCommand())) { 
+			_importPanel = null;
+			_queryPanel = null;
+			doConfigPanel();
 		}else { // quit
 			System.exit(0);
 		}
@@ -242,16 +233,27 @@ public class MainController implements ActionListener {
 		_initialFrame.setContentPane(new JPanel());
 		_initialFrame.validate();
 	}
+	
+	private void doConfigPanel(){
+		ConfigurationController cc = new ConfigurationController(AppResources
+				.optionString("hibernateProperties"), AppResources
+				.optionString("hibernate_properties_default_url"));
+		
+		try {
+			_configPanel = new ConfigurationPanel(cc.getConfigurationModel(),
+					new Properties(), cc);
+		} catch (FileNotFoundException e1) {
+			// a proper handling of this exeption is left to the implementor
+			e1.printStackTrace();
+		}
+		_configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		_initialFrame.setContentPane(_configPanel);
+	}
 
 	// ### DEFINE VARS ###
 	JFrame _initialFrame;
-
 	ImportPanel _importPanel;
-
 	ConfigurationPanel _configPanel;
-
 	HQLPanel _queryPanel;
-
-	ConfigurationController _cc;
 
 } // end Main

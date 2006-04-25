@@ -5,7 +5,6 @@
 package edu.lmu.xmlpipedb.util.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -34,7 +33,6 @@ import javax.swing.JTextField;
 import edu.lmu.xmlpipedb.util.app.ConfigurationController;
 import edu.lmu.xmlpipedb.util.app.HibernatePropertiesModel;
 import edu.lmu.xmlpipedb.util.app.HibernateProperty;
-import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 /**
  * @author J.Nicholas
@@ -104,13 +102,22 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 		// add entries to combo
 		getComboBox(STRCAT, null);
 		getFields(STRCAT, (String)_typeCombo.getSelectedItem());
-
+		
+		_saveButton = new JButton("Save");
+        _cancelButton = new JButton("Cancel");
+        _revertButton = new JButton("Revert");
+        _revertButton.setToolTipText("Revert to values when app was started");
+        _defaultButton = new JButton("Default");
+        _defaultButton.setToolTipText("Default values from hibernate");
+        
+        
+        /*  --- make an option to pass params via hashmap --- 
         _saveButton = new JButton(AppResources.messageString("config_save"));
         _cancelButton = new JButton(AppResources.messageString("config_cancel"));
         _revertButton = new JButton(AppResources.messageString("config_revert"));
         _revertButton.setToolTipText(AppResources.messageString("config_revert_tooltip"));
         _defaultButton = new JButton(AppResources.messageString("config_default"));
-        _defaultButton.setToolTipText(AppResources.messageString("config_default_tooltip"));
+        _defaultButton.setToolTipText(AppResources.messageString("config_default_tooltip"));*/
         
         _revertButton.setEnabled(false);
         _defaultButton.setEnabled(false);

@@ -7,7 +7,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import edu.lmu.xmlpipedb.util.resources.AppResources;
+import edu.lmu.xmlpipedb.util.demo.resources.AppResources;
 import edu.lmu.xmlpipedb.util.utilities.ImportEngine;
 import java.io.File;
 import java.io.FileInputStream;

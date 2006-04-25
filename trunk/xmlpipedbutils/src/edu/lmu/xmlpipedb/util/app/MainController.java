@@ -31,7 +31,11 @@ import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 import edu.lmu.xmlpipedb.util.utilities.ImportEngine;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import org.hibernate.HibernateException;
+import org.hibernate.cfg.Configuration;
 
 /**
  * @author J. Nicholas
@@ -39,6 +43,7 @@ import java.io.InputStream;
  */
 public class MainController implements ActionListener {
 
+        Configuration hibernateConfiguration; 
 	public MainController() {
 		_initialFrame = null;
 
@@ -91,27 +96,37 @@ public class MainController implements ActionListener {
 
 	} // end inner classs UIStarter
 
-	public void importXml(File xmlFile) throws Exception {
+	/*public void importXml(File xmlFile) throws Exception {
 		String context = AppResources.optionString("jaxbContextPath");
 		String hibernateProp = AppResources.optionString("hibernateProperties");
 
 		String hibernateConfig = AppResources
 				.optionString("hibernateMappingDir");
-		ImportEngine importEngine = new ImportEngine(context, hibernateConfig,
-				hibernateProp);
+                
+                setHibernateConfig(hibernateConfig, hibernateProp);
+		ImportEngine importEngine = new ImportEngine(context, hibernateConfiguration);
 		importEngine.loadToDB(xmlFile);
-	}
+	}*/
 
-    public void importXml(InputStream xmlFile) throws Exception {
+	public void importXml(InputStream xml) throws Exception {
 		String context = AppResources.optionString("jaxbContextPath");
 		String hibernateProp = AppResources.optionString("hibernateProperties");
 
 		String hibernateConfig = AppResources
 				.optionString("hibernateMappingDir");
-		ImportEngine importEngine = new ImportEngine(context, hibernateConfig,
-				hibernateProp);
-		importEngine.loadToDB(xmlFile);
-	}
+                
+                setHibernateConfig(hibernateConfig, hibernateProp);
+		ImportEngine importEngine = new ImportEngine(context, hibernateConfiguration);
+		importEngine.loadToDB(xml);
+	}        
+        private void setHibernateConfig(String hibernateMappingDirectory, String hibernatePropertiesFileName) throws IOException, HibernateException {
+            hibernateConfiguration = new Configuration();
+            hibernateConfiguration.addJar(new File(hibernateMappingDirectory));
+            Properties hibernateProperties = new Properties();
+            hibernateProperties.load(new FileInputStream(hibernatePropertiesFileName));
+            hibernateConfiguration.setProperties(hibernateProperties);
+
+        }
     
 	// Creates an icon-worthy Image from scratch.
 	protected static Image createImage() {

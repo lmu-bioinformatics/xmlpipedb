@@ -37,13 +37,15 @@ public class ImportEngine {
     private Configuration hibernateConfiguration;
 
     /** Creates a new instance of ImportEngine */
-    public ImportEngine(String jaxbContextPath, String hibernateMappingDirectory, String hibernatePropertiesFileName) throws JAXBException, SAXException, IOException, HibernateException {
+    public ImportEngine(String jaxbContextPath, Configuration hibernateConfiguration) throws JAXBException, SAXException, IOException, HibernateException {
         jaxbContext = JAXBContext.newInstance(jaxbContextPath);
         unmarshaller = jaxbContext.createUnmarshaller();
-        setHibernateConfig(hibernateMappingDirectory, hibernatePropertiesFileName);
+        //setHibernateConfig(hibernateMappingDirectory, hibernatePropertiesFileName);
+        this.hibernateConfiguration = hibernateConfiguration; 
+        sessionFactory = hibernateConfiguration.buildSessionFactory();
     }
 
-    private void setHibernateConfig(String hibernateMappingDirectory, String hibernatePropertiesFileName) throws IOException, HibernateException {
+    /*private void setHibernateConfig(String hibernateMappingDirectory, String hibernatePropertiesFileName) throws IOException, HibernateException {
         hibernateConfiguration = new Configuration();
         hibernateConfiguration.addJar(new File(hibernateMappingDirectory));
         Properties hibernateProperties = new Properties();
@@ -51,9 +53,9 @@ public class ImportEngine {
         hibernateConfiguration.setProperties(hibernateProperties);
         sessionFactory = hibernateConfiguration.buildSessionFactory();
 
-    }
+    }*/
 
-    public void loadToDB(File xmlFile) throws Exception {
+    /*public void loadToDB(File xmlFile) throws Exception {
         Object object = unmarshaller.unmarshal(xmlFile);
         Session saveSession = sessionFactory.openSession();
         Transaction transaction = null;
@@ -68,9 +70,9 @@ public class ImportEngine {
         } finally {
             saveSession.close();
         }
-    }
-    public void loadToDB(InputStream xmlFile) throws Exception {
-        Object object = unmarshaller.unmarshal(xmlFile);
+    }*/
+    public void loadToDB(InputStream xml) throws Exception {
+        Object object = unmarshaller.unmarshal(xml);
         Session saveSession = sessionFactory.openSession();
         Transaction transaction = null;
         try {

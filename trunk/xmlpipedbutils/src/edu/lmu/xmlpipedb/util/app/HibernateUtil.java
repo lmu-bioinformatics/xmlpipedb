@@ -9,6 +9,10 @@ import org.hibernate.SessionFactory;
 
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 import edu.lmu.xmlpipedb.util.utilities.ImportEngine;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Properties;
+import org.hibernate.cfg.Configuration;
 
 
 /**
@@ -33,9 +37,15 @@ public class HibernateUtil {
             String hibernateProp = AppResources.optionString("hibernateProperties");
 
             String hibernateConfig = AppResources.optionString("hibernateMappingDir");
-            ImportEngine ie = new ImportEngine(context, hibernateConfig, hibernateProp);
+            Configuration hibernateConfiguration = new Configuration();
+            hibernateConfiguration.addJar(new File(hibernateConfig));
+            Properties hibernateProperties = new Properties();
+            hibernateProperties.load(new FileInputStream(hibernateProp));
+            hibernateConfiguration.setProperties(hibernateProperties);
+            sessionFactory = hibernateConfiguration.buildSessionFactory();
+            
+            ImportEngine ie = new ImportEngine(context, hibernateConfiguration);
 
-            sessionFactory = ie.getSessionFactory();
         } catch(Throwable ex) {
             System.err.println("Initial SessionFactory creation failed.\n" + ex);
             throw new ExceptionInInitializerError(ex);

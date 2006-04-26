@@ -17,8 +17,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.hibernate.cfg.Configuration;
 
-import edu.lmu.xmlpipedb.util.app.HibernateUtil;
+import edu.lmu.xmlpipedb.util.utilities.QueryEngine;
 
 /**
  * This panel displays a text area for the user to input an HQL or SQL query and
@@ -31,30 +32,13 @@ import edu.lmu.xmlpipedb.util.app.HibernateUtil;
  * 
  */
 public class HQLPanel extends JPanel {
-
-    private JTextArea _queryTextArea;
-    private JTable _resultsTable;
-    private HQLResultTree _resultsTree;
-
-    private DefaultTableModel _tableModel;
-    private JSplitPane _split;
-    private JPanel _buttonPanel;
-    private JPanel _dataViewPanel;
-    private Box _box = new Box(BoxLayout.Y_AXIS);
-
-    private JRadioButton _sql;
-    private JRadioButton _hql;
-    private ButtonGroup _radioGroup;
-    private String _queryActionCommand;
-
-    private final static String HQL_COMMAND = "HQL", SQL_COMMAND = "SQL";
-
     /**
      * Default constructor. Adds the query area and the results table below it.
      * All buttons will be displayed along the right edge of the UI.
      */
-    public HQLPanel() {
-        super();
+    public HQLPanel(String jaxbContextPath, Configuration hibernateConfiguration) {
+        _jaxbContextPath = jaxbContextPath;
+        _hibernateConfiguration = hibernateConfiguration;
 
         initComponents();
         setLayout(new BorderLayout());
@@ -171,7 +155,8 @@ public class HQLPanel extends JPanel {
      * any) are displayed in the data view panel.
      */
     private void runSQL() {
-        Connection conn = HibernateUtil.currentSession().connection();
+        QueryEngine qe = new QueryEngine(_jaxbContextPath, _hibernateConfiguration);
+        Connection conn = qe.currentSession().connection();
         PreparedStatement query = null;
         ResultSet results = null;
 
@@ -185,9 +170,7 @@ public class HQLPanel extends JPanel {
             JOptionPane.showMessageDialog(this, sqle.getMessage());
         } catch(Exception e) {
             reportException(e);
-        }
-
-        finally {
+        } finally {
             try {
                 results.close();
                 query.close();
@@ -196,18 +179,18 @@ public class HQLPanel extends JPanel {
             } catch(Exception e) {
                 reportException(e);
             } // Ignore the errors here, nothing we can do anyways.
-
         }
     }
 
     private void runHQL() {
         try {
-            Iterator iter = HibernateUtil.executeHQL(_queryTextArea.getText().trim());
+            QueryEngine qe = new QueryEngine(_jaxbContextPath, _hibernateConfiguration);
+            Iterator iter = qe.executeHQL(_queryTextArea.getText().trim());
             final LinkedList<Object> data = new LinkedList<Object>();
             while (iter.hasNext()) {
                 data.add(iter.next());
             }
-            HibernateUtil.closeSession();
+            qe.closeSession();
 
             populateTable(data);
 
@@ -217,17 +200,14 @@ public class HQLPanel extends JPanel {
                 }
             };
             new Thread(thread).start();
-
         } catch(Exception e) {
             reportException(e);
         }
     }
 
     private JButton initExecuteQueryButton() {
-
         JButton execute = new JButton("Execute Query");
         execute.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent ae) {
 
                 if ("SQL".equals(_queryActionCommand)) {
@@ -236,7 +216,6 @@ public class HQLPanel extends JPanel {
                     runHQL();
                 }
             }
-
         });
 
         return execute;
@@ -308,4 +287,24 @@ public class HQLPanel extends JPanel {
         _tableModel.setColumnCount(map.size());
         _tableModel.addRow(data);
     }
+
+    private final static String HQL_COMMAND = "HQL", SQL_COMMAND = "SQL";
+
+    private String _jaxbContextPath;
+    private Configuration _hibernateConfiguration;
+
+    private JTextArea _queryTextArea;
+    private JTable _resultsTable;
+    private HQLResultTree _resultsTree;
+
+    private DefaultTableModel _tableModel;
+    private JSplitPane _split;
+    private JPanel _buttonPanel;
+    private JPanel _dataViewPanel;
+    private Box _box = new Box(BoxLayout.Y_AXIS);
+
+    private JRadioButton _sql;
+    private JRadioButton _hql;
+    private ButtonGroup _radioGroup;
+    private String _queryActionCommand;
 }

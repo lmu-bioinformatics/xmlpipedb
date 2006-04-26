@@ -1,4 +1,4 @@
-package edu.lmu.xmlpipedb.util.app;
+package edu.lmu.xmlpipedb.util.utilities;
 
 import java.util.Iterator;
 
@@ -6,14 +6,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-
-import edu.lmu.xmlpipedb.util.demo.resources.AppResources;
-import edu.lmu.xmlpipedb.util.utilities.ImportEngine;
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Properties;
 import org.hibernate.cfg.Configuration;
-
 
 /**
  * This class maintains a set of hibernate utilities. The initial class and the
@@ -23,36 +16,10 @@ import org.hibernate.cfg.Configuration;
  * @author Babak Naffas
  * 
  */
-public class HibernateUtil {
-
-    // private static Log log = LogFactory.getLog(HibernateUtil.class);
-
-    private static final SessionFactory sessionFactory;
-
-    static {
-        try {
-            // Since the ImportEngine is working fine, let's use its hibernate
-            // settings for now.
-            String context = AppResources.optionString("jaxbContextPath");
-            String hibernateProp = AppResources.optionString("hibernateProperties");
-
-            String hibernateConfig = AppResources.optionString("hibernateMappingDir");
-            Configuration hibernateConfiguration = new Configuration();
-            hibernateConfiguration.addJar(new File(hibernateConfig));
-            Properties hibernateProperties = new Properties();
-            hibernateProperties.load(new FileInputStream(hibernateProp));
-            hibernateConfiguration.setProperties(hibernateProperties);
-            sessionFactory = hibernateConfiguration.buildSessionFactory();
-            
-            ImportEngine ie = new ImportEngine(context, hibernateConfiguration);
-
-        } catch(Throwable ex) {
-            System.err.println("Initial SessionFactory creation failed.\n" + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
+public class QueryEngine {
+    public QueryEngine(String jaxbContextPath, Configuration hibernateConfiguration) {
+        sessionFactory = hibernateConfiguration.buildSessionFactory();
     }
-
-    private static final ThreadLocal<Session> session = new ThreadLocal<Session>();
 
     /**
      * Returns an instance of the current Hibernate Session.
@@ -60,7 +27,7 @@ public class HibernateUtil {
      * @return Session reference.
      * @throws HibernateException
      */
-    public static Session currentSession() throws HibernateException {
+    public Session currentSession() throws HibernateException {
         Session s = (Session)session.get();
         // Open a new Session, if this Thread has none yet
         if (s == null) {
@@ -78,7 +45,7 @@ public class HibernateUtil {
      * @version 1.1 Modified by Babak Naffas to catch HibernateException within
      *          the method and handle it here.
      */
-    public static void closeSession() {
+    public void closeSession() {
         try {
             Session s = (Session)session.get();
             session.set(null);
@@ -97,12 +64,10 @@ public class HibernateUtil {
      * @return The resulting java.util.Iterator referencing the results of the
      *         query.
      */
-    public static Iterator executeHQL(String hql) {
-
+    public Iterator executeHQL(String hql) {
         Session session = null;
         Query query = null;
         Iterator iter = null;
-
         try {
             session = currentSession();
             query = session.createQuery(hql);
@@ -111,14 +76,13 @@ public class HibernateUtil {
             System.err.println(he.getMessage());
         } catch(Exception e) {
             System.err.println(e.getMessage());
-
         }
 
         // closeSession();
         return iter;
     }
 
-    /*
-     * public Dialect getDialect(){ sessionFactory. }
-     */
+    private static final ThreadLocal<Session> session = new ThreadLocal<Session>();
+
+    private SessionFactory sessionFactory;
 }

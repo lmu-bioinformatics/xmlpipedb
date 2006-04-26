@@ -33,26 +33,19 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ProgressMonitorInputStream;
 
-import edu.lmu.xmlpipedb.util.demo.MainController;
+import org.hibernate.cfg.Configuration;
+
+import edu.lmu.xmlpipedb.util.utilities.ImportEngine;
 
 /**
  *
  * @author Dave
  */
 public class ImportPanel extends JPanel {
-    private JButton _previewButton;
-    private JTextField _textFieldPath;
-    private JScrollPane _xmlScrollArea;
-    private JTextArea _xmlView;
-    private JButton _importButton;
-    private JButton _openButton;
-    private JProgressBar _progressBar;
-    private File _xmlFile;
-    private MainController _main;
-
     /** Creates a new instance of ImportPanel2 */
-    public ImportPanel(MainController main) {
-        _main = main;
+    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration) {
+        _jaxbContextPath = jaxbContextPath;
+        _hibernateConfiguration = hibernateConfiguration;
         createComponents();
         createActions();
         layoutComponents();
@@ -152,8 +145,8 @@ public class ImportPanel extends JPanel {
             try {
                 // does the progress monitor popup
                 InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(this, "Reading " + _xmlFile, new FileInputStream(_xmlFile)));
-                _main.importXml(in);
-
+                ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration);
+                importEngine.loadToDB(in);
             } catch(Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -202,4 +195,16 @@ public class ImportPanel extends JPanel {
             }
         }
     }
+
+    private String _jaxbContextPath;
+    private Configuration _hibernateConfiguration;
+    
+    private JButton _previewButton;
+    private JTextField _textFieldPath;
+    private JScrollPane _xmlScrollArea;
+    private JTextArea _xmlView;
+    private JButton _importButton;
+    private JButton _openButton;
+    private JProgressBar _progressBar;
+    private File _xmlFile;
 }

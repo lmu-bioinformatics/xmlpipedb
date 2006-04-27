@@ -25,36 +25,76 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import edu.lmu.xmlpipedb.util.app.ConfigurationController;
+import org.hibernate.cfg.Configuration;
+
+import edu.lmu.xmlpipedb.util.app.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.app.HibernatePropertiesModel;
 import edu.lmu.xmlpipedb.util.app.HibernateProperty;
+import edu.lmu.xmlpipedb.util.exceptions.CouldNotLoadPropertiesException;
+import edu.lmu.xmlpipedb.util.exceptions.NoHibernatePropertiesException;
+import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 /**
  * @author J.Nicholas
  * 
  */
 public class ConfigurationPanel extends JPanel implements ActionListener, ItemListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3486506045107182287L;
 	String STRCAT;
 	
 	/**
-     * @param cc
-     * @param m
-     * @param url
-     * @param currFile
+	 * Creates an instance of the ConfigurationPanel, which in turn creates an
+	 * instance of the ConfigurationEngine for its own private use.
+	 * 
+	 * @throws CouldNotLoadPropertiesException 
+	 * @throws FileNotFoundException
      */
-    public ConfigurationPanel(HibernatePropertiesModel model, Properties props, ConfigurationController configController) {
-    	_model = model;
-    	_configController = configController;
+    public ConfigurationPanel() throws CouldNotLoadPropertiesException, FileNotFoundException {
+    	
+    	try{
+    		_configEngine = new ConfigurationEngine();
+    		_model = _configEngine.getConfigurationModel();
+    		
+    	}catch (CouldNotLoadPropertiesException e) {
+			throw e;
+		}catch ( FileNotFoundException e ){
+			throw e;
+		}
     	
         createComponents();
         layoutComponents();
         startListeningToUI();
     }
+    
+	/**
+	 * Returns a hibernate Configuration object, if the properties object is not
+	 * empty. If it is empty, a NoHibernatePropertiesException will be thrown.
+	 * 
+	 * @return Configuration - an org.hibernate.cfg.Configuration ojbect is 
+	 * populated with the currently configured properties and returned. 
+	 * @throws NoHibernatePropertiesException
+	 */
+	public Configuration getHibernateConfiguration() throws NoHibernatePropertiesException{
+		Configuration config = null;
+
+		try{
+			config = _configEngine.getHibernateConfiguration();
+		}catch( NoHibernatePropertiesException e ){
+			JOptionPane.showMessageDialog(this, e.getMessage());
+			throw e;
+		}
+
+		return config;
+	}
 
     /**
      * Lays out the components on the panel
@@ -103,21 +143,12 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 		getComboBox(STRCAT, null);
 		getFields(STRCAT, (String)_typeCombo.getSelectedItem());
 		
-		_saveButton = new JButton("Save");
-        _cancelButton = new JButton("Cancel");
-        _revertButton = new JButton("Revert");
-        _revertButton.setToolTipText("Revert to values when app was started");
-        _defaultButton = new JButton("Default");
-        _defaultButton.setToolTipText("Default values from hibernate");
-        
-        
-        /*  --- make an option to pass params via hashmap --- 
         _saveButton = new JButton(AppResources.messageString("config_save"));
         _cancelButton = new JButton(AppResources.messageString("config_cancel"));
         _revertButton = new JButton(AppResources.messageString("config_revert"));
         _revertButton.setToolTipText(AppResources.messageString("config_revert_tooltip"));
         _defaultButton = new JButton(AppResources.messageString("config_default"));
-        _defaultButton.setToolTipText(AppResources.messageString("config_default_tooltip"));*/
+        _defaultButton.setToolTipText(AppResources.messageString("config_default_tooltip"));
         
         _revertButton.setEnabled(false);
         _defaultButton.setEnabled(false);
@@ -307,11 +338,11 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
        	saveModel.setCurrentType( type);
        	saveModel.setCurrentCategory(category);
        	
-        _configController.saveProperties(saveModel);
+        _configEngine.saveProperties(saveModel);
         
         //update the model to reflect what is now saved.
         try {
-			_model = _configController.getConfigurationModel();
+			_model = _configEngine.getConfigurationModel();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -351,8 +382,11 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 
     //private Box _centerBox;
     private JPanel _centerPanel;
+    private JPanel _platforms;
+    private JPanel _misc;
+    private JPanel _pools;
     private Box _topBox;
-    private ConfigurationController _configController;
+    private ConfigurationEngine _configEngine;
     
     // gridbag vars
 	private static final Insets PROMPT_INSETS = new Insets(0,0,5,5);

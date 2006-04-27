@@ -32,9 +32,9 @@ alter table IsoformType_Id drop constraint FK93D161776BE415D0;
 alter table IsoformType_NameType drop constraint FKAEF4DFC12DDC4D60;
 alter table KeywordType drop constraint FK1603ACA37C00D25A;
 alter table LocationType drop constraint FK65214AFEE2F2184;
+alter table LocationType drop constraint FK65214AF8EB39F5F;
 alter table LocationType drop constraint FK65214AFC7310104;
 alter table LocationType drop constraint FK65214AF9D640322;
-alter table LocationType drop constraint FK65214AFC19E1136;
 alter table NameListType_PersonOrConsortium drop constraint FK452761F5969E4EA2;
 alter table OrganismNameType drop constraint FK8F6D77774EBD64E2;
 alter table OrganismType drop constraint FK44B91F4C3E7D0A0B;
@@ -144,7 +144,6 @@ create table CitationType (
     Publisher varchar,
     Locator varchar,
     Date_Hjclass varchar,
-    Date_Hjid int8,
     City varchar,
     Last varchar,
     AuthorList int8,
@@ -749,6 +748,10 @@ alter table LocationType
     foreign key (Position) 
     references PositionType;
 alter table LocationType 
+    add constraint FK65214AF8EB39F5F 
+    foreign key (EndPosition) 
+    references PositionType;
+alter table LocationType 
     add constraint FK65214AFC7310104 
     foreign key (Begin) 
     references PositionType;
@@ -756,10 +759,6 @@ alter table LocationType
     add constraint FK65214AF9D640322 
     foreign key (CommentType_Location_Hjid) 
     references CommentType;
-alter table LocationType 
-    add constraint FK65214AFC19E1136 
-    foreign key (EndPosition) 
-    references PositionType;
 alter table NameListType_PersonOrConsortium 
     add constraint FK452761F5969E4EA2 
     foreign key (NameListType_PersonOrConsortium_Hjid) 

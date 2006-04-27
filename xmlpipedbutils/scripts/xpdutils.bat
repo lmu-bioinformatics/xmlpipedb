@@ -1,1 +1,1 @@
-java -jar xpdUtilsDemoApp.jar
+java -jar xpdutils-demo.jar

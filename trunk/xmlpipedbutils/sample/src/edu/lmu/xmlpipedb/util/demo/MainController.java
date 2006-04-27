@@ -31,8 +31,8 @@ import javax.swing.SwingUtilities;
 
 import org.hibernate.cfg.Configuration;
 
-import edu.lmu.xmlpipedb.util.app.ConfigurationController;
 import edu.lmu.xmlpipedb.util.demo.resources.AppResources;
+import edu.lmu.xmlpipedb.util.exceptions.CouldNotLoadPropertiesException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
@@ -212,14 +212,16 @@ public class MainController implements ActionListener {
     }
 
     private void doConfigPanel() {
-        ConfigurationController cc = new ConfigurationController(AppResources.optionString("hibernateProperties"), AppResources.optionString("hibernate_properties_default_url"));
 
         try {
-            _configPanel = new ConfigurationPanel(cc.getConfigurationModel(), new Properties(), cc);
+            _configPanel = new ConfigurationPanel();
         } catch(FileNotFoundException e1) {
             // a proper handling of this exeption is left to the implementor
             e1.printStackTrace();
+        } catch( CouldNotLoadPropertiesException e ){
+        	e.printStackTrace();
         }
+        
         _configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         _initialFrame.setContentPane(_configPanel);
     }

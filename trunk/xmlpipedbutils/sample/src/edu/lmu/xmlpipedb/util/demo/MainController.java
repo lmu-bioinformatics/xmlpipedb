@@ -14,17 +14,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -32,6 +28,7 @@ import javax.swing.SwingUtilities;
 import org.hibernate.cfg.Configuration;
 
 import edu.lmu.xmlpipedb.util.demo.resources.AppResources;
+import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.exceptions.CouldNotLoadPropertiesException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
@@ -82,20 +79,15 @@ public class MainController implements ActionListener {
     }
 
     private Configuration getHibernateConfig() {
-        String hibernatePropertiesFileName = AppResources.optionString("hibernateProperties");
-        String hibernateMappingDirectory = AppResources.optionString("hibernateMappingDir");
+        String hibernateMappingLocation = AppResources.optionString("hibernateMappingLocation");
+        Configuration hibernateConfiguration = null;
         try {
-            Configuration hibernateConfiguration = new Configuration();
-            hibernateConfiguration.addJar(new File(hibernateMappingDirectory));
-            Properties hibernateProperties = new Properties();
-            hibernateProperties.load(new FileInputStream(hibernatePropertiesFileName));
-            hibernateConfiguration.setProperties(hibernateProperties);
-            return hibernateConfiguration;
-        } catch(IOException ioexc) {
-            // TODO: Improve this error message.
-            JOptionPane.showMessageDialog(_initialFrame, "An error occurred while trying to read the configuration file.", "Error Reading Configuration", JOptionPane.ERROR_MESSAGE);
-            return null;
+            hibernateConfiguration = (new ConfigurationEngine()).getHibernateConfiguration();
+        } catch(Exception exc) {
+            hibernateConfiguration = new Configuration();
         }
+        hibernateConfiguration.addJar(new File(hibernateMappingLocation));
+        return hibernateConfiguration;
     }
 
     // Creates an icon-worthy Image from scratch.
@@ -188,7 +180,7 @@ public class MainController implements ActionListener {
             _configPanel = null;
             Configuration hibernateConfiguration = getHibernateConfig();
             if (hibernateConfiguration != null) {
-                _queryPanel = new HQLPanel(AppResources.optionString("jaxbContextPath"), hibernateConfiguration);
+                _queryPanel = new HQLPanel(hibernateConfiguration);
                 _queryPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
                 _initialFrame.setContentPane(_queryPanel);
             }

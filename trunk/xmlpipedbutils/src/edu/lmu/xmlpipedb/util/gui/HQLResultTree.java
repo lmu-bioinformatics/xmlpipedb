@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.lmu.xmlpipedb.util.gui;
 
 import java.util.List;
@@ -13,7 +10,7 @@ import javax.swing.tree.TreePath;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import edu.lmu.xmlpipedb.util.utilities.PipeDBBeanUtils;
+import edu.lmu.xmlpipedb.util.engines.PipeDBBeanUtils;
 
 /**
  * HQLResultTree will servce as the object tree for the results of our HQL
@@ -25,9 +22,6 @@ import edu.lmu.xmlpipedb.util.utilities.PipeDBBeanUtils;
  * 
  */
 public class HQLResultTree extends JTree {
-
-    private HQLTreeModel _treeModel;
-
     /**
      * @param newModel
      */
@@ -79,10 +73,11 @@ public class HQLResultTree extends JTree {
      *            The list of objects
      */
     public void populateTree(List<Object> list) {
-
-        // First empty out the tree
+        // First, empty out the tree
         DefaultMutableTreeNode root = (DefaultMutableTreeNode)_treeModel.getRoot();
         root.removeAllChildren();
+        setModel(null);
+        setModel(_treeModel);
 
         Map map = null;
 
@@ -105,7 +100,6 @@ public class HQLResultTree extends JTree {
         } catch(Exception e) {
             reportException(e);
         }
-
     }
 
     private void populateObjects(Object property, Object value, DefaultMutableTreeNode root) {
@@ -127,10 +121,10 @@ public class HQLResultTree extends JTree {
 
                 // Map map = BeanUtils.describe(o);
                 Map map = PropertyUtils.describe(value);
-                //java.util.Collection fields = map.values();
+                // java.util.Collection fields = map.values();
                 for (Object key : map.keySet()) {
                     addObject(addedNode, getNodeLabel(key, map.get(key)), true);
-                    //populateObjects( field, addedNode );
+                    // populateObjects( field, addedNode );
                 }
             } catch(Exception e) {
                 reportException(e);
@@ -149,4 +143,6 @@ public class HQLResultTree extends JTree {
     private void reportException(Exception e) {
         JOptionPane.showMessageDialog(this, e.getMessage());
     }
+
+    private HQLTreeModel _treeModel;
 }

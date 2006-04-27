@@ -35,7 +35,7 @@ import javax.swing.ProgressMonitorInputStream;
 
 import org.hibernate.cfg.Configuration;
 
-import edu.lmu.xmlpipedb.util.utilities.ImportEngine;
+import edu.lmu.xmlpipedb.util.engines.ImportEngine;
 
 /**
  *
@@ -58,10 +58,9 @@ public class ImportPanel extends JPanel {
         _importButton.setEnabled(false);
         _openButton = new JButton("open");
         _textFieldPath = new JTextField();
-        _xmlView = new JTextArea();
+        _xmlView = new JTextArea(10, 80);
         _xmlScrollArea = new JScrollPane(_xmlView);
         _progressBar = new JProgressBar();
-
     }
 
     private void createActions() {

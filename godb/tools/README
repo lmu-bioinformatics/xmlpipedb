@@ -1,10 +1,8 @@
-uniprotdb
-usage: uniprotdb
+godb
+usage: Run the main class in GodbPostProcessor
 
 Options:
---godbSQLFile=filename   -- Full path to the godb sql file
---locationTypeFile=filename -- Full path to the To.hbm.xml file
--help                       -- Displays help and exits
+	- No options available
 
-Note: The file options, if used, must all be used in the 
-order specified.  
+Note: There is no longer a command line version of this
+program.  It has been replaced by the GUI version.  

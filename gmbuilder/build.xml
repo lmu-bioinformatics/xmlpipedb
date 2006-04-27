@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="gmbuilder" default="jar" basedir=".">
-    <property name="src" location="src"/>
-    <property name="bin" location="bin"/>
-    <property name="lib" location="lib"/>
-    <property name="dist" location="dist"/>
-    <property name="jarfile" location="${dist}/${ant.project.name}.jar"/>
-    <property name="compile.debug" value="true"/>
+    <property name="src" location="src" />
+    <property name="bin" location="bin" />
+    <property name="lib" location="lib" />
+    <property name="dist" location="dist" />
+    <property name="jarfile" location="${dist}/lib/${ant.project.name}.jar" />
+    <property name="compile.debug" value="true" />
 
     <fileset id="lib.jars" dir="${lib}">
-        <include name="**/*.jar"/>
+        <include name="**/*.jar" />
     </fileset>
 
     <path id="lib.path">
-        <fileset refid="lib.jars"/>
+        <fileset refid="lib.jars" />
+    </path>
+
+    <path id="run.path">
+        <fileset dir="${dist}/lib">
+            <include name="**/*.jar"/>
+        </fileset>
     </path>
 
     <!-- Stub install target.  Install should depend on the 'jar' target,
@@ -21,25 +27,27 @@
     </target>
 
     <target name="compile" description="Compile code">
-        <mkdir dir="${bin}"/>
-        <javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no"
-               classpathref="lib.path" debug="${compile.debug}">
+        <mkdir dir="${bin}" />
+        <javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no" classpathref="lib.path" debug="${compile.debug}">
         </javac>
     </target>
 
     <target name="jar" depends="compile" description="Build jar">
-        <mkdir dir="${dist}"/>
-        <jar jarfile="${jarfile}" basedir="${bin}" manifest="Manifest">
+        <mkdir dir="${dist}" />
+        <!-- Copy other libraries and the run scripts (.bat and .sh files) -->
+        <copy todir="${dist}/lib">
+            <fileset dir="${lib}" includes="**/*.jar" />
+        </copy>
+        <jar file="${jarfile}" basedir="${bin}" manifest="Manifest">
         </jar>
     </target>
 
     <target name="run" depends="jar" description="Run jar file">
-        <java jar="${jarfile}" fork="yes" failonerror="true">
-        </java>
+        <java classname="edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder" fork="true" failonerror="true" classpathref="run.path" />
     </target>
 
     <target name="clean" description="Remove build and dist directories">
-        <delete dir="${bin}"/>
-        <delete dir="${dist}"/>
+        <delete dir="${bin}" />
+        <delete dir="${dist}" />
     </target>
 </project>

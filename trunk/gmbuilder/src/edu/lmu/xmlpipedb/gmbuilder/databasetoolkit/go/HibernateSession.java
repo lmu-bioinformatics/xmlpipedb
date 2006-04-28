@@ -49,17 +49,38 @@ public class HibernateSession {
     private Configuration hibernateConfiguration;
     private Session session;
     
-    /** Creates a new instance of ImportEngine 
-     * @throws JAXBException */
+    /**
+     *  Crete a hibernate session
+     * 
+     * @param hibernateConfig
+     * @param hibernateProp
+     * @throws SAXException
+     * @throws IOException
+     * @throws HibernateException
+     * @throws JAXBException
+     */
     public HibernateSession(String hibernateConfig, String hibernateProp) throws SAXException, IOException, HibernateException, JAXBException {
         setHibernateConfig(hibernateConfig, hibernateProp);
-//        queryDatabase();
     }
     
+    /**
+     * Opens a hibernate session
+     * 
+     * @return
+     * 		hibernate session
+     */
     public Session openSession() {
     	return sessionFactory.openSession();
     }
-   
+    
+    /**
+     * Defines hibernate configuration settings
+     * 
+     * @param hibernateConfig
+     * @param hibernateProp
+     * @throws IOException
+     * @throws HibernateException
+     */
     private void setHibernateConfig(String hibernateConfig, String hibernateProp) throws IOException, HibernateException {
         hibernateConfiguration = new Configuration();
         hibernateConfiguration.addDirectory(new File(hibernateConfig));

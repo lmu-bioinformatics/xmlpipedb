@@ -22,6 +22,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.JAXBException;
+
+import org.hibernate.HibernateException;
+import org.xml.sax.SAXException;
+
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
+
 /**
  * Class to extract from the database
  * @author LMU
@@ -190,8 +197,11 @@ public class ExportToGenMaPP {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
+	 * @throws JAXBException 
+	 * @throws SAXException 
+	 * @throws HibernateException 
 	 */
-	public static void exportToGenMaPP(File outputFile) throws IOException, ClassNotFoundException, SQLException {
+	public static void exportToGenMaPP(File outputFile) throws IOException, ClassNotFoundException, SQLException, HibernateException, SAXException, JAXBException {
 		
 		//Create relational database connection.
 		Class.forName("org.postgresql.Driver");
@@ -209,6 +219,9 @@ public class ExportToGenMaPP {
 		
 		//Create and build the Access GenMaPP file.
 		try {
+			// ********************************************************
+			// ************** EXPORT UNIPROT TABLES TO GENAMPP ********
+			// ********************************************************
 			
 			//Create the file, open the Access database connection.
 			AccessFileCreator.openConnection(outputFile);
@@ -234,6 +247,14 @@ public class ExportToGenMaPP {
 						uniprotTable_ProteinName.get(id),
 						"", "|Escherichia coli K12|", dateString, "");
 			}
+			
+			// ********************************************************
+			// ************** EXPORT GO TABLES TO GENAMPP ********
+			// ********************************************************
+
+			(new ExportGoData(outputFile.getAbsolutePath())).export();
+		
+			
 		} finally {
 			//Close the Access database connection.
 			AccessFileCreator.closeConnection();

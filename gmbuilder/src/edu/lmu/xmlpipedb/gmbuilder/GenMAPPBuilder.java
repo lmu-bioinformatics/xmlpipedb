@@ -3,16 +3,20 @@ package edu.lmu.xmlpipedb.gmbuilder;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
 import org.hibernate.cfg.Configuration;
 
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExtractFromDB;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
@@ -188,14 +192,35 @@ public class GenMAPPBuilder extends App {
      * native Access Jet engine.
      */
     private void doExportToGenMAPP() {
+    	
         // Prompt the user for the output (destination) file.
+    	JFileChooser chooser = new JFileChooser();
+    	int returnVal = chooser.showSaveDialog(this.getFrontmostWindow());
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            // Now we have all the information we need; perform the actual export.
+    		try {
+    			ExtractFromDB.PushToAccessDB(new File(chooser.getSelectedFile().getName()));
+    		} catch (SQLException e) {			
+                ModalDialog.showErrorDialog("SQL error.");
+                e.printStackTrace();
+    		} catch (IOException e) {
+    			ModalDialog.showErrorDialog("I/O error.");
+    			e.printStackTrace();
+    		} catch (ClassNotFoundException e) {
+    			ModalDialog.showErrorDialog("Database driver error.");
+    			e.printStackTrace();
+			}
+        }
+     
         
         // In the future, we also want to prompt the user for the organism to
         // output for.
         
         // Prompt the user for the GO Associations file.
         
-        // Now we have all the information we need; perform the actual export.
+
+    	
+    	
     }
 
     /**

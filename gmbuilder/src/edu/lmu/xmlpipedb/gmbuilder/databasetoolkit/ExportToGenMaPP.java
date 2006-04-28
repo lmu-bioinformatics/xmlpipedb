@@ -29,7 +29,7 @@ import java.util.List;
 public class ExportToGenMaPP {
 
 	private Connection connection = null;
-	private String outputFile = null;
+	private File outputFile = null;
 	
 	/**
 	 * Constructor 
@@ -37,11 +37,11 @@ public class ExportToGenMaPP {
 	 * @param outputFile
 	 * @throws IOException
 	 */
-	public ExportToGenMaPP(String templateFile, String outputFile) throws IOException {
+	public ExportToGenMaPP(String templateFile, File outputFile) throws IOException {
 		this.outputFile = outputFile;
 		
 		//make a copy of the template file.
-		copyFile(templateFile, new File(outputFile));
+		copyFile(templateFile, outputFile);
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class ExportToGenMaPP {
 		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
 		   
         String database = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
-        database += outputFile.trim() + ";DriverID=22;READONLY=false}"; 
+        database += outputFile.getAbsolutePath() + ";DriverID=22;READONLY=false}"; 
         
         connection = DriverManager.getConnection(database ,"","");
 	}
@@ -83,7 +83,9 @@ public class ExportToGenMaPP {
 	 * @throws SQLException
 	 */
 	public void closeConnection() throws SQLException {
-		connection.close();
+		if(connection != null) {
+			connection.close();
+		}
 	}
 	
 	/**

@@ -67,6 +67,7 @@ public class UniprotXSDPostProcessor extends JFrame {
 		//
 		locateFileDialog(SQL_FILE);
 		chooser.setFileFilter(new MyFilter(SQL_EXTENSION));
+		chooser.setDialogTitle("Locate the " + SQL_FILE + " file");
 		chooser.showOpenDialog(this);
 		sqlFile = chooser.getSelectedFile();
 		if (sqlFile == null) {
@@ -85,6 +86,7 @@ public class UniprotXSDPostProcessor extends JFrame {
 		//
 		locateFileDialog(HBM_FILE_1);
 		chooser.setFileFilter(new MyFilter(XML_EXTENSION));
+		chooser.setDialogTitle("Locate the " + HBM_FILE_1 + " file");
 		chooser.showOpenDialog(this);
 		hbmFile1 = chooser.getSelectedFile();
 		if (hbmFile1 == null) {
@@ -103,6 +105,7 @@ public class UniprotXSDPostProcessor extends JFrame {
 		//
 		locateFileDialog(HBM_FILE_2);
 		chooser.setFileFilter(new MyFilter(XML_EXTENSION));
+		chooser.setDialogTitle("Locate the " + HBM_FILE_2 + " file");
 		chooser.showOpenDialog(this);
 		hbmFile2 = chooser.getSelectedFile();
 		if (hbmFile2 == null) {
@@ -121,6 +124,7 @@ public class UniprotXSDPostProcessor extends JFrame {
 		//
 		locateFileDialog(JAVA_FILE_1);
 		chooser.setFileFilter(new MyFilter(JAVA_EXTENSION));
+		chooser.setDialogTitle("Locate the " + JAVA_FILE_1 + " file");
 		chooser.showOpenDialog(this);
 		javaFile1 = chooser.getSelectedFile();
 		if (javaFile1 == null) {
@@ -139,6 +143,7 @@ public class UniprotXSDPostProcessor extends JFrame {
 		//
 		locateFileDialog(JAVA_FILE_2);
 		chooser.setFileFilter(new MyFilter(JAVA_EXTENSION));
+		chooser.setDialogTitle("Locate the " + JAVA_FILE_2 + " file");
 		chooser.showOpenDialog(this);
 		javaFile2 = chooser.getSelectedFile();
 		if (javaFile2 == null) {

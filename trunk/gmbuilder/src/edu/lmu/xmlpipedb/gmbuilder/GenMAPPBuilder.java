@@ -92,6 +92,8 @@ public class GenMAPPBuilder extends App {
         m.addSeparator();
         m.add(_importUniprotAction);
         m.add(_importGOAction);
+        m.addSeparator();
+        m.add(_exportToGenMAPPAction);
         mb.add(m);
 
         mb.add(new WindowMenu(this));
@@ -128,6 +130,15 @@ public class GenMAPPBuilder extends App {
                 doImport("generated", "Import GO XML File");
             }
         };
+        
+        _exportToGenMAPPAction = new AbstractAction("Export to GenMAPP...") {
+            /**
+             * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+             */
+            public void actionPerformed(ActionEvent aevt) {
+                doExportToGenMAPP();
+            }
+        };
     }
 
     /**
@@ -153,6 +164,15 @@ public class GenMAPPBuilder extends App {
         }
     }
 
+    /**
+     * Imports an XML file into the database.
+     * 
+     * @param jaxbContextPath
+     *            The context path under which to store the object
+     * @param title
+     *            The title of the dialog (helps prompt the user on what file to
+     *            import)
+     */
     private void doImport(String jaxbContextPath, String title) {
         Configuration hibernateConfiguration = createHibernateConfiguration();
         if (hibernateConfiguration != null) {
@@ -163,12 +183,32 @@ public class GenMAPPBuilder extends App {
     }
 
     /**
+     * Exports the content of the current database to a GenMAPP database file.
+     * For the moment, this runs only on Windows due to a dependence on the
+     * native Access Jet engine.
+     */
+    private void doExportToGenMAPP() {
+        // Prompt the user for the output (destination) file.
+        
+        // In the future, we also want to prompt the user for the organism to
+        // output for.
+        
+        // Prompt the user for the GO Associations file.
+        
+        // Now we have all the information we need; perform the actual export.
+    }
+
+    /**
      * Builds the current Hibernate configuration.
      */
     private Configuration createHibernateConfiguration() {
         Configuration hibernateConfiguration = null;
         try {
             hibernateConfiguration = (new ConfigurationEngine()).getHibernateConfiguration();
+            
+            // TODO: Find a way to make this independent of the current
+            // directory, or at least ensure that the working directory of this
+            // program is indeed the top-level directory of the distribution.
             hibernateConfiguration.addJar(new File("lib/uniprotdb.jar"));
             hibernateConfiguration.addJar(new File("lib/godb.jar"));
         } catch(Exception exc) {
@@ -193,6 +233,12 @@ public class GenMAPPBuilder extends App {
      * Action object for importing a go file into the database.
      */
     private Action _importGOAction;
+
+    /**
+     * Action object for exporting the current content of the database to a
+     * GenMAPP database file.
+     */
+    private Action _exportToGenMAPPAction;
 
     /**
      * Component for issuing queries to the database.

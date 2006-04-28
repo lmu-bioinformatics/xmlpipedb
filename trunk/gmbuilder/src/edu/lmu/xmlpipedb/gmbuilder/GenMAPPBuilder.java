@@ -16,7 +16,7 @@ import javax.swing.JMenuBar;
 
 import org.hibernate.cfg.Configuration;
 
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExtractFromDB;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMaPP;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
@@ -199,7 +199,7 @@ public class GenMAPPBuilder extends App {
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             // Now we have all the information we need; perform the actual export.
     		try {
-    			ExtractFromDB.PushToAccessDB(new File(chooser.getSelectedFile().getName()));
+    			ExportToGenMaPP.exportToGenMaPP(new File(chooser.getSelectedFile().getName()));
     		} catch (SQLException e) {			
                 ModalDialog.showErrorDialog("SQL error.");
                 e.printStackTrace();

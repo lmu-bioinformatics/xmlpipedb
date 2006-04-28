@@ -9,39 +9,86 @@ import java.util.HashMap;
 public class Go {
 	private HashMap<String, String> create_cmds;
 	private HashMap<String, String> insert_cmds;
-	private String[] tables = {"GeneOntology", "GeneOntologyTree",  "GOCount"};
+	private String[] tables = {"GeneOntology", "GeneOntologyTree",  "GeneOntologyCount"};
 	
+	/**
+	 * Constuctor
+	 *
+	 */
 	public Go() {
 		create_cmds = new HashMap<String, String>();
 		insert_cmds = new HashMap<String, String>();
 		createMaps();
 	}
 	
+	/**
+	 * Create GO tables
+	 * 
+	 * @param connection
+	 * 			The database connection
+	 * @throws SQLException
+	 */
 	public void createTables(Connection connection) throws SQLException {
 		Statement s = connection.createStatement();
 		
 		for (int x = 0; x < tables.length; x++) {
 			String table_name =  tables[x];
 			String create_cmd = create_cmds.get(table_name);
-//			String alter_cmd = "ALTER TABLE " + table_name + " ADD CONSTRAINT " + table_name +"_constraint PRIMARY KEY(ID)";
 			s.execute(create_cmd);
-//			s.execute(alter_cmd);
 		}
 		
 		s.close();
 	}
 	
+	/**
+	 * Insert data into a GO table
+	 * 
+	 * @param connection
+	 * 				The database connection
+	 * @param table_name
+	 * 				Go table name 
+	 * @param values
+	 * 				go data 
+	 * @throws SQLException
+	 */
 	public void insert(Connection connection, String table_name, String[] values) throws SQLException {
     	String insert_cmd = insert_cmds.get(table_name);
     	PreparedStatement ps = connection.prepareStatement(insert_cmd);
-    	
+
     	for (int index = 1; index <= values.length; index++) {
     		ps.setString(index, values[index-1]);
     	}
+    	
     	ps.executeUpdate();
     	ps.close();
  	}
 	
+	/**
+	 * Updates the date for GO in the Systems table 
+	 * 
+	 * @param connection
+	 * 				the database connection
+	 * @param date
+	 * 				today date
+	 * @param systemCode
+	 * 				Unique identifier for the GO table
+	 * @throws SQLException
+	 */
+	public void updateSystemsTable(Connection connection, String date, String systemCode) throws SQLException {
+		String stmt = "UPDATE Systems SET \"Date\" = ? WHERE SystemCode = ?";
+		PreparedStatement ps = connection.prepareStatement(stmt);
+		ps.setString(1, date);
+		ps.setString(2, systemCode);
+    	ps.executeUpdate();
+    	ps.close();
+		
+	}
+	
+	/**
+	 * Creates the sql statements to create tables and insert 
+	 * data 
+	 *
+	 */
 	private void createMaps() {
 		int index = 0;
 		String create_cmd; 	
@@ -51,14 +98,14 @@ public class Go {
 		String[][] fields = new String[][]
 		       {
 				{"ID", "NAME", "Type","Parent","Relation","Species", "\"Date\"", "Remarks"},
-				{"ID", "OrderNo", "Level", "NAME"},
-				{"ID", "Count", "Total"}
+				{"OrderNo", "LVL", "ID", "NAME"},
+				{"ID", "Count"}
 		       };
 		String[][] types  = new String[][]
 		       {
 				{"VARCHAR(50) NOT NULL", "MEMO", "VARCHAR(2)","VARCHAR(50)","CHAR","MEMO", "DATE", "MEMO"},
-				{"VARCHAR(50) NOT NULL", "LONG", "Int", "MEMO"},
-				{"VARCHAR(50) NOT NULL", "Int", "Long"}
+				{"LONG", "Int", "VARCHAR(50)", "MEMO"},
+				{"VARCHAR(50) NOT NULL", "Int"}
 		       };
 
 		

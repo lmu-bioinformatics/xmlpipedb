@@ -13,8 +13,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.xml.bind.JAXBException;
 
+import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
+import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMaPP;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
@@ -199,8 +202,17 @@ public class GenMAPPBuilder extends App {
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             // Now we have all the information we need; perform the actual export.
     		try {
-    			ExportToGenMaPP.exportToGenMaPP(new File(chooser.getSelectedFile().getName()));
-    		} catch (SQLException e) {			
+				ExportToGenMaPP.exportToGenMaPP(new File(chooser.getSelectedFile().getName()));
+			} catch (HibernateException e) {
+				ModalDialog.showErrorDialog("HIBERNATE error.");
+				e.printStackTrace();
+			} catch (SAXException e) {
+				ModalDialog.showErrorDialog("SAX error.");
+				e.printStackTrace();
+			} catch (JAXBException e) {
+				ModalDialog.showErrorDialog("JAXB error.");
+				e.printStackTrace();
+			} catch (SQLException e) {			
                 ModalDialog.showErrorDialog("SQL error.");
                 e.printStackTrace();
     		} catch (IOException e) {

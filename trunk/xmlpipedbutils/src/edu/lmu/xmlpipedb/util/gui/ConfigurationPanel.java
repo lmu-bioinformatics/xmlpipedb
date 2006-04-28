@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyListener;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,7 +29,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.hibernate.cfg.Configuration;
 
@@ -103,7 +107,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         this.add(_topBox, BorderLayout.NORTH);
 
         // add fields
-        this.add(_centerPanel, BorderLayout.CENTER);
+        this.add( new JScrollPane(_centerPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
 
         Box buttonBox = Box.createHorizontalBox();
         buttonBox.add(Box.createHorizontalGlue());
@@ -225,26 +229,50 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         Iterator props = propsArray.iterator();
 
         _propSelected = new JCheckBox[propsArray.size()];
-        _propName = new JLabel[propsArray.size()];
+        //_propName = new JLabel[propsArray.size()];
         _propValue = new JTextField[propsArray.size()];
         int i = 0;
         while (props.hasNext()) {
             HibernateProperty hp = (HibernateProperty)props.next();
 
-            _propSelected[i] = new JCheckBox();
-            _propName[i] = new JLabel(hp.getName());
+            //Babak - Changed the implementation to use the JCheckBox's text label instead of a seperate 
+            _propSelected[i] = new JCheckBox( hp.getName() );
+            //_propName[i] = new JLabel(hp.getName());
+            
             // check if the field is a password field
             if (hp.getName().indexOf("password") != -1)
                 _propValue[i] = new JPasswordField(hp.getValue(), 30);
             else
                 _propValue[i] = new JTextField(hp.getValue(), 30);
+            
+            final JCheckBox thisCheckBox =_propSelected[i]; 
+            _propValue[i].getDocument().addDocumentListener(
+            		new DocumentListener(){
 
+						public void insertUpdate(DocumentEvent e) {
+							// TODO Auto-generated method stub
+							thisCheckBox.setSelected(true);
+						}
+
+						public void removeUpdate(DocumentEvent e) {
+							// TODO Auto-generated method stub
+							thisCheckBox.setSelected(true);
+						}
+
+						public void changedUpdate(DocumentEvent e) {
+							// TODO Auto-generated method stub
+							thisCheckBox.setSelected(true);
+						}
+            			
+            		}
+            );
+            
             if (hp.isSaved()) {
                 _propSelected[i].setSelected(true);
             }
 
             _centerPanel.add(_propSelected[i], _promptGBC);
-            _centerPanel.add(_propName[i], _promptGBC);
+            //_centerPanel.add(_propName[i], _promptGBC);
             _centerPanel.add(_propValue[i], _fieldGBC);
 
             i++;
@@ -320,7 +348,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
             if (_propSelected[i].isSelected()) {
                 // if it is checked, add, which will add a new or replace an
                 // existing property
-                saveModel.add(new HibernateProperty(category, type, _propName[i].getText(), _propValue[i].getText(), true));
+                //saveModel.add(new HibernateProperty(category, type, _propName[i].getText(), _propValue[i].getText(), true));
+            	saveModel.add(new HibernateProperty(category, type, _propSelected[i].getText(), _propValue[i].getText(), true));
             } else {
                 // not sure we need an else
             }
@@ -366,7 +395,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 
     // control arrays
     private JCheckBox[] _propSelected;
-    private JLabel[] _propName;
+    //private JLabel[] _propName;
     private JTextField[] _propValue;
     private JRadioButton _categoryRB;
 

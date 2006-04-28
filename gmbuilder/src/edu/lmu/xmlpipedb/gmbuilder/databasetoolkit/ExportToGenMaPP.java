@@ -19,6 +19,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -259,16 +261,15 @@ public class ExportToGenMaPP {
 	 * @param date
 	 * @throws SQLException
 	 */
-	public void updateSystemsTable(
-			List<String> systemCodeList, String date) throws SQLException {
-        
-		Statement s = connection.createStatement();
+	public void updateSystemsTable(String systemCode, String dateString, String columns) throws SQLException {
 		
-		for(String systemCode : systemCodeList) {
-            s.execute("UPDATE Systems " +
-            		"SET \"Date\"='04/06/2006'" +
+		Statement s = connection.createStatement();
+
+        s.execute("UPDATE Systems " +
+            		"SET \"Date\"='" + dateString + "'" +
+            		"AND Columns='" + columns + "'" +
             		"WHERE SystemCode='" + systemCode + "'");
-		}
+		
         s.close();
 	}
 }

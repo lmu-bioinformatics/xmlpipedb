@@ -10,6 +10,32 @@ public class HibernateProperty {
 		_value = value;
 		_isSaved = isSaved;
 	}
+	
+	public HibernateProperty(String name, String value, boolean isSaved) {
+		parseStorageName(name);
+		_value = value;
+		_isSaved = isSaved;
+	}
+	
+	private void parseStorageName( String key ){
+        int categoryMarker = key.indexOf("|");
+        int typeMarker = key.indexOf("|", categoryMarker + 1);
+
+        String category = key.substring(0, categoryMarker);
+        _category = category.replace(".", " "); // replaces . with spaces
+        String type = key.substring(categoryMarker + 1, typeMarker);
+        _type = type.replace(".", " "); // replaces . with spaces
+        String name = key.substring(typeMarker + 1);
+        _name = name;
+		
+	}
+	
+	public String getStorageName(){
+		String category = _category.replace(" ", "."); // replaces spaces with .
+        String type = _type.replace(" ", "."); // replaces spaces with .
+        String name = category + "|" + type + "|" + _name;
+		return name;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

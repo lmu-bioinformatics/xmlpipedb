@@ -1,1 +1,3 @@
 \subsection{Database Generation with \emph{xsd2db}}
+\label{xsd2db}
+The first step to in creating a tool chain that would build relational databases from xml sources was to create a JAXB object model for the schema of our xml sources.  This object model could then be used to load JAXB objects into memory where we could then use hibernate and the appropriate hibernate mappings to map these JAXB objects to a relational database.  

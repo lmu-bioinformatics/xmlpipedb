@@ -39,10 +39,14 @@ import edu.lmu.xmlpipedb.util.engines.ImportEngine;
 
 /**
  *
- * @author Dave
+ * @author Dave Hoffman
  */
 public class ImportPanel extends JPanel {
-    /** Creates a new instance of ImportPanel2 */
+    /**
+     * Creates a new instance of ImportPanel
+     * @param hibernateConfiguration The hibernate configuration to save to
+     * @param jaxbContextPath The context path for the jaxb
+     */
     public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration) {
         _jaxbContextPath = jaxbContextPath;
         _hibernateConfiguration = hibernateConfiguration;
@@ -197,7 +201,6 @@ public class ImportPanel extends JPanel {
 
     private String _jaxbContextPath;
     private Configuration _hibernateConfiguration;
-    
     private JButton _previewButton;
     private JTextField _textFieldPath;
     private JScrollPane _xmlScrollArea;

@@ -52,7 +52,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * 
      */
     private static final long serialVersionUID = -3486506045107182287L;
-    String STRCAT;
+//    String STRCAT;
 
     /**
      * Creates an instance of the ConfigurationPanel, which in turn creates an
@@ -66,7 +66,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         try {
             _configEngine = new ConfigurationEngine();
             _model = _configEngine.getConfigurationModel();
-
+           
         } catch(CouldNotLoadPropertiesException e) {
             throw e;
         } catch(FileNotFoundException e) {
@@ -142,8 +142,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         _topBox = getTopBox();
         _centerPanel = new JPanel(new GridBagLayout());
         // add entries to combo
-        getComboBox(STRCAT, null);
-        getFields(STRCAT, (String)_typeCombo.getSelectedItem());
+        getComboBox(/*STRCAT, */null);
+        getFields(/*STRCAT,*/ (String)_typeCombo.getSelectedItem());
 
         _saveButton = new JButton(AppResources.messageString("config_save"));
         _cancelButton = new JButton(AppResources.messageString("config_cancel"));
@@ -165,8 +165,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     public void itemStateChanged(ItemEvent iEvent) {
         if (iEvent.getStateChange() == ItemEvent.SELECTED) {
             _centerPanel.removeAll();
-            getComboBox(STRCAT, (String)iEvent.getItem());
-            getFields(STRCAT, (String)iEvent.getItem());
+            getComboBox(/*STRCAT,*/ (String)iEvent.getItem());
+            getFields(/*STRCAT,*/ (String)iEvent.getItem());
             this.validate();
             this.repaint();
         }
@@ -178,7 +178,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      */
     private Box getTopBox() {
         Box topBox = new Box(BoxLayout.X_AXIS);
-
+        String strCat = null;
         Set catSet = _model.getCategories();
         Iterator catIter = catSet.iterator();
         ButtonGroup bg = new ButtonGroup();
@@ -186,35 +186,43 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 
         while (catIter.hasNext()) {
             // add _catButton buttons
-            STRCAT = (String)catIter.next();
-            if (STRCAT == null)
+            strCat = (String)catIter.next();
+            if (strCat == null)
                 throw new NullPointerException("There are " + "no categories in the model.");
 
-            _categoryRB = new JRadioButton(STRCAT);
+            // SET IT TO TRUE IF IT IS THE CURRENT CATEGORY
+            if( strCat.equalsIgnoreCase(_model.getCurrentCategory()))
+            	_categoryRB = new JRadioButton(strCat, true );
+            else
+            	_categoryRB = new JRadioButton(strCat, false );
+            
             _categoryRB.addActionListener(this);
             bg.add(_categoryRB);
-            _categoryRB.setSelected(true);
             topBox.add(_categoryRB, BorderLayout.NORTH);
             i++;
         }
 
+        //FIXME ???
+        //STRCAT = _model.getCurrentCategory();
+        
         return topBox;
     }
 
-    private void getComboBox(String category, String selected) {
+    private void getComboBox(/*String category,*/ String selected) {
         if (_typeCombo != null)
             _typeCombo.removeItemListener(this);
 
-        String[] types = _model.getTypes(category);
+        String[] types = _model.getTypes(_model.getCurrentCategory());
         _typeCombo = new JComboBox(types);
-        if (selected != null)
-            _typeCombo.setSelectedItem(selected);
-        else {
-            String selectedType = _model.getSelectedType(category);
-            if (selectedType == null)
-                _typeCombo.setSelectedIndex(0);
-            else
-                _typeCombo.setSelectedItem(selectedType);
+
+        if( selected != null)
+			_typeCombo.setSelectedItem(selected);
+        else{
+        	String selectedType = _model.getSelectedType(_model.getCurrentCategory());
+	        if (selectedType == null)
+	            _typeCombo.setSelectedIndex(0);
+	        else
+	            _typeCombo.setSelectedItem(selectedType);
         }
         _typeCombo.addItemListener(this);
         _centerPanel.add(_typeCombo, _comboGBC);
@@ -224,8 +232,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * @param config
      * @param path
      */
-    private void getFields(String category, String type) {
-        ArrayList propsArray = _model.getProperties(category, type);
+    private void getFields(/*String category, */String type) {
+        ArrayList propsArray = _model.getProperties(_model.getCurrentCategory(), type);
         Iterator props = propsArray.iterator();
 
         _propSelected = new JCheckBox[propsArray.size()];
@@ -325,9 +333,10 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 
     private void saveAction() {
         // get current info
-        String category = STRCAT;
+    	//FIXME
+        //String category = STRCAT;
         String type = (String)_typeCombo.getSelectedItem();
-
+        //String logging = "";
         // Prepare a new model object, which will be used to save the
         // properties.
         // Add all the other saved properties to the saveModel, except the
@@ -338,24 +347,36 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         while (modelIter.hasNext()) {
             HibernateProperty hp = _model.getProperty((String)modelIter.next());
             // if it is this category, don't add it no matter what
-            if (hp.getCategory().equals(category))
+            if (hp.getCategory().equals(_model.getCurrentCategory()))
                 continue;
-            if (hp.isSaved())
+            if (hp.isSaved()){
                 saveModel.add(hp);
+                //logging += hp.toString() + "\n";
+            }
         }
+        //System.out.print(logging);
+        //logging = "";
 
         for (int i = 0; i < _propValue.length; i++) {
             if (_propSelected[i].isSelected()) {
                 // if it is checked, add, which will add a new or replace an
                 // existing property
+
+            	HibernateProperty hp = new HibernateProperty(_model.getCurrentCategory(), type, _propSelected[i].getText(), _propValue[i].getText(), true); 
+                saveModel.add(hp);
+                //logging += hp.toString() + "\n";
+
                 //saveModel.add(new HibernateProperty(category, type, _propName[i].getText(), _propValue[i].getText(), true));
-            	saveModel.add(new HibernateProperty(category, type, _propSelected[i].getText(), _propValue[i].getText(), true));
+            	saveModel.add(hp);
+
             } else {
                 // not sure we need an else
             }
         }
+        //System.out.print(logging);
+        
         saveModel.setCurrentType(type);
-        saveModel.setCurrentCategory(category);
+        saveModel.setCurrentCategory(_model.getCurrentCategory());
 
         _configEngine.saveProperties(saveModel);
 
@@ -379,10 +400,10 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
             this.validate();
         } else {
 
-            STRCAT = aevt.getActionCommand();
+            _model.setCurrentCategory( aevt.getActionCommand() );
             _centerPanel.removeAll();
-            getComboBox(STRCAT, null);
-            getFields(STRCAT, (String)_typeCombo.getSelectedItem());
+            getComboBox(/*STRCAT, */null);
+            getFields(/*STRCAT,*/ (String)_typeCombo.getSelectedItem());
             this.validate();
             this.repaint();
         }

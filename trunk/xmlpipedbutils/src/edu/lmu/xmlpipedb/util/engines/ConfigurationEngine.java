@@ -12,6 +12,8 @@ import java.util.Properties;
 
 import org.hibernate.cfg.Configuration;
 
+import sun.print.resources.serviceui;
+
 import edu.lmu.xmlpipedb.util.exceptions.CouldNotLoadPropertiesException;
 import edu.lmu.xmlpipedb.util.exceptions.NoHibernatePropertiesException;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
@@ -73,7 +75,24 @@ public class ConfigurationEngine {
         if (_currentHibProps.isEmpty()) {
             throw new NoHibernatePropertiesException(AppResources.messageString("exception.nohibprops"));
         }
-        config.setProperties(_currentHibProps);
+        // get a copy of the currentHibProps
+        Properties currProps = _currentHibProps;
+        // remove "local" properties
+        currProps.remove(SAVED_TYPE_NAME);
+        currProps.remove(SAVED_CATEGORY_NAME);
+        // create the to-be-delivered properties object
+        Properties configProps = new Properties();
+        
+        Enumeration propsEnum = currProps.keys();
+        
+        while (propsEnum.hasMoreElements()) {
+            String key = (String)propsEnum.nextElement();
+            String value = currProps.getProperty(key);
+            HibernateProperty hp = new HibernateProperty( key, value, false );
+            configProps.setProperty(hp.getName(), value);
+        }
+        
+        config.setProperties(configProps);
 
         return config;
     }
@@ -127,8 +146,6 @@ public class ConfigurationEngine {
     public HibernatePropertiesModel getConfigurationModel() throws FileNotFoundException {
         HibernatePropertiesModel model = new HibernatePropertiesModel();
         // used to determine if this is saved
-        String savedType = null;
-
         _defaultProperties = new Properties();
 
         try {
@@ -149,45 +166,26 @@ public class ConfigurationEngine {
             e.printStackTrace();
         }
 
-        savedType = _currentHibProps.getProperty(SAVED_TYPE_NAME);
+        model.setCurrentCategory(_currentHibProps.getProperty(SAVED_CATEGORY_NAME));
+        model.setCurrentType(_currentHibProps.getProperty(SAVED_TYPE_NAME));
         _currentHibProps.remove(SAVED_TYPE_NAME);
         _currentHibProps.remove(SAVED_CATEGORY_NAME);
+
         Enumeration propsEnum = _defaultProperties.keys();
 
         while (propsEnum.hasMoreElements()) {
             String key = (String)propsEnum.nextElement();
-            boolean isSavedDialect = false;
-            int categoryMarker = key.indexOf("|");
-            int typeMarker = key.indexOf("|", categoryMarker + 1);
-
-            String category = key.substring(0, categoryMarker);
-            category = category.replace(".", " "); // replaces . with spaces
-            String type = key.substring(categoryMarker + 1, typeMarker);
-            type = type.replace(".", " "); // replaces . with spaces
-            String name = key.substring(typeMarker + 1);
             String value = _defaultProperties.getProperty(key);
-
-            // used to determine if a property is 'saved' or not
-            if (savedType != null && savedType.equals(type))
-                isSavedDialect = true;
-            // exception for general properties
-            if (category.equalsIgnoreCase("general"))
-                isSavedDialect = true;
-
+			
             HibernateProperty hp;
             // figure out what value to put in model
-            if (isSavedDialect) {
-                String altVal = _currentHibProps.getProperty(name);
-                boolean isSaved = true;
-
-                if (altVal == null) {
-                    altVal = value;
-                    isSaved = false;
-                }
-
-                hp = new HibernateProperty(category, type, name, altVal, isSaved);
+            // if the key matches a key in the properties file we read in
+            // then use the value from that file and mark it as saved
+            // otherwise, use the default value.
+            if (_currentHibProps.containsKey(key)) {
+                hp = new HibernateProperty(key, _currentHibProps.getProperty(key), true);
             } else {
-                hp = new HibernateProperty(category, type, name, value, false);
+                hp = new HibernateProperty(key, value, false);
             }
 
             model.add(hp);
@@ -226,13 +224,16 @@ public class ConfigurationEngine {
         // Properties props = _currentHibProps;
         Properties props = new Properties();
         Iterator namesIter = saveModel.getProperties();
+        String logging = "";
 
         while (namesIter.hasNext()) {
             String propName = (String)namesIter.next();
+            logging += propName + "\n";
             HibernateProperty hp = saveModel.getProperty(propName);
             if (hp.isSaved())
-                props.setProperty(hp.getName(), hp.getValue());
+                props.setProperty(hp.getStorageName(), hp.getValue());
         }
+        System.out.print(logging);
 
         // add these two "static" properties to the Properties obj.
         props.setProperty(SAVED_TYPE_NAME, saveModel.getCurrentType());
@@ -243,7 +244,7 @@ public class ConfigurationEngine {
     }
 
     /**
-     * @deprecated
+     * 
      * @param category
      * @param type
      */

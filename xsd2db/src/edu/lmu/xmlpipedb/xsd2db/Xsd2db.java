@@ -69,15 +69,17 @@ public class Xsd2db {
         Options options = new Options();
         options.targetDir = new File(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.SRC_DIR]);
         //  TODO:  need to add the bindings file
+        
         if (cmdline.getSchemaType() == Xsd2dbCommandLine.Schema.DTD)
+        //  Set the schema language to DTD
             options.setSchemaLanguage(Options.SCHEMA_DTD);
         else
-            options.setSchemaLanguage(Options.SCHEMA_XMLSCHEMA);
         //  Set the schema language to XSD
+            options.setSchemaLanguage(Options.SCHEMA_XMLSCHEMA);
+        
         System.out.println(cmdline.dbSrcDir.getPath());
-        options.addGrammar(new org.xml.sax.InputSource(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.XSD_DIR] + File.separator + cmdline.xsdName));
-
         //  Sets the schema.
+        options.addGrammar(new org.xml.sax.InputSource(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.XSD_DIR] + File.separator + cmdline.xsdName));
         try {
             options.parseArguments(xjcArgs);
         } catch(Exception e) {
@@ -90,21 +92,25 @@ public class Xsd2db {
             grammar = GrammarLoader.load(options, errorReceiver);
             if (grammar == null)
                 System.out.println("Unable to parse schema");
-        } catch(Exception e) { // TODO: unsuppress exception 
+        } catch(Exception e) {
+        
+        
         }
 
         try {
             GeneratorContext generatorContext = Driver.generateCode(grammar, options, errorReceiver);
             if (generatorContext == null)
                 System.out.println("failed to compile a schema");
-            AbstractParameterizableCodeAugmenter codeAugmenter = new AddOn();
             // Calling the hyperjaxb2 addon manualy
+            AbstractParameterizableCodeAugmenter codeAugmenter = new AddOn();
             ErrorHandler errorHandler = new ConsoleErrorReporter();
-            codeAugmenter.run(grammar, generatorContext, options, errorHandler);
             // Must run before building the code model.
+            codeAugmenter.run(grammar, generatorContext, options, errorHandler);
             grammar.codeModel.build(Driver.createCodeWriter(options.targetDir, options.readOnly));
-        } catch(Exception e) { // TODO: unsuppress exception
+        } catch(Exception e) {
+            System.out.println("Error: The hyperjaxb addon failed to generate hibernate mappings.");
             System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
         File destDir = new File(cmdline.dbSrcDir, cmdline.subDirs[Xsd2dbCommandLine.HBM_DIR]);

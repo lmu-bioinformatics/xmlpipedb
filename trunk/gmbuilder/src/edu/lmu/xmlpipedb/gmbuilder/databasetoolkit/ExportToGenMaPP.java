@@ -1,8 +1,9 @@
 /********************************************************
- * Filename: ExportToGenMaPP.java
+ * Filename: ExportFromDB.java
  * Author: LMU
  * Program: gmBuilder
- * Description: Export the data to the access database.    
+ * Description: Extract the data from the Postgresql 
+ * database.    
  * Revision History:
  * 20060422: Initial Revision.
  * *****************************************************/
@@ -10,266 +11,232 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Class that exports to GenMaPP
+ * Class to extract from the database
  * @author LMU
  *
  */
 public class ExportToGenMaPP {
 
-	private Connection connection = null;
-	private File outputFile = null;
+	
+	private static Map<String, String> uniprotTable_ID = new HashMap<String, String>();
+	private static Map<String, String> uniprotTable_EntryName = new HashMap<String, String>();
+	private static Map<String, String> uniprotTable_GeneName = new HashMap<String, String>();
+	private static Map<String, String> uniprotTable_ProteinName = new HashMap<String, String>();
+	
+	private static Connection connection = null;
 	
 	/**
-	 * Constructor 
-	 * @param templateFile
-	 * @param outputFile
-	 * @throws IOException
+	 * Empty Constructor.
 	 */
-	public ExportToGenMaPP(String templateFile, File outputFile) throws IOException {
-		this.outputFile = outputFile;
+	public ExportToGenMaPP() {}
+
+	/**
+	 * Queries for the gene names in the database and adds them to the given map
+	 * keyed on the given ID.
+	 * 
+	 * @param map
+	 */
+	private static void extractNames(String id, Map<String, String> map) throws SQLException {
+		// First, yank out the primary names.
+		extractNamesForType(id, map, "primary");
+
+		// Then, yank out the ordered locus names.
+		extractNamesForType(id, map, "ordered locus");
 		
-		//make a copy of the template file.
-		copyFile(templateFile, outputFile);
+		// Finally, add anything else that has neither.
+		extractNamesForType(id, map, null);
 	}
-	
+
 	/**
-	 * Copy template file to output file
-	 * @param templateFile
-	 * @param fileOut
-	 * @throws IOException
+	 * Extracts names with a given name type.
 	 */
-	private void copyFile(String templateFile, File fileOut) throws IOException {
-		InputStream in = getClass().getResourceAsStream(templateFile);
-		OutputStream out = new FileOutputStream(fileOut);
-	    
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
+	private static void extractNamesForType(String id, Map<String, String> map, String type) throws SQLException {
+        //
+        //  uniprotTable_GeneName <UID> <Uniprot Table GeneName>
+        //
+		final String baseQuery = "select value from genenametype inner join entrytype_genetype on(entrytype_genetype_name_hjid = entrytype_genetype.hjid) where entrytype_gene_hjid = ?";
+		final String baseQueryWithFilter = baseQuery + " and type = ?";
+
+		PreparedStatement ps = connection.prepareStatement(
+				(type != null) ? baseQueryWithFilter : baseQuery);
+		ps.setString(1, id);
+		if (type != null) {
+			ps.setString(2, type);
+		}
+		ResultSet result = ps.executeQuery();
+        while(result.next()) {
+        	if (!map.containsKey(id)) {
+            	map.put(id, result.getString(1));
+        	}
         }
-        in.close();
-        out.close();
-    }
-	
+        ps.close();
+	}
+
 	/**
-	 * Open connection to the access database
-	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public void openConnection() throws ClassNotFoundException, SQLException {
-		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-		   
-        String database = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
-        database += outputFile.getAbsolutePath() + ";DriverID=22;READONLY=false}"; 
-        
-        connection = DriverManager.getConnection(database ,"","");
+	private static void extractUniqueEntries() throws SQLException {
+        //
+        //  uniprotTable_ID <UID> <Uniprot Table ID>
+        //
+		PreparedStatement ps = connection.prepareStatement(
+				"SELECT " +
+        		"entrytype_accession_hjid, " +
+        		"hjvalue " +
+        		"FROM entrytype_accession where entrytype_accession_hjindex = 0");
+		ResultSet result = ps.executeQuery();
+        while(result.next()) {
+        	uniprotTable_ID.put(result.getString(1), result.getString(2));
+        }
+        ps.close();
 	}
 	
 	/**
-	 * Close connection to the access database
 	 * @throws SQLException
 	 */
-	public void closeConnection() throws SQLException {
-		if(connection != null) {
-			connection.close();
+	private static void extractAccessionNames() throws SQLException {
+        //
+        //  uniprotTable_ID <UID> <Uniprot Table ID>
+        //
+		PreparedStatement ps = connection.prepareStatement(
+				"SELECT " +
+        		"entrytype_accession_hjid, " +
+        		"hjvalue " +
+        		"FROM entrytype_accession where entrytype_accession_hjindex = 0");
+		ResultSet result = ps.executeQuery();
+        while(result.next()) {
+        	uniprotTable_ID.put(result.getString(1), result.getString(2));
+        }
+        ps.close();
+	}
+	
+	/**
+	 * @param id
+	 * @throws SQLException
+	 */
+	private static void extractEntryName(String id) throws SQLException {
+        //
+        //  uniprotTable_EntryName <UID> <Uniprot Table EntryName>
+        //  
+    	PreparedStatement ps = connection.prepareStatement(
+    			"SELECT hjvalue " +
+        		"FROM entrytype_name " +
+        		"WHERE entrytype_name_hjid = ?");
+    	ps.setString(1, id);
+    	ResultSet result = ps.executeQuery();
+        while(result.next()) {
+        	uniprotTable_EntryName.put(id, result.getString(1));
+        }
+        ps.close();
+	}
+	
+	/**
+	 * @param id
+	 * @throws SQLException
+	 */
+	private static void extractProteinName(String id) throws SQLException {           
+        //
+        //  uniprotTable_ProteinName <UID> <Uniprot Table ProteinName>
+        //
+		PreparedStatement ps = connection.prepareStatement(
+				"select value from entrytype " +
+				"inner join proteinnametype on " +
+				"(protein = proteintype_name_hjid) " +
+				"where entrytype.hjid = ? and " +
+				"proteintype_name_hjindex = 0;");
+    	ps.setString(1, id);
+    	ResultSet result = ps.executeQuery();
+        while(result.next()) {
+        	uniprotTable_ProteinName.put(id, result.getString(1));
+        }
+        
+        ps.close();
+	}
+	
+	
+	/**
+	 * Extract all the table data
+	 * @throws SQLException
+	 */
+	private static void extractAllData() throws SQLException {
+		
+		extractUniqueEntries();		
+		extractAccessionNames();
+
+		for(String id : uniprotTable_ID.keySet()) {
+			extractEntryName(id);		
+			extractNames(id, uniprotTable_GeneName);
+			extractProteinName(id);
 		}
 	}
 	
-	/**
-	 * Update info table
-	 * @param owner
-	 * @param version
-	 * @param modSystem
-	 * @param species
-	 * @param modify
-	 * @param displayOrder
-	 * @param notes
-	 * @throws SQLException
-	 */
-	public void updateInfoTable(String owner, 
-			String version, String modSystem, String species,
-			String modify, String displayOrder, 
-			String notes) throws SQLException {
-		
-        Statement s = connection.createStatement();
-        s.execute("INSERT INTO Info (" +
-        		"Owner," +
-        		"Version," +
-        		"MODSystem," +
-        		"Species," +
-        		"Modify," +
-        		"DisplayOrder," +
-        		"Notes) " +
-        		"VALUES (" +
-        		"'" + owner + "'," +
-        		"'" + version + "'," +
-        		"'" + modSystem + "'," +
-        		"'" + species + "'," +
-        		"'" + modify + "'," +
-        		"'" + displayOrder + "'," +
-        		"'" + notes + "')");
-        s.close();
-	}
 	
-	/**
-	 * Create the Uniprot table
-	 * @throws SQLException
-	 */
-	public void createUniProtTable() throws SQLException {
-		
-        Statement s = connection.createStatement();
-        s.execute("CREATE TABLE UniProt (" +
-        		"ID VARCHAR(50) NOT NULL," +
-        		"EntryName VARCHAR(50) NOT NULL," +
-        		"GeneName VARCHAR(50) NOT NULL," +
-        		"ProteinName MEMO," +
-        		"Function MEMO," +
-        		"Species MEMO," +
-        		"\"Date\" DATE," +
-        		"Remarks MEMO)");
-        s.execute("ALTER TABLE UniProt ADD CONSTRAINT UniProt_constraint PRIMARY KEY(ID)"); 
 
-        s.close();
-	}
-	
 	/**
-	 * Fill in the Uniprot table
-	 * @param id
-	 * @param entryName
-	 * @param geneName
-	 * @param proteinName
-	 * @param function
-	 * @param species
-	 * @param date
-	 * @param remarks
+	 * Export all data to a new Access GenMaPP file.
+	 * @param outputFile
+	 * @throws IOException
+	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-    public void fillUniProtTable(String id, 
-    			String entryName, String geneName, String proteinName, 
-    			String function, String species, String date, 
-    			String remarks) throws SQLException {
-	    	PreparedStatement ps = connection.prepareStatement("INSERT INTO UniProt (" +
-	        		"ID," +
-	        		"EntryName," +
-	        		"GeneName," +
-	        		"ProteinName," +
-	        		"Function," +
-	        		"Species," +
-	        		"\"Date\"," +
-	        		"Remarks)" +
-	        		"VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-	    	ps.setString(1, id);
-	    	ps.setString(2, entryName);
-	    	ps.setString(3, geneName);
-	    	ps.setString(4, proteinName);
-	    	ps.setString(5, function);
-	    	ps.setString(6, species);
-	    	ps.setString(7, date);
-	    	ps.setString(8, remarks);
-	    	ps.executeUpdate();
-	    	ps.close();
-    	}
-	
-    /**
-     * Create and fill the System Table
-     * @param table
-     * @param idList
-     * @param species
-     * @param date
-     * @param remarks
-     * @throws SQLException
-     */
-	public void createAndFillSystemTable(String table, 
-			List<String> idList, String species, String date, 
-			String remarks) throws SQLException {
-        
-		Statement s = connection.createStatement();
-
-        s.execute("CREATE TABLE " + table +" (" +
-        		"ID VARCHAR(50) NOT NULL," +
-        		"Species MEMO," +
-        		"Date DATE," +
-        		"Remarks MEMO)");
-        
-        s.execute("ALTER TABLE " + table + " ADD CONSTRAINT " + table + "_constraint PRIMARY KEY(ID)"); 
-        
-        for(String id : idList) {
-            s.execute("INSERT INTO " + table +" (" +
-            		"ID," +
-            		"Species," +
-            		"Date," +
-            		"Remarks)" +
-            		"VALUES (" +
-            		"'" + id + "'," +
-            		"'" + species + "'," +
-            		"'" + date + "'," +
-            		"'" + remarks + "')");
-        }
-        s.close();
-	}
-	
-	/**
-	 * Create and fill the Relations table
-	 * @param table
-	 * @param primary
-	 * @param relatedList
-	 * @param bridge
-	 * @throws SQLException
-	 */
-	public void createAndFillRelationTable(String table, 
-			String primary, List<String> relatedList, 
-			String bridge) throws SQLException {
-        
-		Statement s = connection.createStatement();
+	public static void exportToGenMaPP(File outputFile) throws IOException, ClassNotFoundException, SQLException {
 		
-        s.execute("CREATE TABLE " + table +" (" +
-        		"Primary VARCHAR(50) NOT NULL," +
-        		"Related VARCHAR(50) NOT NULL," +
-        		"Bridge VARCHAR(3) NOT NULL)");
-
-        for(String related : relatedList) {
-            s.execute("CREATE TABLE " + table +" (" +
-            		"Primary," +
-            		"Related," +
-            		"Bridge)" +
-            		"VALUES (" +
-            		"'" + primary + "'," +
-            		"'" + related + "'," +
-            		"'" + bridge + "')");
-        }
-        s.close();
-	}
-	
-	/**
-	 * Update the systems table
-	 * @param systemCodeList
-	 * @param date
-	 * @throws SQLException
-	 */
-	public void updateSystemsTable(String systemCode, String dateString, String columns) throws SQLException {
+		//Create relational database connection.
+		Class.forName("org.postgresql.Driver");
+		connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/uniprot", "postgres", "password");
 		
-		Statement s = connection.createStatement();
-
-        s.execute("UPDATE Systems " +
-            		"SET \"Date\"='" + dateString + "'" +
-            		"AND Columns='" + columns + "'" +
-            		"WHERE SystemCode='" + systemCode + "'");
+		//Get todays date to tag in access file for creation date.
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		String dateString = dateFormat.format(new Date());
 		
-        s.close();
+		//Extract the data from the relational database.
+		extractAllData();
+		
+		//Close the relational database connection.
+		connection.close();
+		
+		//Create and build the Access GenMaPP file.
+		try {
+			
+			//Create the file, open the Access database connection.
+			AccessFileCreator.openConnection(outputFile);
+			
+			//Update the "Info Table".
+			AccessFileCreator.updateInfoTable("Loyola Marymount University",
+					dateString, "UniProt", "|Escherichia coli K12|",
+					dateString, "|S|", "");
+			
+			//Update the "Systems Table".
+			AccessFileCreator.updateSystemsTable("S", dateString, 
+					"ID|EntryName\\sBF|GeneName\\sBF|");
+			
+			//Create the "Uniprot Table".
+			AccessFileCreator.createUniProtTable();
+			
+			//Fill the "Uniprot Table".
+			for(String id : uniprotTable_ID.keySet()) {
+				AccessFileCreator.fillUniProtTable(
+						uniprotTable_ID.get(id), 
+						uniprotTable_EntryName.get(id), 
+						uniprotTable_GeneName.get(id),
+						uniprotTable_ProteinName.get(id),
+						"", "|Escherichia coli K12|", dateString, "");
+			}
+		} finally {
+			//Close the Access database connection.
+			AccessFileCreator.closeConnection();
+		}
 	}
 }

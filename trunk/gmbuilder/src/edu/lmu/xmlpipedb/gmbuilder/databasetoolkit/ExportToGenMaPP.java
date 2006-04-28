@@ -217,11 +217,12 @@ public class ExportToGenMaPP {
 		//Close the relational database connection.
 		connection.close();
 		
+		// ********************************************************
+		// ************** EXPORT UNIPROT TABLES TO GENAMPP ********
+		// ********************************************************
+	
 		//Create and build the Access GenMaPP file.
 		try {
-			// ********************************************************
-			// ************** EXPORT UNIPROT TABLES TO GENAMPP ********
-			// ********************************************************
 			
 			//Create the file, open the Access database connection.
 			AccessFileCreator.openConnection(outputFile);
@@ -247,17 +248,19 @@ public class ExportToGenMaPP {
 						uniprotTable_ProteinName.get(id),
 						"", "|Escherichia coli K12|", dateString, "");
 			}
-			
-			// ********************************************************
-			// ************** EXPORT GO TABLES TO GENAMPP ********
-			// ********************************************************
-
-			(new ExportGoData(outputFile.getAbsolutePath())).export();
-		
+					
 			
 		} finally {
 			//Close the Access database connection.
 			AccessFileCreator.closeConnection();
 		}
+		
+		// ********************************************************
+		// ************** EXPORT GO TABLES TO GENAMPP ********
+		// ********************************************************
+
+		(new ExportGoData(outputFile.getAbsolutePath())).export();
+		
+		
 	}
 }

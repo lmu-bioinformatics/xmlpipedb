@@ -5,6 +5,7 @@
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
+ * This class was written by David Hoffman
  */
 
 package edu.lmu.xmlpipedb.util.engines;
@@ -24,17 +25,31 @@ import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
 /**
- * 
+ * This class imports an xml file into a database.
  * @author David Hoffman
  */
 public class ImportEngine {
-    /** Creates a new instance of ImportEngine */
+    /**
+     * Creates a new instance of ImportEngine
+     * @param jaxbContextPath The jaxbContext path
+     * @param hibernateConfiguration A hibernate configuration as the configuration to import
+     * the xml to the database
+     * @throws javax.xml.bind.JAXBException For JaxB Exceptions
+     * @throws org.xml.sax.SAXException for SAX Exceptions
+     * @throws java.io.IOException for IO exceptions
+     * @throws org.hibernate.HibernateException all hibernate exceptions
+     */
     public ImportEngine(String jaxbContextPath, Configuration hibernateConfiguration) throws JAXBException, SAXException, IOException, HibernateException {
         jaxbContext = JAXBContext.newInstance(jaxbContextPath);
         unmarshaller = jaxbContext.createUnmarshaller();
         sessionFactory = hibernateConfiguration.buildSessionFactory();
     }
 
+    /**
+     * This function call takes the xml off the input stream and loads it to the database
+     * @param xml expecting xml on the input stream
+     * @throws java.lang.Exception 
+     */
     public void loadToDB(InputStream xml) throws Exception {
         Object object = unmarshaller.unmarshal(xml);
         Session saveSession = sessionFactory.openSession();
@@ -52,6 +67,10 @@ public class ImportEngine {
         }
     }
 
+    /**
+     * Within the demo app this method was made public.
+     * @return The session factory in case someone needs it.
+     */
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }

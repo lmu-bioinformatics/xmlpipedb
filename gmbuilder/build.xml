@@ -49,5 +49,6 @@
     <target name="clean" description="Remove build and dist directories">
         <delete dir="${bin}" />
         <delete dir="${dist}" />
+    	<delete file="hibernate.properties"/>
     </target>
 </project>

@@ -25,9 +25,11 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 
 import org.hibernate.HibernateException;
+import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
+import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
 
 /**
  * Class to extract from the database
@@ -209,7 +211,13 @@ public class ExportToGenMaPP {
 		
 		//Create relational database connection.
 		Class.forName("org.postgresql.Driver");
-		connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/uniprot", "postgres", "password");
+		Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
+		
+		// need to get the configuration
+		if (hibernateConfiguration != null) {
+			connection = DriverManager.getConnection(hibernateConfiguration.getProperty("hibernate.connection.url"), 
+					hibernateConfiguration.getProperty("hibernate.connection.username"), hibernateConfiguration.getProperty("hibernate.connection.password"));
+		}
 		
 		//Get todays date to tag in access file for creation date.
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");

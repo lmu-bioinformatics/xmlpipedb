@@ -202,7 +202,7 @@ public class GenMAPPBuilder extends App {
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             // Now we have all the information we need; perform the actual export.
     		try {
-				ExportToGenMaPP.exportToGenMaPP(new File(chooser.getSelectedFile().getName()));
+				ExportToGenMaPP.exportToGenMaPP(chooser.getSelectedFile());
 			} catch (HibernateException e) {
 				ModalDialog.showErrorDialog("HIBERNATE error.");
 				e.printStackTrace();
@@ -238,7 +238,7 @@ public class GenMAPPBuilder extends App {
     /**
      * Builds the current Hibernate configuration.
      */
-    private Configuration createHibernateConfiguration() {
+    public static Configuration createHibernateConfiguration() {
         Configuration hibernateConfiguration = null;
         try {
             hibernateConfiguration = (new ConfigurationEngine()).getHibernateConfiguration();

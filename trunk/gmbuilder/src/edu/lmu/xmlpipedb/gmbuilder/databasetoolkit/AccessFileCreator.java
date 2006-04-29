@@ -29,7 +29,7 @@ import java.util.List;
 public class AccessFileCreator {
 
 	private static final File GENE_DB_TMPL = new File(
-		"/edu/lmu/xmlpipedb/gmbuilder/resource/dbFiles/GeneDBTmpl.mdb");
+		"src/edu/lmu/xmlpipedb/gmbuilder/resource/dbFiles/GeneDBTmpl.mdb");
 	
 	private static Connection connection = null;
 	

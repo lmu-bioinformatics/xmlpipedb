@@ -1,5 +1,5 @@
 /********************************************************
- * Filename: ExportToGenMaPP.java
+ * Filename: AccessFileCreator.java
  * Author: LMU
  * Program: gmBuilder
  * Description: Export the data to the access database.    

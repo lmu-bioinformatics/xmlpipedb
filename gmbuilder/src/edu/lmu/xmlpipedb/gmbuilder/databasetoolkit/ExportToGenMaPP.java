@@ -1,5 +1,5 @@
 /********************************************************
- * Filename: ExportFromDB.java
+ * Filename: ExportToGenMaPP.java
  * Author: LMU
  * Program: gmBuilder
  * Description: Extract the data from the Postgresql 
@@ -92,6 +92,7 @@ public class ExportToGenMaPP {
 	}
 
 	/**
+	 * Extract the unique entries
 	 * @throws SQLException
 	 */
 	private static void extractUniqueEntries() throws SQLException {
@@ -111,6 +112,7 @@ public class ExportToGenMaPP {
 	}
 	
 	/**
+	 * Extract the accesion names
 	 * @throws SQLException
 	 */
 	private static void extractAccessionNames() throws SQLException {
@@ -130,6 +132,7 @@ public class ExportToGenMaPP {
 	}
 	
 	/**
+	 * Extract the entry names
 	 * @param id
 	 * @throws SQLException
 	 */
@@ -150,6 +153,7 @@ public class ExportToGenMaPP {
 	}
 	
 	/**
+	 * Extract the protein names
 	 * @param id
 	 * @throws SQLException
 	 */

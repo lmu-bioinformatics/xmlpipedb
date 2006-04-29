@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyListener;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,7 +23,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -52,8 +50,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * 
      */
     private static final long serialVersionUID = -3486506045107182287L;
-//    String STRCAT;
 
+    
     /**
      * Creates an instance of the ConfigurationPanel, which in turn creates an
      * instance of the ConfigurationEngine for its own private use.
@@ -191,19 +189,21 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
                 throw new NullPointerException("There are " + "no categories in the model.");
 
             // SET IT TO TRUE IF IT IS THE CURRENT CATEGORY
-            if( strCat.equalsIgnoreCase(_model.getCurrentCategory()))
+            if(  strCat.equalsIgnoreCase(_model.getCurrentCategory())){
             	_categoryRB = new JRadioButton(strCat, true );
-            else
+            } else{
             	_categoryRB = new JRadioButton(strCat, false );
+            }
             
             _categoryRB.addActionListener(this);
             bg.add(_categoryRB);
             topBox.add(_categoryRB, BorderLayout.NORTH);
             i++;
         }
-
-        //FIXME ???
-        //STRCAT = _model.getCurrentCategory();
+        
+        if( _model.getCurrentCategory() == null ){
+        	_model.setCurrentCategory(strCat);
+        }
         
         return topBox;
     }
@@ -258,17 +258,14 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
             		new DocumentListener(){
 
 						public void insertUpdate(DocumentEvent e) {
-							// TODO Auto-generated method stub
 							thisCheckBox.setSelected(true);
 						}
 
 						public void removeUpdate(DocumentEvent e) {
-							// TODO Auto-generated method stub
 							thisCheckBox.setSelected(true);
 						}
 
 						public void changedUpdate(DocumentEvent e) {
-							// TODO Auto-generated method stub
 							thisCheckBox.setSelected(true);
 						}
             			
@@ -333,10 +330,9 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 
     private void saveAction() {
         // get current info
-    	//FIXME
-        //String category = STRCAT;
         String type = (String)_typeCombo.getSelectedItem();
         //String logging = "";
+
         // Prepare a new model object, which will be used to save the
         // properties.
         // Add all the other saved properties to the saveModel, except the
@@ -366,12 +362,10 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
                 saveModel.add(hp);
                 //logging += hp.toString() + "\n";
 
-                //saveModel.add(new HibernateProperty(category, type, _propName[i].getText(), _propValue[i].getText(), true));
             	saveModel.add(hp);
 
-            } else {
-                // not sure we need an else
-            }
+            } 
+            // else -- if not select, just move on to the next one
         }
         //System.out.print(logging);
         

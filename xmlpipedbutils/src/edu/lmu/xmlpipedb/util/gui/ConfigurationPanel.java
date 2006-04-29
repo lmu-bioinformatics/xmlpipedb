@@ -42,7 +42,11 @@ import edu.lmu.xmlpipedb.util.exceptions.NoHibernatePropertiesException;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 /**
- * @author J.Nicholas
+ * ConfigurationPanel should be called to create a Hibernate configuration
+ * panel. ConfigurationPanel will create instances of the ConfigurationEngine
+ * and any other classes it needs.
+ * 
+ * @author J. Nicholas
  * 
  */
 public class ConfigurationPanel extends JPanel implements ActionListener, ItemListener {
@@ -99,6 +103,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 
     /**
      * Lays out the components on the panel
+     * @return void
      */
     private void layoutComponents() {
         this.setLayout(new BorderLayout());
@@ -122,8 +127,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     }
 
     /**
-     * @param url
-     * @param currFile
+     * Creates the components used on the panel
+     * @return void
      */
     private void createComponents() {
 
@@ -140,8 +145,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         _topBox = getTopBox();
         _centerPanel = new JPanel(new GridBagLayout());
         // add entries to combo
-        getComboBox(/*STRCAT, */null);
-        getFields(/*STRCAT,*/ (String)_typeCombo.getSelectedItem());
+        getComboBox(null);
+        getFields((String)_typeCombo.getSelectedItem());
 
         _saveButton = new JButton(AppResources.messageString("config_save"));
         _cancelButton = new JButton(AppResources.messageString("config_cancel"));
@@ -156,6 +161,10 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     } // end createComponents
 
     /*
+     * Listens to the combo box for changes in the which item is selected.
+     * When the item changes, it rebuilds the _centerPanel with a new combo
+     * box and new fields
+     * 
      * (non-Javadoc)
      * 
      * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
@@ -163,16 +172,16 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     public void itemStateChanged(ItemEvent iEvent) {
         if (iEvent.getStateChange() == ItemEvent.SELECTED) {
             _centerPanel.removeAll();
-            getComboBox(/*STRCAT,*/ (String)iEvent.getItem());
-            getFields(/*STRCAT,*/ (String)iEvent.getItem());
+            getComboBox( (String)iEvent.getItem());
+            getFields( (String)iEvent.getItem());
             this.validate();
             this.repaint();
         }
     }
 
     /**
-     * @param folderUrl
-     * @param currFile
+     * Returns the categories box used on the top of the panel
+     * @return Box - contains radio buttons for each category
      */
     private Box getTopBox() {
         Box topBox = new Box(BoxLayout.X_AXIS);
@@ -208,6 +217,14 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         return topBox;
     }
 
+    /**
+     * Instantiates the class var _typeCombo, which contains the types for
+     * the currently selected category.
+     * 
+     * @param selected - the currently selected item or null, if no item is
+     * currently selected.
+     * @return void
+     */
     private void getComboBox(/*String category,*/ String selected) {
         if (_typeCombo != null)
             _typeCombo.removeItemListener(this);
@@ -229,23 +246,24 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     }
 
     /**
-     * @param config
-     * @param path
+     * Creates all the fields for the currently selected category and type.
+     * 
+     * @param type - the currently selected type
+     * @return void
      */
-    private void getFields(/*String category, */String type) {
+    private void getFields(String type) {
         ArrayList propsArray = _model.getProperties(_model.getCurrentCategory(), type);
         Iterator props = propsArray.iterator();
 
         _propSelected = new JCheckBox[propsArray.size()];
-        //_propName = new JLabel[propsArray.size()];
         _propValue = new JTextField[propsArray.size()];
         int i = 0;
         while (props.hasNext()) {
             HibernateProperty hp = (HibernateProperty)props.next();
 
-            //Babak - Changed the implementation to use the JCheckBox's text label instead of a seperate 
+            //Babak - Changed the implementation to use the JCheckBox's text label instead of a seperate
+            //JN - thank you, Babak
             _propSelected[i] = new JCheckBox( hp.getName() );
-            //_propName[i] = new JLabel(hp.getName());
             
             // check if the field is a password field
             if (hp.getName().indexOf("password") != -1)
@@ -277,7 +295,6 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
             }
 
             _centerPanel.add(_propSelected[i], _promptGBC);
-            //_centerPanel.add(_propName[i], _promptGBC);
             _centerPanel.add(_propValue[i], _fieldGBC);
 
             i++;
@@ -321,13 +338,20 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * Adds listeners to components of interest.
      */
     private void startListeningToUI() {
-        // FIXME This is a very fragile binding...must redesign...
+        // FIXME Dondi - This is a very fragile binding...must redesign...
         _saveButton.addActionListener(this);
         _cancelButton.addActionListener(this);
         _revertButton.addActionListener(this);
         _defaultButton.addActionListener(this);
     }
 
+    /**
+     * Iterates through the current set of controls and populates a 
+     * HibernatePropertiesModel that is passed to the ConfigurationEnging 
+     * to save the properties.
+     * 
+     * @return void
+     */
     private void saveAction() {
         // get current info
         String type = (String)_typeCombo.getSelectedItem();
@@ -383,6 +407,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     }
 
     /**
+     * 
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent aevt) {
@@ -392,27 +417,26 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         } else if (aevt.getSource() == _cancelButton) {
             this.setVisible(false);
             this.validate();
-        } else {
-
+        
+        } else { // this is a radio button click
             _model.setCurrentCategory( aevt.getActionCommand() );
             _centerPanel.removeAll();
-            getComboBox(/*STRCAT, */null);
-            getFields(/*STRCAT,*/ (String)_typeCombo.getSelectedItem());
+            getComboBox(null);
+            getFields( (String)_typeCombo.getSelectedItem());
             this.validate();
             this.repaint();
         }
     }
 
     // ### DEFINE VARS ###
-    private JButton _saveButton, _cancelButton, _revertButton, _defaultButton;
-    private JComboBox _typeCombo;
     private HibernatePropertiesModel _model;
 
-    // control arrays
+    // control arrays and controls
     private JCheckBox[] _propSelected;
-    //private JLabel[] _propName;
     private JTextField[] _propValue;
     private JRadioButton _categoryRB;
+    private JButton _saveButton, _cancelButton, _revertButton, _defaultButton;
+    private JComboBox _typeCombo;
 
     //private Box _centerBox;
     private JPanel _centerPanel;

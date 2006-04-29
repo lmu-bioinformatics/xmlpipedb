@@ -34,8 +34,6 @@ public class ExportGoData {
 	private Go 		 godb;
 	private HashMap<String, String> namespace;
 	private HashMap<String, Integer> goCount;
-	private final String hbmPath = "hbm/";
-	private final String hibernateProperties = System.getProperty("user.dir")+ "/src/edu/lmu/xmlpipedb/gmbuilder/resource/properties/hibernate.properties";
 	
 	// GO DB variables
 	private int orderNo 			= 1;
@@ -100,7 +98,7 @@ public class ExportGoData {
 	 */
 	private void populateGoTables() throws SQLException, HibernateException, SAXException, IOException, JAXBException {
 		Iterator iter = null;
-		HibernateSession hs	= new HibernateSession(hbmPath, hibernateProperties);
+		HibernateSession hs	= new HibernateSession();
 		Session session = hs.openSession(); // open Hibernate session
 
 		populateGeneOntologyTable(session);

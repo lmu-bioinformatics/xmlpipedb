@@ -2,6 +2,15 @@ package edu.lmu.xmlpipedb.util.engines;
 
 public class HibernateProperty {
 
+	/**
+	 * Creates a HibernateProperty with the specified values
+	 * 
+	 * @param category
+	 * @param type
+	 * @param name
+	 * @param value
+	 * @param isSaved
+	 */
 	public HibernateProperty(String category, String type, String name,
 			String value, boolean isSaved) {
 		_category = category;
@@ -11,12 +20,29 @@ public class HibernateProperty {
 		_isSaved = isSaved;
 	}
 	
+	/**
+	 * Creates an instance of HibernateProperty and parses the passed name
+	 * into category, type and name. Expects name to be in the format:
+	 * category|type|name. Dots in category and type are replaced with spaces.
+	 * For example, "Connection.Pool" becomes "Connection Pool".
+	 * 
+	 * @param name - must be in the form: category|type|name
+	 * @param value
+	 * @param isSaved
+	 */
 	public HibernateProperty(String name, String value, boolean isSaved) {
 		parseStorageName(name);
 		_value = value;
 		_isSaved = isSaved;
 	}
 	
+	/**
+	 * Parses the passed key as a storage name. Expects key to be in the format:
+	 * category|type|name. Dots in category and type are replaced with spaces.
+	 * For example, "Connection.Pool" becomes "Connection Pool".
+	 * 
+	 * @param key
+	 */
 	private void parseStorageName( String key ){
         int categoryMarker = key.indexOf("|");
         int typeMarker = key.indexOf("|", categoryMarker + 1);
@@ -30,6 +56,12 @@ public class HibernateProperty {
 		
 	}
 	
+	/**
+	 * Returns the storage name, which is in the form: category|type|name. 
+	 * Spaces are replaced with the '.' character.
+	 * 
+	 * @return String
+	 */
 	public String getStorageName(){
 		String category = _category.replace(" ", "."); // replaces spaces with .
         String type = _type.replace(" ", "."); // replaces spaces with .
@@ -56,6 +88,8 @@ public class HibernateProperty {
 	 * category, type and property name in the form:
 	 * category.type.name
 	 * 
+	 * This is used by the HibernatePropertiesModel as key to the model.
+	 * 
 	 * @return
 	 */
 	public String getFullyQualifiedName() {
@@ -69,6 +103,7 @@ public class HibernateProperty {
 	}
 
 	/**
+	 * Get the category
 	 * @return Returns the category.
 	 */
 	public String getCategory() {
@@ -76,6 +111,7 @@ public class HibernateProperty {
 	}
 
 	/**
+	 * Set the category
 	 * @param category
 	 *            The _category to set.
 	 */
@@ -84,6 +120,7 @@ public class HibernateProperty {
 	}
 
 	/**
+	 * Get the type
 	 * @return Returns the type.
 	 */
 	public String getType() {
@@ -91,6 +128,7 @@ public class HibernateProperty {
 	}
 
 	/**
+	 * Set the type
 	 * @param type
 	 *            The type to set.
 	 */
@@ -99,6 +137,7 @@ public class HibernateProperty {
 	}
 
 	/**
+	 * Get the name
 	 * @return Returns the name.
 	 */
 	public String getName() {
@@ -106,6 +145,7 @@ public class HibernateProperty {
 	}
 
 	/**
+	 * Set the name
 	 * @param name
 	 *            The name to set.
 	 */
@@ -114,6 +154,7 @@ public class HibernateProperty {
 	}
 
 	/**
+	 * Get the value
 	 * @return Returns the value.
 	 */
 	public String getValue() {
@@ -121,6 +162,7 @@ public class HibernateProperty {
 	}
 
 	/**
+	 * Set the value
 	 * @param value
 	 *            The value to set.
 	 */
@@ -129,6 +171,7 @@ public class HibernateProperty {
 	}
 	
 	/**
+	 * Return isSaved
 	 * @return Returns the isSaved.
 	 */
 	public boolean isSaved() {
@@ -136,6 +179,7 @@ public class HibernateProperty {
 	}
 
 	/**
+	 * Set isSaved
 	 * @param isSaved The isSaved to set.
 	 */
 	public void setSaved(boolean isSaved) {

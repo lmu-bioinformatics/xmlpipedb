@@ -1,17 +1,20 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go;
 
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.Go;
+
 import generated.impl.*;
 
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,7 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBException;
 
@@ -37,9 +41,6 @@ public class ExportGoData {
 	
 	// GO DB variables
 	private int orderNo 			= 1;
-	private String GeneOntologyTree = "GeneOntologyTree";
-	private String GeneOntology		= "GeneOntology";
-	private String GeneOntologyCount= "GeneOntologyCount";
 	
 	/**
 	 *  Constructor 
@@ -104,14 +105,30 @@ public class ExportGoData {
 		populateGeneOntologyTable(session);
 		populateGeneOntologyTree();
 		populateGeneOntologyCount();
+		populateUniprotGoTable();
+		
 		
 		session.close();		
 		
 	}
 	
-	private void updateSystemsFile() {
-		
-	}
+	private void populateUniprotGoTable() throws IOException, SQLException {
+		File file = new File("src/edu/lmu/xmlpipedb/gmbuilder/resource/GoAssociations/associations.txt");
+		BufferedReader in = new BufferedReader(new FileReader(file.getCanonicalPath()));
+		String line = null;
+	    while ((line = in.readLine()) != null) {
+	    	Matcher m = Pattern.compile("UniProtKB/[\\w-]+:(\\w+)").matcher(line);
+	        if (m.find()) {
+	            String Up_ID = m.group(1);
+	            Matcher match  = Pattern.compile("GO:(\\w+)").matcher(line);
+	            while (match.find()) {
+	            	String[] values = new String[] {Up_ID, match.group(1), "En"};
+	            	godb.insert(connection,Go.Uniprot_Go, values);
+	            }
+	        }
+	     }
+	}		
+	
 	
 	/**
 	 *  Populate genMAPP's GeneOntologyTable
@@ -172,12 +189,12 @@ public class ExportGoData {
 					if (is_root) {
 						// create root ID entry
 						String[] values = {Id, Name, Type, null, null, null, Date, null};
-						godb.insert(connection,GeneOntology, values);
+						godb.insert(connection,Go.GeneOntology, values);
 						is_root = false;
 					} else if (Parent != "" && Relation != "" ) { 
 						// create child ID 
 						String[] values = {Id, Name, Type, Parent, Relation, Species, Date, Remarks};
-						godb.insert(connection,GeneOntology, values);
+						godb.insert(connection,Go.GeneOntology, values);
 						Relation = "";
 					}
 				}
@@ -199,7 +216,7 @@ public class ExportGoData {
 			String id 	= root_ids[index];
 			String name = names[index];
 			goCount.put(id, 1);
-			godb.insert(connection, GeneOntologyTree, new String[]{orderNo++ + "", 1+"" ,id, name});
+			godb.insert(connection, Go.GeneOntologyTree, new String[]{orderNo++ + "", 1+"" ,id, name});
 			insertChildren(id, 2);
 			
 		}
@@ -217,7 +234,7 @@ public class ExportGoData {
 		while (iter.hasNext()) {
 			id = (String)iter.next();
 			count = goCount.get(id);
-			godb.insert(connection, GeneOntologyCount, new String[]{id, count + ""});
+			godb.insert(connection, Go.GeneOntologyCount, new String[]{id, count + ""});
 		}
 	}
 	
@@ -232,7 +249,7 @@ public class ExportGoData {
 	 */
 	private void insertChildren(String parent, int level) throws SQLException {
 		Statement s = connection.createStatement();
-		String sql = "SELECT name,id from " + GeneOntology + " where parent = '" + parent + "' order by parent";
+		String sql = "SELECT name,id from " + Go.GeneOntology + " where parent = '" + parent + "' order by parent";
 		ResultSet results = s.executeQuery(sql);
 		while(results.next()) {
 			String name = results.getString(1);
@@ -244,7 +261,7 @@ public class ExportGoData {
 			} else {
 				goCount.put(id, 1);
 			}
-			godb.insert(connection, GeneOntologyTree, new String[]{orderNo++ + "", level+"" ,id, name});
+			godb.insert(connection, Go.GeneOntologyTree, new String[]{orderNo++ + "", level+"" ,id, name});
 			// Used for feedback; should be replaced with something else
 			System.out.println(orderNo);
 			insertChildren(id, level + 1);

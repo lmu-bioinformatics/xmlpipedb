@@ -36,6 +36,7 @@ import javax.swing.ProgressMonitorInputStream;
 import org.hibernate.cfg.Configuration;
 
 import edu.lmu.xmlpipedb.util.engines.ImportEngine;
+import javax.swing.filechooser.FileFilter;
 
 /**
  *
@@ -54,7 +55,7 @@ public class ImportPanel extends JPanel {
         createActions();
         layoutComponents();
     }
-
+    
     private void createComponents() {
         _previewButton = new JButton("preview");
         _previewButton.setEnabled(false);
@@ -122,7 +123,7 @@ public class ImportPanel extends JPanel {
                 proceedWithPreview = true;
             }
         }
-
+        //see Java API to understand why this is ok to use a thread and not a swing worker
         if (proceedWithPreview) {
             (new Thread(new FilePreview(_xmlFile, _xmlView))).start();
         } else {
@@ -161,6 +162,7 @@ public class ImportPanel extends JPanel {
 
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {
         JFileChooser fc = new JFileChooser();
+        fc.setFileFilter(new XMLFilter()); 
         fc.setCurrentDirectory(new File("."));
         if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             _xmlFile = fc.getSelectedFile();
@@ -198,7 +200,39 @@ public class ImportPanel extends JPanel {
             }
         }
     }
+    /*
+     *
+     * A filter for xml files
+     *
+     */
+    private class XMLFilter extends FileFilter
+    {
 
+        public boolean accept(File f)
+        {
+            //if it is a directory -- we want to show it so return true.
+            if (f.isDirectory())
+                return true;
+            //get the extension of the file
+            String extension = getExtension(f);
+            if ((extension.equals("xml")) || (extension.equals("XML")))
+            return true;
+
+            return false;
+        }
+        public String getDescription()
+        {
+            return "XML files";
+        }
+        private String getExtension(File f)
+        {
+            String s = f.getName();
+            int i = s.lastIndexOf('.');
+            if (i > 0 &&  i < s.length() - 1)
+                return s.substring(i+1).toLowerCase();
+            return "";
+        }        
+    }
     private String _jaxbContextPath;
     private Configuration _hibernateConfiguration;
     private JButton _previewButton;

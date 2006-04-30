@@ -9,7 +9,14 @@ import java.util.HashMap;
 public class Go {
 	private HashMap<String, String> create_cmds;
 	private HashMap<String, String> insert_cmds;
-	private String[] tables = {"GeneOntology", "GeneOntologyTree",  "GeneOntologyCount"};
+	
+	protected static String GeneOntologyTree 	= "GeneOntologyTree";
+	protected static String GeneOntology		= "GeneOntology";
+	protected static String GeneOntologyCount	= "GeneOntologyCount";
+	protected static String Uniprot_Go		    = "Uniprot-GeneOntology";
+	
+	
+	private String[] tables = {GeneOntology, GeneOntologyTree, GeneOntologyCount, Uniprot_Go};
 	
 	/**
 	 * Constuctor
@@ -97,15 +104,17 @@ public class Go {
 		
 		String[][] fields = new String[][]
 		       {
-				{"ID", "NAME", "Type","Parent","Relation","Species", "\"Date\"", "Remarks"},
-				{"OrderNo", "LVL", "ID", "NAME"},
-				{"ID", "Count"}
+				{"ID", "NAME", "Type","Parent","Relation","Species", "\"Date\"", "Remarks"}, /* GO */
+				{"OrderNo", "LVL", "ID", "NAME"}, /* GOTree */
+				{"ID", "Count"}, /* GOCount */
+				{"Primary", "Related", "Bridge"} /* Uniprot-Go */
 		       };
 		String[][] types  = new String[][]
 		       {
-				{"VARCHAR(50) NOT NULL", "MEMO", "VARCHAR(2)","VARCHAR(50)","CHAR","MEMO", "DATE", "MEMO"},
-				{"LONG", "Int", "VARCHAR(50)", "MEMO"},
-				{"VARCHAR(50) NOT NULL", "Int"}
+				{"VARCHAR(50) NOT NULL", "MEMO", "VARCHAR(2)","VARCHAR(50)","CHAR","MEMO", "DATE", "MEMO"}, /* GO */
+				{"LONG", "Int", "VARCHAR(50)", "MEMO"}, /* GOTree */
+				{"VARCHAR(50) NOT NULL", "Int"}, /* GOCount */
+				{"VARCHAR(50) NOT NULL", "VARCHAR(50) NOT NULL", "VARCHAR(3) NOT NULL"}  /* Uniprot-Go */
 		       };
 
 		

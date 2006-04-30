@@ -31,6 +31,10 @@ how the tools work.
 Dr. John David Dionisio of Loyola Marymount University for getting us
 started, keeping us going and directing us to the right places.
 
+Dr. Kam Dahlquist of Loyola Marymount University for providing the 
+original goal and motivation -- helping the biological community with 
+DNA micro array analysis of a variety of organisms.
+
 David Hoffman - Import
 Babak Naffas - Query
 Jeffrey Nicholas - Configuration

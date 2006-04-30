@@ -52,7 +52,8 @@ public class HibernateSession {
      * @throws JAXBException
      */
     public HibernateSession() throws SAXException, IOException, HibernateException, JAXBException {
-    	hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
+    	hibernateConfiguration 	= GenMAPPBuilder.createHibernateConfiguration();
+    	sessionFactory 			= hibernateConfiguration.buildSessionFactory();
     }
     
     /**

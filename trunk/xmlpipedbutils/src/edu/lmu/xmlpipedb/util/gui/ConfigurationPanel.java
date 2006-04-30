@@ -66,23 +66,33 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     public ConfigurationPanel() throws CouldNotLoadPropertiesException, FileNotFoundException {
 
         try {
+        	// create an instance of the config engine
             _configEngine = new ConfigurationEngine();
+            // use the config engine to get the config model.
+            // the config model is a HibernatePropertiesModel and 
+            // contains both the default values and any saved values
             _model = _configEngine.getConfigurationModel();
            
+        // throw all exceptions back to the caller
         } catch(CouldNotLoadPropertiesException e) {
             throw e;
         } catch(FileNotFoundException e) {
             throw e;
         }
-
+        
+        // create all gui components
         createComponents();
+        // layout the components
         layoutComponents();
+        // start the action listener for the buttons (save, cancel, etc.), but
+        // not for the radio buttons
         startListeningToUI();
     }
 
     /**
      * Returns a hibernate Configuration object, if the properties object is not
-     * empty. If it is empty, a NoHibernatePropertiesException will be thrown.
+     * empty. If it is empty, a message will be displayed to the user and 
+     * a NoHibernatePropertiesException will be thrown to the caller.
      * 
      * @return Configuration - an org.hibernate.cfg.Configuration ojbect is
      *         populated with the currently configured properties and returned.
@@ -92,8 +102,12 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         Configuration config = null;
 
         try {
+        	// pass through method that calls the _configEngine to get a 
+        	// hibernate Configuration object
             config = _configEngine.getHibernateConfiguration();
         } catch(NoHibernatePropertiesException e) {
+        	// in the event of an exception, display a message to the user, then
+        	// throw the exception to the caller
             JOptionPane.showMessageDialog(this, e.getMessage());
             throw e;
         }
@@ -102,7 +116,13 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     }
 
     /**
-     * Lays out the components on the panel
+     * Lays out the components on the panel.
+     * 
+     * A BorderLayout is used for the primary panel (this).
+     * A box with radio buttons for the categories is put into North
+     * A box with action buttons (save, cancel, etc.) is put into South
+     * A panel using GridbagLayout is put into a scroll pane, in the center
+     * 
      * @return void
      */
     private void layoutComponents() {
@@ -110,14 +130,16 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         this.add(_topBox, BorderLayout.NORTH);
 
         // add fields
-        this.add( new JScrollPane(_centerPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        this.add(new JScrollPane(_centerPanel,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
 
         Box buttonBox = Box.createHorizontalBox();
         buttonBox.add(Box.createHorizontalGlue());
-        buttonBox.add(_defaultButton);
-        buttonBox.add(Box.createHorizontalStrut(5));
-        buttonBox.add(_revertButton);
-        buttonBox.add(Box.createHorizontalStrut(5));
+        //buttonBox.add(_defaultButton);
+        //buttonBox.add(Box.createHorizontalStrut(5));
+        //buttonBox.add(_revertButton);
+       // buttonBox.add(Box.createHorizontalStrut(5));
         buttonBox.add(_saveButton);
         buttonBox.add(Box.createHorizontalStrut(5));
         buttonBox.add(_cancelButton);
@@ -132,6 +154,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      */
     private void createComponents() {
 
+    	// *** prepare gridbag stuff ***
         _promptGBC = new GridBagConstraints();
         _fieldGBC = new GridBagConstraints();
         _comboGBC = new GridBagConstraints();
@@ -142,21 +165,31 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         setComboConstraints(_comboGBC);
         setPanelConstraints(_panelGBC);
 
+        // *** get the dynamic components ***
+        // gets the categories box, which goes on top
         _topBox = getTopBox();
+        // instantiates the center panel
         _centerPanel = new JPanel(new GridBagLayout());
-        // add entries to combo
+        // add entries for the selected category to the types combo 
+        // and adds the types combo to the _centerPanel 
         getComboBox(null);
+        // adds entries for the selected type to the _centerPanel
         getFields((String)_typeCombo.getSelectedItem());
 
+        // *** instantiate the static action components (buttons) ***
         _saveButton = new JButton(AppResources.messageString("config_save"));
         _cancelButton = new JButton(AppResources.messageString("config_cancel"));
-        _revertButton = new JButton(AppResources.messageString("config_revert"));
-        _revertButton.setToolTipText(AppResources.messageString("config_revert_tooltip"));
-        _defaultButton = new JButton(AppResources.messageString("config_default"));
-        _defaultButton.setToolTipText(AppResources.messageString("config_default_tooltip"));
+        
+        // *** these buttons may be enabled, but some changes need to be made
+        // to the methods that support them ***
+        
+        //_revertButton = new JButton(AppResources.messageString("config_revert"));
+        //_revertButton.setToolTipText(AppResources.messageString("config_revert_tooltip"));
+        //_defaultButton = new JButton(AppResources.messageString("config_default"));
+        //_defaultButton.setToolTipText(AppResources.messageString("config_default_tooltip"));
 
-        _revertButton.setEnabled(false);
-        _defaultButton.setEnabled(false);
+        //_revertButton.setEnabled(false);
+        //_defaultButton.setEnabled(false);
 
     } // end createComponents
 
@@ -171,9 +204,14 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      */
     public void itemStateChanged(ItemEvent iEvent) {
         if (iEvent.getStateChange() == ItemEvent.SELECTED) {
+        	// clear out the _centerPanel
             _centerPanel.removeAll();
+            // put a new ComboBox in
             getComboBox( (String)iEvent.getItem());
+            // put new fields in
             getFields( (String)iEvent.getItem());
+            
+            // ensure that everything shows up right away
             this.validate();
             this.repaint();
         }
@@ -184,32 +222,49 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * @return Box - contains radio buttons for each category
      */
     private Box getTopBox() {
+    	//create the box that will be returned
         Box topBox = new Box(BoxLayout.X_AXIS);
+        // strCat is a temporary var to store the category being worked with
         String strCat = null;
+        // catSet is the Set of categories
         Set catSet = _model.getCategories();
+        // the catIter will be used to iterate over the categories
         Iterator catIter = catSet.iterator();
+        // bg is the buttonGroup the will contain the radio buttons
+        // the buttonGroup provides single select functionality, which
+        // disables other buttons if one is selected
         ButtonGroup bg = new ButtonGroup();
-        int i = 0;
 
         while (catIter.hasNext()) {
-            // add _catButton buttons
+            // get the category and ensure that it is not null, if so, throw an
+        	// exception
             strCat = (String)catIter.next();
             if (strCat == null)
-                throw new NullPointerException("There are " + "no categories in the model.");
+                throw new NullPointerException(AppResources
+						.messageString("exception.nullpointer.nocategories"));
 
-            // SET IT TO TRUE IF IT IS THE CURRENT CATEGORY
+            // If the working category is the same as the last category worked
+            // with by the user (stored in the model as currentCategory)
+            // then mark this radio button as true (selected) otherwise it is
+            // false
             if(  strCat.equalsIgnoreCase(_model.getCurrentCategory())){
             	_categoryRB = new JRadioButton(strCat, true );
             } else{
             	_categoryRB = new JRadioButton(strCat, false );
             }
             
+            // add an action listener to the radio button
             _categoryRB.addActionListener(this);
+            // add the button to the button group
             bg.add(_categoryRB);
-            topBox.add(_categoryRB, BorderLayout.NORTH);
-            i++;
+            // add the button to the local topBox
+            topBox.add(_categoryRB);
         }
         
+        // if there was no saved category, the currentCategory will be null
+        // in this case, set it to be strCat, which is the last category added
+        // since currentCategory is used by other methods, leaving it null
+        // will be disasterous!!!
         if( _model.getCurrentCategory() == null ){
         	_model.setCurrentCategory(strCat);
         }
@@ -225,22 +280,38 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * currently selected.
      * @return void
      */
-    private void getComboBox(/*String category,*/ String selected) {
+    private void getComboBox(String selected) {
+    	// _typeCombo will be to null the first time this method is called
+    	// and no item listener will exist, so we skip this step
+    	// All subsequent times, we remove the item listener
         if (_typeCombo != null)
             _typeCombo.removeItemListener(this);
 
+        // get a String array of the types for this category
+        // use the String array to create the _typeCombo
         String[] types = _model.getTypes(_model.getCurrentCategory());
         _typeCombo = new JComboBox(types);
 
+        // if selected was passed in, then mark this item as selected
+        // selected is not null when this method is called from the item
+        // listener. In this case, selected is the item that was clicked
         if( selected != null)
 			_typeCombo.setSelectedItem(selected);
         else{
+        	// try to get a selected type from the model. this is different
+        	// from the currentType stored in the model, because there can
+        	// be only one currentType, but the getSelectedType method will
+        	// look to see if anything is stored for the current category
+        	// and get that type - it takes the first type encountered
         	String selectedType = _model.getSelectedType(_model.getCurrentCategory());
 	        if (selectedType == null)
+	        	// if there were no selectedType, set selected to the first
+	        	// item in the list
 	            _typeCombo.setSelectedIndex(0);
 	        else
 	            _typeCombo.setSelectedItem(selectedType);
         }
+        // add the item listener and add the combo to the panel 
         _typeCombo.addItemListener(this);
         _centerPanel.add(_typeCombo, _comboGBC);
     }
@@ -252,13 +323,29 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * @return void
      */
     private void getFields(String type) {
+    	// get the properties for the currentcategory and the type passed in
         ArrayList propsArray = _model.getProperties(_model.getCurrentCategory(), type);
+        // create an iterator for these props
         Iterator props = propsArray.iterator();
 
+        // initialize the checkbox and textfield arrays to the size of the
+        // properties array
         _propSelected = new JCheckBox[propsArray.size()];
         _propValue = new JTextField[propsArray.size()];
+        // i is required to access the correct element of the control array
         int i = 0;
         while (props.hasNext()) {
+        	// for each item:
+        	// - get a HibernateProperties object from the properties array
+        	// - set the name to the lable of the checkbox
+        	// - if the field is a password field, then initialize the field in
+        	//   the textfield array as a password field otherwise initialize it
+        	//   as  textfield - in either case use the property's value
+        	// - create a document listener for each textfield, that checks
+        	//   the check box if the text is changed.
+        	// - set the checkbox as selected the property is marked "saved"
+        	// - add the components to the _centerPanel
+        	// - increment i for the next iteration
             HibernateProperty hp = (HibernateProperty)props.next();
 
             //Babak - Changed the implementation to use the JCheckBox's text label instead of a seperate
@@ -301,6 +388,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         }
     } // end createConfigPanel
 
+    // #### gridbag helper methods ####
     private void setPromptConstraints(GridBagConstraints gbc) {
         gbc.insets = PROMPT_INSETS;
         gbc.gridwidth = 1;
@@ -341,8 +429,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         // FIXME Dondi - This is a very fragile binding...must redesign...
         _saveButton.addActionListener(this);
         _cancelButton.addActionListener(this);
-        _revertButton.addActionListener(this);
-        _defaultButton.addActionListener(this);
+        //_revertButton.addActionListener(this);
+        //_defaultButton.addActionListener(this);
     }
 
     /**
@@ -353,15 +441,14 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * @return void
      */
     private void saveAction() {
-        // get current info
+        // get currently selected type
         String type = (String)_typeCombo.getSelectedItem();
         //String logging = "";
 
         // Prepare a new model object, which will be used to save the
         // properties.
         // Add all the other saved properties to the saveModel, except the
-        // properties
-        // of this category, which will be overwritten.
+        // properties of this category, which will be overwritten.
         HibernatePropertiesModel saveModel = new HibernatePropertiesModel();
         Iterator modelIter = _model.getProperties();
         while (modelIter.hasNext()) {
@@ -369,6 +456,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
             // if it is this category, don't add it no matter what
             if (hp.getCategory().equals(_model.getCurrentCategory()))
                 continue;
+            // hp is not this category, so check if it is saved.
             if (hp.isSaved()){
                 saveModel.add(hp);
                 //logging += hp.toString() + "\n";
@@ -379,23 +467,24 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 
         for (int i = 0; i < _propValue.length; i++) {
             if (_propSelected[i].isSelected()) {
-                // if it is checked, add, which will add a new or replace an
+                // if it is checked, add it, which will add a new or replace an
                 // existing property
-
-            	HibernateProperty hp = new HibernateProperty(_model.getCurrentCategory(), type, _propSelected[i].getText(), _propValue[i].getText(), true); 
+            	HibernateProperty hp = new HibernateProperty(_model
+						.getCurrentCategory(), type,
+						_propSelected[i].getText(), _propValue[i].getText(),
+						true); 
                 saveModel.add(hp);
                 //logging += hp.toString() + "\n";
-
-            	saveModel.add(hp);
-
             } 
             // else -- if not select, just move on to the next one
         }
         //System.out.print(logging);
         
+        // save the current type and category
         saveModel.setCurrentType(type);
         saveModel.setCurrentCategory(_model.getCurrentCategory());
 
+        // save the properties in the model
         _configEngine.saveProperties(saveModel);
 
         // update the model to reflect what is now saved.
@@ -412,17 +501,24 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      */
     public void actionPerformed(ActionEvent aevt) {
         if (aevt.getSource() == _saveButton) {
+        	// do save
             saveAction();
 
         } else if (aevt.getSource() == _cancelButton) {
+        	// make the main panel invisible
             this.setVisible(false);
             this.validate();
         
         } else { // this is a radio button click
+        	// update the currentCategory
             _model.setCurrentCategory( aevt.getActionCommand() );
+            // remove all components from the _centerPanel
             _centerPanel.removeAll();
+            // create the combobox
             getComboBox(null);
+            // create the fields for the selected type
             getFields( (String)_typeCombo.getSelectedItem());
+            // update the display
             this.validate();
             this.repaint();
         }
@@ -435,7 +531,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     private JCheckBox[] _propSelected;
     private JTextField[] _propValue;
     private JRadioButton _categoryRB;
-    private JButton _saveButton, _cancelButton, _revertButton, _defaultButton;
+    private JButton _saveButton, _cancelButton /*, _revertButton, _defaultButton*/;
     private JComboBox _typeCombo;
 
     //private Box _centerBox;

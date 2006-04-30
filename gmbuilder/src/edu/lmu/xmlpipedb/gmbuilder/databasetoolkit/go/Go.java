@@ -105,7 +105,7 @@ public class Go {
 		String[][] fields = new String[][]
 		       {
 				{"ID", "NAME", "Type","Parent","Relation","Species", "\"Date\"", "Remarks"}, /* GO */
-				{"OrderNo", "LVL", "ID", "NAME"}, /* GOTree */
+				{"OrderNo", "Level", "ID", "NAME"}, /* GOTree */
 				{"ID", "Count"}, /* GOCount */
 				{"Primary", "Related", "Bridge"} /* Uniprot-Go */
 		       };

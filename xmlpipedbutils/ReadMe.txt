@@ -1,25 +1,36 @@
 This is the readme for XmlPipeDb Utilities.
 
-The goal of XPDU is to provide a set of classes for configuring, loading 
-and accessing XmlPipeDb databases. XPDU also provides a sample application
-that uses these classes on the canonical books.xsd and books.xml examples.
 
-In order to compile these classes, you should have the following jar files
-in your build path (one or two may not be needed, but I couldn't bother to
-figure this out - so just included them  all).
-hibernate3.jar
-hyperjaxb2.jar
-jaxb-api.jar
-jaxb-impl.jar
-jaxb-libs.jar
-jaxb-xjc.jar
-namespace.jar
-relaxngDatatype.jar
-xsdlib.jar
+-- QUESTIONS --
+If you have questions about this set of utilities that are not answered here,
+please go to sourceforge.org and search for the xmlpipedb project. Questions
+can be posted in the help forum.
 
-All of these should be available in the hyperjaxb2 download, which you can
-find at: https://hyperjaxb2.dev.java.net/
+-- INTRODUCTION --
+XmlPipeDb Utilities (XPDU) is a set of tools for configuring, loading 
+and querying databases via hibernate. It was written specifically to support
+the xmlpipedb project, but could be used for anyone wishing to use Hibernate
+for database loading and access.
 
-...
-write more stuff here
-...
+The XPDU package includes a sample application that shows one simple way 
+to use these tools. Much of the development was done with the canonical 
+books.xsd and books.xml examples. However, these tools have also been
+tested on VERY large biological datasets from Uniprot and Gene Ontology.
+
+-- USAGE --
+Please refer to the javadocs for information on how to use the tools. If 
+you downloaded the source, use "ant javadoc" in the root of XPDU to 
+build the javadocs.
+
+Use "ant run" to build and run the sample application and get a feel for
+how the tools work.
+
+
+
+-- CREDITS --
+Dr. John David Dionisio of Loyola Marymount University for getting us
+started, keeping us going and directing us to the right places.
+
+David Hoffman - Import
+Babak Naffas - Query
+Jeffrey Nicholas - Configuration

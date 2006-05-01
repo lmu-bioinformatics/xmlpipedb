@@ -225,8 +225,7 @@ public class ExportToGenMaPP {
 		}
 		
 		//Get todays date to tag in access file for creation date.
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-		String dateString = dateFormat.format(new Date());
+		String dateString = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
 		
 		//Extract the data from the relational database.
 		extractAllData();
@@ -240,8 +239,10 @@ public class ExportToGenMaPP {
 	
 		//Create and build the Access GenMaPP file.
 		try {
+			//Create the file,.
+			AccessFileCreator.createNewAccessFile(outputFile);
 			
-			//Create the file, open the Access database connection.
+			//Open the Access database connection.
 			AccessFileCreator.openConnection(outputFile);
 			
 			//Update the "Info Table".
@@ -276,7 +277,7 @@ public class ExportToGenMaPP {
 		// ************** EXPORT GO TABLES TO GENAMPP ********
 		// ********************************************************
 
-		(new ExportGoData(outputFile.getAbsolutePath())).export();
+		(new ExportGoData(outputFile)).export();
 		
 		
 	}

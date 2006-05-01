@@ -117,9 +117,11 @@ public class ExportGoData {
 		BufferedReader in = new BufferedReader(new FileReader(file.getCanonicalPath()));
 		String line = null;
 	    while ((line = in.readLine()) != null) {
+	    	// Grab the Uniprot ID 
 	    	Matcher m = Pattern.compile("UniProtKB/[\\w-]+:(\\w+)").matcher(line);
 	        if (m.find()) {
 	            String Up_ID = m.group(1);
+	            // Grab the GO ID(s) 
 	            Matcher match  = Pattern.compile("GO:(\\w+)").matcher(line);
 	            while (match.find()) {
 	            	String[] values = new String[] {Up_ID, match.group(1), "En"};

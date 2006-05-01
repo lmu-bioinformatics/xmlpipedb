@@ -42,8 +42,8 @@ import com.sun.tools.xjc.grammar.AnnotatedGrammar;
 
 
 public class Xsd2db {
-    public static final String xjcArgs[] = {
-        // HyperJaxb invokes xjc in debug mode for some reason
+    public static final String XJC_ARGS[] = {
+        // HyperJaxb needs xjc to be invoked in debug mode
         "-debug",
         // Enables extensions so we can use hyperjaxb2
         "-nv", "-extension",
@@ -56,59 +56,85 @@ public class Xsd2db {
     public static final String HIB_PROPERTIES = "hibernate.properties";
 
     /**
-     * The execution entry point for the utility.
-     *
-     * @param args
+     * Initilization function.  Initlizes components used in the generation
+     * of the JAXB objects and HBM files, such as log4j.
      */
-    public static void main(String[] args) {
+    private static void init() 
+    {
         // Initialize log4j.
         BasicConfigurator.configure();
-
-        Xsd2dbCommandLine cmdline = new Xsd2dbCommandLine();
-        cmdline.parse(args);
-        Options options = new Options();
-        options.targetDir = new File(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.SRC_DIR]);
+    }
+    
+    
+    /**
+     * Sets the options for the xjc compiler based on the options specified
+     * by the cmdline parser.
+     * @param xjcOptions xjc Options object to be set.
+     * @param cmdline Parsed Xsd2dbCommandLine object.
+     */  
+    private static void setXjcOptions(Options xjcOptions, Xsd2dbCommandLine cmdline)
+    {
+        xjcOptions.targetDir = new File(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.SRC_DIR]);
         //  TODO:  need to add the bindings file
-        
         if (cmdline.getSchemaType() == Xsd2dbCommandLine.Schema.DTD)
         //  Set the schema language to DTD
-            options.setSchemaLanguage(Options.SCHEMA_DTD);
+            xjcOptions.setSchemaLanguage(Options.SCHEMA_DTD);
         else
         //  Set the schema language to XSD
-            options.setSchemaLanguage(Options.SCHEMA_XMLSCHEMA);
-        
-        System.out.println(cmdline.dbSrcDir.getPath());
+            xjcOptions.setSchemaLanguage(Options.SCHEMA_XMLSCHEMA);
         //  Sets the schema.
-        options.addGrammar(new org.xml.sax.InputSource(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.XSD_DIR] + File.separator + cmdline.xsdName));
+        xjcOptions.addGrammar(new org.xml.sax.InputSource(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.XSD_DIR] + File.separator + cmdline.xsdName));
+        //  Attempt to parse additional xjc arguments.
         try {
-            options.parseArguments(xjcArgs);
+            xjcOptions.parseArguments(XJC_ARGS);
         } catch(Exception e) {
             System.out.println("XJC args are invalid");
         }
-
+    }
+                    
+    
+    
+    /**
+     * The execution entry point for the utility.
+     *
+     * @param args Argument array for xsd2db.
+     */
+    public static void main(String[] args) {
+        // Inits log4j
+        init();
+        
+        Xsd2dbCommandLine cmdline = new Xsd2dbCommandLine();
+        
+        cmdline.parse(args);
+        //  Set all the options for the xjc comiler.
+        Options xjcOptions = new Options();
+        setXjcOptions(xjcOptions, cmdline);
+        
+        
         ErrorReceiver errorReceiver = new ErrorReceiverImpl();
         AnnotatedGrammar grammar = null;
         try {
-            grammar = GrammarLoader.load(options, errorReceiver);
+            grammar = GrammarLoader.load(xjcOptions, errorReceiver);
             if (grammar == null)
                 System.out.println("Unable to parse schema");
         } catch(Exception e) {
-        
-        
+            System.out.println("Error loading the grammar");
+            e.printStackTrace();
         }
 
         try {
-            GeneratorContext generatorContext = Driver.generateCode(grammar, options, errorReceiver);
+            GeneratorContext generatorContext = Driver.generateCode(grammar, xjcOptions, errorReceiver);
             if (generatorContext == null)
                 System.out.println("failed to compile a schema");
-            // Calling the hyperjaxb2 addon manualy
+            // Create the hyperJAXB addon object.
             AbstractParameterizableCodeAugmenter codeAugmenter = new AddOn();
+            // Create a console error handler to send errors in the hyperJAXB addon to the console.
             ErrorHandler errorHandler = new ConsoleErrorReporter();
-            // Must run before building the code model.
-            codeAugmenter.run(grammar, generatorContext, options, errorHandler);
-            grammar.codeModel.build(Driver.createCodeWriter(options.targetDir, options.readOnly));
+            // Must run the hyperJAXB addon before generating the the JAXB objects.
+            codeAugmenter.run(grammar, generatorContext, xjcOptions, errorHandler);
+            grammar.codeModel.build(Driver.createCodeWriter(xjcOptions.targetDir, xjcOptions.readOnly));
         } catch(Exception e) {
-            System.out.println("Error: The hyperjaxb addon failed to generate hibernate mappings.");
+            System.out.println("Error: There was an error with the hyperjaxb addon or xjc comipler.");
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
@@ -117,6 +143,7 @@ public class Xsd2db {
         File srcDir = new File(cmdline.dbSrcDir, cmdline.subDirs[Xsd2dbCommandLine.SRC_DIR]);
         FilenameFilter hbmFilter = new HbmFilter();
         movefilesRecursive(destDir, srcDir, hbmFilter);
+        
         Configuration cfg = new Configuration();
         File hibPropertiesFile = new File(HIB_PROPERTIES);
         Properties hibProperties = new Properties();

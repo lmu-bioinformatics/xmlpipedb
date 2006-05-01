@@ -307,6 +307,15 @@ public class Xsd2db {
         }
     }
 
+    /**
+     * Recursively moves a directory of files from srcDir to destDir if they match 
+     * the FileNameFilter.
+     *
+     * @param destDir Directory to move files to
+     * @param srcDir  Directory to move files from
+     * @param filter  Filename filter that must be matched
+     *                in order for files to be moved
+     */
     public static void movefilesRecursive(File destDir, File srcDir, FilenameFilter filter) {
         File filesToMove[] = srcDir.listFiles(filter);
         for (int i = 0; i < filesToMove.length; i++) {
@@ -319,6 +328,32 @@ public class Xsd2db {
         }
     }
 
+    /**
+     * Copies a binding file to dbsrcdir/xsd
+     *
+     * @param in
+     *            input file
+     * @param out
+     *            output file
+     * @throws Exception
+     *             I/O error or File not found error
+     */
+    private void copyBindingsFile(File in, File out) throws Exception {
+        FileInputStream fis = new FileInputStream(in);
+        FileOutputStream fos = new FileOutputStream(out);
+        byte[] buf = new byte[BUFFER_SIZE];
+        int i = 0;
+
+        System.out.println("\nCopying binding file " + in.getName() + " ...");
+
+        while ((i = fis.read(buf)) != -1) {
+            fos.write(buf, 0, i);
+        }
+        fis.close();
+        fos.close();
+
+        System.out.println("Copy successful... ");
+    }
 
     /**
      * Downloads the user requested .xsd file to projectDir/xsd

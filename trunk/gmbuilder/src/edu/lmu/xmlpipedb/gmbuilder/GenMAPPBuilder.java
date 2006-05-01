@@ -1,4 +1,12 @@
-// Created by dondi, Apr 26, 2006.
+/********************************************************
+ * Filename: GenMAPPBuilder.java
+ * Author: LMU
+ * Program: gmBuilder
+ * Description: Export the data to the access database.    
+ * Revision History:
+ * 20060426: Initial Revision.
+ * *****************************************************/
+
 package edu.lmu.xmlpipedb.gmbuilder;
 
 import java.awt.event.ActionEvent;

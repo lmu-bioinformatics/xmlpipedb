@@ -38,9 +38,10 @@ import edu.lmu.xmlpipedb.util.engines.QueryEngine;
  * This panel displays a text area for the user to input an HQL or SQL query and
  * view the results. As of version 1.1, the UI displays all data in a table. As
  * of version 1.2, a tree has been added. All data will be displayed in both the
- * tree and the table fow now.
+ * tree and the table fow now. As of version 1.3, the hibernate propoerties and 
+ * sessions are maintained withing our module.
  * 
- * @version 1.2
+ * @version 1.3
  * @author Babak Naffas
  * 
  */
@@ -54,7 +55,7 @@ public class HQLPanel extends JPanel {
         initComponents();
         setLayout(new BorderLayout());
 
-        _queryTextArea.setText("from generated.BookType");
+        //_queryTextArea.setText("from generated.BookType");
 
         add(_buttonPanel, BorderLayout.EAST);
         add(_split, BorderLayout.CENTER);
@@ -88,16 +89,21 @@ public class HQLPanel extends JPanel {
     private void initComponents() {
         _queryTextArea = new JTextArea();
 
+       //The table model that will be used to update the table. The magic numbers are irrelavent
         _tableModel = new DefaultTableModel(1, 10);
 
         _resultsTable = new JTable(_tableModel);
         _resultsTable.setVisible(true);
 
+        //Initializing the data tree
         _resultsTree = new HQLResultTree(new HQLTreeModel("Our Tree"));
 
         _dataViewPanel = new JPanel(new BorderLayout());
+        
+        //Adding each data viewer to a scroll pane so we can view the whole thing
         JScrollPane tableScroll = new JScrollPane(_resultsTable);
         JScrollPane treeScroll = new JScrollPane(_resultsTree);
+        
         JSplitPane dataSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tableScroll, treeScroll);
         dataSplit.setOneTouchExpandable(true);
         _dataViewPanel.add(dataSplit, BorderLayout.CENTER);
@@ -185,6 +191,10 @@ public class HQLPanel extends JPanel {
         _buttonPanel.add(_box);
     }
 
+    /**
+     * Simple helper method to display error messages on the user interface.
+     * @param e
+     */
     private void reportException(Exception e) {
         JOptionPane.showMessageDialog(this, e.getMessage());
     }
@@ -194,17 +204,18 @@ public class HQLPanel extends JPanel {
      * any) are displayed in the data view panel.
      */
     private void runSQL() {
+    	
+    	//Get the session and initialize the variables.
         QueryEngine qe = new QueryEngine(_hibernateConfiguration);
         Connection conn = qe.currentSession().connection();
         PreparedStatement query = null;
         ResultSet results = null;
 
         try {
+        	
             query = conn.prepareStatement(_queryTextArea.getText());
             results = query.executeQuery();
             populateTable(results);
-            // results.beforeFirst();
-            // populateTree( results );
         } catch(SQLException sqle) {
             JOptionPane.showMessageDialog(this, sqle.getMessage());
         } catch(Exception e) {
@@ -213,8 +224,8 @@ public class HQLPanel extends JPanel {
             try {
                 results.close();
                 query.close();
-                // conn.close();
-                // HibernateUtil.closeSession();
+
+               //We need to be sure to NOT close the connection or the session here. Leave it open!
             } catch(Exception e) {
                 reportException(e);
             } // Ignore the errors here, nothing we can do anyways.
@@ -223,8 +234,11 @@ public class HQLPanel extends JPanel {
 
     private void runHQL() {
         try {
-            QueryEngine qe = new QueryEngine(_hibernateConfiguration);
-            Iterator iter = qe.executeHQL(_queryTextArea.getText().trim());
+            
+        	//Instantiate the query engine and execute the query
+        	QueryEngine qe = new QueryEngine(_hibernateConfiguration);
+            
+        	Iterator iter = qe.executeHQL(_queryTextArea.getText().trim());
             final LinkedList<Object> data = new LinkedList<Object>();
             while (iter.hasNext()) {
                 data.add(iter.next());
@@ -233,6 +247,7 @@ public class HQLPanel extends JPanel {
 
             populateTable(data);
 
+            //Running the whole thing in a new thread allows us to maintain control of the UI while the tree's being populated.
             Runnable thread = new Runnable() {
                 public void run() {
                     _resultsTree.populateTree(data);
@@ -272,13 +287,20 @@ public class HQLPanel extends JPanel {
 
         int numColumns = meta.getColumnCount();
         String[] columnNames = new String[numColumns];
+        
+        //Populate the names of each column using the meta data.
         for (int i = 0; i < numColumns; i++) {
             columnNames[i] = meta.getColumnLabel(i + 1);
         }
         _tableModel.setColumnIdentifiers(columnNames);
 
+        //Reset the table
         _tableModel.setRowCount(0);
+        
+        //For each record that is returned...
         while (results.next()) {
+        	
+        	//For each field in the record, add the data as a row in the table.
             Vector<Object> data = new Vector<Object>();
             for (int i = 1; i <= numColumns; i++) {
                 data.addElement(results.getObject(i));

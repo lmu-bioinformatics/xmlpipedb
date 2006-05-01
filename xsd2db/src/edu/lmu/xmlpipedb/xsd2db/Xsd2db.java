@@ -67,6 +67,9 @@ public class Xsd2db {
         "jaxb-libs.jar",
         "relaxngDatatype.jar"
     };
+    /**
+     * Map to store the absolute paths for all the sub directories.
+     */
     private HashMap<String, String> pathMap;
     private static final String SUB_DIRS[] = {"xsd", "src", "hbm", "sql", "lib"};
     private static final int XSD_DIR = 0;
@@ -86,8 +89,18 @@ public class Xsd2db {
     
     private static Xsd2db instance;
     
+    /**
+     * Options for the xjc compiler such as dest dir.
+     */
     private Options xjcOptions;
+    /**
+     * Name of the schema file
+     */
     private String xsdName;
+    /**
+     * hibernate configuration object
+     */
+    private Configuration hibernateConfig;
 
     /**
      * Constructor
@@ -113,10 +126,20 @@ public class Xsd2db {
      * Initilization function.  Initlizes components used in the generation
      * of the JAXB objects and HBM files, such as log4j.
      */
-    private static void init() 
+    private void init() 
     {
         // Initialize log4j.
         BasicConfigurator.configure();
+        // Initialize hibernate
+        hibernateConfig = new Configuration();
+        File hibPropertiesFile = new File(HIB_PROPERTIES);
+        Properties hibProperties = new Properties();
+        try {
+            hibProperties.load(new FileInputStream(hibPropertiesFile));
+        } catch(Exception e) {
+            System.out.println("Properties file failed to load.");
+        }
+        hibernateConfig.setProperties(hibProperties);
     }
     
     
@@ -164,7 +187,7 @@ public class Xsd2db {
      */
     public void run(File projectDir, String schemaURL, Xsd2db.Schema schemaType) {
         // Inits log4j
-        init();
+        getInstance().init();
         // Set up the directory structure of the project
         createDirectoryStructure(projectDir);
         // Fill in the path map.
@@ -231,24 +254,73 @@ public class Xsd2db {
         FilenameFilter hbmFilter = new HbmFilter();
         movefilesRecursive(destDir, srcDir, hbmFilter);
         
-        Configuration cfg = new Configuration();
-        File hibPropertiesFile = new File(HIB_PROPERTIES);
-        Properties hibProperties = new Properties();
-        try {
-            hibProperties.load(new FileInputStream(hibPropertiesFile));
-        } catch(Exception e) {
-            System.out.println("Properties file failed to load.");
-        }
-        cfg.setProperties(hibProperties);
-        addHibFiles(cfg, destDir);
+        // Use Hibernate to export a DDL for our database.
+        exportDDL(projectDir, destDir);
+ 
+        // Copy the canned build file and libs into
+        // the project directory.
+        copyLibAndBuildFiles(projectDir);
 
+        System.out.println("Build Finished!");
+    }
+
+    /**
+     * Exports a DDL file to the sql subdirectory of the projectDirectory.
+     *
+     * @param projectDir Directory of the generated project.
+     * @param mappingDir Directory containing the hibernate mappings.
+     */
+    public void exportDDL(File projectDir, File mappingDir)
+    {
+        // Add hibernate mapping files to hibernate cfg object
+        addHibFiles(hibernateConfig, mappingDir);
         // Produce the SQL file.
-        SchemaExport schemaExporter = new SchemaExport(cfg);
+        SchemaExport schemaExporter = new SchemaExport(hibernateConfig);
         schemaExporter.setOutputFile(projectDir.getPath() + File.separator + SUB_DIRS[SQL_DIR] + File.separator + "schema.sql");
         schemaExporter.setDelimiter(";");
         schemaExporter.create(true, false);
+    }
+    
+    /**
+     * Recursively adds a directory of hbm files to an hibernate configuration 
+     * object.
+     *
+     * @param cfg Hibernate Configuration object to add the hibernate files to.
+     * @param hibDir Directory containing the hbm files.
+     */
+    public static void addHibFiles(Configuration cfg, File hibDir) {
+        HbmFilter hbmFilter = new HbmFilter();
+        File fileList[] = hibDir.listFiles(hbmFilter);
+        for (int i = 0; i < fileList.length; i++) {
+            if (!fileList[i].isDirectory())
+                cfg.addFile(fileList[i]);
+        }
+    }
 
-        // Copy needed library files.
+    /**
+     * Recursively moves a directory of files from srcDir to destDir if they match 
+     * the FileNameFilter.
+     *
+     * @param destDir Directory to move files to
+     * @param srcDir  Directory to move files from
+     * @param filter  Filename filter that must be matched
+     *                in order for files to be moved
+     */
+    public static void movefilesRecursive(File destDir, File srcDir, FilenameFilter filter) {
+        File filesToMove[] = srcDir.listFiles(filter);
+        for (int i = 0; i < filesToMove.length; i++) {
+            if (filesToMove[i].isDirectory())
+                movefilesRecursive(destDir, filesToMove[i], filter);
+            else {
+                File newFile = new File(destDir, filesToMove[i].getName());
+                filesToMove[i].renameTo(newFile);
+            }
+        }
+    }
+
+    public void copyLibAndBuildFiles(File projectDir)
+    {
+                // Copy needed library files.
         Class xsd2dbClass = this.getClass();
         File libDir = new File(projectDir, SUB_DIRS[LIB_DIR]);
         libDir.mkdir();
@@ -286,45 +358,6 @@ public class Xsd2db {
             buildFileWriter.close();
         } catch(IOException ioException) {
             System.out.println("Error writing canned build file: " + ioException.getMessage());
-        }
-
-        System.out.println("Build Finished!");
-    }
-
-    /**
-     * Recursively adds a directory of hbm files to an hibernate configuration 
-     * object.
-     *
-     * @param cfg Hibernate Configuration object to add the hibernate files to.
-     * @param hibDir Directory containing the hbm files.
-     */
-    public static void addHibFiles(Configuration cfg, File hibDir) {
-        HbmFilter hbmFilter = new HbmFilter();
-        File fileList[] = hibDir.listFiles(hbmFilter);
-        for (int i = 0; i < fileList.length; i++) {
-            if (!fileList[i].isDirectory())
-                cfg.addFile(fileList[i]);
-        }
-    }
-
-    /**
-     * Recursively moves a directory of files from srcDir to destDir if they match 
-     * the FileNameFilter.
-     *
-     * @param destDir Directory to move files to
-     * @param srcDir  Directory to move files from
-     * @param filter  Filename filter that must be matched
-     *                in order for files to be moved
-     */
-    public static void movefilesRecursive(File destDir, File srcDir, FilenameFilter filter) {
-        File filesToMove[] = srcDir.listFiles(filter);
-        for (int i = 0; i < filesToMove.length; i++) {
-            if (filesToMove[i].isDirectory())
-                movefilesRecursive(destDir, filesToMove[i], filter);
-            else {
-                File newFile = new File(destDir, filesToMove[i].getName());
-                filesToMove[i].renameTo(newFile);
-            }
         }
     }
 

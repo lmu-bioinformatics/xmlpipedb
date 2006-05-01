@@ -112,6 +112,12 @@ public class ExportGoData {
 		
 	}
 	
+	/**
+	 * Populate genMAPP's Uniprot-GeneOntology table
+	 * 
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	private void populateUniprotGoTable() throws IOException, SQLException {
 		File file = new File("src/edu/lmu/xmlpipedb/gmbuilder/resource/GoAssociations/associations.txt");
 		BufferedReader in = new BufferedReader(new FileReader(file.getCanonicalPath()));

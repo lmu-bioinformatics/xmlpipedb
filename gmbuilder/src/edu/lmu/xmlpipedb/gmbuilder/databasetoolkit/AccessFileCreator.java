@@ -87,6 +87,9 @@ public class AccessFileCreator {
         
         connection = DriverManager.getConnection(database ,"","");
         
+        // Alternative connection URL when using a database other than Access.
+        //connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/gmproxy", "<<username>>", "<<password>>");
+        
         return connection;
 	}
 	
@@ -153,6 +156,12 @@ public class AccessFileCreator {
         		"Species MEMO," +
         		"\"Date\" DATE," +
         		"Remarks MEMO)");
+        // Alternative column definitions when not using Access.
+        //"ProteinName varchar," +
+        //"Function varchar," +
+        //"Species varchar," +
+        //"\"Date\" varchar," +
+        //"Remarks varchar)");
 		ps.executeUpdate();
 		
 		ps = connection.prepareStatement(
@@ -221,6 +230,10 @@ public class AccessFileCreator {
         		"Species MEMO," +
         		"Date DATE," +
         		"Remarks MEMO)");     
+        // Alternative column definitions when not using Access.
+        //"Species varchar," +
+        //"Date varchar," +
+        //"Remarks varchar)");
 		ps.setString(1, table);
 		ps.executeUpdate();
 		

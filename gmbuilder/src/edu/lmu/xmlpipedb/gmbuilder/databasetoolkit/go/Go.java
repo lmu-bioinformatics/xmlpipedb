@@ -123,6 +123,10 @@ public class Go {
 				{"VARCHAR(50) NOT NULL", "MEMO", "VARCHAR(2)","VARCHAR(50)","CHAR","MEMO", "DATE", "MEMO"}, /* GO */
 				{"LONG", "Int", "VARCHAR(50)", "MEMO"}, /* GOTree */
 				{"VARCHAR(50) NOT NULL", "Int"}, /* GOCount */
+                // Alternative column definitions when not using Access.
+                //{"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO */
+                //{"varchar", "varchar", "VARCHAR(50)", "varchar"}, /* GOTree */
+                //{"VARCHAR(50) NOT NULL", "varchar"}, /* GOCount */
 				{"VARCHAR(50) NOT NULL", "VARCHAR(50) NOT NULL", "VARCHAR(3) NOT NULL"}  /* Uniprot-Go */
 		       };
 

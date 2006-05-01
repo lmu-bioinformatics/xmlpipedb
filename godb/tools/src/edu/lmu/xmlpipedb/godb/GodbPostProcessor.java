@@ -40,9 +40,13 @@ import javax.swing.JFrame;
 
 /**
  * GodbXSDPostProcessor does post processing for the Godb
- * database
+ * database. This file replaces the varchar(50) in the sql
+ * schema definition file with varchar.  It also replaces 
+ * the instaces of the "To" table in the schema file and the
+ * To.hbm.xml file with "To_". Same GUI and design as the
+ * uniprot postprocessor.
  * 
- * @author   
+ * @author   Roberto Ruiz
  * @version  
  */
 public class GodbPostProcessor extends JFrame {
@@ -131,6 +135,7 @@ public class GodbPostProcessor extends JFrame {
     
 	/**
 	 * Make changes to SQL file.  Used pattern and matcher for speed on large files.
+	 * replaces varchar(255) and To with varchar and To_ respectively.
 	 * @throws IOException 
 	 */
 	private void processSQLFile() throws IOException {
@@ -150,6 +155,7 @@ public class GodbPostProcessor extends JFrame {
 	
 	/**
 	 * Make changes to HBM file.
+	 * Replaces the table name To with To_ 
 	 * @throws IOException 
 	 */
 	private void processHBMFile1() throws IOException {
@@ -262,7 +268,7 @@ public class GodbPostProcessor extends JFrame {
 	}
 	
 	/**
-     * A tester main method for running the processor.
+     * A main method for running the processor.
      */
 	public static void main(final String[] args) {
         

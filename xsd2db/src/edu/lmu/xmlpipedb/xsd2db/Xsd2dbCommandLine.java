@@ -88,6 +88,23 @@ public class Xsd2dbCommandLine {
         return instance;
     }
     
+    
+    public File getDBSrcDir()
+    {
+        return dbSrcDir;
+    }
+    public String getBindingsFile()
+    { 
+        return bindingsFile;
+    }
+    public String getXSDURL()
+    {
+        return xsdurl;
+    }
+    public Xsd2db.Schema getSchemaType()
+    {
+        return schemaType;
+    }
 
     /**
      * Parse the command line
@@ -143,53 +160,9 @@ public class Xsd2dbCommandLine {
             } 
         }
         Xsd2db.getInstance().run(dbSrcDir, xsdurl, schemaType);
-/*
-        if (!bindingsFile.equals("")) {
-            File in = new File(bindingsFile);
-            File out = new File(getAbsolutePath("xsd") + File.separator + in.getName());
-            if (in.canRead()) {
-                try {
-                    copyBindingsFile(in, out);
-                } catch(Exception e) {
-                    printErrorMsgAndExit(e.getMessage() + "\n\nError copying bindings file");
-                }
-            } else {
-                printErrorMsgAndExit("Unable to read bindings file: '" + in.getPath() + "'");
-            }
-        } else {
-
-        }
-*/
     }
 
-
-
-    /**
-     * Copies a binding file to dbsrcdir/xsd
-     *
-     * @param in
-     *            input file
-     * @param out
-     *            output file
-     * @throws Exception
-     *             I/O error or File not found error
-     */
-    private void copyBindingsFile(File in, File out) throws Exception {
-        FileInputStream fis = new FileInputStream(in);
-        FileOutputStream fos = new FileOutputStream(out);
-        byte[] buf = new byte[BUFFER_SIZE];
-        int i = 0;
-
-        System.out.println("\nCopying binding file " + in.getName() + " ...");
-
-        while ((i = fis.read(buf)) != -1) {
-            fos.write(buf, 0, i);
-        }
-        fis.close();
-        fos.close();
-
-        System.out.println("Copy successful... ");
-    }
+ 
 
     
     /**

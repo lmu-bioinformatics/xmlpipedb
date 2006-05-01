@@ -1,1 +1,35 @@
 \section{Application to Biological Databases}
+\label{biodb}
+% First three paragraphs added by Joe Boyle 4/30/2006
+% Need Scott or Roberto to add information about GO
+The GenMAPP application uses a gene database that contains species-specific 
+libraries of gene information.  The database is needed in order to link expression
+data with MAPPs, for creating and modifying MAPPs, and for importing new data.  
+The gene database contains two main types of tables, Gene Tables and Relationship 
+Tables.  A Gene table is a collection of gene identifiers obtained from a 
+cataloging system for a particular species.  A Relationship Table provides a link 
+between gene IDs of two separate gene ID databases.  These tables are essential to
+the GenMAPP application \cite{noSupport}.  
+
+GenMAPP gene databases function around a central system, known as the MOD system.  
+A Model Organism Database (MOD) is a public database that contains genes and 
+annotation for a particular organism.  
+The purpose of using a MOD system within GenMAPP is to form a link between
+GenMAPP and the gene ontology (GO) hierarchy.  
+Lastly, GenMAPP supports species that are typically
+found in the UniProt database.  As a result, UniProt is typically seen as the MOD
+for the GenMAPP application \cite{noSupport}.  
+
+UniProt (Universal Protein Resource) is the world's most comprehensive catalog of 
+information on proteins \cite{uniprotWeb}.  
+The European Bioinformatics (EBI) group and the
+Swiss Institute of Bioinformatics (SIB) produced Swiss-Prot and TrEMBL 
+(Translated EMBL Nucleotide Sequence Data Library)
+whereas 
+Protein Information Resource (PIR) produced the Protein Sequence Database (PIR-PSD).  
+By noticing that the information contained in these separate databases was beginning
+to overlap, the UniProt Consortium was formed.  
+UniProt has now become the central repository 
+for protein sequence and function after joining the information found in 
+Swiss-Prot, TrEMBL, and PIR databases.  
+

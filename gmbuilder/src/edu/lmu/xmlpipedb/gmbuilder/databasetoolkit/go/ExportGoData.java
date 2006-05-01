@@ -265,7 +265,7 @@ public class ExportGoData {
 			}
 			godb.insert(connection, Go.GeneOntologyTree, new String[]{orderNo++ + "", level+"" ,id, name});
 			// Used for feedback; should be replaced with something else
-			System.out.println(orderNo);
+			//System.out.println(orderNo);
 			insertChildren(id, level + 1);
 		}
 		s.close();

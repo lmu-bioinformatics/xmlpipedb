@@ -1,3 +1,13 @@
+/********************************************************
+ * Filename: Go.java
+ * Author: LMU
+ * Program: gmBuilder
+ * Description: Creates the tables to export to the 
+ * access database.    
+ * Revision History:
+ * 20060422: Initial Revision.
+ * *****************************************************/
+
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go;
 
 import java.sql.Connection;

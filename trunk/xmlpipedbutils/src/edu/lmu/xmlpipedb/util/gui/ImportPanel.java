@@ -55,7 +55,11 @@ public class ImportPanel extends JPanel {
         createActions();
         layoutComponents();
     }
-    
+    /*
+     *
+     * Create all swing components
+     *
+     */
     private void createComponents() {
         _previewButton = new JButton("preview");
         _previewButton.setEnabled(false);
@@ -67,7 +71,12 @@ public class ImportPanel extends JPanel {
         _xmlScrollArea = new JScrollPane(_xmlView);
         _progressBar = new JProgressBar();
     }
-
+    /*
+     *
+     *
+     * Create actions for the panel 
+     *
+     */
     private void createActions() {
         _textFieldPath.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent evt) {
@@ -90,7 +99,12 @@ public class ImportPanel extends JPanel {
             }
         });
     }
-
+    /*
+     *
+     * Layout the swing components
+     *
+     *
+     */
     private void layoutComponents() {
         setLayout(new BorderLayout());
         Box openBox = Box.createHorizontalBox();
@@ -115,6 +129,11 @@ public class ImportPanel extends JPanel {
         this.add(_xmlScrollArea, BorderLayout.CENTER);
     }
 
+    /*
+     *
+     * The preview action when the button is pushed
+     *
+     */
     private void previewButtonActionPerformed(ActionEvent evt) {
         boolean proceedWithPreview = (_xmlFile != null);
         if (!proceedWithPreview) {
@@ -130,12 +149,21 @@ public class ImportPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Please Open a Valid XML File", "Missing or Invalid File", JOptionPane.ERROR_MESSAGE);
         }
     }
-
+    /*
+     *
+     * When something is typed in the text field the buttons are enabled. 
+     *
+     */
     private void TextFieldPathKeyTyped(java.awt.event.KeyEvent evt) {
         _previewButton.setEnabled(true);
         _importButton.setEnabled(true);
     }
 
+    /*
+     *
+     * Import the opened file
+     *
+     */
     private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {
         boolean proceedWithImport = (_xmlFile != null);
         if (!proceedWithImport) {
@@ -172,6 +200,11 @@ public class ImportPanel extends JPanel {
         }
     }
 
+    /*
+     *
+     * This class is for displaying text in the text area in a different thread. 
+     *
+     */
     private class FilePreview implements Runnable {
         File myFile;
         JTextArea myArea;

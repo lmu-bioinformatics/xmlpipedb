@@ -207,7 +207,10 @@ public class ExportToGenMaPP {
 	 * @throws SAXException 
 	 * @throws HibernateException 
 	 */
-	public static void exportToGenMaPP(File outputFile) throws IOException, ClassNotFoundException, SQLException, HibernateException, SAXException, JAXBException {
+	public static void exportToGenMaPP(File outputFile) 
+			throws IOException, ClassNotFoundException, 
+			SQLException, HibernateException, SAXException, 
+			JAXBException {
 		
 		//Create relational database connection.
 		Class.forName("org.postgresql.Driver");
@@ -215,8 +218,10 @@ public class ExportToGenMaPP {
 		
 		// need to get the configuration
 		if (hibernateConfiguration != null) {
-			connection = DriverManager.getConnection(hibernateConfiguration.getProperty("hibernate.connection.url"), 
-					hibernateConfiguration.getProperty("hibernate.connection.username"), hibernateConfiguration.getProperty("hibernate.connection.password"));
+			connection = DriverManager.getConnection(
+					hibernateConfiguration.getProperty("hibernate.connection.url"), 
+					hibernateConfiguration.getProperty("hibernate.connection.username"), 
+					hibernateConfiguration.getProperty("hibernate.connection.password"));
 		}
 		
 		//Get todays date to tag in access file for creation date.

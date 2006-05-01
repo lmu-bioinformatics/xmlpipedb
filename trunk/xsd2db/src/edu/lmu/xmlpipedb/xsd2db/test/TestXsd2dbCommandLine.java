@@ -17,13 +17,6 @@ public class TestXsd2dbCommandLine extends TestCase {
         super.tearDown();
     }
 
-    public void testGetAbsolutePath() {
-        String dir = "";
-        String expectedReturn = null;
-        String actualReturn = xsd2dbCommandLine.getAbsolutePath(dir);
-        assertEquals("return value", expectedReturn, actualReturn);
-        /**@todo fill in the test code*/
-    }
 
     public void testGetSchemaType() {
         String[] args = {""};

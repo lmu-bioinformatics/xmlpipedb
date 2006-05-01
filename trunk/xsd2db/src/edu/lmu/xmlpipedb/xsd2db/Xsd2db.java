@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
+import java.net.URL;
+import java.net.MalformedURLException;
+import java.util.HashMap;
 
 import org.apache.log4j.BasicConfigurator;
 import org.hibernate.cfg.Configuration;
@@ -42,7 +45,10 @@ import com.sun.tools.xjc.grammar.AnnotatedGrammar;
 
 
 public class Xsd2db {
-    public static final String XJC_ARGS[] = {
+    /**
+     * additional command line arguments to be passed to the xjcCompiler.
+     */
+    private static final String XJC_ARGS[] = {
         // HyperJaxb needs xjc to be invoked in debug mode
         "-debug",
         // Enables extensions so we can use hyperjaxb2
@@ -52,9 +58,57 @@ public class Xsd2db {
         // hashCode extension is requred for hb2
         "-XhashCode"
     };
+    /**
+     * JARs on which the final database project will depend.
+     */
+    private static final String[] LIB_DEP = {
+        "jaxb-api.jar",
+        "jaxb-impl.jar",
+        "jaxb-libs.jar",
+        "relaxngDatatype.jar"
+    };
+    private HashMap<String, String> pathMap;
+    private static final String SUB_DIRS[] = {"xsd", "src", "hbm", "sql", "lib"};
+    private static final int XSD_DIR = 0;
+    private static final int SRC_DIR = 1;
+    private static final int HBM_DIR = 2;
+    private static final int SQL_DIR = 3;
+    private static final int LIB_DIR = 4;
+    
+    
+    private static int BUFFER_SIZE = 1024;
 
     public static final String HIB_PROPERTIES = "hibernate.properties";
 
+    public static enum Schema {
+        DTD, XSD
+    }
+    
+    private static Xsd2db instance;
+    
+    private Options xjcOptions;
+    private String xsdName;
+
+    /**
+     * Constructor
+     */
+    private Xsd2db()
+    {
+        xjcOptions = new Options();
+        pathMap = new HashMap<String, String>();
+    }
+    
+    /**
+     * Returns an instance of the singleton Xsd2db.
+     */
+    public static Xsd2db getInstance()
+    {
+        if (instance == null)
+            instance = new Xsd2db();
+        return instance;
+    }
+    
+    
     /**
      * Initilization function.  Initlizes components used in the generation
      * of the JAXB objects and HBM files, such as log4j.
@@ -67,23 +121,25 @@ public class Xsd2db {
     
     
     /**
-     * Sets the options for the xjc compiler based on the options specified
-     * by the cmdline parser.
+     * Sets the options for the xjc compiler.
      * @param xjcOptions xjc Options object to be set.
-     * @param cmdline Parsed Xsd2dbCommandLine object.
      */  
-    private static void setXjcOptions(Options xjcOptions, Xsd2dbCommandLine cmdline)
+    private void setXjcOptions(File projectDirectory, Xsd2db.Schema schemaType)
     {
-        xjcOptions.targetDir = new File(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.SRC_DIR]);
-        //  TODO:  need to add the bindings file
-        if (cmdline.getSchemaType() == Xsd2dbCommandLine.Schema.DTD)
+        xjcOptions.targetDir = new File(projectDirectory.getPath() + 
+                                        File.separator + 
+                                        SUB_DIRS[SRC_DIR]);
+        if (schemaType == Xsd2db.Schema.DTD)
         //  Set the schema language to DTD
             xjcOptions.setSchemaLanguage(Options.SCHEMA_DTD);
         else
         //  Set the schema language to XSD
             xjcOptions.setSchemaLanguage(Options.SCHEMA_XMLSCHEMA);
         //  Sets the schema.
-        xjcOptions.addGrammar(new org.xml.sax.InputSource(cmdline.dbSrcDir.getPath() + File.separator + cmdline.subDirs[Xsd2dbCommandLine.XSD_DIR] + File.separator + cmdline.xsdName));
+        xjcOptions.addGrammar(new org.xml.sax.InputSource(projectDirectory.getPath() + 
+                                                          File.separator + 
+                                                          SUB_DIRS[XSD_DIR] + 
+                                                          File.separator + xsdName));
         //  Attempt to parse additional xjc arguments.
         try {
             xjcOptions.parseArguments(XJC_ARGS);
@@ -91,24 +147,54 @@ public class Xsd2db {
             System.out.println("XJC args are invalid");
         }
     }
+
                     
     
     
     /**
-     * The execution entry point for the utility.
+     * The execution entry point for the utility.  Creates a directory 
+     * structure for xsd2db project, downloads the given schema and then
+     * outputs JAXB objects and hibernate mapping files to persist the 
+     * schema into a relational database.  Also outputs a build file
+     * to make compiling the project into a jar easy.
      *
-     * @param args Argument array for xsd2db.
+     * @param projectDir Directory to place the project in.
+     * @param schemaURL  URL for schema file
+     * @param schemaType Type of the given schema file (DTD or XSD).
      */
-    public static void main(String[] args) {
+    public void run(File projectDir, String schemaURL, Xsd2db.Schema schemaType) {
         // Inits log4j
         init();
-        
-        Xsd2dbCommandLine cmdline = new Xsd2dbCommandLine();
-        
-        cmdline.parse(args);
-        //  Set all the options for the xjc comiler.
-        Options xjcOptions = new Options();
-        setXjcOptions(xjcOptions, cmdline);
+        // Set up the directory structure of the project
+        createDirectoryStructure(projectDir);
+        // Fill in the path map.
+        createAbsoulutePaths(projectDir);
+        if (schemaURL == null || schemaURL.equals(""))
+        {
+            File schemaFiles[] = projectDir.listFiles(); 
+            File schemaFile = schemaFiles[0];
+            try {
+                schemaURL = schemaFile.toURL().toString();
+            } catch (MalformedURLException e)
+            {
+                System.out.println("URL for stored schema file could not be generated.  Please use the --xsdURL option.");
+            }
+        } 
+        if (schemaURL != null || !schemaURL.equals(""))
+        {
+            try 
+            {
+                downLoadXsdFile(schemaURL);
+            } catch (MalformedURLException e) 
+            {
+                System.out.println("Schema URL is not a valid URL");
+            } catch (IOException e)   
+            {
+                System.out.println("Could not download schema file");
+            }
+        }
+
+        setXjcOptions(projectDir, schemaType);
         
         
         ErrorReceiver errorReceiver = new ErrorReceiverImpl();
@@ -119,7 +205,7 @@ public class Xsd2db {
                 System.out.println("Unable to parse schema");
         } catch(Exception e) {
             System.out.println("Error loading the grammar");
-            e.printStackTrace();
+            e.printStackTrace(); 
         }
 
         try {
@@ -139,8 +225,9 @@ public class Xsd2db {
             e.printStackTrace();
         }
 
-        File destDir = new File(cmdline.dbSrcDir, cmdline.subDirs[Xsd2dbCommandLine.HBM_DIR]);
-        File srcDir = new File(cmdline.dbSrcDir, cmdline.subDirs[Xsd2dbCommandLine.SRC_DIR]);
+        // Move the hbm files to the hbm dir.
+        File destDir = new File(projectDir, SUB_DIRS[HBM_DIR]);
+        File srcDir = new File(projectDir, SUB_DIRS[SRC_DIR]);
         FilenameFilter hbmFilter = new HbmFilter();
         movefilesRecursive(destDir, srcDir, hbmFilter);
         
@@ -157,18 +244,18 @@ public class Xsd2db {
 
         // Produce the SQL file.
         SchemaExport schemaExporter = new SchemaExport(cfg);
-        schemaExporter.setOutputFile(cmdline.dbSrcDir.getPath() + "/" + cmdline.subDirs[Xsd2dbCommandLine.SQL_DIR] + "/" + "schema.sql");
+        schemaExporter.setOutputFile(projectDir.getPath() + File.separator + SUB_DIRS[SQL_DIR] + File.separator + "schema.sql");
         schemaExporter.setDelimiter(";");
         schemaExporter.create(true, false);
 
         // Copy needed library files.
-        Class cmdlineClass = cmdline.getClass();
-        File libDir = new File(cmdline.dbSrcDir, cmdline.subDirs[Xsd2dbCommandLine.LIB_DIR]);
+        Class xsd2dbClass = this.getClass();
+        File libDir = new File(projectDir, SUB_DIRS[LIB_DIR]);
         libDir.mkdir();
         try {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[BUFFER_SIZE];
             for (String libName: LIB_DEP) {
-                BufferedInputStream bis = new BufferedInputStream(cmdlineClass.getResourceAsStream("/" + libName));
+                BufferedInputStream bis = new BufferedInputStream(xsd2dbClass.getResourceAsStream("/" + libName));
                 File libFile = new File(libDir, libName);
                 libFile.createNewFile();
                 BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(libFile));
@@ -184,12 +271,13 @@ public class Xsd2db {
             System.out.println("Error writing library file: " + ioexc.getMessage());
         }
 
+        // Copy Build file into project
         InputStreamReader buildFileReader;
-        InputStream buildFileStream = cmdlineClass.getResourceAsStream("build.xml");
+        InputStream buildFileStream = xsd2dbClass.getResourceAsStream("build.xml");
         buildFileReader = new InputStreamReader(buildFileStream);
         try {
             System.out.println("found build file");
-            File cannedBuildfile = new File(cmdline.dbSrcDir, "build.xml");
+            File cannedBuildfile = new File(projectDir, "build.xml");
             cannedBuildfile.createNewFile();
             FileWriter buildFileWriter = new FileWriter(cannedBuildfile);
             int streamedChar = 0;
@@ -203,7 +291,14 @@ public class Xsd2db {
         System.out.println("Build Finished!");
     }
 
-    private static void addHibFiles(Configuration cfg, File hibDir) {
+    /**
+     * Recursively adds a directory of hbm files to an hibernate configuration 
+     * object.
+     *
+     * @param cfg Hibernate Configuration object to add the hibernate files to.
+     * @param hibDir Directory containing the hbm files.
+     */
+    public static void addHibFiles(Configuration cfg, File hibDir) {
         HbmFilter hbmFilter = new HbmFilter();
         File fileList[] = hibDir.listFiles(hbmFilter);
         for (int i = 0; i < fileList.length; i++) {
@@ -223,6 +318,88 @@ public class Xsd2db {
             }
         }
     }
+
+
+    /**
+     * Downloads the user requested .xsd file to projectDir/xsd
+     *
+     * @throws IOException
+     *             if an I/O error occurs
+     */
+    private void downLoadXsdFile(String xsdUrl) throws IOException {
+        xsdName = xsdUrl.substring(xsdUrl.lastIndexOf("/"));
+        File xsdfile = new File(getAbsolutePath("xsd") + xsdName);
+        URL url = null;
+        System.out.println("\nDownloading " + xsdfile.getName() + "...");
+        try {
+            url = new URL(xsdUrl);
+        } catch(MalformedURLException e) {
+            System.out.println("Error: Xsd url is not valid");
+            e.printStackTrace();
+        }
+
+        BufferedInputStream inputStream = new BufferedInputStream(url.openStream());
+        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(xsdfile));
+
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int bytesRead;
+        while (true) {
+            bytesRead = inputStream.read(buffer);
+            if (bytesRead == -1)
+                break;
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        outputStream.flush();
+        outputStream.close();
+
+        System.out.println("Download successful...");
+    }
+
+
+    /**
+     * Creates the database source output directory structure,
+     * per user request. Defaults to db-gen
+     *
+     */
+    private void createDirectoryStructure(File projectDir) {
+        projectDir.mkdir();
+
+        for (String dir : SUB_DIRS) {
+            File newDirectory = new File(projectDir.toString() + 
+                                         File.separator +
+                                         dir);
+                if(!newDirectory.exists())
+                    newDirectory.mkdir();
+        }
+    }
+
+    /**
+     * Creates absoulte paths for the database source output directory and any
+     * children directories
+     *
+     */
+    private void createAbsoulutePaths(File projectDir) {
+        pathMap.put("projectDir", projectDir.getAbsolutePath());
+
+        for (String dir : SUB_DIRS) {
+            pathMap.put(dir, new File(projectDir.toString() + 
+                                      File.separator + 
+                                      dir).getAbsolutePath());
+        }
+    }
+
+    /**
+     * Returns the absolute path for the database source output directory
+     * and any child directories
+     *
+     * @param dir
+     *            directory name
+     * @return absoulte path of the requested directory
+     */
+    public String getAbsolutePath(String dir) {
+        return pathMap.get(dir);
+    }
+    
 
     /**
      * {@link ErrorReceiver} that produces messages
@@ -246,6 +423,7 @@ public class Xsd2db {
         }
     }
 
+
     private static class HbmFilter implements FilenameFilter {
         public boolean accept(File dir, String name) {
             if (name.endsWith("hbm.xml") || (new File(dir + "/" + name)).isDirectory())
@@ -253,14 +431,4 @@ public class Xsd2db {
             return false;
         }
     }
-    
-    /**
-     * JARs on which the final database project will depend.
-     */
-    private static final String[] LIB_DEP = {
-        "jaxb-api.jar",
-        "jaxb-impl.jar",
-        "jaxb-libs.jar",
-        "relaxngDatatype.jar"
-    };
 }

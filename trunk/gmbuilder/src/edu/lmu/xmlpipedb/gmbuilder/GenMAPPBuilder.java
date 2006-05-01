@@ -2,7 +2,7 @@
  * Filename: GenMAPPBuilder.java
  * Author: LMU
  * Program: gmBuilder
- * Description: Export the data to the access database.    
+ * Description: Main application.    
  * Revision History:
  * 20060426: Initial Revision.
  * *****************************************************/

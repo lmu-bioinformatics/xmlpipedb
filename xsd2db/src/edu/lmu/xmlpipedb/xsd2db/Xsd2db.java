@@ -26,6 +26,7 @@ import java.util.Properties;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.lang.StringBuffer;
 
 import org.apache.log4j.BasicConfigurator;
 import org.hibernate.cfg.Configuration;
@@ -354,7 +355,7 @@ public class Xsd2db {
             FileWriter buildFileWriter = new FileWriter(cannedBuildfile);
             int streamedChar = 0;
             while (((streamedChar = buildFileReader.read()) != -1))
-                buildFileWriter.write(streamedChar);
+                    buildFileWriter.write(streamedChar);
             buildFileWriter.close();
         } catch(IOException ioException) {
             System.out.println("Error writing canned build file: " + ioException.getMessage());

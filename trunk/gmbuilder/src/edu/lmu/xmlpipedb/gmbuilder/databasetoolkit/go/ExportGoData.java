@@ -1,3 +1,12 @@
+/********************************************************
+ * Filename: ExportGoData.java
+ * Author: LMU
+ * Program: gmBuilder
+ * Description: Export the data to the access database.    
+ * Revision History:
+ * 20060422: Initial Revision.
+ * *****************************************************/
+
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go;
 
 import java.io.BufferedReader;

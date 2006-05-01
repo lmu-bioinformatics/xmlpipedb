@@ -97,7 +97,6 @@ public class Go {
 	 *
 	 */
 	private void createMaps() {
-		int index = 0;
 		String create_cmd; 	
 		String insert_cmd; 
 		String dollar_signs;

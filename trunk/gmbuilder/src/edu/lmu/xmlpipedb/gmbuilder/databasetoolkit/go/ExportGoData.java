@@ -1,20 +1,10 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go;
 
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.Go;
-
-import generated.impl.*;
-
-
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -29,12 +19,24 @@ import javax.xml.bind.JAXBException;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
+
+import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.AccessFileCreator;
+import generated.impl.IdImpl;
+import generated.impl.IsAImpl;
+import generated.impl.NameImpl;
+import generated.impl.NamespaceImpl;
+import generated.impl.RelationshipImpl;
+import generated.impl.TermImpl;
+import generated.impl.ToImpl;
 
 public class ExportGoData {
 
 	private Connection connection 	= null;
-	private String outputFile 		= null;
+	private File outputFile 		= null;
 	private Go 		 godb;
 	private HashMap<String, String> namespace;
 	private HashMap<String, Integer> goCount;
@@ -50,7 +52,7 @@ public class ExportGoData {
 	 * @throws IOException
 	 * 			I/O error
 	 */
-	public ExportGoData(String outputFile) throws IOException {
+	public ExportGoData(File outputFile) throws IOException {
 		this.outputFile = outputFile;
 		godb 		= new Go();
 		namespace 	= new HashMap<String, String>();
@@ -68,7 +70,10 @@ public class ExportGoData {
 	 * @throws IOException
 	 * @throws JAXBException
 	 */
-	public void export() throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
+	public void export() throws ClassNotFoundException, 
+			SQLException, HibernateException, 
+			SAXException, IOException, JAXBException {
+		
 		String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
 		
 		openConnection();
@@ -97,10 +102,13 @@ public class ExportGoData {
 	 * @throws IOException
 	 * @throws JAXBException
 	 */
-	private void populateGoTables() throws SQLException, HibernateException, SAXException, IOException, JAXBException {
-		Iterator iter = null;
-		HibernateSession hs	= new HibernateSession();
-		Session session = hs.openSession(); // open Hibernate session
+	private void populateGoTables() throws SQLException, 
+			HibernateException, SAXException, IOException, 
+			JAXBException {
+		
+		Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
+    	SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
+		Session session = sessionFactory.openSession(); // open Hibernate session
 
 		populateGeneOntologyTable(session);
 		populateGeneOntologyTree();
@@ -119,6 +127,7 @@ public class ExportGoData {
 	 * @throws SQLException
 	 */
 	private void populateUniprotGoTable() throws IOException, SQLException {
+
 		File file = new File("src/edu/lmu/xmlpipedb/gmbuilder/resource/GoAssociations/associations.txt");
 		BufferedReader in = new BufferedReader(new FileReader(file.getCanonicalPath()));
 		String line = null;
@@ -277,33 +286,16 @@ public class ExportGoData {
 		s.close();
 	}
 	
-	private void copyFile(File fileIn, File fileOut) throws IOException {
-		InputStream in = new FileInputStream(fileIn);
-		OutputStream out = new FileOutputStream(fileOut);
-	    
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-        }
-        in.close();
-        out.close();
-    }
-	
 	/**
 	 * Open connection to the access database  
 	 * 
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
+	 * @throws IOException 
 	 */
-	private void openConnection() throws ClassNotFoundException, SQLException {
-		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-		   
-        String database = "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
-        database += outputFile.trim() + ";DriverID=22;READONLY=false}"; 
-        
-        connection = DriverManager.getConnection(database ,"","");
+	private void openConnection() throws ClassNotFoundException, 
+			SQLException, IOException {     
+        connection = AccessFileCreator.openConnection(outputFile);
 	}
 	/**
 	 * Close database connection

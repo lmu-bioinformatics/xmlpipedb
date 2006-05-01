@@ -59,14 +59,26 @@ public class AccessFileCreator {
     }
 	
 	/**
-	 * Open connection to the access database
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 * @throws IOException 
+	 * Create a new Access file.
+	 * @param outputFile
+	 * @throws IOException
 	 */
-	public static void openConnection(File outputFile) throws ClassNotFoundException, SQLException, IOException {
+	public static void createNewAccessFile(File outputFile) throws IOException {
 		//make a copy of the template file.
 		copyFile(outputFile);
+	}
+
+	/**
+	 * Open connection to the access database
+	 * @param outputFile
+	 * @return the connection, may be ignored.
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	public static Connection openConnection(File outputFile) throws 
+			ClassNotFoundException, SQLException, IOException {
+
 		
 		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
 		   
@@ -74,6 +86,8 @@ public class AccessFileCreator {
         database += outputFile.getAbsolutePath() + ";DriverID=22;READONLY=false}"; 
         
         connection = DriverManager.getConnection(database ,"","");
+        
+        return connection;
 	}
 	
 	/**
@@ -276,7 +290,8 @@ public class AccessFileCreator {
 	 * @param columns (may be null)
 	 * @throws SQLException
 	 */
-	public static void updateSystemsTable(String systemCode, String dateString, String columns) throws SQLException {
+	public static void updateSystemsTable(String systemCode, 
+			String dateString, String columns) throws SQLException {
 		
 		if(columns != null) {
 			PreparedStatement ps = connection.prepareStatement(

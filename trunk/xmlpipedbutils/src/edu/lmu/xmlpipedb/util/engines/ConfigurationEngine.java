@@ -321,7 +321,7 @@ public class ConfigurationEngine {
 
     private String _hibernatePropertiesUrl;
     private String _defaultPropertiesUrl;
-    public static String SAVED_TYPE_NAME = "xmlpipedb.type";
-    public static String SAVED_CATEGORY_NAME = "xmlpipedb.category";
+    private static String SAVED_TYPE_NAME = "xmlpipedb.type";
+    private static String SAVED_CATEGORY_NAME = "xmlpipedb.category";
 
 } // end class

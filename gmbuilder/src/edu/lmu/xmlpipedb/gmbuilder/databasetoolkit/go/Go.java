@@ -13,7 +13,7 @@ public class Go {
 	protected static String GeneOntologyTree 	= "GeneOntologyTree";
 	protected static String GeneOntology		= "GeneOntology";
 	protected static String GeneOntologyCount	= "GeneOntologyCount";
-	protected static String Uniprot_Go		    = "Uniprot-GeneOntology";
+	protected static String Uniprot_Go		    = "\"Uniprot-GeneOntology\"";
 	
 	
 	private String[] tables = {GeneOntology, GeneOntologyTree, GeneOntologyCount, Uniprot_Go};
@@ -105,9 +105,9 @@ public class Go {
 		String[][] fields = new String[][]
 		       {
 				{"ID", "NAME", "Type","Parent","Relation","Species", "\"Date\"", "Remarks"}, /* GO */
-				{"OrderNo", "Level", "ID", "NAME"}, /* GOTree */
+				{"OrderNo", "\"Level\"", "ID", "NAME"}, /* GOTree */
 				{"ID", "Count"}, /* GOCount */
-				{"Primary", "Related", "Bridge"} /* Uniprot-Go */
+				{"\"Primary\"", "Related", "Bridge"} /* Uniprot-Go */
 		       };
 		String[][] types  = new String[][]
 		       {

@@ -13,8 +13,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
+import java.net.URL;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -24,86 +24,70 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 public class Xsd2dbCommandLine {
-    private static final String bindings = "bindings";
-    private static final String outputDirectory = "outputDirectory";
-    private static final String updateXSD = "updateXSD";
-    private static final String xsdURL = "xsdURL";
-    private static final String dtdSchema = "dtdSchema";
-    private static final String help = "help";
 
-    private static final String usage = "usage: xsd2db [--" + outputDirectory + "=dirname] " + "[--" + bindings + "=filename] [[-" + updateXSD + "] --" + xsdURL + "=url] [-" + dtdSchema + "] [-" + help + "]";
-    private static final String helpMsg = "--" + outputDirectory + "=dirname -- " + "The directory when generating the source code and file; defaults to db-gen\n" + "--" + bindings + "=filename       -- " + "The binding file used when generation the database source code and files\n" + "                             for the time.  Defaults to standard binding file supplied by XSD-To-DB\n" + "--" + xsdURL + "=url              -- " + "The URL of the XSD to convert\n" + "-" + updateXSD + "                -- " + "Replaces the XSD being used with the new version\n" + "-" + dtdSchema + "                -- Sets schema type to DTD; defaults to XSD\n" + "-" + help + "                     -- Displays this help and exits\n";
-
-    protected static final int XSD_DIR = 0;
-    protected static final int SRC_DIR = 1;
-    protected static final int HBM_DIR = 2;
-    protected static final int SQL_DIR = 3;
-    protected static final int LIB_DIR = 4;
-    protected String[] subDirs = { "xsd", "src", "hbm", "sql", "lib" };
-
-    protected Options options;
-    protected File dbSrcDir;
-    protected String bindingsFile;
-    protected String xsdurl;
-    protected String xsdName;
-    protected HashMap<String, String> map;
-
-    public static enum Schema {
-        DTD, XSD
-    }
-
-    protected Schema schemaType;
+    /*
+     * Private varibles used to store option names
+     */
+    private static final String BINDINGS = "bindings";
+    private static final String OUTPUT_DIRECTORY = "outputDirectory";
+    private static final String UPDATE_XSD = "updateXSD";
+    private static final String XSD_URL = "xsdURL";
+    private static final String DTD_SCHEMA = "dtdSchema";
+    private static final String HELP = "help";
 
     /**
-     * Constructor
+     * Usage message
      */
-    public Xsd2dbCommandLine() {
+    private static final String USAGE = "usage: xsd2db [--" + OUTPUT_DIRECTORY + "=dirname] " + "[--" + BINDINGS + 
+                                        "=filename] [[-" + UPDATE_XSD + "] --" + XSD_URL + "=url] [-" + DTD_SCHEMA + "] [-" + HELP + "]";
+    /**
+     * Help message
+     */
+    private static final String HELP_MESSAGE = "--" + OUTPUT_DIRECTORY + "=dirname -- " + 
+                                                "The directory when generating the source code and file; defaults to db-gen\n" + 
+                                                "--" + BINDINGS + "=filename       -- " + 
+                                                "The binding file used when generation the database source code and files\n" + 
+                                                "                             for the time.  Defaults to standard binding file supplied by XSD-To-DB\n" + 
+                                                "--" + XSD_URL + "=url              -- " + "The URL of the XSD to convert\n" + "-" + 
+                                                UPDATE_XSD + "                -- " + 
+                                                "Replaces the XSD being used with the new version\n" + "-" + DTD_SCHEMA + 
+                                                "                -- Sets schema type to DTD; defaults to XSD\n" + "-" + HELP + 
+                                                "                     -- Displays this help and exits\n";
+    private static final int BUFFER_SIZE = 1024;
+
+    /**
+     * Singleton instance varible.
+     */
+    private static Xsd2dbCommandLine instance;
+
+    /*
+     * Place to store the command line argumetns that 
+     * xsd2db was invoked with.
+     */ 
+    private Options options;
+    private File dbSrcDir;
+    private String bindingsFile;
+    private String xsdurl;
+    private Xsd2db.Schema schemaType;
+
+    /**
+     * Constructor.  Used to instainted the singleton.
+     */
+    private Xsd2dbCommandLine() {
         options = new Options();
-        map = new HashMap<String, String>();
         addXsd2dbOptions();
     }
 
     /**
-     * Returns the absolute path for the the database source output directory
-     * and any child directories
-     *
-     * @param dir
-     *            directory name
-     * @return absoulte path of the requested directory
+     * Returns the singleton instance of Xsd2dbCommandLine.
      */
-    public String getAbsolutePath(String dir) {
-        return map.get(dir);
+    public static Xsd2dbCommandLine getInstance()
+    {
+        if (instance == null)
+            instance = new Xsd2dbCommandLine();
+        return instance;
     }
-
-    /**
-     * @return Returns the bindingsFile.
-     */
-    public String getBindingsFile() {
-        return bindingsFile;
-    }
-
-    /**
-     * @return Returns the dbSrcDir.
-     */
-    public File getDBSrcDir() {
-        return dbSrcDir;
-    }
-
-    /**
-     * @return Returns the xsdurl.
-     */
-    public String getXSDURL() {
-        return xsdurl;
-    }
-
-    /**
-     * Returns the type of schema file to process.
-     * 
-     * @return DTD or XSD
-     */
-    public Schema getSchemaType() {
-        return schemaType;
-    }
+    
 
     /**
      * Parse the command line
@@ -115,52 +99,51 @@ public class Xsd2dbCommandLine {
         CommandLineParser parser = new PosixParser();
         CommandLine line = null;
 
-        // Bail out helpfully if no arguments were found.
-        if (args.length == 0) {
-            printErrorMsgAndExit(usage + "\n\n" + helpMsg);
-        }
-
+        // parse command line options
         try {
             line = parser.parse(options, args);
         } catch(ParseException e) {
-            printErrorMsgAndExit(e.getMessage() + "\n\n" + usage);
+            printErrorMsgAndExit(e.getMessage() + "\n\n" + USAGE);
         }
 
-        if (line.hasOption(help)) {
-            printErrorMsgAndExit(usage + "\n\n" + helpMsg);
+        if (line.hasOption(HELP)) {
+            printErrorMsgAndExit(USAGE + "\n\n" + HELP_MESSAGE);
         }
 
-        dbSrcDir = new File(line.hasOption(outputDirectory) ? line.getOptionValue(outputDirectory) : "db-gen");
+        // Read the parsed options
+        dbSrcDir = new File(line.hasOption(OUTPUT_DIRECTORY) ? line.getOptionValue(OUTPUT_DIRECTORY) : "db-gen");
 
-        bindingsFile = line.hasOption(bindings) ? line.getOptionValue(bindings) : "";
+        bindingsFile = line.hasOption(BINDINGS) ? line.getOptionValue(BINDINGS) : "";
 
-        xsdurl = line.hasOption(xsdURL) ? line.getOptionValue(xsdURL) : "";
+        xsdurl = line.hasOption(XSD_URL) ? line.getOptionValue(XSD_URL) : "";
 
-        schemaType = line.hasOption(dtdSchema) ? Xsd2dbCommandLine.Schema.DTD : Xsd2dbCommandLine.Schema.XSD;
+        schemaType = line.hasOption(DTD_SCHEMA) ? Xsd2db.Schema.DTD : Xsd2db.Schema.XSD;
 
-        if (line.hasOption(updateXSD) && xsdurl.equals("")) {
-            printErrorMsgAndExit(usage + "\n\n--" + xsdURL + "=url must be specified when using -" + updateXSD);
+        if (line.hasOption(UPDATE_XSD) && xsdurl.equals("")) {
+            printErrorMsgAndExit(USAGE + "\n\n--" + XSD_URL + "=url must be specified when using -" + UPDATE_XSD);
 
         }
-
+    }
+    
+    /**
+     * Entry point into the command line executable.
+     */
+    public static void main(String args[])
+    {
+        Xsd2dbCommandLine.getInstance().run(args);
+    }       
+    
+    
+    public void run(String args[])
+    {
+        parse(args);
         if (!dbSrcDir.isDirectory() || (dbSrcDir.list().length == 0)) {
             if (xsdurl.equals("")) {
-                printErrorMsgAndExit("\nFirst time run with output directory '" + dbSrcDir.toString() + "'. Therefore --" + xsdURL + "=url must be specifed");
-            } else {
-                createDirectoryStructure();
-            }
+                printErrorMsgAndExit("\nFirst time run with output directory '" + dbSrcDir.toString() + "'. Therefore --" + XSD_URL + "=url must be specifed");
+            } 
         }
-        createAbsoulutePaths();
-
-        if (!xsdurl.equals("")) {
-            xsdName = xsdurl.substring(xsdurl.lastIndexOf("/"));
-            try {
-                downLoadXsdFile();
-            } catch(IOException e) {
-                printErrorMsgAndExit(e.getMessage() + "\n\nError downloading xsd file");
-            }
-        }
-
+        Xsd2db.getInstance().run(dbSrcDir, xsdurl, schemaType);
+/*
         if (!bindingsFile.equals("")) {
             File in = new File(bindingsFile);
             File out = new File(getAbsolutePath("xsd") + File.separator + in.getName());
@@ -176,20 +159,10 @@ public class Xsd2dbCommandLine {
         } else {
 
         }
+*/
     }
 
-    /**
-     * Creates absoulte paths for the database source output directory and any
-     * children directories
-     *
-     */
-    private void createAbsoulutePaths() {
-        map.put("dbsrc", dbSrcDir.getAbsolutePath());
 
-        for (String dir : subDirs) {
-            map.put(dir, new File(dbSrcDir.toString() + File.separator + dir).getAbsolutePath());
-        }
-    }
 
     /**
      * Copies a binding file to dbsrcdir/xsd
@@ -204,7 +177,7 @@ public class Xsd2dbCommandLine {
     private void copyBindingsFile(File in, File out) throws Exception {
         FileInputStream fis = new FileInputStream(in);
         FileOutputStream fos = new FileOutputStream(out);
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[BUFFER_SIZE];
         int i = 0;
 
         System.out.println("\nCopying binding file " + in.getName() + " ...");
@@ -218,52 +191,18 @@ public class Xsd2dbCommandLine {
         System.out.println("Copy successful... ");
     }
 
-    /**
-     * Downloads the user requested .xsd file to dbsrcdir/xsd
-     *
-     * @throws IOException
-     *             if an I/O error occurs
-     */
-    private void downLoadXsdFile() throws IOException {
-        File xsdfile = new File(getAbsolutePath("xsd") + xsdurl.substring(xsdurl.lastIndexOf("/")));
-        URL url = null;
-
-        System.out.println("\nDownloading " + xsdfile.getName() + "...");
-
-        try {
-            url = new URL(xsdurl);
-        } catch(MalformedURLException e) {
-            printErrorMsgAndExit(e.getMessage());
-        }
-
-        BufferedInputStream inputStream = new BufferedInputStream(url.openStream());
-        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(xsdfile));
-
-        byte[] buffer = new byte[128];
-        int bytesRead;
-        while (true) {
-            bytesRead = inputStream.read(buffer);
-            if (bytesRead == -1)
-                break;
-            outputStream.write(buffer, 0, bytesRead);
-        }
-        outputStream.flush();
-        outputStream.close();
-
-        System.out.println("Download successful...");
-    }
-
+    
     /**
      * Adds the acceptable command line options
      */
     @SuppressWarnings("static-access")
     private void addXsd2dbOptions() {
-        options.addOption(help, false, null);
-        options.addOption(updateXSD, false, null);
-        options.addOption(dtdSchema, false, null);
-        options.addOption(OptionBuilder.withLongOpt(outputDirectory).withValueSeparator('=').hasArg().create());
-        options.addOption(OptionBuilder.withLongOpt(bindings).withValueSeparator('=').hasArg().create());
-        options.addOption(OptionBuilder.withLongOpt(xsdURL).withValueSeparator('=').hasArg().create());
+        options.addOption(HELP, false, null);
+        options.addOption(UPDATE_XSD, false, null);
+        options.addOption(DTD_SCHEMA, false, null);
+        options.addOption(OptionBuilder.withLongOpt(OUTPUT_DIRECTORY).withValueSeparator('=').hasArg().create());
+        options.addOption(OptionBuilder.withLongOpt(BINDINGS).withValueSeparator('=').hasArg().create());
+        options.addOption(OptionBuilder.withLongOpt(XSD_URL).withValueSeparator('=').hasArg().create());
     }
 
     /**
@@ -275,16 +214,4 @@ public class Xsd2dbCommandLine {
         System.exit(0);
     }
 
-    /**
-     * Creates the database source output directory structure,
-     * per user request. Defaults to db-gen
-     *
-     */
-    private void createDirectoryStructure() {
-        dbSrcDir.mkdir();
-
-        for (String dir : subDirs) {
-            new File(dbSrcDir.toString() + File.separator + dir).mkdir();
-        }
-    }
 }

@@ -4,44 +4,44 @@
 
 \subsection{Gene Ontology}
 % Updated by Roberto and Scott
-The Gene Ontology (henceforth Go) database is a staging database created to hold the records describing gene products according to biological processes,
+The Gene Ontology (henceforth GO) database is a staging database created to hold the records describing gene products according to biological processes,
 cellular component, and molecular functions. This database allows the user to extract structured-controlled vocabulary terms
 which describe gene products in any organism. In particular, Escherichia coli related data is queried as a part of the main
 objective of the xmlpipedb project.
 
 \subsubsection{Introduction}
-Go and Uniprot, which is described in Section~\ref{uniprotdb}, are the two data strucures needed to output a
+GO and Uniprot, which is described in Section~\ref{uniprotdb}, are the two data strucures needed to output a
 working GenMAPP gene database for a partiuclar organism. During the beginning phases of the original XMLPipeDB project,
-only Uniprot had been included into the build process; Go came along after the project was broken into subprojects,
-which was named godb. The first step in creating a godb deliverable was to run a Go schema file
+only Uniprot had been included into the build process; GO came along after the project was broken into subprojects,
+which was named godb. The first step in creating a godb deliverable was to run a GO schema file
 through xsd2db, which is described in Section~\ref{xsd2db}. xsd2db generates the necessary JAXB
 objects, hibernate mappings, SQL DDL file, and the godb build file. The build file is then executed
 to produce a deliverable jar file which  would later be used in the gmbuilder
 subproject, which is described in Section~\ref{gmbuilder}.
- 
+
 
 \subsubsection{Design}
 \label{godtd}
-Go exports its data to a number of different file formats to allow flexibility for different users with
+GO exports its data to a number of different file formats to allow flexibility for different users with
 different background and purposes. For this subproject, choosing a file format proved to be a difficult task.
-There are three main file formats to extract Go data: flat files, mySQL formats, and XML files. Flat files
+There are three main file formats to extract GO data: flat files, mySQL formats, and XML files. Flat files
 were eliminate because they are not compatible with JAXB classes (Java Architecture for XML Binding), which  are called by
 xmlpipedb utilities. MySQL format were eliminated because a ``one-off" tool would need
 to be created to port the data from mySQL to postgres. Initially, this format was considered since xsd2db
 required a XSD
-schema file (hence its name), which GO did not provide. A later version of xsd2db supported DTD schemas, which Go uses to define their
+schema file (hence its name), which GO did not provide. A later version of xsd2db supported DTD schemas, which GO uses to define their
 schema definitions. If we used mySQL, then what happens if the schema changes? The ``one-off" tool would need to be changed every
-time Go changed its schema, which would be costly and inefficient. But xsd2db provides the ability to auto generate any time Go changes
+time GO changed its schema, which would be costly and inefficient. But xsd2db provides the ability to auto generate any time GO changes
 their schema, so the mySQL format was not passed on, which left XML formats.
 
-Go provides their data in two XML format which both contain DTD schema files: OBO.xml and RDF.xml. However,
+GO provides their data in two XML format which both contain DTD schema files: OBO.xml and RDF.xml. However,
 the members of the GO Consortium claimed that they will eventually generate a XSD schema for OBO.xml, and that there
 are no plans to generate an XSD schema for the RDF file. In fact, they only reason why they currently have a DTD file
 for RDF.xml is for historical reasons. Thus, the OBO.xml file format
 was chosen for the project, and therefore the OBO.dtd file was fed into xsd2db.
 
 As it turned out, the OBO.dtd file produced a SQL schema that contained a tabled name \emph{To}, which happens to be
-a postgresSQL keyword. Furthermore, since the DTD file did not specify a maximum character length for all Go tags-value
+a postgresSQL keyword. Furthermore, since the DTD file did not specify a maximum character length for all GO tags-value
 pairs, the SQL schema defaulted those tags to type \emph{varchar(255)}. Unfortunately, though, some of the data exceeds the
 character limit of 255. Due to the variety of problems, a godb postprocessor was created.
 
@@ -60,7 +60,7 @@ In the interest of flexibility, the postprocessor GUI asks the user to supply th
 Once each file has been selected, the tools proceeds to fix the corresponding files and returns a success message
 if the changes were done correctly, otherwise the application terminates without modifying the files.
 
-\subsubsection{Performance Analysis}.
+\subsubsection{Performance Analysis}
 Once the godb ran through the postprocessor, a OBO.xml was loaded using the import features of xmlpipedb utilities.
 Unfortunately, the import failed; fortunately it was simply a memory heap issue: since the OBO.xml file contains alot of data, and
 JaxB instantiates the ``entire" object graph in memory before committing it to the database, an \emph{out of memory} error was issue.
@@ -86,5 +86,5 @@ documentation.  Although the godb project successfully performed its work, it wa
 requirement specification can be prepared which lists all the requirements on the database and the postprocessor tool.  The
 delivery of this document can give an idea to users and developers on how to proceed when using or modifying the godb
 applications.
- 
+
 %\end{document}

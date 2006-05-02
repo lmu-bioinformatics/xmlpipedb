@@ -51,7 +51,7 @@ if the changes were done correctly, otherwise the application terminates without
 \subsubsection{Performance Analysis}.
 Once the Godb ran through the postprocessor, a OBO.xml was loaded using the import features of xmlpipedb utilities.
 Unfortunately, the import failed; fortunately it was simply a memory heap issue: since the OBO.xml file contains alot of data, and
-JaxB instantiates the "entire" object graph in memory before committing it to the database, an \emph{out of memory} error was issue.
+JaxB instantiates the ``entire" object graph in memory before committing it to the database, an \emph{out of memory} error was issue.
 To fix this, the java \emph{maximum heap size} was increased to 1024mb, and the subsequent import was successful. It took
 around 40 minutes to load the entire file on a 2.0GHz machine.
 

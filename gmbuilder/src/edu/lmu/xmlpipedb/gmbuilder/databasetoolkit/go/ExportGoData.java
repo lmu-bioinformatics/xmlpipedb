@@ -50,7 +50,7 @@ public class ExportGoData {
 	private HashMap<String, String> namespace;
 	private HashMap<String, Integer> goCount;
 	
-	// GO DB variables
+	// GO DB variables 
 	private int orderNo 			= 1;
 	
 	/**

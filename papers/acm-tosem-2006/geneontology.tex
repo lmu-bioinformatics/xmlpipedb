@@ -7,17 +7,29 @@
 The Gene Ontology (henceforth Go) database is a staging database created to hold the records describing gene products according to biological processes,
 cellular component, and molecular functions. This database allows the user to extract structured-controlled vocabulary terms
 which describe gene products in any organism. In particular, Escherichia coli related data is queried as a part of the main
-objective of the xmlpipedb project. Go exports its data to a number of different file formats to allow flexibility for different users with
-different background and purposes. For this project, choosing a file format proved to be a difficult task.
+objective of the xmlpipedb project.
 
-\subsubsection{OBO.DTD Schema File}
+\subsubsection{Introduction}
+Go and Uniprot, which is described in Section~\ref{uniprotdb}, are the two data strucures needed to output a
+working GenMAPP gene database for a partiuclar organism. During the beginning phases of the original XMLPipeDB project,
+only Uniprot had been included into the build process; Go came along after the project was broken into subprojects,
+which was named godb. The first step in creating a godb deliverable was to run a Go schema file
+through xsd2db, which is described in Section~\ref{xsd2db}. xsd2db generates the necessary JAXB
+objects, hibernate mappings, SQL DDL file, and the godb build file. The build file is then executed
+to produce a deliverable jar file which  would later be used in the gmbuilder
+subproject, which is described in Section~\ref{gmbuilder}.
+ 
+
+\subsubsection{Design}
 \label{godtd}
-There are three main file formats to extract Go data: flat files, mySQL formats, and XML files. For this project,
-flat files were eliminate because they are not compatible with JaxB classes (Java Architecture for XML Binding), which  are called by
+Go exports its data to a number of different file formats to allow flexibility for different users with
+different background and purposes. For this subproject, choosing a file format proved to be a difficult task.
+There are three main file formats to extract Go data: flat files, mySQL formats, and XML files. Flat files
+were eliminate because they are not compatible with JAXB classes (Java Architecture for XML Binding), which  are called by
 xmlpipedb utilities. MySQL format were eliminated because a ``one-off" tool would need
 to be created to port the data from mySQL to postgres. Initially, this format was considered since xsd2db
-(see section \ref{xsd2db}) required a XSD
-schema file (hence its name), which GO did not provide. A later version of xsd2db supported DTD schema files, which Go uses to define their
+required a XSD
+schema file (hence its name), which GO did not provide. A later version of xsd2db supported DTD schemas, which Go uses to define their
 schema definitions. If we used mySQL, then what happens if the schema changes? The ``one-off" tool would need to be changed every
 time Go changed its schema, which would be costly and inefficient. But xsd2db provides the ability to auto generate any time Go changes
 their schema, so the mySQL format was not passed on, which left XML formats.
@@ -31,11 +43,11 @@ was chosen for the project, and therefore the OBO.dtd file was fed into xsd2db.
 As it turned out, the OBO.dtd file produced a SQL schema that contained a tabled name \emph{To}, which happens to be
 a postgresSQL keyword. Furthermore, since the DTD file did not specify a maximum character length for all Go tags-value
 pairs, the SQL schema defaulted those tags to type \emph{varchar(255)}. Unfortunately, though, some of the data exceeds the
-character limit of 255. Due to the variety of problems, a Godb postprocessor was created.
+character limit of 255. Due to the variety of problems, a godb postprocessor was created.
 
 \subsubsection{Postprocessor}
-The Godb postprocessor is a GUI based tool to fix the errors in section~\ref{godtd}. Two files needed to be modified  before
-Godb can be delivered: \emph{schema.sql} and \emph{To.hbm.xml}. For the \emph{schema.sql} file, the postprocessor
+The godb postprocessor is a GUI based tool to fix the errors in section~\ref{godtd}. Two files needed to be modified  before
+godb can be delivered: \emph{schema.sql} and \emph{To.hbm.xml}. For the \emph{schema.sql} file, the postprocessor
 searched and replaced all instances of \emph{varchar(255)} to \emph{varchar}, which specifies an unlimited character string type.
 Thus, any data that exceeded 255 characters would not generate an error. Additionally,
 the postprocessor changed the table name \emph{To} to  \emph{To\_}, which eliminates any conflicts with postgresSQL keywords.
@@ -49,30 +61,30 @@ Once each file has been selected, the tools proceeds to fix the corresponding fi
 if the changes were done correctly, otherwise the application terminates without modifying the files.
 
 \subsubsection{Performance Analysis}.
-Once the Godb ran through the postprocessor, a OBO.xml was loaded using the import features of xmlpipedb utilities.
+Once the godb ran through the postprocessor, a OBO.xml was loaded using the import features of xmlpipedb utilities.
 Unfortunately, the import failed; fortunately it was simply a memory heap issue: since the OBO.xml file contains alot of data, and
 JaxB instantiates the ``entire" object graph in memory before committing it to the database, an \emph{out of memory} error was issue.
 To fix this, the java \emph{maximum heap size} was increased to 1024mb, and the subsequent import was successful. It took
 around 40 minutes to load the entire file on a 2.0GHz machine.
 
-The Godb served its purpose because all the data from gene ontology was successfully uploaded.  The database access was also
+The godb served its purpose because all the data from gene ontology was successfully uploaded.  The database access was also
 successfully executed by gmbuilder without any major problems.  The development of this part of the project was facilitated
 in part because the uniprot database.  The functionality of the postprocessor was mirrored from the same postprocessor
-developed by uniprot db.  By using the same code design as the uniprot postprocessor, the future maintenance of the Godb
+developed by uniprot db.  By using the same code design as the uniprot postprocessor, the future maintenance of the godb
 code can be done in parallel with any changes done on the uniprot db side.
 
 \subsubsection{Future Work}
-The future work with the Godb can be extensive.  However, in order to have a good understanding of
+The future work with the godb can be extensive.  However, in order to have a good understanding of
 future change requests, the developers must work together with biologists to find relevant information needed to support their requests.
-After all, the biologist are the end users. One potential issue with  Godb is that it was only tested on a postgres database. In other
+After all, the biologist are the end users. One potential issue with  godb is that it was only tested on a postgres database. In other
 words, other databases may require additional/other fixes to be performed by the postprocessor. If that were the case, then
 the postprocessor tool would need to change to allow the user to select the database type. Integration test would also have to be performed
 in using another database.
 
 Another future work that can be done is
-documentation.  Although the Godb project successfully performed its work, it was not documented properly.  A software
+documentation.  Although the godb project successfully performed its work, it was not documented properly.  A software
 requirement specification can be prepared which lists all the requirements on the database and the postprocessor tool.  The
-delivery of this document can give an idea to users and developers on how to proceed when using or modifying the Godb
+delivery of this document can give an idea to users and developers on how to proceed when using or modifying the godb
 applications.
-
+ 
 %\end{document}

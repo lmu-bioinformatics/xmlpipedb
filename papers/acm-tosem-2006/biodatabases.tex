@@ -15,10 +15,13 @@ GenMAPP gene databases function around a central system, known as the MOD system
 A Model Organism Database (MOD) is a public database that contains genes and 
 annotation for a particular organism.  
 The purpose of using a MOD system within GenMAPP is to form a link between
-GenMAPP and the gene ontology (GO) hierarchy.  
-Lastly, GenMAPP supports species that are typically
-found in the UniProt database.  As a result, UniProt is typically seen as the MOD
-for the GenMAPP application \cite{noSupport}.  
+GenMAPP and the gene ontology (GO) hierarchy \cite{noSupport}.  Current gene 
+databases supplied by GenMAPP use the Ensembl database to link to GO.  However, 
+Ensembl is limited to the number of species it represents.  
+As a result, for the XMLPipeDB project, UniProt was chosen to form the link to GO
+based on the number of species available.  In this case, UniProt is not 
+actually a MOD in the strict sense of the word.  But it can be used to form the 
+needed link to the GO hierarchy.  
 
 UniProt (Universal Protein Resource) is the world's most comprehensive catalog of 
 information on proteins \cite{uniprotWeb}.  

@@ -1,6 +1,6 @@
 \documentclass[11pt]{article}
 \usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
-\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ...
 %\geometry{landscape}                % Activate for for rotated page geometry
 %\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
 \usepackage{graphicx}
@@ -9,6 +9,9 @@
 %\usepackage{epstopdf}
 \usepackage{url}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\setcounter{secnumdepth}{7}
+\setcounter{tocdepth}{7}
+
 
 \title{XMLPipeDB: A Reusable Tool Chain for Building Relational Databases from XML Sources}
 \author{
@@ -79,4 +82,4 @@ Despite the pitfalls encountered, incredibly tight timeframes and demands of ass
 \bibliography{../xmlpipedb-refs}
 \bibliographystyle{alpha}
 
-\end{document}  
+\end{document}

@@ -189,8 +189,8 @@ public class ExportGoData {
 	    	boolean is_root = false;
 			/*
 			 *  Each Term may have more than one parent (is_a) and a part_of. In that
-			 *  case, create an entry for each object. Thus each term may have max of three
-			 *  entries: two parents and one part of
+			 *  case, create an entry for each object. Thus each term may have more than one
+			 *  entry
 			 */
 	    	while (myiter.hasNext()) {
 				Object o = myiter.next();

@@ -162,7 +162,7 @@ public class UniprotXSDPostProcessor extends JFrame {
 		//
 		JOptionPane.showMessageDialog(this,
 			    "The files were processed and saved successfully!",
-			    "Please select a file", 
+			    "Success!!!", 
 			    JOptionPane.INFORMATION_MESSAGE);
 		
 		//

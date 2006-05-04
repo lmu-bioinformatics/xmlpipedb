@@ -11,13 +11,13 @@ Initially the project seemed simple and we attempted to design it as a single un
 % Finish up the above section
 % Added uniprotdb - Joe Boyle 4/30/2006
 
-In the second stage, post-processor applications, UniprotDb and GoDb were written for the Uniprot and GO databases. This takes the output from Xsd2Db, makes the kinds of changes described above and then, through an ANT build file, allows the user to Jar the output for use a library with GenMAPP Builder.
+In the second stage, post-processor applications, UniprotDb and GoDb were written for the Uniprot and GO databases. This takes the output from \emph{xsd2db}, makes the kinds of changes described above and then, through an ANT build file, allows the user to Jar the output for use a library with GenMAPP Builder.
 
-The final stage, called GenMAPP Builder, uses the output of UniprotDb and GoDb and another module, XmlPipeDb Utilities, to provide the end user with an application via which s/he can: 
+The final stage, called GenMAPP Builder, uses the output of UniprotDb and GoDb and another module, XmlPipeDb Utilities, to provide the end user with an application via which she/he can: 
 \begin{itemize}
 	\item {configure the Hibernate properties for the intermediate database being used (for us it was PostgreSQL)}
 	\item {import a Uniprot and/or GO XML file to the intermediate database; run queries on that data}
-	\item {export the data to a GenMAPP 2 data file (MS Access MDB file with the GenMAPP 2 schema)}
+	\item {export the data to a \genmapp data file (MS Access MDB file with the \genmapp schema)}
 \end{itemize}
 
 
@@ -30,4 +30,4 @@ XmlPipeDb Utilities consists of components to:
 	\item {Query the and view data with the query interface}
 \end{itemize}
 
-The advantage of this overall design is that each component or module can be used individually, with a completely different application or, as we have done here, as part of a chain of applications. Some of the components, like UniprotDb and GenMAPP Builder are very specific in the problem domain they address. Others, however, like Xsd2Db nad XmlPipeDb Utilities are very general and can be applied to any set of XSD and XML files the user wishes to use in conjuction with a relational database.
+The advantage of this overall design is that each component or module can be used individually, with a completely different application or, as we have done here, as part of a chain of applications. Some of the components, like \emph{uniprotdb} and \genmapp Builder are very specific in the problem domain they address. Others, however, like \emph{xsd2db} nad XmlPipeDb Utilities are very general and can be applied to any set of XSD and XML files the user wishes to use in conjuction with a relational database.

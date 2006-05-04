@@ -28,7 +28,7 @@ has no \emph{is\_a} relationships, then one row is inserted into the table. If a
 \paragraph{GeneOntologyTree}
 The GeneOntologyTree table contains a tree representation of the GO DAG structure, which is used by MAPPFinder
 to build the GO tree in the MAPPFinder browser. The algorithm that creates this table starts by inserting the root
-node for each ontology. After inserting the root node, it then grabs all the children of that node and perform an insert.
+node for each ontology. After inserting the root node, it then grabs all the children of that node and performs an insert.
 For each child, it grabs its children
 and performs an insert. This process continues recursively, and stops when no more child nodes exist.
 Unfortunately, this table is not created from postgres, but rather from the
@@ -50,7 +50,7 @@ to query the GeneOntologyTree to extract the number of times it showed up in the
 
 \paragraph{Uniprot-GeneOntology}
 The Uniprot-GeneOntology table provides a mapping between a Uniprot ID and a GO ID, which is a many to many relationship.
-Currently this information is not found in godb, but rather in a associations text file which is part of the GenMAPP Builder
+Currently this information is not found in godb, but rather in an associations text file which is part of the GenMAPP Builder
 resource library. Each line in the text file may contain a Uniprot ID. If it does, then there will be one to many GO ID's.
 Thus, for each GO ID, a new row is created in the Uniprot-GeneOntology table with the Uniprot ID as one field and the GO ID
 as another field. For example, if the line contained a Uniprot ID of \emph{00001} and three GO ID's \emph{10001,10002, and 10003},
@@ -86,7 +86,7 @@ efficient according the java API.
 
 As of right now, Uniprot-GeneOntology associations file is defined at a specific location in the build tree,
 and the code reflects that by hardcoding the path to the file. This is error prone: every time the file changes location,
-the code would also have to change, which supports poor coding practices. Also, what is the user wanted to use a different
+the code would also have to change, which supports poor coding practices. Also, what if the user wanted to use a different
 associations file? Then the file would have to be checked in as a new resource file, and a new version of the software would have
 to be released. The solution is to make this file user selectable from the genMAPP Builder GUI. This eliminate the two problems
 above, while add flexibility to the user.

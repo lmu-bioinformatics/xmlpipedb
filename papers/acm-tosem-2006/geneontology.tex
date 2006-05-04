@@ -67,11 +67,6 @@ JaxB instantiates the ``entire" object graph in memory before committing it to t
 To fix this, the java \emph{maximum heap size} was increased to 1024mb, and the subsequent import was successful. It took
 around 40 minutes to load the entire file on a 2.0GHz machine.
 
-The godb served its purpose because all the data from gene ontology was successfully uploaded.  The database access was also
-successfully executed by gmbuilder without any major problems.  The development of this part of the project was facilitated
-in part because the uniprot database.  The functionality of the postprocessor was mirrored from the same postprocessor
-developed by uniprot db.  By using the same code design as the uniprot postprocessor, the future maintenance of the godb
-code can be done in parallel with any changes done on the uniprot db side.
 
 \subsubsection{Future Work}
 The future work with the godb can be extensive.  However, in order to have a good understanding of
@@ -86,5 +81,12 @@ documentation.  Although the godb project successfully performed its work, it wa
 requirement specification can be prepared which lists all the requirements on the database and the postprocessor tool.  The
 delivery of this document can give an idea to users and developers on how to proceed when using or modifying the godb
 applications.
+
+\subsubsection{Conclusion}
+The godb served its purpose because all the data from gene ontology was successfully uploaded.  The database access was also
+successfully executed by gmbuilder without any major problems.  The development of this part of the project was facilitated
+in part because the uniprot database.  The functionality of the postprocessor was mirrored from the same postprocessor
+developed by uniprot db.  By using the same code design as the uniprot postprocessor, the future maintenance of the godb
+code can be done in parallel with any changes done on the uniprot db side.
 
 %\end{document}

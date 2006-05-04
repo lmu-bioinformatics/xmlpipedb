@@ -1,10 +1,2 @@
 \section{Introduction}
-  The approach we propose to automatically migrate existing databases to a relational database and then use GenMap
-  \par
- 	In this process we designed a set of tools to: 
- \begin{itemize}
-	\item {Configure the database to import data and run queries via the configuration interface}
-	\item {Import XML data into a database using the import interface}
-	\item {Query the and view data with the query interface}
-\end{itemize}
-	This bundled functionality is separate from any particular data or database. To do this, we used a tool set called HyperJaxB. These tools allows to take XML schemas to create SQL databases, and their corresponding XML files and import them into the SQL database. 
+We started out with a problem: build a tool that will take an XML file from a gene information storage giant, like Uniprot and convert it to a GenMAPP file. At first this seemed to be an easy problem. Using tools like Hyperjaxb and Hibernate, we would be able to easily build a simple tool to accomplish this task. After building that simple tool, we found that things were not so straight forward. So, we broke up the task into several modules and went to work. This paper describes the motivations behind our original goal, the solution we finally agreed on, and how that solution fits together. Also, we will explore how our solution not only solves the problem we originally set out to solve for the bioinfomatics community, but solves some other problems for the general computing and computer science communities.

@@ -4,7 +4,7 @@
 While manually calling the chain of open source tools described in section \ref{design} to generate the necessary JAXB objects, hibernate mappings, and SQL DDL (an import file set) for each different type of XML source we wanted to import was possible, we decided that this would violate our pattern of reusability.  It was obvious that to even build our sample application GenMAPP builder would requirer us to be able to import two different types of XML sources.   Thus, it was clear that it would be in the best interest of the project to create a metatool for generating these import file sets.  It is this tool that became \emph{xsd2db}.
     
 \subsubsection{Design and Implementation}
-Initially \emph{xsd2db} took the form of an ant build script in the original \xmlpipedb~project \cite{xmlpipedb}.  However, as we began to add use cases to \emph{xsd2db}, most notably being able to download an XML schema,  it was decided that an executable jar would need to be built for the project.  Thus we decided to build \emph{xsd2db} in two parts.  A command line interface which would call the \emph{xsd2db} functional component and a functional component which would be responsible for all meaningful work.  These components would be kept loosely coupled i.e. the only knowledge they would have of each other is that  the \emph{xsd2db} functional component would contain a run method that could be called by the command line interface.  This way \emph{xsd2db} functional component would be easy to integrate into future application's, graphical or otherwise.   
+Initially \emph{xsd2db} took the form of an ant build script in the original \xmlpipedb~project \cite{xmlpipedb}.  However, as we began to add use cases to \emph{xsd2db}, most notably being able to download an XML schema,  it was decided that an executable jar would need to be built for the project.  Thus we decided to build \emph{xsd2db} in two parts.  A command line interface, Xsd2dbCommandLine.class, and the functional component, Xsd2db.class, which would be responsible for all meaningful work.  These components would be kept loosely coupled i.e. the only knowledge they would have of each other is that  the \emph{xsd2db} functional component would contain a run method that could be called by the command line interface.  This way \emph{xsd2db} functional component would be easy to integrate into future application's, graphical or otherwise.   
 
 %talk about command line parser.
 Xsd2db was created as a command line tool.  The reason behind this choice is was that \emph{xsd2db} was primarily intended to be a metatool to aid developers in creating there own import engines for specificXMLdata to relational databases.  Since our primary target is experienced users we felt that a command line interface was more appropriate than a graphical user interface and would allow us to spend more time working on the functionality of the program.    
@@ -40,7 +40,10 @@ To call the JAXB bindings compiler one must first create a com.sun.tools.xjc.Opt
         try {
             // Generate the JAXB objects
             GeneratorContext generatorContext;
-            generatorContext = Driver.generateCode(grammar, XJCOptions, errorReceiver);
+            generatorContext = Driver.generateCode(
+                 grammar, 
+                 XJCOptions, 
+                 errorReceiver);
             if (generatorContext == null)
                 System.out.println("failed to compile a schema");
           }
@@ -78,8 +81,8 @@ In order to generate the SQL DDL file we use the Hibernate SchemaExport object. 
         schemaExporter.setDelimiter(";");
         schemaExporter.create(true, false);
 \end{verbatim}
-\caption{default}
-\label{default}
+\caption{Schema export sample code}
+\label{schemaExportSampleCode}
 \end{center}
 \end{figure}
 
@@ -98,16 +101,22 @@ After this last phase the user can then compile the output of \emph{xsd2db} usin
 \subsubsection{Performance Analysis}
 \emph{xsd2db} has been tested on three differentXMLschema files with varying degrees of success.  We preformed initial testing on the books.xsd schema.  Books.xsd is the canonical schema used in most example applications that useXMLdata and thus we felt it was an appropriate choice as our initial test schema.  When using \emph{xsd2db} we were able to importXMLdata into a Postgresql database, and later query that database without making any modifications to our generated files.  The success of this initial test lead us to try using \emph{xsd2db} on two other schemas: Uniprot.xsd and the GO DTD schema.  
 
-After running \emph{xsd2db} on the Uniprot.xsd we discovered that some post processing would be required on the generated project before we would be able to importXMLdata into a Postgresql database.  This was largely due to several incompatiblities with the Postgresql database and no fault of \emph{xsd2db}.  However, one problem did arise which was a direct occurance of a failure of \emph{xsd2db} to properly handle XSD union types.  This was later attributed to a bug in Hyperjaxb2  and remains a part of \emph{xsd2db}.  We created another tool, uniprotdb, to resolve these issues by post processing the output of \emph{xsd2db}.  A more thorough examination of these problems as well as a detailed description of uniprotdb can be found in section \ref{uniprotdb}.
+After running \emph{xsd2db} on the Uniprot.xsd we discovered that some post processing would be required on the generated project before we would be able to importXMLdata into a Postgresql database.  This was largely due to several incompatiblities with the Postgresql database and no fault of \emph{xsd2db}.  However, one problem did arise which was a direct occurance of a failure of \emph{xsd2db} to properly handle XSD union types.  This was later attributed to a bug in \hyperjaxb2~  and remains a part of \emph{xsd2db}.  We created another tool, uniprotdb, to resolve these issues by post processing the output of \emph{xsd2db}.  A more thorough examination of these problems as well as a detailed description of uniprotdb can be found in section \ref{uniprotdb}.
 
 The last schema file we tested \emph{xsd2db} on was the GO schema file.  The GO schema file presented a unique challenge in that it differed from the other schemas we tested \emph{xsd2db} on since it was DTD and not an XSD schema.  Again as with the Uniprot.xsd we encounter some problems with Postgresql and had to develop a post processor for GO, \emph{godb}.  \emph{godb} and the problems we encountered are described in more detail in section \ref{godb}.
+
+In addition to the test we preformed with these three different schemas \emph{xsd2db} also contains several unit test of the command line interface.  Thus we are sure that the command line interface works and is bug free.
 
 Overall it can be said, that \emph{xsd2db} does what is intended.  It is a metatool for developers to create there own xml import engines, thus it is reasonable that it might require post processing depending on a developer's design choices.  However, despite this initial success it is clear that there remains work to be done to improve the performance and robustness of \emph{xsd2db}. 
 
 \subsubsection{Future Work}
+For the first round of development we initially focused on simply getting \emph{xsd2db} working as quickly as possible.  While some minor unit testing has been preformed as well as a good amount of maintenance to re-factor the code base, more can always be done.  
 
-     
+One aspect we would like to work on would be to improve the compatibility of \emph{xsd2db} with the Postgresql database.  This would fix  the problems with both biological databases referenced in sections \ref{uniprotdb} and \ref{godb}.  In addition, on the same line of thought we would like to fix the XSD union bug in \hyperjaxb2.
 
+Another area of improvement in \emph{xsd2db} would be to develop more unit test for both the \emph{xsd2db} command line and the \emph{xsd2db} functional unit.  When the unit test were initially written for xsd2db the functional component was not written in a state that would lend itself to be easily unit tested.  It has since been re-factored and unit test should be written.
+
+The last area of improvement, would be to possibly add a graphical interface to \emph{xsd2db}.  While \emph{xsd2db} is primarily intended as a tool for developers and thus a command line interface is appropriate, adding a graphical interface to \emph{xsd2db} can only ease its use.
 
 
 

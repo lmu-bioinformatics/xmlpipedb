@@ -57,9 +57,33 @@ as another field. For example, if the line contained a Uniprot ID of \emph{00001
 then three row would be created with values ``00001 10001", ``00001 10002", and ``00001 10003."
 
 \subsubsection{Performance Analysis}
-% Add reason ny Go ran slow, ect...
+A couple of GO errors occurred during the first run of gmbuilder: two table fields are named \emph{Primary} and \emph{Level}, which
+Microsoft Access interpreted as keywords. Additionally, the hyphen in the table \emph{Uniprot-GeneOntology}
+was recognized  as a continuation line, and therefore a syntax error was generated. Fortunately, the same fix was used
+in all three cases: enclose each name in double quotes. After the fix was implemented, gmbuilder successfully built the
+GO tables in the MDB file, which took considerable time.
 
-\subsubsection{Improvements}
+The time to build the four GO tables ran in the neighborhood of five hours (2.0GHz single processor), and
+granted, this time can be shorten with better hardware. A big chunk of that time falls on the creation of the
+GeneOntologyTree, although this table contains roughly seven time more entries than the table with the second
+most entries. Still, it seemed that the rate of insertions per second was larger.
+A good test would be to time, call it T, the creation of the
+GeneOntology table by itself, than take the number of entries that were created and divide it by T. Then do the same for the
+GeneOntologyTree, and compare the rate of insertions per second. If they are approximately the same, then the increased time
+is due to the increase in entries. But, if the GeneOntologyTree insertion rate was much higher, than further investigation would be
+needed to why the rate is slower. Perhaps it's due to the recursive nature of the algorithm, since recursion increases overhead.
+
+
+\subsubsection{Future Work}
+Regarding the GO tables, the algorithm that populates the GeneOntologyTree table should be investigated.
+If it turns out that the GeneOntologyTree insertion rate in considerable larger that the other tables, then
+a couple of solutions can be analyzed: 1) create an equivalent non-recursive function to build the tree. This
+eliminates the added overhead of recursion; 2) the code can be cleaned up to
+close \emph{Statement} objects before the next call to the recursive function is made. Also, the code can
+be modified to use \emph{PreparedStatement} object as opposed to \emph{Statement} objects, which may be more
+efficient according the java API.
+
+
 As of right now, Uniprot-GeneOntology associations file is defined at a specific location in the build tree,
 and the code reflects that by hardcoding the path to the file. This is error prone: every time the file changes location,
 the code would also have to change, which supports poor coding practices. Also, what is the user wanted to use a different

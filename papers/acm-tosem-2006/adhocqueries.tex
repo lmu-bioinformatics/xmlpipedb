@@ -36,3 +36,8 @@ We will now discuss some changes that are being considered for the next iteratio
 1. Currently, the object tree is populated with all of the returned data upon executing the query. While this works fine for small sets of objects, this is not efficient for large data sets. For the next iteration we will maintain a copy of the returned objects locally, but we will only populate the first level of the tree. Each sub tree will be further populated as the user expands the corresponding tree nodes.
 
 2. The user interface currently displays both the result table and the object tree simultaneously. The next update should display only one of these components at a time. Upon selecting each of the radio buttons designating which type of query we are working with, the proper component should be made visible. Selecting the SQL radio button shall display the result table and selecting the HQL radio button shall display the object tree.
+
+3. The result table associated with SQL query results currently only displays
+the data as it is returned. So modifications, manipulations, or sorting is
+currently allowed. For the next version, we will utilize the the customized
+JTable available in Dr. Dionisio's Shag package.

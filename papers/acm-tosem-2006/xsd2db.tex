@@ -1,3 +1,84 @@
 \subsection{Database Generation with \emph{xsd2db}}
 \label{xsd2db}
-The first step to in creating a tool chain that would build relational databases from xml sources was to create a JAXB object model for the schema of our xml sources.  This object model could then be used to load JAXB objects into memory where we could then use hibernate and the appropriate hibernate mappings to map these JAXB objects to a relational database.  
+\subsubsection{Introduction}
+As we described in section \ref{design}, we decided to 
+The first step in creating a reusable tool chain for building relational databases from xml sources was to create a way to automatically create JAXB objects and corresponding hibernate mapping files for those objects automatically.  While this would undoubtedly lead to objects and mappings that would be sub optimal it was dreamed an appropriate design decision due to the large amount of time required to hand generate these objects and mapping files.  and   This object model could then be used to load JAXB objects into memory where we could then use hibernate and the appropriate hibernate mappings to map these JAXB objects to a relational database. 
+%TODO figure out what I actually want to put here 
+
+\subsubsection{Reason for xsd2db}
+While manually calling the chain of open source tools described in section \ref{design} to generate the necessary JAXB objects, hibernate mappings, and SQL DDL (an import file set) for each different type of xml source we wanted to import was possible, we decided that this would violate our pattern of reusability.  It was obvious that to even build our sample application GenMAPP builder would requirer us to be able to import two different types of xml sources.   Thus, it was clear that it would be in the best interest of the project to create a metatool for generating these import file sets.  It is this tool that became xsd2db.    
+\subsubsection{Design and Implementation}
+Initially xsd2db took the form of an ant build script in the original xmlpipedb project \cite{xmlpipedb}.  However, as we began to add use cases to xsd2db, most notably being able to download an xml schema,  it was decided that an executable jar would need to be built for the project.
+
+The use case requirements for xsd2db were many.  From start to finish xsd2db would have several task it needed to complete.  First it would need to download an schema file from a user supplied URL.  It would then need to use the JAXB bindings compiler to create JAXB objects for the schema.  Next it would have to invoke the HyperJAXB addon to generate hibernate mappings.  Using these hibernate mappings a SQL DDL file could then be created using the hibernate schema export tool.  Finally, a project directory structure could be built to copy the generated files into as well as a generated build file for the project.  A UML use case diagram can be seen below in figure \ref{xsd2dbUMLUseCase}.
+
+In order to download a schema file we did blah blah blah 
+%scott can you fill this in if not I will come up with something.
+
+To call the JAXB bindings compiler one must first create a com.sun.tools.xjc.Options object.  You must then use the Options object to set the target directory for generated JAXB object files, the schema type of the xml schema (DTD or XSD), and finally the location of the schema to be parsed.  Once the Options object is configured you can annotate the schema and create a annotated grammar by invoking the com.sun.tools.xjc.GrammarLoader.load()  factory method on the Options object and an ErrorReceiver object.  An ErrorReceiver is simply an object that implements the com.sun.tools.XJC.ErrorReceiver interface and allows a developer to decided how to handle errors;  in our case we simply reported them to the command line.   Once you have created an annotated grammer the XJC bindings compiler can be invoked using the static method Driver.generateCode() method on the AnnotatedGrammer, XJC Options object, and the ErrorReciver.  Some sample code is shown in figure \ref{XJCsamplecode}.
+\begin{figure}[htbp]
+\begin{center}
+\begin{verbatim}     
+        ErrorReceiver errorReceiver = new ErrorReceiverImpl();
+        AnnotatedGrammar grammar = null;
+        try {
+            // Create a annotated grammar
+            grammar = GrammarLoader.load(XJCOptions, errorReceiver);
+            if (grammar == null)
+                System.out.println("Unable to parse schema");
+        } catch(Exception e) {
+            System.out.println("Error loading the grammar");
+            e.printStackTrace(); 
+        }
+        try {
+            // Generate the JAXB objects
+            GeneratorContext generatorContext;
+            generatorContext = Driver.generateCode(grammar, XJCOptions, errorReceiver);
+            if (generatorContext == null)
+                System.out.println("failed to compile a schema");
+          }
+        
+\end{verbatim}
+
+\caption{Code to invoke the JAXB XJC bindings compiler.}
+\label{XJCsamplecode}
+\end{center}
+\end{figure}
+
+To invoke the HyperJAXB add-on we take advantage of the fact that all JAXB add-ons must provide a run method since they implement the JAXB AbstractParameterizableCodeAugmenter interface.  Thus to create the hibernate mapping files for the generated JAXB objects, we create a new HyperJAXB addon and call run ussing the AnnotatedGrammar, GeneratorContext,  and XJC Options Objects that we created when invoking the XJC bindings compiler. 
+
+In order to generate the SQL DDL file we use the org.hibernate.tool.hbm2ddl.SchemaExport object.  Hibernate requires that Hibernate Configuration object be created and configured before any hibernate objects can be used.  To configure the Hibernate Configuration object we simply load an included Hibernate properties file and use the Hibernate Configuration object's setProperties method to configure Hibernate.  The last step of the Hibernate Configuration is to inform hibernate of the location of the hibernate mapping files that it will be using.  In xsd2db we decieded to do this manualy using the Configuration object's addFile() method.   Once hibernate is configured generating a SQL DDL file is very simple.  All we must do is create a new SchemaExporter, set the output directory for the DDL file, set the delimiter for the DDL file, and finally create the DDL file by calling the create() method on the SchemaExporter.  Sample code can be seen in figure \ref{schemaExportSampleCode}.
+\begin{figure}[htbp]
+\begin{center}
+\begin{verbatim}
+         // Initialize hibernate
+        hibernateConfig = new Configuration();
+        File hibPropertiesFile = new File(HIB_PROPERTIES);
+        Properties hibProperties = new Properties();
+        try {
+            hibProperties.load(new FileInputStream(hibPropertiesFile));
+        } catch(Exception e) {
+            System.out.println("Properties file failed to load.");
+        }
+        hibernateConfig.setProperties(hibProperties);
+
+         // Add a hibernate mapping file
+         hibernateConfig.addFile(hbmMappingFile);
+         
+        // Produce the SQL file.
+        SchemaExport schemaExporter = new SchemaExport(hibernateConfig);
+        schemaExporter.setOutputFile(fullOutputPath);
+        schemaExporter.setDelimiter(";");
+        schemaExporter.create(true, false);
+\end{verbatim}
+\caption{default}
+\label{default}
+\end{center}
+\end{figure}
+
+
+
+  So the decision was made to programatically access the open source tools described in section \ref{design}.  
+Xsd2db was developed as two distinct pieces of software.  The first part was the logical program logic which is responsible for downloading an xml schema from a URL, compiling that schema into JAXB objects, creating hibernate mappings for the object, using hibernate to generate a SQL DDL document, creating a directory structure for the generated project, coping the generated files to that directory structure, and finally creating a build file for that project.  The second part is a command line interface capable of parsing unix command line options supplied by the user.  
+
+Xsd2db was created as a command line tool.  The reason behind this choice is was that xsd2db was primarily intended to be a metatool to aid developers in creating there own import engines for specific xml data to relational databases.  Since our primary target is experienced users we felt that a command line interface was more appropriate than a graphical user interface and would allow us to spend more time working on the functionality of the program.    

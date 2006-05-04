@@ -18,6 +18,7 @@ The final stage, called GenMAPP Builder, uses the output of UniprotDb and GoDb a
 	\item {configure the Hibernate properties for the intermediate database being used (for us it was PostgreSQL)}
 	\item {import a Uniprot and/or GO XML file to the intermediate database; run queries on that data}
 	\item {export the data to a GenMAPP 2 data file (MS Access MDB file with the GenMAPP 2 schema)}
+\end{itemize}
 
 
 The approach we propose to automatically migrate existing databases to a relational database and then use genmap builder to export a GenMAPP gene database allows us to use virtually any existing bioinformatics database that provides exports of their database in XML.  This allows us to expand GenMAPP to analyze plant and bacteria organisms.  

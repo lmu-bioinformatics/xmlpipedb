@@ -1,3 +1,10 @@
 \section{Introduction}
-  The approach we propose to automaticcly migrate existing databases to a relational database and then use genmap builder to export a GenMapp gene database allows us to use virtually any existing bioinformatics database that provides exports of their database in xml.  This allows us to expand GenMapp to analyse plant and bacteria organisms.  
-
+  The approach we propose to automatically migrate existing databases to a relational database and then use GenMap
+  \par
+ 	In this process we designed a set of tool to: 
+ \begin{itemize}
+	\item {Configure the database to import data and run queries via the configuration interface}
+	\item {Import XML data into a database using the import interface}
+	\item {Query the and view data with the query interface}
+\end{itemize}
+	This bundled functionality is separate from any particular data or database. To do this, we used a tool set called HyperJaxB. These tools allows to take XML schemas to create SQL databases, and their corresponding XML files and import them into the SQL database. 

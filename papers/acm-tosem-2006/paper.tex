@@ -35,10 +35,11 @@ Loyola Marymount University
 \maketitle
 
 \abstract{
-The abstract should be 150 to 200 words long and should consist of short, direct, and complete sentences. It should state the objectives of the work, summarize the results, and give the principal conclusions and recommendations. It should indicate clearly whether the focus is on theoretical developments or on practical questions and whether subject or method is emphasized. The title need not be repeated. Work planned but not done should not be described in the abstract.
-
+We set out to create a method of moving data from large genetic databases into the format used by GenMapp 2. We limited the scope of our work to Uniprot and GO databases. PostgreSQL was used as the intermediate database. We were determined to use as many existing, open source tools as possible to facilitate this. We used Hyperjaxb 2.0 to facilitate generation of database schemas, Hibernate mapping files and target-specific Hibernate class files. Hibernate 3 was used to provide the object to relational mapping. We succeeded in builing a chain of tools to go from an XSD to a GenMapp database file. We also succeeded in building many reusable components that are not specific to nor tied solely to bioinformatics, Uniprot, GO or GenMapp. This tool set is unique in that there is no open source tool set that uses HyberjaxB 2 and Hibernate 3 to accomplish such tasks.
+=======
 \par
  Tools needed to be created to give capability to configure the system, preview XML data, import XML data, and run queries on data in the database. The xmlpipedbutils is a collection of tools that give you is capability. 
+
 }
 
 \include{introduction}

@@ -10,13 +10,13 @@ used by GenMAPP.
 GenMAPP Builder is also tasked to export GO data from postgres to a Microsoft Access (MDB) file.
 GenMAPP requires four GO tables to be populated with data: GeneOntology,
 GeneOntologyTree, GeneOntologyCount, and Uniprot-GeneOntology. At runtime, each table
-is created in the MDB file prior to any data extraction.
+is created in the MDB file prior data is inserted. 
 The following sections will discuss each table.
 
 \paragraph{GeneOntology}
 \label{gotable}
 The GeneOntology table consists of a list of GO terms, which is created by extracting all the
-GO terms from postgres database by executing HQL statements. Each term has required tags, \emph{Id} and \emph{Name}.
+GO terms from the postgres database by executing HQL statements. Each term has required tags, \emph{Id} and \emph{Name}.
 Each term may contain optional tags, one of which is an \emph{is\_a} tag. An \emph{is\_a} tag describes a
 subclassing relationship between one term and another. Since GO terms
 are organized in structures called directed acyclic graphs (DAG), each term may have many \emph{is\_a} relationships.

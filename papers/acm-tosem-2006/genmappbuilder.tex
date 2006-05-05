@@ -15,6 +15,13 @@ used by \genmapp. The application is built from components in \emph{xmlpipedbuti
 \end{itemize}
 The process of loading an XML file into a \genmapp~gene database starts with configuring the database connection followed by the loading of an XML file into the relational database.  The database connection must be configured to access a relational database setup by the database administrator.  Once the database connection is configured the XML files can be imported and exported without effort.  There is also an interface for HQL queries to the database provided by \emph{xmlpipedbutils}.
 
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=1.0]{Images/goImport.jpg}
+\caption{\small \sl The uniprotdb layout.}
+\label{fig:uniprotLayout}
+\end{figure}
+
 \subsubsection{Design}
 \genmapp~Builder must create and fill the tables required in a \genmapp gene database.  Using a template Microsoft Access (MDB) file, \genmapp~Builder fills in the system information tables: Systems, Info and Relations.  Two more stages create and fill in five more tables.
 
@@ -69,8 +76,7 @@ as another field. For example, if the line contained a Uniprot ID of \emph{00001
 then three row would be created with values ``00001 10001", ``00001 10002", and ``00001 10003."
 
 \subsubsection{Performance Analysis}
-\genmapp~Builder requires quite a bit of processing power and memory because of the large amount of data processed.  Initial tests of importing large XML files (40MB) took just over an hour.  Our current implementation requires a significant amount of memory because the entire file is read in as Java objects before it is pushed out to the database. Initial tests of exporting the same large XML files required nearly three hours.  Memory is not as crucial for exporting as is it for importing because only a small portion of the original data is extracted.
-
+\genmapp~Builder requires quite a bit of processing power and memory because of the large amount of data processed.  Initial tests of importing large XML files (40MB) took just over an hour.  Our current implementation requires a significant amount of memory because the entire file is read in as Java objects before it is pushed out to the database. Initial tests of exporting the same large XML files required nearly three hours.  Memory is not as crucial for exporting as is it for importing because only a small portion of the original data is extracted to build the \genmapp gene database.
 
 A couple of GO errors occurred during the first run of gmbuilder: two table fields are named \emph{Primary} and \emph{Level}, which
 Microsoft Access interpreted as keywords. Additionally, the hyphen in the table \emph{Uniprot-GeneOntology}
@@ -90,6 +96,7 @@ needed to why the rate is slower. Perhaps it's due to the recursive nature of th
 
 
 \subsubsection{Future Work}
+Future plan involve updating the SQL queries to HQL.
 Regarding the GO tables, the algorithm that populates the GeneOntologyTree table should be investigated.
 If it turns out that the GeneOntologyTree insertion rate in considerable larger that the other tables, then
 a couple of solutions can be analyzed: 1) create an equivalent non-recursive function to build the tree. This

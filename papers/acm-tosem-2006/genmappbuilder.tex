@@ -23,7 +23,7 @@ The first stage creates and fills in the Uniprot table using SQL queries.  The t
 
 \paragraph{UniProt Table}
 \label{uniprottable}
-The UniProt table contain the 
+The UniProt table consists of entries which have an ID, name, species and date (comments and remarks are optional).  The data to populate this table comes originally from each unique entry in a given XML file.  This data must be extracted from the relational database using a pattern of SQL queries.  The extracted data is then filled into UniProt table in the MDB file.
 
 \paragraph{GeneOntology Table}
 \label{gotable}
@@ -69,6 +69,9 @@ as another field. For example, if the line contained a Uniprot ID of \emph{00001
 then three row would be created with values ``00001 10001", ``00001 10002", and ``00001 10003."
 
 \subsubsection{Performance Analysis}
+\genmapp~Builder requires quite a bit of processing power and memory because of the large amount of data processed.  Initial tests of importing large XML files (40MB) took just over an hour.  Our current implementation requires a significant amount of memory because the entire file is read in as Java objects before it is pushed out to the database. Initial tests of exporting the same large XML files required nearly three hours.  Memory is not as crucial for exporting as is it for importing because only a small portion of the original data is extracted.
+
+
 A couple of GO errors occurred during the first run of gmbuilder: two table fields are named \emph{Primary} and \emph{Level}, which
 Microsoft Access interpreted as keywords. Additionally, the hyphen in the table \emph{Uniprot-GeneOntology}
 was recognized  as a continuation line, and therefore a syntax error was generated. Fortunately, the same fix was used

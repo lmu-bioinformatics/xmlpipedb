@@ -2,18 +2,30 @@
 \label{gmbuilder}
 
 \subsubsection{Introduction}
-GenMAPP Builder is a GUI application for loading, querying, and exporting data
-used by GenMAPP.
+\genmapp~Builder is a GUI application for loading, querying, and exporting data
+used by \genmapp. The application is built from components in \emph{xmlpipedbutils} and contains the customized output from \emph{uniprotdb} and \emph{godb}. \genmapp~Builder is our final product for converting new gene sequence data from XML into \genmapp.
+
+\subsubsection{End-Users}
+\genmapp~Builder was created to be easy enough for a not-technical end user.  The interface is simple and provides access to the basic functionality required to load an XML file into a \genmapp~gene database.  \genmapp~Builder does however assume that a database administrator has prepared an accessible database server and loaded the UniProt and GO SQL database schemas.  There are four main functionalities provided by \genmapp~Builder.
+\begin{itemize}
+	\item {Configure the database.}
+	\item {Import a UniProt XML file. }
+	\item {Import a GO XML file.}
+	\item {Export to \genmapp.}
+\end{itemize}
+The process of loading an XML file into a \genmapp~gene database starts with configuring the database connection followed by the loading of an XML file into the relational database.  The database connection must be configured to access a relational database setup by the database administrator.  Once the database connection is configured the XML files can be imported and exported without effort.  There is also an interface for HQL queries to the database provided by \emph{xmlpipedbutils}.
 
 \subsubsection{Design}
+\genmapp~Builder must create and fill the tables required in a \genmapp gene database.  Using a template Microsoft Access (MDB) file, \genmapp~Builder fills in the system information tables: Systems, Info and Relations.  Two more stages create and fill in five more tables.
 
-GenMAPP Builder is also tasked to export GO data from postgres to a Microsoft Access (MDB) file.
-GenMAPP requires four GO tables to be populated with data: GeneOntology,
-GeneOntologyTree, GeneOntologyCount, and Uniprot-GeneOntology. At runtime, each table
-is created in the MDB file prior data is inserted. 
-The following sections will discuss each table.
+The first stage creates and fills in the Uniprot table using SQL queries.  The table is populated with the needed information extracted from the relational database.The second stages requires four GO tables to be populated with data: GeneOntology, GeneOntologyTree, GeneOntologyCount, and Uniprot-GeneOntology. At runtime, each table is created in the MDB file prior data is inserted. The following sections will discuss each table.
 
-\paragraph{GeneOntology}
+
+\paragraph{UniProt Table}
+\label{uniprottable}
+The UniProt table contain the 
+
+\paragraph{GeneOntology Table}
 \label{gotable}
 The GeneOntology table consists of a list of GO terms, which is created by extracting all the
 GO terms from the postgres database by executing HQL statements. Each term has required tags, \emph{Id} and \emph{Name}.
@@ -25,7 +37,7 @@ has no \emph{is\_a} relationships, then one row is inserted into the table. If a
 \emph{is\_a} relationships, a row is inserted for each \emph{is\_a} relationships using the same term Id.
 
 
-\paragraph{GeneOntologyTree}
+\paragraph{GeneOntologyTree Table}
 The GeneOntologyTree table contains a tree representation of the GO DAG structure, which is used by MAPPFinder
 to build the GO tree in the MAPPFinder browser. The algorithm that creates this table starts by inserting the root
 node for each ontology. After inserting the root node, it then grabs all the children of that node and performs an insert.
@@ -37,7 +49,7 @@ the ability to extract child nodes from a parent node. The GeneOntology table pr
 is why it must be created first. Thus, the algorithm actually queries the MDB Access file using SQL statements.
 
 
-\paragraph{GeneOntologyCount}
+\paragraph{GeneOntologyCount Table}
 The GeneOntologyCount table contains the of number of times a GO ID appears in the GeneOntologyTree table, which
 is also used by MAPPFinder to build the GO tree in the MAPPFinder browser. During the creating of the GeneOntologyTree
 table, a count of each GO ID is stored in a data structure. In other words, when the algorithm grabs all child nodes from
@@ -48,7 +60,7 @@ the algorithm would have to wait until the GeneOntologyTree table was complete. 
 to query the GeneOntologyTree to extract the number of times it showed up in the table, which is costly and inefficient.
 
 
-\paragraph{Uniprot-GeneOntology}
+\paragraph{Uniprot-GeneOntology Table}
 The Uniprot-GeneOntology table provides a mapping between a Uniprot ID and a GO ID, which is a many to many relationship.
 Currently this information is not found in godb, but rather in an associations text file which is part of the GenMAPP Builder
 resource library. Each line in the text file may contain a Uniprot ID. If it does, then there will be one to many GO ID's.

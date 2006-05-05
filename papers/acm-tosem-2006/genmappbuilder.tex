@@ -13,14 +13,42 @@ used by \genmapp. The application is built from components in \emph{xmlpipedbuti
 	\item {Import a GO XML file.}
 	\item {Export to \genmapp.}
 \end{itemize}
-The process of loading an XML file into a \genmapp~gene database starts with configuring the database connection followed by the loading of an XML file into the relational database.  The database connection must be configured to access a relational database setup by the database administrator.  Once the database connection is configured the XML files can be imported and exported without effort.  There is also an interface for HQL queries to the database provided by \emph{xmlpipedbutils}.
+The process of loading an XML file into a \genmapp~gene database starts with configuring the database connection followed by the loading of an XML file into the relational database.  The database connection must be configured to access a relational database setup by the database administrator.  Once the database connection is configured the XML files can be imported and exported without effort.  There is also an interface for HQL queries to the database provided by \emph{xmlpipedbutils}.  The screen shots of the application are below.
+
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=1.0]{Images/hibernateProps.jpg}
+\caption{\small \sl The database configuration tool.}
+\end{figure}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=1.0]{Images/uniprotImport.jpg}
+\caption{\small \sl The import window for UniProt XML files.}
+\end{figure}
 
 \begin{figure}[htp]
 \centering
 \includegraphics[scale=1.0]{Images/goImport.jpg}
-\caption{\small \sl The uniprotdb layout.}
-\label{fig:uniprotLayout}
+\caption{\small \sl The import window for GO XML files.}
 \end{figure}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=0.75]{Images/query.jpg}
+\caption{\small \sl The relational database query interface.}
+\end{figure}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=0.75]{Images/exportGenmapp.jpg}
+\caption{\small \sl The export window for \genmapp gene MDB files.}
+\end{figure}
+
+
+query
+exportGenmapp
+uniprotImport
 
 \subsubsection{Design}
 \genmapp~Builder must create and fill the tables required in a \genmapp gene database.  Using a template Microsoft Access (MDB) file, \genmapp~Builder fills in the system information tables: Systems, Info and Relations.  Two more stages create and fill in five more tables.
@@ -96,8 +124,7 @@ needed to why the rate is slower. Perhaps it's due to the recursive nature of th
 
 
 \subsubsection{Future Work}
-Future plan involve updating the SQL queries to HQL.
-Regarding the GO tables, the algorithm that populates the GeneOntologyTree table should be investigated.
+Future plans involve updating the SQL queries to HQL and creating in the the remaining tables in the MDB file. The large memory requirements could be reduced by importing the XML files into memory in portions and flushing the data to the database. Regarding the GO tables, the algorithm that populates the GeneOntologyTree table should be investigated.
 If it turns out that the GeneOntologyTree insertion rate in considerable larger that the other tables, then
 a couple of solutions can be analyzed: 1) create an equivalent non-recursive function to build the tree. This
 eliminates the added overhead of recursion; 2) the code can be cleaned up to

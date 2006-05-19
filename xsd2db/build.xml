@@ -59,11 +59,15 @@
                 <include name="hibernate.properties"/>
             </fileset>
         </copy>
+    	<!-- JN - OH! This is making the .sh file (which has no extension -why???) 
+    	to be executable. -->
         <chmod perm="+x" file="${dist}/${ant.project.name}"/>
     </target>
 
     <target name="compile" description="Compile code">
-        <mkdir dir="${bin}"/>
+    	<!-- JN - why is bin being made in the root, instead of under /build/bin ??? -->
+    	<mkdir dir="${bin}"/>
+    	<!-- JN - why are we making lib, when it already exists??? -->
         <mkdir dir="${lib}"/>
         <javac srcdir="${src}" destdir="${bin}" includeAntRuntime="no" classpathref="lib.path" debug="${compile.debug}"/>
     </target>

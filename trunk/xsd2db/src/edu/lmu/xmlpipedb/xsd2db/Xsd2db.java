@@ -14,6 +14,7 @@ package edu.lmu.xmlpipedb.xsd2db;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -22,11 +23,11 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Properties;
-import java.net.URL;
+import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
-import java.lang.StringBuffer;
+import java.util.Properties;
 
 import org.apache.log4j.BasicConfigurator;
 import org.hibernate.cfg.Configuration;
@@ -46,6 +47,8 @@ import com.sun.tools.xjc.grammar.AnnotatedGrammar;
 
 
 public class Xsd2db {
+	private final String BUILD_XML_JAR_FILE_NAME = "@@jarfilename";  
+
     /**
      * additional command line arguments to be passed to the xjcCompiler.
      */
@@ -193,6 +196,9 @@ public class Xsd2db {
         createDirectoryStructure(projectDir);
         // Fill in the path map.
         createAbsoulutePaths(projectDir);
+        
+        // if we did NOT get a file as input, check if a suitable file
+        // exists in the project dir
         if (schemaURL == null || schemaURL.equals(""))
         {
             File schemaFiles[] = projectDir.listFiles(); 
@@ -204,6 +210,8 @@ public class Xsd2db {
                 System.out.println("URL for stored schema file could not be generated.  Please use the --xsdURL option.");
             }
         } 
+        // JN - why not just make this an else ???
+        // if we DID get a file as input, use this as the schema and download it.
         if (schemaURL != null || !schemaURL.equals(""))
         {
             try 
@@ -354,12 +362,27 @@ public class Xsd2db {
             cannedBuildfile.createNewFile();
             FileWriter buildFileWriter = new FileWriter(cannedBuildfile);
             int streamedChar = 0;
-            while (((streamedChar = buildFileReader.read()) != -1))
-                    buildFileWriter.write(streamedChar);
+            // string into which the file contents can be put 
+            String sBuf = "";
+            // put the file contents in the buffer
+            while(((streamedChar = buildFileReader.read()) != -1)){
+            	// convert the integer to a character, then append to the buffer
+            	sBuf += (char)streamedChar;
+            }
+            // fill in the name of the jar file based on the name of the
+            // xsd or dtd file supplied.
+            sBuf = sBuf.replaceAll(BUILD_XML_JAR_FILE_NAME, xsdName.substring(1,xsdName.lastIndexOf(".")));
+
+            // iterate through sBuf writing each character out to the file
+            for(int i = 0; i < sBuf.length(); i++) {
+                buildFileWriter.write(sBuf.codePointAt(i));
+            }
+            
             buildFileWriter.close();
         } catch(IOException ioException) {
             System.out.println("Error writing canned build file: " + ioException.getMessage());
         }
+        
     }
 
     /**

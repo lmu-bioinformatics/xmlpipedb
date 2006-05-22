@@ -7,7 +7,7 @@
     <property name="bin" location="bin" />
     <property name="hbm" location="hbm" />
     <property name="compile.debug" value="true" />
-    <property name="jarfile" location="${dist}/${ant.project.name}.jar" />
+    <property name="jarfile" location="${dist}/@@jarfilename.jar" />
 
     <fileset id="lib.jars" dir="${lib}">
         <include name="**/*.jar" />

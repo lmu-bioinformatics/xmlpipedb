@@ -225,7 +225,7 @@ public class ExportToGenMaPP {
 		}
 		
 		//Get todays date to tag in access file for creation date.
-		String dateString = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
+		String dateString = new SimpleDateFormat("yyyyMMdd").format(new Date());
 		
 		//Extract the data from the relational database.
 		extractAllData();
@@ -248,11 +248,15 @@ public class ExportToGenMaPP {
 			//Update the "Info Table".
 			AccessFileCreator.updateInfoTable("Loyola Marymount University",
 					dateString, "UniProt", "|Escherichia coli K12|",
-					dateString, "|S|", "");
+					dateString, "|S|T|", "");
 			
 			//Update the "Systems Table".
 			AccessFileCreator.updateSystemsTable("S", dateString, 
 					"ID|EntryName\\sBF|GeneName\\sBF|");
+			
+			//Update the "Relations Table".
+			AccessFileCreator.updateRelationsTable("S", "T", 
+					"UniProt-GeneOntology", "Direct", "");
 			
 			//Create the "Uniprot Table".
 			AccessFileCreator.createUniProtTable();

@@ -296,6 +296,38 @@ public class AccessFileCreator {
         ps.close();
 	}
 	
+	
+	/**
+	 * Update the Ralations Table
+	 * @param systemCode
+	 * @param relatedCode
+	 * @param relation
+	 * @param type
+	 * @param source (may be null)
+	 * @throws SQLException
+	 */
+	public static void updateRelationsTable(String systemCode, 
+			String relatedCode, String relation, String type, 
+			String source) throws SQLException {
+	
+		PreparedStatement ps = connection.prepareStatement(
+				"INSERT INTO Relations (" +
+            	"SystemCode," +
+            	"RelatedCode," +
+            	"Relation," +
+            	"Type," +
+            	"Source)" +
+            	"VALUES (?, ?, ?, ?, ?)");
+    	ps.setString(1, systemCode);
+    	ps.setString(2, relatedCode);
+    	ps.setString(3, relation);
+    	ps.setString(4, type);
+    	ps.setString(5, source);
+    	ps.executeUpdate();
+    	ps.close();
+	}
+	
+	
 	/**
 	 * Update the systems table
 	 * @param systemCodeList

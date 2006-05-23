@@ -83,7 +83,7 @@ public class ExportGoData {
 			SQLException, HibernateException, 
 			SAXException, IOException, JAXBException {
 		
-		String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
+		String Date = new SimpleDateFormat("yyyyMMdd").format(new Date());
 		
 		openConnection();
 		godb.createTables(connection);
@@ -149,7 +149,7 @@ public class ExportGoData {
 	            Matcher match  = Pattern.compile("GO:(\\w+)").matcher(line);
 	            while (match.find()) {
 	            	String[] values = new String[] {Up_ID, match.group(1), "En"};
-	            	godb.insert(connection,Go.Uniprot_Go, values);
+	            	godb.insert(connection,Go.UniProt_Go, values);
 	            }
 	        }
 	     }
@@ -171,7 +171,7 @@ public class ExportGoData {
     	String Remarks = null;
     	
     	// Get today's date
-    	String Date	   = new SimpleDateFormat("MM/dd/yyyy").format(new Date()); 
+    	String Date	   = new SimpleDateFormat("yyyyMMdd").format(new Date()); 
     	
     	// Grab all term object
     	iter = session.createQuery(  "from generated.impl.TermImpl" ).iterate();

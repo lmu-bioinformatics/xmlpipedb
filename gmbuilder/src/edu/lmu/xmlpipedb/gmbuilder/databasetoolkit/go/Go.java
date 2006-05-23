@@ -23,10 +23,10 @@ public class Go {
 	protected static String GeneOntologyTree 	= "GeneOntologyTree";
 	protected static String GeneOntology		= "GeneOntology";
 	protected static String GeneOntologyCount	= "GeneOntologyCount";
-	protected static String Uniprot_Go		    = "\"Uniprot-GeneOntology\"";
+	protected static String UniProt_Go		    = "\"UniProt-GeneOntology\"";
 	
 	
-	private String[] tables = {GeneOntology, GeneOntologyTree, GeneOntologyCount, Uniprot_Go};
+	private String[] tables = {GeneOntology, GeneOntologyTree, GeneOntologyCount, UniProt_Go};
 	
 	/**
 	 * Constuctor
@@ -127,7 +127,7 @@ public class Go {
                 //{"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO */
                 //{"varchar", "varchar", "VARCHAR(50)", "varchar"}, /* GOTree */
                 //{"VARCHAR(50) NOT NULL", "varchar"}, /* GOCount */
-				{"VARCHAR(50) NOT NULL", "VARCHAR(50) NOT NULL", "VARCHAR(3) NOT NULL"}  /* Uniprot-Go */
+				{"VARCHAR(50) NOT NULL", "VARCHAR(50) NOT NULL", "VARCHAR(3) NOT NULL"}  /* UniProt-Go */
 		       };
 
 		

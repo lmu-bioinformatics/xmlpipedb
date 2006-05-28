@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="xsd2dbgen" default="jar" basedir=".">
+<project name="@@projectname" default="jar" basedir=".">
     <property name="src" location="src" />
     <property name="rsrc" location="src" />
     <property name="lib" location="lib" />

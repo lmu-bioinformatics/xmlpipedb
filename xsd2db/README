@@ -1,4 +1,4 @@
-Last updated:  
+Last updated:  05 / 28 / 2006
 
 What is XSD2DB?
 XSD2DB is a program for converting an XML Schema Definition (XSD) or Document Type Definition (DTD) into a database schema (SQL) file and a set of Hibernate mapping files and Java classes. The output includes a build.xml file, which will run under ANT to build a .jar file for you. Jar file allows you to access your database using Hibernate (http://www.hibernate.org/).
@@ -71,9 +71,15 @@ This application is brought to you by the letter A.
 
 
 Version History:
+1.02
+Changes:
+Added capability to customize the build.xml during copy to output folder.
+- custom projectname depending on output folder
+
 1.01
 Changes:
 Added capability to customize the build.xml during copy to output folder.
+- custom jar file name depending on xsd or dtd file name
 
 1.0
 Changes:

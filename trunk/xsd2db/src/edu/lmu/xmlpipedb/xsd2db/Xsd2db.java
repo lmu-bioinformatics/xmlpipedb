@@ -14,7 +14,6 @@ package edu.lmu.xmlpipedb.xsd2db;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,7 +22,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -47,7 +45,9 @@ import com.sun.tools.xjc.grammar.AnnotatedGrammar;
 
 
 public class Xsd2db {
-	private final String BUILD_XML_JAR_FILE_NAME = "@@jarfilename";  
+	private static final String BUILD_XML_JAR_FILE_NAME = "@@jarfilename";
+	private static final String BUILD_XML_PROJECT_NAME = "@@projectname";
+	private static final String BUILD_XML_PROJECT_NAME_DEFAULT = "xsd2dbgen";
 
     /**
      * additional command line arguments to be passed to the xjcCompiler.
@@ -372,6 +372,13 @@ public class Xsd2db {
             // fill in the name of the jar file based on the name of the
             // xsd or dtd file supplied.
             sBuf = sBuf.replaceAll(BUILD_XML_JAR_FILE_NAME, xsdName.substring(1,xsdName.lastIndexOf(".")));
+            // fill in the project name based on the name of the project directory
+            // if one was supplied, otherwise default to xsd2dbgen.
+            if( projectDir != null && projectDir.exists() ){
+            	sBuf = sBuf.replaceAll(BUILD_XML_PROJECT_NAME, projectDir.getPath());
+            } else {
+            	sBuf = sBuf.replaceAll(BUILD_XML_PROJECT_NAME, BUILD_XML_PROJECT_NAME_DEFAULT);
+            }
 
             // iterate through sBuf writing each character out to the file
             for(int i = 0; i < sBuf.length(); i++) {

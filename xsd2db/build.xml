@@ -57,6 +57,7 @@
             <fileset dir="${scripts}"/>
             <fileset dir="${basedir}">
                 <include name="hibernate.properties"/>
+            	<include name="readme.txt"/>
             </fileset>
         </copy>
     	<!-- JN - OH! This is making the .sh file (which has no extension -why???) 
@@ -99,4 +100,6 @@
         <delete dir="${bin}"/>
         <delete dir="${dist}"/>
     </target>
+	
+	<target name="all" depends="clean,dist" description="Run clean, then dist"></target>
 </project>

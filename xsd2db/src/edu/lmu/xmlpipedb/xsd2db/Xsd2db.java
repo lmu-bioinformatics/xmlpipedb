@@ -227,17 +227,18 @@ public class Xsd2db {
         }
 
         setXjcOptions(projectDir, schemaType);
-        
-        
+              
         ErrorReceiver errorReceiver = new ErrorReceiverImpl();
+      
         AnnotatedGrammar grammar = null;
+    
         try {
             grammar = GrammarLoader.load(xjcOptions, errorReceiver);
             if (grammar == null)
                 System.out.println("Unable to parse schema");
-        } catch(Exception e) {
-            System.out.println("Error loading the grammar");
-            e.printStackTrace(); 
+        } catch(Throwable t) {
+            System.out.println("XSD2DB - Error loading the grammar. Please ensure that there are no special characters in your run path e.g. '!'.");
+            t.printStackTrace(); 
         }
 
         try {
@@ -265,7 +266,7 @@ public class Xsd2db {
         
         // Use Hibernate to export a DDL for our database.
         exportDDL(projectDir, destDir);
- 
+
         // Copy the canned build file and libs into
         // the project directory.
         copyLibAndBuildFiles(projectDir);

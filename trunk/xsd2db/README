@@ -18,6 +18,7 @@ ANT (http://ant.apache.org/) version 1.6.5 or better is required to build a .jar
 Installation:
 -- clean install --
 Simply extract all files into a folder (e.g. xsd2db).
+WARNING: DO NOT use folders with special charactes in them, e.g. "!temp" will not work.
 
 -- upgrade --
 Delete all previous file / versions, then follow the instructions for a "clean install".

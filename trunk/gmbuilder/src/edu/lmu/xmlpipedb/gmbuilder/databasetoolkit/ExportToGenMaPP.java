@@ -225,7 +225,10 @@ public class ExportToGenMaPP {
 		}
 		
 		//Get todays date to tag in access file for creation date.
-		String dateString = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		String dateString1 = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		
+		//Get todays date to tag in access file for creation date.
+		String dateString2 = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
 		
 		//Extract the data from the relational database.
 		extractAllData();
@@ -247,11 +250,11 @@ public class ExportToGenMaPP {
 			
 			//Update the "Info Table".
 			AccessFileCreator.updateInfoTable("Loyola Marymount University",
-					dateString, "UniProt", "|Escherichia coli K12|",
-					dateString, "|S|T|", "");
+					dateString1, "UniProt", "|Escherichia coli K12|",
+					dateString1, "|S|T|", "");
 			
 			//Update the "Systems Table".
-			AccessFileCreator.updateSystemsTable("S", dateString, 
+			AccessFileCreator.updateSystemsTable("S", dateString2, 
 					"ID|EntryName\\sBF|GeneName\\sBF|");
 			
 			//Update the "Relations Table".
@@ -268,7 +271,7 @@ public class ExportToGenMaPP {
 						uniprotTable_EntryName.get(id), 
 						uniprotTable_GeneName.get(id),
 						uniprotTable_ProteinName.get(id),
-						"", "|Escherichia coli K12|", dateString, "");
+						"", "|Escherichia coli K12|", dateString2, "");
 			}
 					
 			

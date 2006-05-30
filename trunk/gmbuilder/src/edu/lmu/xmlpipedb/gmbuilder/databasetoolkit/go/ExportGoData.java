@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -274,9 +275,12 @@ public class ExportGoData {
 	 * @throws SQLException
 	 */
 	private void insertChildren(String parent, int level) throws SQLException {
-		Statement s = connection.createStatement();
-		String sql = "SELECT name,id from " + Go.GeneOntology + " where parent = '" + parent + "' order by parent";
-		ResultSet results = s.executeQuery(sql);
+		
+		PreparedStatement ps = connection.prepareStatement(
+				"SELECT name,id from ? where parent = ? order by parent");
+		ps.setString(1, Go.GeneOntology);
+		ps.setString(1, parent);
+		ResultSet results = ps.executeQuery();
 		while(results.next()) {
 			String name = results.getString(1);
 			String id	= results.getString(2);
@@ -292,7 +296,7 @@ public class ExportGoData {
 			//System.out.println(orderNo);
 			insertChildren(id, level + 1);
 		}
-		s.close();
+		ps.close();
 	}
 	
 	/**

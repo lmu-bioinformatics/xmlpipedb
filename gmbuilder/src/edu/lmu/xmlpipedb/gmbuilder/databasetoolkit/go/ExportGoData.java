@@ -83,7 +83,7 @@ public class ExportGoData {
 			SQLException, HibernateException, 
 			SAXException, IOException, JAXBException {
 		
-		String Date = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
 		
 		openConnection();
 		godb.createTables(connection);
@@ -171,7 +171,7 @@ public class ExportGoData {
     	String Remarks = null;
     	
     	// Get today's date
-    	String Date	   = new SimpleDateFormat("yyyyMMdd").format(new Date()); 
+    	String Date	   = new SimpleDateFormat("MM/dd/yyyy").format(new Date()); 
     	
     	// Grab all term object
     	iter = session.createQuery(  "from generated.impl.TermImpl" ).iterate();

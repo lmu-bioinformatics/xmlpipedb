@@ -18,8 +18,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -28,8 +30,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 
 /**
  * Class to extract from the database
@@ -38,61 +40,22 @@ import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
  */
 public class ExportToGenMaPP {
 
+	private static Connection connection = null;
 	
 	private static Map<String, String> uniprotTable_ID = new HashMap<String, String>();
 	private static Map<String, String> uniprotTable_EntryName = new HashMap<String, String>();
 	private static Map<String, String> uniprotTable_GeneName = new HashMap<String, String>();
 	private static Map<String, String> uniprotTable_ProteinName = new HashMap<String, String>();
+	private static Map<String, String> uniprotTable_Function = new HashMap<String, String>();
 	
-	private static Connection connection = null;
+	public enum SystemTableNames { EMBL, InterPro, Pfam, PDB, TIGR, EchoBASE, EcoGene };	
+	private static Map<String, SystemTable> systemTable_IDs = new HashMap<String, SystemTable>();
 	
 	/**
 	 * Empty Constructor.
 	 */
 	public ExportToGenMaPP() {}
-
-	/**
-	 * Queries for the gene names in the database and adds them to the given map
-	 * keyed on the given ID.
-	 * 
-	 * @param map
-	 */
-	private static void extractNames(String id, Map<String, String> map) throws SQLException {
-		// First, yank out the primary names.
-		extractNamesForType(id, map, "primary");
-
-		// Then, yank out the ordered locus names.
-		extractNamesForType(id, map, "ordered locus");
-		
-		// Finally, add anything else that has neither.
-		extractNamesForType(id, map, null);
-	}
-
-	/**
-	 * Extracts names with a given name type.
-	 */
-	private static void extractNamesForType(String id, Map<String, String> map, String type) throws SQLException {
-        //
-        //  uniprotTable_GeneName <UID> <Uniprot Table GeneName>
-        //
-		final String baseQuery = "select value from genenametype inner join entrytype_genetype on(entrytype_genetype_name_hjid = entrytype_genetype.hjid) where entrytype_gene_hjid = ?";
-		final String baseQueryWithFilter = baseQuery + " and type = ?";
-
-		PreparedStatement ps = connection.prepareStatement(
-				(type != null) ? baseQueryWithFilter : baseQuery);
-		ps.setString(1, id);
-		if (type != null) {
-			ps.setString(2, type);
-		}
-		ResultSet result = ps.executeQuery();
-        while(result.next()) {
-        	if (!map.containsKey(id)) {
-            	map.put(id, result.getString(1));
-        	}
-        }
-        ps.close();
-	}
-
+	
 	/**
 	 * Extract the unique entries
 	 * @throws SQLException
@@ -112,7 +75,7 @@ public class ExportToGenMaPP {
         }
         ps.close();
 	}
-	
+
 	/**
 	 * Extract the accesion names
 	 * @throws SQLException
@@ -155,6 +118,50 @@ public class ExportToGenMaPP {
 	}
 	
 	/**
+	 * Queries for the gene names in the database and adds them to the given map
+	 * keyed on the given ID.
+	 * 
+	 * @param map
+	 */
+	private static void extractNames(String id, Map<String, String> map) throws SQLException {
+		// First, yank out the primary names.
+		extractNamesForType(id, map, "primary");
+
+		// Then, yank out the ordered locus names.
+		extractNamesForType(id, map, "ordered locus");
+		
+		// Finally, add anything else that has neither.
+		extractNamesForType(id, map, null);
+	}
+
+	/**
+	 * Extracts names with a given name type.
+	 */
+	private static void extractNamesForType(String id, Map<String, String> map, String type) throws SQLException {
+        //
+        //  uniprotTable_GeneName <UID> <Uniprot Table GeneName>
+        //
+		final String baseQuery = "select value from genenametype inner join " +
+				"entrytype_genetype on(entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
+				"where entrytype_gene_hjid = ?";
+		final String baseQueryWithFilter = baseQuery + " and type = ?";
+
+		PreparedStatement ps = connection.prepareStatement(
+				(type != null) ? baseQueryWithFilter : baseQuery);
+		ps.setString(1, id);
+		if (type != null) {
+			ps.setString(2, type);
+		}
+		ResultSet result = ps.executeQuery();
+        while(result.next()) {
+        	if (!map.containsKey(id)) {
+            	map.put(id, result.getString(1));
+        	}
+        }
+        ps.close();
+	}
+	
+	/**
 	 * Extract the protein names
 	 * @param id
 	 * @throws SQLException
@@ -180,6 +187,47 @@ public class ExportToGenMaPP {
 	
 	
 	/**
+	 * Extract the function field for the uniprot table.
+	 * @param id
+	 * @throws SQLException
+	 */
+	private static void extractFunction(String id) throws SQLException {
+        //
+        //  uniprotTable_Function <UID> <Uniprot Table Function>
+        //
+		PreparedStatement ps = connection.prepareStatement("");
+    	ps.setString(1, id);
+    	ResultSet result = ps.executeQuery();
+        while(result.next()) {
+        	uniprotTable_Function.put(id, result.getString(1));
+        }
+        
+        ps.close();
+	}
+	
+	private static void extractSystemTableIDs(String id) throws SQLException {
+        //
+        //  systemTable_IDs <UID> <SystemTable(type, id list)>
+        //
+		
+		List<String> systemIDs;
+		
+		for(SystemTableNames tableName : SystemTableNames.values()) {
+			PreparedStatement ps = connection.prepareStatement("select id from entrytype inner join dbreferencetype on entrytype.hjid = entrytype_dbreference_hjid where entrytype.hjid = ? and type = ?");
+	    	ps.setString(1, id);
+	    	ps.setString(2, tableName.name());
+	    	ResultSet result = ps.executeQuery();
+	    	systemIDs = new ArrayList<String>();
+	        while(result.next()) {
+	        	systemIDs.add(result.getString(1));
+	        }
+	        systemTable_IDs.put(id, new SystemTable(tableName.name(), systemIDs.toArray(new String[0])));
+	        ps.close();
+		}
+	}
+	
+	
+	/**
 	 * Extract all the table data
 	 * @throws SQLException
 	 */
@@ -192,6 +240,8 @@ public class ExportToGenMaPP {
 			extractEntryName(id);		
 			extractNames(id, uniprotTable_GeneName);
 			extractProteinName(id);
+			//extractFunction(id);
+			extractSystemTableIDs(id);
 		}
 	}
 	
@@ -271,8 +321,18 @@ public class ExportToGenMaPP {
 						uniprotTable_EntryName.get(id), 
 						uniprotTable_GeneName.get(id),
 						uniprotTable_ProteinName.get(id),
-						"", "|Escherichia coli K12|", dateString2, "");
+						uniprotTable_Function.get(id), 
+						"|Escherichia coli K12|", dateString2, "");
 			}
+			
+			//Create the System Tables and the Relations Tables
+			for(SystemTableNames tableName : SystemTableNames.values()) {
+				AccessFileCreator.createSystemTable(tableName.name());
+				AccessFileCreator.createRelationsTable("UniProt-" + tableName.name());
+			}
+			
+			//Fill the System Tables and the Relations Tables
+			//for()
 					
 			
 		} finally {

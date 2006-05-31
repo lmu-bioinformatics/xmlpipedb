@@ -211,24 +211,19 @@ public class AccessFileCreator {
 	    	ps.close();
     	}
 	
-    /**
-     * Create and fill the System Table
-     * @param table
-     * @param idList
-     * @param species
-     * @param date
-     * @param remarks
-     * @throws SQLException
-     */
-	public static void createAndFillSystemTable(String table, 
-			List<String> idList, String species, String date, 
-			String remarks) throws SQLException {
+
+	/**
+	 * Create a system table.
+	 * @param table
+	 * @throws SQLException
+	 */
+	public static void createSystemTable(String table) throws SQLException {
         
 		PreparedStatement ps = connection.prepareStatement(
 				"CREATE TABLE ? (" +
         		"ID VARCHAR(50) NOT NULL," +
         		"Species MEMO," +
-        		"Date DATE," +
+        		"\"Date\" DATE," +
         		"Remarks MEMO)");     
         // Alternative column definitions when not using Access.
         //"Species varchar," +
@@ -241,7 +236,22 @@ public class AccessFileCreator {
 				"ALTER TABLE ? ADD CONSTRAINT ?_constraint PRIMARY KEY(ID)"); 
 		ps.setString(1, table);
 		ps.executeUpdate();
-		
+		ps.close();
+	}
+	
+	/**
+	 * Update a system table.
+	 * @param table
+	 * @param idList
+	 * @param species
+	 * @param date
+	 * @param remarks
+	 * @throws SQLException
+	 */
+	public static void updateSystemTable(String table, 
+			String[] idList, String species, String date, 
+			String remarks) throws SQLException {
+		PreparedStatement ps = null;
         for(String id : idList) {
         	ps = connection.prepareStatement(
         			"INSERT INTO ? (" +
@@ -259,18 +269,13 @@ public class AccessFileCreator {
         }
         ps.close();
 	}
-	
+
 	/**
-	 * Create and fill the Relations table
+	 * Create a relations table.
 	 * @param table
-	 * @param primary
-	 * @param relatedList
-	 * @param bridge
 	 * @throws SQLException
 	 */
-	public static void createAndFillRelationTable(String table, 
-			String primary, List<String> relatedList, 
-			String bridge) throws SQLException {
+	public static void createRelationsTable(String table) throws SQLException {
         
 		PreparedStatement ps = connection.prepareStatement(
 				"CREATE TABLE ? (" +
@@ -279,7 +284,23 @@ public class AccessFileCreator {
         		"Bridge VARCHAR(3) NOT NULL)");
 		ps.setString(1, table);
 		ps.executeUpdate();
+		ps.close();
+	}
+	
+	
+	/**
+	 * Update a relations table.
+	 * @param table
+	 * @param primary
+	 * @param relatedList
+	 * @param bridge
+	 * @throws SQLException
+	 */
+	public static void updateRelationsTable(String table, 
+			String primary, String[] relatedList, 
+			String bridge) throws SQLException {
 		
+		PreparedStatement ps = null;
         for(String related : relatedList) {
         	ps = connection.prepareStatement(
         			"CREATE TABLE ? (" +

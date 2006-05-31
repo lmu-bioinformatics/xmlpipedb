@@ -48,8 +48,8 @@ public class ExportToGenMaPP {
 	private static Map<String, String> uniprotTable_ProteinName = new HashMap<String, String>();
 	private static Map<String, String> uniprotTable_Function = new HashMap<String, String>();
 	
-	public enum SystemTableNames { EMBL, InterPro, Pfam, PDB, TIGR, EchoBASE, EcoGene };	
-	private static Map<String, SystemTable> systemTable_IDs = new HashMap<String, SystemTable>();
+	public enum DBReferenceNames { EMBL, InterPro, Pfam, PDB, EchoBASE, EcoGene, Blattner, GeneOntology};	
+	private static Map<String, DBReference> dbReference_IDs = new HashMap<String, DBReference>();
 	
 	/**
 	 * Empty Constructor.
@@ -205,23 +205,25 @@ public class ExportToGenMaPP {
         ps.close();
 	}
 	
-	private static void extractSystemTableIDs(String id) throws SQLException {
+	private static void extractDBReferenceIDs(String id) throws SQLException {
         //
-        //  systemTable_IDs <UID> <SystemTable(type, id list)>
+        //  dbReference_IDs <UID> <DBReference(type, id list)>
         //
+		List<String> referenceIDs;
 		
-		List<String> systemIDs;
-		
-		for(SystemTableNames tableName : SystemTableNames.values()) {
-			PreparedStatement ps = connection.prepareStatement("select id from entrytype inner join dbreferencetype on entrytype.hjid = entrytype_dbreference_hjid where entrytype.hjid = ? and type = ?");
+		for(DBReferenceNames referenceName : DBReferenceNames.values()) {
+			PreparedStatement ps = connection.prepareStatement(
+					"select id from entrytype inner join dbreferencetype " +
+					"on entrytype.hjid = entrytype_dbreference_hjid " +
+					"where entrytype.hjid = ? and type = ?");
 	    	ps.setString(1, id);
-	    	ps.setString(2, tableName.name());
+	    	ps.setString(2, referenceName.name());
 	    	ResultSet result = ps.executeQuery();
-	    	systemIDs = new ArrayList<String>();
+	    	referenceIDs = new ArrayList<String>();
 	        while(result.next()) {
-	        	systemIDs.add(result.getString(1));
+	        	referenceIDs.add(result.getString(1));
 	        }
-	        systemTable_IDs.put(id, new SystemTable(tableName.name(), systemIDs.toArray(new String[0])));
+	        dbReference_IDs.put(id, new DBReference(referenceName.name(), referenceIDs.toArray(new String[0])));
 	        ps.close();
 		}
 	}
@@ -241,7 +243,7 @@ public class ExportToGenMaPP {
 			extractNames(id, uniprotTable_GeneName);
 			extractProteinName(id);
 			//extractFunction(id);
-			extractSystemTableIDs(id);
+			extractDBReferenceIDs(id);
 		}
 	}
 	
@@ -326,15 +328,68 @@ public class ExportToGenMaPP {
 			}
 			
 			//Create the System Tables and the Relations Tables
-			for(SystemTableNames tableName : SystemTableNames.values()) {
+			for(DBReferenceNames tableName : DBReferenceNames.values()) {
+				
 				AccessFileCreator.createSystemTable(tableName.name());
-				AccessFileCreator.createRelationsTable("UniProt-" + tableName.name());
+				
+				AccessFileCreator.createRelationsTable("UniProt-" + tableName.name());				
+				
+				if(tableName != DBReferenceNames.EMBL) {
+					AccessFileCreator.createRelationsTable("EMBL-" + tableName.name());
+					
+				}
+				
+				if((tableName != DBReferenceNames.EMBL) && 
+						(tableName != DBReferenceNames.Blattner) && 
+						(tableName != DBReferenceNames.EcoGene) && 
+						(tableName != DBReferenceNames.EchoBASE)) {
+					AccessFileCreator.createRelationsTable("Blattner-" + tableName.name());
+				}
+				
+				if((tableName != DBReferenceNames.EMBL) &&
+						(tableName != DBReferenceNames.EcoGene)) {
+					AccessFileCreator.createRelationsTable("EcoGene-" + tableName.name());
+				}
+				
+				if((tableName != DBReferenceNames.EMBL) &&
+						(tableName != DBReferenceNames.EcoGene)) {
+					AccessFileCreator.createRelationsTable("EchoBASE-" + tableName.name());
+				}
 			}
 			
-			//Fill the System Tables and the Relations Tables
-			//for()
+			//Fill the System Tables and the Relations Tables.
+			for(String id : uniprotTable_ID.keySet()) {
+				
+				DBReference dbReference = dbReference_IDs.get(id);	
+				AccessFileCreator.updateSystemTable(dbReference.getType(), dbReference.getIds(), "|Escherichia coli K12|", dateString2, "");
+				
+				for(DBReferenceNames tableName : DBReferenceNames.values()) {
 					
-			
+					AccessFileCreator.updateRelationsTable("UniProt-" + dbReference.getType(), id, dbReference.getIds(), "");	
+					
+					if(tableName != DBReferenceNames.EMBL) {
+						//AccessFileCreator.updateRelationsTable(("EMBL-" + dbReference.getType(), );
+						
+					}
+					
+					if((tableName != DBReferenceNames.EMBL) && 
+							(tableName != DBReferenceNames.Blattner) && 
+							(tableName != DBReferenceNames.EcoGene) && 
+							(tableName != DBReferenceNames.EchoBASE)) {
+						
+					}
+					
+					if((tableName != DBReferenceNames.EMBL) &&
+							(tableName != DBReferenceNames.EcoGene)) {
+						
+					}
+					
+					if((tableName != DBReferenceNames.EMBL) &&
+							(tableName != DBReferenceNames.EcoGene)) {
+						
+					}
+				}		
+			}
 		} finally {
 			//Close the Access database connection.
 			AccessFileCreator.closeConnection();

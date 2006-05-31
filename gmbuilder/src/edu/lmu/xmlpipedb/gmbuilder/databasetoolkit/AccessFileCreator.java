@@ -19,7 +19,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Class that exports to GenMaPP
@@ -219,22 +218,21 @@ public class AccessFileCreator {
 	 */
 	public static void createSystemTable(String table) throws SQLException {
         
-		PreparedStatement ps = connection.prepareStatement(
-				"CREATE TABLE ? (" +
-        		"ID VARCHAR(50) NOT NULL," +
-        		"Species MEMO," +
-        		"\"Date\" DATE," +
-        		"Remarks MEMO)");     
+		String sqlStatement = "CREATE TABLE " + table + " (" +
+				"ID VARCHAR(50) NOT NULL," +
+				"Species MEMO," +
+				"\"Date\" DATE," +
+				"Remarks MEMO)";
+		
+		PreparedStatement ps = connection.prepareStatement(sqlStatement);     
         // Alternative column definitions when not using Access.
         //"Species varchar," +
         //"Date varchar," +
         //"Remarks varchar)");
-		ps.setString(1, table);
 		ps.executeUpdate();
 		
-		ps = connection.prepareStatement(
-				"ALTER TABLE ? ADD CONSTRAINT ?_constraint PRIMARY KEY(ID)"); 
-		ps.setString(1, table);
+		sqlStatement = "ALTER TABLE " + table + " ADD CONSTRAINT " + table + "_constraint PRIMARY KEY(ID)";
+		ps = connection.prepareStatement(sqlStatement); 
 		ps.executeUpdate();
 		ps.close();
 	}
@@ -251,20 +249,21 @@ public class AccessFileCreator {
 	public static void updateSystemTable(String table, 
 			String[] idList, String species, String date, 
 			String remarks) throws SQLException {
+		
+		String sqlStatement = "INSERT INTO " + table + " (" +
+				"ID," +
+				"Species," +
+				"Date," +
+				"Remarks)" +
+				"VALUES (?, ?, ?, ?)";
+		
 		PreparedStatement ps = null;
         for(String id : idList) {
-        	ps = connection.prepareStatement(
-        			"INSERT INTO ? (" +
-            		"ID," +
-            		"Species," +
-            		"Date," +
-            		"Remarks)" +
-            		"VALUES (?, ?, ?, ?)");
-	    	ps.setString(1, table);
-	    	ps.setString(2, id);
-	    	ps.setString(3, species);
-	    	ps.setString(4, date);
-	    	ps.setString(5, remarks);
+        	ps = connection.prepareStatement(sqlStatement);
+	    	ps.setString(1, id);
+	    	ps.setString(2, species);
+	    	ps.setString(3, date);
+	    	ps.setString(4, remarks);
 	    	ps.executeUpdate();
         }
         ps.close();
@@ -277,20 +276,17 @@ public class AccessFileCreator {
 	 */
 	public static void createRelationsTable(String table) throws SQLException {
         
-		PreparedStatement ps = connection.prepareStatement(
-				"CREATE TABLE ? (" +
-        		"Primary VARCHAR(50) NOT NULL," +
-        		"Related VARCHAR(50) NOT NULL," +
-        		"Bridge VARCHAR(3) NOT NULL)");
-		ps.setString(1, table);
+		String sqlStatement = "CREATE TABLE \"" + table + "\" (" +
+				"\"Primary\" VARCHAR(50) NOT NULL," +
+				"Related VARCHAR(50) NOT NULL," +
+				"Bridge VARCHAR(3))";
+		PreparedStatement ps = connection.prepareStatement(sqlStatement);
 		ps.executeUpdate();
 		ps.close();
 	}
 	
-	
 	/**
-	 * Update a relations table.
-	 * @param table
+	 * Update a relations tables.
 	 * @param primary
 	 * @param relatedList
 	 * @param bridge
@@ -300,18 +296,18 @@ public class AccessFileCreator {
 			String primary, String[] relatedList, 
 			String bridge) throws SQLException {
 		
+		String sqlStatement = "INSERT INTO \"" + table + "\" (" +
+				"\"Primary\"," +
+				"Related," +
+				"Bridge)" +
+				"VALUES (?, ?, ?)";
+		
 		PreparedStatement ps = null;
         for(String related : relatedList) {
-        	ps = connection.prepareStatement(
-        			"CREATE TABLE ? (" +
-            		"Primary," +
-            		"Related," +
-            		"Bridge)" +
-            		"VALUES (?, ?, ?)");
-	    	ps.setString(1, table);
-	    	ps.setString(2, primary);
-	    	ps.setString(3, related);
-	    	ps.setString(4, bridge);
+        	ps = connection.prepareStatement(sqlStatement);
+	    	ps.setString(1, primary);
+	    	ps.setString(2, related);
+	    	ps.setString(3, bridge);
 	    	ps.executeUpdate();
         }
         ps.close();

@@ -1,11 +1,11 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit;
 
-public class SystemTable {
+public class DBReference {
 	
 	private String type;
 	private String[] ids;
 	
-	protected SystemTable(String type, String[] ids) {
+	protected DBReference(String type, String[] ids) {
 		this.type = type;
 		this.ids = ids;
 	}

@@ -21,6 +21,14 @@ create table systems(
     systemcode varchar
 );
 
+create table relations(
+    systemcode varchar,
+    relatedcode varchar,
+    relation varchar,
+    type varchar,
+    source varchar
+);
+
 -- Unfortunately, it is not enough to just create these tables.
 -- The following issues also exist, and can only be rectified in
 -- the code.  Thus, these changes must be made in the code in

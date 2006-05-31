@@ -243,7 +243,7 @@ public class ExportToGenMaPP {
 			extractNames(id, uniprotTable_GeneName);
 			extractProteinName(id);
 			//extractFunction(id);
-			extractDBReferenceIDs(id);
+			//extractDBReferenceIDs(id);
 		}
 	}
 	
@@ -357,39 +357,39 @@ public class ExportToGenMaPP {
 				}
 			}
 			
-			//Fill the System Tables and the Relations Tables.
-			for(String id : uniprotTable_ID.keySet()) {
-				
-				DBReference dbReference = dbReference_IDs.get(id);	
-				AccessFileCreator.updateSystemTable(dbReference.getType(), dbReference.getIds(), "|Escherichia coli K12|", dateString2, "");
-				
-				for(DBReferenceNames tableName : DBReferenceNames.values()) {
-					
-					AccessFileCreator.updateRelationsTable("UniProt-" + dbReference.getType(), id, dbReference.getIds(), "");	
-					
-					if(tableName != DBReferenceNames.EMBL) {
-						//AccessFileCreator.updateRelationsTable(("EMBL-" + dbReference.getType(), );
-						
-					}
-					
-					if((tableName != DBReferenceNames.EMBL) && 
-							(tableName != DBReferenceNames.Blattner) && 
-							(tableName != DBReferenceNames.EcoGene) && 
-							(tableName != DBReferenceNames.EchoBASE)) {
-						
-					}
-					
-					if((tableName != DBReferenceNames.EMBL) &&
-							(tableName != DBReferenceNames.EcoGene)) {
-						
-					}
-					
-					if((tableName != DBReferenceNames.EMBL) &&
-							(tableName != DBReferenceNames.EcoGene)) {
-						
-					}
-				}		
-			}
+//			//Fill the System Tables and the Relations Tables.
+//			for(String id : uniprotTable_ID.keySet()) {
+//				
+//				DBReference dbReference = dbReference_IDs.get(id);	
+//				AccessFileCreator.updateSystemTable(dbReference.getType(), dbReference.getIds(), "|Escherichia coli K12|", dateString2, "");
+//				
+//				for(DBReferenceNames tableName : DBReferenceNames.values()) {
+//					
+//					AccessFileCreator.updateRelationsTable("UniProt-" + dbReference.getType(), id, dbReference.getIds(), "");	
+//					
+//					if(tableName != DBReferenceNames.EMBL) {
+//						//AccessFileCreator.updateRelationsTable(("EMBL-" + dbReference.getType(), );
+//						
+//					}
+//					
+//					if((tableName != DBReferenceNames.EMBL) && 
+//							(tableName != DBReferenceNames.Blattner) && 
+//							(tableName != DBReferenceNames.EcoGene) && 
+//							(tableName != DBReferenceNames.EchoBASE)) {
+//						
+//					}
+//					
+//					if((tableName != DBReferenceNames.EMBL) &&
+//							(tableName != DBReferenceNames.EcoGene)) {
+//						
+//					}
+//					
+//					if((tableName != DBReferenceNames.EMBL) &&
+//							(tableName != DBReferenceNames.EcoGene)) {
+//						
+//					}
+//				}		
+//			}
 		} finally {
 			//Close the Access database connection.
 			AccessFileCreator.closeConnection();

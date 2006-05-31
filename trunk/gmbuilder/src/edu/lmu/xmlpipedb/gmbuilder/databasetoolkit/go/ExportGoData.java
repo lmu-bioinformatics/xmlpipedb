@@ -149,7 +149,7 @@ public class ExportGoData {
 	            // Grab the GO ID(s) 
 	            Matcher match  = Pattern.compile("GO:(\\w+)").matcher(line);
 	            while (match.find()) {
-	            	String[] values = new String[] {Up_ID, match.group(1), "En"};
+	            	String[] values = new String[] {Up_ID, match.group(1), ""};
 	            	godb.insert(connection,Go.UniProt_Go, values);
 	            }
 	        }
@@ -277,7 +277,7 @@ public class ExportGoData {
 	private void insertChildren(String parent, int level) throws SQLException {
 		
 		PreparedStatement ps = connection.prepareStatement(
-				"SELECT name,id from ? where parent = ? order by parent");
+				"SELECT name,id from " + Go.GeneOntology + " where parent = ? order by parent");
 		ps.setString(1, Go.GeneOntology);
 		ps.setString(1, parent);
 		ResultSet results = ps.executeQuery();

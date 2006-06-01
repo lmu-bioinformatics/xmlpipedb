@@ -50,9 +50,12 @@ public class ExportGoData {
 	private Go 		 godb;
 	private HashMap<String, String> namespace;
 	private HashMap<String, Integer> goCount;
+	private HashMap<String, Boolean> duplicates;
 	
 	// GO DB variables 
-	private int orderNo 			= 1;
+	private final int NUM_OF_GO_COLS	= 8;
+	private final int PARENT_COL		= 4 - 1;
+	private int orderNo 				= 1;
 	
 	/**
 	 *  Constructor 
@@ -67,6 +70,7 @@ public class ExportGoData {
 		godb 		= new Go();
 		namespace 	= new HashMap<String, String>();
 		goCount		= new HashMap<String, Integer>();
+		duplicates	= new HashMap<String, Boolean>();
 		createNamespaceMappings();
 	}
 	
@@ -120,11 +124,10 @@ public class ExportGoData {
     	SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
 		Session session = sessionFactory.openSession(); // open Hibernate session
 
+		populateUniprotGoTable();
 		populateGeneOntologyTable(session);
 		populateGeneOntologyTree();
 		populateGeneOntologyCount();
-		populateUniprotGoTable();
-		
 		
 		session.close();		
 		
@@ -158,14 +161,30 @@ public class ExportGoData {
 	
 	
 	/**
-	 *  Populate genMAPP's GeneOntologyTable
+	 *  Populate genMAPP's two tables:
+	 *  	GeneOntologyStage -- data containing all species
+	 *  	GeneOntology	  -- data containing user specied species
 	 *  
 	 * @param session
 	 * 				A hibernate session (needed for HQL queries)
 	 * @throws SQLException
 	 */
 	private void populateGeneOntologyTable (Session session) throws SQLException {
-    	Iterator iter	= null;
+		populateGeneOntologyStage(session);
+		populateGeneOntology();
+	}
+
+	/**
+	 *  Create a staging database of the entire
+	 *  GeneOntology, including all species 
+	 *  
+	 * @param session
+	 * 				A hibernate session (needed for HQL queries)
+	 * @throws SQLException
+	 */
+	private void populateGeneOntologyStage (Session session) throws SQLException {
+		System.out.println("creating: " + Go.GeneOntologyStage);
+		Iterator iter	= null;
     	Iterator myiter = null;
     	
     	String Species = null;
@@ -190,13 +209,13 @@ public class ExportGoData {
 	    	boolean is_root = false;
 			/*
 			 *  Each Term may have more than one parent (is_a) and a part_of. In that
-			 *  case, create an entry for each object. Thus each term may have more than one
-			 *  entry
+			 *  case, create an entry for each object. Thus each term may have max of three
+			 *  entries: two parents and one part of
 			 */
 	    	while (myiter.hasNext()) {
 				Object o = myiter.next();
 				if (o instanceof generated.impl.IdImpl) {
-					Id = (((IdImpl)o).getContent()).substring(3); // Strip off "GO:" from ID 
+					Id = (((IdImpl)o).getContent()).substring(3); // Strip off "GO:" from ID
 				} else if(o instanceof generated.impl.NameImpl) {
 					Name = ((NameImpl)o).getContent();
 				} else if(o instanceof generated.impl.NamespaceImpl) {
@@ -216,18 +235,77 @@ public class ExportGoData {
 					if (is_root) {
 						// create root ID entry
 						String[] values = {Id, Name, Type, null, null, null, Date, null};
-						godb.insert(connection,Go.GeneOntology, values);
+						godb.insert(connection,Go.GeneOntologyStage, values);
 						is_root = false;
 					} else if (Parent != "" && Relation != "" ) { 
 						// create child ID 
 						String[] values = {Id, Name, Type, Parent, Relation, Species, Date, Remarks};
-						godb.insert(connection,Go.GeneOntology, values);
+						godb.insert(connection,Go.GeneOntologyStage, values);
 						Relation = "";
 					}
 				}
 			}  
     	} 
     }
+	
+
+	/**
+	 *  Populates genMAPP's GeneOntology table based on a user selected species
+	 *  
+	 * 
+	 * @throws SQLException
+	 */
+	private void populateGeneOntology () throws SQLException {
+		String sql 			= "select * from " + Go.GeneOntologyStage 
+							+ " where Id in (select DISTINCT(Related) from " 
+							+ Go.UniProt_Go + ") order by Id";
+		PreparedStatement ps = connection.prepareStatement(sql);
+		ResultSet results 	 = ps.executeQuery();
+		System.out.println("creating: " + Go.GeneOntology);
+		while (results.next()) {
+			String[] values = getGoValues(results);
+			godb.insert(connection,Go.GeneOntology, values);
+			insertParents(values[PARENT_COL]);
+		}
+	}
+	
+	/**
+	 * Recursively inserts data based on a parent until reaching the root
+	 * 
+	 * @param id
+	 * 		parent ID
+	 * @throws SQLException
+	 */
+	private void insertParents(String id) throws SQLException {
+		String sql 		= "select * from " + Go.GeneOntologyStage 
+						+ " where Id = ? order by Id";
+		PreparedStatement ps = connection.prepareStatement(sql);
+		ps.setString(1, id);
+		ResultSet results 	 = ps.executeQuery();
+		while (results.next()) {
+			String[] values = getGoValues(results);
+			String key = id + "," + values[PARENT_COL];
+			if (!duplicates.containsKey(key)) {
+				duplicates.put(key, true);
+				godb.insert(connection,Go.GeneOntology, values);
+				insertParents(values[PARENT_COL]);
+			}
+			
+		}
+		ps.close();
+	}
+	
+	private String[] getGoValues(ResultSet results) throws SQLException {
+		String[] values 	= new String[NUM_OF_GO_COLS];
+		for (int x = 0; x < values.length; x++) {
+			try {
+				values[x] = results.getString(x + 1).trim();
+			} catch (NullPointerException ex) {}
+		}
+		return values;
+		
+	}
+	
 	
 	/**
 	 * Populate genMAPP's GeneOntologyTree
@@ -237,7 +315,7 @@ public class ExportGoData {
 	private void populateGeneOntologyTree () throws SQLException {
 		String[] root_ids	= {"0003674", "0005575", "0008150" };
 		String[] names 		= {"molecular_function", "cellular_component", "biological_process"};
-		
+		System.out.println("creating: " + Go.GeneOntologyTree);
 		// Traverse the graph beginning with each root ID
 		for (int index = 0; index < root_ids.length; index++) {
 			String id 	= root_ids[index];
@@ -258,6 +336,7 @@ public class ExportGoData {
 		Iterator iter = goCount.keySet().iterator();
 		String id;
 		int count;
+		System.out.println("creating: " + Go.GeneOntologyCount);
 		while (iter.hasNext()) {
 			id = (String)iter.next();
 			count = goCount.get(id);

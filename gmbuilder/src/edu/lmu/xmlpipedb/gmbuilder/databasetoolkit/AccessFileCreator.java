@@ -223,12 +223,12 @@ public class AccessFileCreator {
 				"Species MEMO," +
 				"\"Date\" DATE," +
 				"Remarks MEMO)";
-		
-		PreparedStatement ps = connection.prepareStatement(sqlStatement);     
         // Alternative column definitions when not using Access.
         //"Species varchar," +
         //"Date varchar," +
-        //"Remarks varchar)");
+        //"Remarks varchar)";
+		
+		PreparedStatement ps = connection.prepareStatement(sqlStatement);     
 		ps.executeUpdate();
 		
 		sqlStatement = "ALTER TABLE " + table + " ADD CONSTRAINT " + table + "_constraint PRIMARY KEY(ID)";

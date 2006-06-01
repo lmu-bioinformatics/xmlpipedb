@@ -22,11 +22,12 @@ public class Go {
 	
 	protected static String GeneOntologyTree 	= "GeneOntologyTree";
 	protected static String GeneOntology		= "GeneOntology";
+	protected static String GeneOntologyStage	= "GeneOntologyStage";	
 	protected static String GeneOntologyCount	= "GeneOntologyCount";
 	protected static String UniProt_Go		    = "\"UniProt-GeneOntology\"";
 	
 	
-	private String[] tables = {GeneOntology, GeneOntologyTree, GeneOntologyCount, UniProt_Go};
+	private String[] tables = {GeneOntology, GeneOntologyStage, GeneOntologyTree, GeneOntologyCount, UniProt_Go };
 	
 	/**
 	 * Constuctor
@@ -114,6 +115,7 @@ public class Go {
 		String[][] fields = new String[][]
 		       {
 				{"ID", "NAME", "Type","Parent","Relation","Species", "\"Date\"", "Remarks"}, /* GO */
+				{"ID", "NAME", "Type","Parent","Relation","Species", "\"Date\"", "Remarks"}, /* GO stage */
 				{"OrderNo", "\"Level\"", "ID", "NAME"}, /* GOTree */
 				{"ID", "Count"}, /* GOCount */
 				{"\"Primary\"", "Related", "Bridge"} /* Uniprot-Go */
@@ -121,10 +123,12 @@ public class Go {
 		String[][] types  = new String[][]
 		       {
 				{"VARCHAR(50) NOT NULL", "MEMO", "VARCHAR(2)","VARCHAR(50)","CHAR","MEMO", "DATE", "MEMO"}, /* GO */
+				{"VARCHAR(50) NOT NULL", "MEMO", "VARCHAR(2)","VARCHAR(50)","CHAR","MEMO", "DATE", "MEMO"}, /* GO stage */
 				{"LONG", "Int", "VARCHAR(50)", "MEMO"}, /* GOTree */
 				{"VARCHAR(50) NOT NULL", "Int"}, /* GOCount */
                 // Alternative column definitions when not using Access.
                 //{"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO */
+                //{"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO stage*/
                 //{"varchar", "varchar", "VARCHAR(50)", "varchar"}, /* GOTree */
                 //{"VARCHAR(50) NOT NULL", "varchar"}, /* GOCount */
 				{"VARCHAR(50) NOT NULL", "VARCHAR(50) NOT NULL", "VARCHAR(3) NOT NULL"}  /* UniProt-Go */

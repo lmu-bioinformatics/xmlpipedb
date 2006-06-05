@@ -17,7 +17,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -355,9 +354,8 @@ public class ExportGoData {
 	 */
 	private void insertChildren(String parent, int level) throws SQLException {
 		
-		PreparedStatement ps = connection.prepareStatement(
-				"SELECT name,id from " + Go.GeneOntology + " where parent = ? order by parent");
-		ps.setString(1, Go.GeneOntology);
+		String sqlStatement = "SELECT name,id from " + Go.GeneOntology + " where parent = ? order by parent";
+		PreparedStatement ps = connection.prepareStatement(sqlStatement);
 		ps.setString(1, parent);
 		ResultSet results = ps.executeQuery();
 		while(results.next()) {

@@ -229,6 +229,9 @@ public class GenMAPPBuilder extends App {
     		} catch (ClassNotFoundException e) {
     			ModalDialog.showErrorDialog("Database driver error.");
     			e.printStackTrace();
+			} catch (Exception e) {
+				ModalDialog.showErrorDialog(e.toString());
+				e.printStackTrace();
 			}
         }
      

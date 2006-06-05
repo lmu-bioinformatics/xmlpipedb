@@ -45,7 +45,7 @@ XMLPipeDB is a suite of tools for managing, querying, importing, and exporting i
 
 \subsection{Pre-Built GenMAPP Files}
 
-If your primary interest is to use GenMAPP for a particular organism, please consult the following list for GenMAPP files that have already been created using GenMAPP Builder (Section~\ref{genmappBuilder}).  In many cases, you can simply download them and point GenMAPP to them, and you'll be ready to load up expression data sets. You should also consult the GenMAPP website (www.genmapp.org ????)
+If your primary interest is to use GenMAPP for a particular organism, please consult the following list for GenMAPP files that have already been created using GenMAPP Builder (Section~\ref{genmappBuilder}).  In many cases, you can simply download them and point GenMAPP to them, and you'll be ready to load up expression data sets.  Full details on GenMAPP are available on the GenMAPP Web site (\url{http://www.genmapp.org}).
 
 \begin{itemize}
 \item E.\ coli K12
@@ -56,9 +56,24 @@ If your primary interest is to use GenMAPP for a particular organism, please con
 \subsection{GenMAPP Builder}
 \label{genmappBuilder}
 
-GenMAPP Builder is an application for creating files compatible with GenMAPP.  The application works by first importing supported data files into a relational database.  The database can then be queried by organism in order to produce a GenMAPP file.
+GenMAPP Builder is an application for creating GenMAPP database files, or GDBs.  These files are actually Microsoft Access database files (MDBs) with a \texttt{gdb} filename extension.
 
-\subsubsection{Usage}
+The application works by first importing supported data files into a relational database.  The database can then be queried by organism in order to produce a GenMAPP database file.
+
+\subsubsection{Supported Data Sets}
+\label{supportedDataSets}
+
+The current version of GenMAPP Builder requires data from the following types of files in order to build a GenMAPP database file:
+\begin{itemize}
+\item UniProt XML
+\item Gene Ontology (GO) OBO XML
+\item Tab-delimited GO associations (various sources)
+\end{itemize}
+Typically, the GO file need only be loaded once, since GO makes the entire set of terms available as a single download.  UniProt XML files can be be downloaded by species from the Integr8 Web interface, and so one UniProt import per species would be the norm.
+
+Once the source files have been imported into the relational database, they are no longer needed; exports can be performed any number of times after that.
+
+\subsubsection{Requirements}
 
 To use GenMAPP Builder, you need:
 \begin{itemize}
@@ -73,10 +88,74 @@ Once these are properly installed and operational, you can perform these primary
 \end{enumerate}
 The built files can then be read directly by GenMAPP.
 
-\subsubsection{Supported Data Sets}
-\label{supportedDataSets}
+\subsubsection{Database Setup}
 
-At this writing: UniProt and GO.
+Main activity: load the GenMAPP Builder schema file (\texttt{gmbuilder.sql}) into the relational database.  Specifics vary depending on the database server that is used.
+
+\subsubsection{Configuration}
+
+When GenMAPP Builder is run for the first time, a configuration dialog appears (Figure~\ref{config}).  A valid configuration is required in order for GenMAPP Builder to operate properly; many problems are caused by incorrect database settings.  The configuration can be changed at any time via the \textsl{Configure Database} command in the \textsl{File} menu.
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=5in]{figures/config.png} 
+   \caption{GenMAPP Builder configuration dialog.}
+   \label{config}
+\end{figure}
+
+The configuration dialog provides an interface for a wide variety of database-related settings; many of these can be left at their default values.  The most important item to configure is the database server itself, a sample of which is shown in Figure~\ref{config}:
+\begin{enumerate}
+\item Select the \textsl{Platforms} radio button.
+\item Select the relational database that you are using from the drop-down menu.
+\item Fill out the relevant settings from the list that appears.
+\end{enumerate}
+The example shown in Figure~\ref{config} shows a GenMAPP Builder installation that uses a PostgreSQL relational database called \emph{gmbuilder} on a server that is running on the same machine as GenMAPP Builder (\emph{localhost}\/) using the default PostgreSQL network port, 5432.  The standard PostgreSQL database driver is used (\emph{org.postgresql.Driver}\/), and the database username is \emph{jsmith} with an accompanying password.
+
+Most of the time, these are the only settings to modify.  Click the \textsl{Save} button when configuration is complete.
+
+\subsubsection{File Import}
+
+A ``fresh'' install of GenMAPP Builder contains no data --- supported files must be \emph{imported} into the relational database first.  There is one \textsl{Import} command for each supported dataset, and these commands are all available under the application's \textsl{File} menu (Figure~\ref{fileMenu}).
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[height=1in]{figures/fileMenu.png} 
+   \caption{GenMAPP Builder \textsl{File} menu.}
+   \label{fileMenu}
+\end{figure}
+
+Each import command works in the same way: once chosen, a file chooser dialog appears.  Locate the file to be imported through this dialog, then click on \textsl{Import}.  The import process then begins.  A progress display tracks the status of the import, from which two commands are available: \textsl{Pause} or \textsl{Cancel}.
+
+The \textsl{Pause} command allows you to stop the import operation temporarily, to be resumed at a later time.  This may be useful for large data sets on a computer that can't be ``left alone'' to complete the entire import operation.  GenMAPP Builder tracks the list of paused imports for you; the primary requirement is that you do \emph{not} delete the files being imported until the operation is complete.
+
+The \textsl{Cancel} command cancels the \emph{entire} import, including data that has already been read.  This command is useful if you change your mind during an import operation, and decide not to load any of that information into the relational database after all.
+
+Once an import operation finishes, the data in the imported file now becomes accessible as a set of relational database tables.
+
+\subsubsection{Browsing the Database}
+
+GenMAPP Builder includes a query engine that allows you to browse the contents of the underlying relational database.  With this engine, you can look at the species that are available and all imported information about the species' proteins and genes.  If a compatible GO associations file has also been imported into the database, you can browse the GO terms that have been associated with that species as well.
+
+(clearly more can be written about this functionality)
+
+\subsubsection{Building a GenMAPP Database}
+
+Once you have determined that the underlying relational database contains all of the information that you need, you can build a GenMAPP database file.  To do this, choose the \textsl{Export to GenMAPP} command from the \textsl{File} menu.
+
+The export operation opens with a dialog that requests the following information:
+\begin{itemize}
+\item The species to export (via taxon ID)
+\item (Kam to verify) The related systems to include
+\item (Kam may provide more necessary export choices)
+\item The location and name of the destination file
+\end{itemize}
+Once these export parameters have been set, the export operation begins.  As with the import operation, a progress display tracks the status of the export.  \textsl{Pause} and \textsl{Cancel} commands, which operate in the same way as their import operation counterparts, are also available while the export operation is taking place.
+
+Once the export operation finishes, the specified destination file can be opened and used directly in GenMAPP.
+
+\subsubsection{Implementation Notes}
+
+The configuration, import, and query functions in GenMAPP Builder make direct use of the XMLPipeDB Utilities (\emph{xmlpipedbutils}) library.
 
 \subsubsection{Database Details}
 

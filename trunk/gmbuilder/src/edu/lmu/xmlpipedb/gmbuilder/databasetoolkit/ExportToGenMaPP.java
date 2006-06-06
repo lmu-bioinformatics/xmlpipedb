@@ -40,6 +40,8 @@ public class ExportToGenMaPP {
 	private static Map<String, String> uniprotTable_ProteinName = new HashMap<String, String>();
 	private static Map<String, String> uniprotTable_Function = new HashMap<String, String>();
 	
+	private static Map<String, String> blattnerTable_IDs = new HashMap<String, String>();
+	
 	
 	/**
 	 * Empty Constructor.
@@ -126,6 +128,9 @@ public class ExportToGenMaPP {
         while(result.next()) {
         	if (!map.containsKey(id)) {
             	map.put(id, result.getString(1));
+        	}
+        	if(!blattnerTable_IDs.containsKey(id) && type=="ordered locus") {
+        		blattnerTable_IDs.put(id, result.getString(1));
         	}
         }
         ps.close();
@@ -275,28 +280,28 @@ public class ExportToGenMaPP {
 		Table EMBL_Blattner = new RelationsTable("EMBL-Blattner");
 		Table EMBL_EcoGene = new RelationsTable("EMBL-EcoGene");
 		Table EMBL_EchoBASE = new RelationsTable("EMBL-EchoBASE");
-		Table EMBL_GeneOntology = new RelationsTable("EMBL-GeneOntology");
 		
 		Table Blattner_InterPro = new RelationsTable("Blattner-InterPro");
 		Table Blattner_PDB = new RelationsTable("Blattner-PDB");
 		Table Blattner_Pfam = new RelationsTable("Blattner-Pfam");
-		Table Blattner_GeneOntology = new RelationsTable("Blattner-GeneOntology");
 		
 		Table EcoGene_InterPro = new RelationsTable("EcoGene-InterPro");
 		Table EcoGene_PDB = new RelationsTable("EcoGene-PDB");
 		Table EcoGene_Pfam = new RelationsTable("EcoGene-Pfam");
 		Table EcoGene_Blattner = new RelationsTable("EcoGene-Blattner");
 		Table EcoGene_EchoBASE = new RelationsTable("EcoGene-EchoBASE");
-		Table EcoGene_GeneOntology = new RelationsTable("EcoGene-GeneOntology");
 		
 		Table EchoBASE_InterPro = new RelationsTable("EchoBASE-InterPro");
 		Table EchoBASE_PDB = new RelationsTable("EchoBASE-PDB");
 		Table EchoBASE_Pfam = new RelationsTable("EchoBASE-Pfam");
 		Table EchoBASE_Blattner = new RelationsTable("EchoBASE-Blattner");
-		Table EchoBASE_GeneOntology = new RelationsTable("EchoBASE-GeneOntology");
 		
+		//
 		//Extract the data.
-		PreparedStatement ps = relationalDBConnetion.prepareStatement("select entrytype_dbreference_hjid, id from dbreferencetype where type = ?");
+		//
+		
+		//All UniProt to x-tables.
+		PreparedStatement ps = relationalDBConnetion.prepareStatement("select hjvalue, id from dbreferencetype inner join entrytype_accession on entrytype_dbreference_hjid = entrytype_accession_hjid where type = ?");
 		String bridge = "S";
 		ResultSet result;
 
@@ -320,11 +325,6 @@ public class ExportToGenMaPP {
 	    while(result.next()) {
 	    	UniProt_Pfam.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
 	    }
-//	    ps.setString(1, "Blattner");
-//	    result = ps.executeQuery();
-//	    while(result.next()) {
-//	    	UniProt_Blattner.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
-//	    }
 	    ps.setString(1, "EcoGene");
 	    result = ps.executeQuery();
 	    while(result.next()) {
@@ -336,6 +336,9 @@ public class ExportToGenMaPP {
 	    	UniProt_EchoBASE.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
 	    }
 	    ps.close();
+	    for(String id : blattnerTable_IDs.keySet()) {
+	    	UniProt_Blattner.insert(uniprotTable_ID.get(id) + ";" + blattnerTable_IDs.get(id) + ";" + bridge);
+	    }
 	    
 	    ps = relationalDBConnetion.prepareStatement("select dbref1.id as id1, " +
 	    		"dbref2.id as id2, dbref1.type as type1,  " +
@@ -347,6 +350,7 @@ public class ExportToGenMaPP {
 	    		"and dbref2.type = ?");
 		bridge = "S";
 		
+		//EMBL to x-table minus EMBL to Blattner and GeneOntology.
 	    ps.setString(1, "EMBL");
 	    ps.setString(2, "InterPro");
 	    result = ps.executeQuery();
@@ -366,12 +370,6 @@ public class ExportToGenMaPP {
 	    	EMBL_Pfam.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
 	    }
 	    ps.setString(1, "EMBL");
-	    ps.setString(2, "Blattner");
-	    result = ps.executeQuery();
-	    while(result.next()) {
-	    	EMBL_Blattner.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
-	    }
-	    ps.setString(1, "EMBL");
 	    ps.setString(2, "EcoGene");
 	    result = ps.executeQuery();
 	    while(result.next()) {
@@ -383,42 +381,8 @@ public class ExportToGenMaPP {
 	    while(result.next()) {
 	    	EMBL_EchoBASE.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
 	    }
-//	    ps = relationalDBConnetion.prepareStatement("");
-//		bridge = "S";
-//	    ps.setString(1, "EMBL");
-//	    ps.setString(2, "GeneOntology");
-//	    result = ps.executeQuery();
-//	    while(result.next()) {
-//	    	EMBL_InterPro.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
-//	    }
 	    
-//	    ps.setString(1, "Blattner");
-//	    ps.setString(2, "InterPro");
-//	    result = ps.executeQuery();
-//	    while(result.next()) {
-//	    	Blattner_InterPro.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
-//	    }
-//	    ps.setString(1, "Blattner");
-//	    ps.setString(2, "PDB");
-//	    result = ps.executeQuery();
-//	    while(result.next()) {
-//	    	Blattner_PDB.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
-//	    }
-//	    ps.setString(1, "Blattner");
-//	    ps.setString(2, "Pfam");
-//	    result = ps.executeQuery();
-//	    while(result.next()) {
-//	    	Blattner_Pfam.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
-//	    }
-//	    ps = relationalDBConnetion.prepareStatement("");
-//		bridge = "S";
-//	    ps.setString(1, "EMBL");
-//	    ps.setString(2, "GeneOntology");
-//	    result = ps.executeQuery();
-//	    while(result.next()) {
-//	    	EMBL_InterPro.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
-//	    }
-	    
+	    //EcoGene to x-table minus EcoGene to Blattner and GeneOntology.
 	    ps.setString(1, "EcoGene");
 	    ps.setString(2, "InterPro");
 	    result = ps.executeQuery();
@@ -437,27 +401,14 @@ public class ExportToGenMaPP {
 	    while(result.next()) {
 	    	EcoGene_Pfam.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
 	    }
-//	    ps.setString(1, "EcoGene");
-//	    ps.setString(2, "Blattner");
-//	    result = ps.executeQuery();
-//	    while(result.next()) {
-//	    	EcoGene_Blattner.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
-//	    }
 	    ps.setString(1, "EcoGene");
 	    ps.setString(2, "EchoBASE");
 	    result = ps.executeQuery();
 	    while(result.next()) {
 	    	EcoGene_EchoBASE.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
 	    }
-//	    ps = relationalDBConnetion.prepareStatement("");
-//		bridge = "S";
-//	    ps.setString(1, "EcoGene");
-//	    ps.setString(2, "GeneOntology");
-//	    result = ps.executeQuery();
-//	    while(result.next()) {
-//	    	EcoGene_GeneOntology.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
-//	    }
 	    
+	    //EchoBASE to x-table minus EcoGene to Blattner and GeneOntology.
 	    ps.setString(1, "EchoBASE");
 	    ps.setString(2, "InterPro");
 	    result = ps.executeQuery();
@@ -476,20 +427,56 @@ public class ExportToGenMaPP {
 	    while(result.next()) {
 	    	EchoBASE_Pfam.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
 	    }
-//	    ps.setString(1, "EchoBASE");
-//	    ps.setString(2, "Blattner");
-//	    result = ps.executeQuery();
-//	    while(result.next()) {
-//	    	EchoBASE_Blattner.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
-//	    }
-//	    ps = relationalDBConnetion.prepareStatement("");
-//		bridge = "S";
-//	    ps.setString(1, "EchoBASE");
-//	    ps.setString(2, "GeneOntology");
-//	    result = ps.executeQuery();
-//	    while(result.next()) {
-//	    	EchoBASE_GeneOntology.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
-//	    }
+		
+		//Blattner to x-table minus Blattner to GeneOntology.
+	    ps = relationalDBConnetion.prepareStatement("select id " +
+	    		"from dbreferencetype " +
+	    		"where type = ? and " +
+	    		"entrytype_dbreference_hjid = ?");    
+
+	    ps.setString(1, "InterPro");
+	    for(String id : blattnerTable_IDs.keySet()) {
+		    ps.setString(2, id);
+		    result = ps.executeQuery();
+		    while(result.next()) {
+		    	Blattner_InterPro.insert(blattnerTable_IDs.get(id) + ";" + result.getString(1) + ";" + bridge);
+		    }
+	    }
+	    ps.setString(1, "PDB");
+	    for(String id : blattnerTable_IDs.keySet()) {
+		    ps.setString(2, id);
+		    result = ps.executeQuery();
+		    while(result.next()) {
+		    	Blattner_PDB.insert(blattnerTable_IDs.get(id) + ";" + result.getString(1) + ";" + bridge);
+		    }
+	    }
+	    ps.setString(1, "Pfam");
+	    for(String id : blattnerTable_IDs.keySet()) {
+		    ps.setString(2, id);
+		    result = ps.executeQuery();
+		    while(result.next()) {
+		    	Blattner_Pfam.insert(blattnerTable_IDs.get(id) + ";" + result.getString(1) + ";" + bridge);
+		    }
+	    }
+		
+		//EMBL-Blattner, EcoGene-Blattner, EchoBASE-Blattner.
+	    ps = relationalDBConnetion.prepareStatement("select entrytype_dbreference_hjid, id from dbreferencetype where type = ?");    
+	    
+	    ps.setString(1, "EMBL");  
+	    result = ps.executeQuery();
+	    while(result.next()) {
+	    	EMBL_Blattner.insert(result.getString(2) + ";" + blattnerTable_IDs.get(result.getString(1)) + ";" + bridge);
+	    }
+	    ps.setString(1, "EcoGene");  
+	    result = ps.executeQuery();
+	    while(result.next()) {
+	    	EcoGene_Blattner.insert(result.getString(2) + ";" + blattnerTable_IDs.get(result.getString(1)) + ";" + bridge);
+	    }
+	    ps.setString(1, "EchoBASE");  
+	    result = ps.executeQuery();
+	    while(result.next()) {
+	    	EchoBASE_Blattner.insert(result.getString(2) + ";" + blattnerTable_IDs.get(result.getString(1)) + ";" + bridge);
+	    }
 	    result.close();
 		ps.close();
 		
@@ -508,30 +495,132 @@ public class ExportToGenMaPP {
 		EMBL_Blattner.flush(genMAPPDBConnection);
 		EMBL_EcoGene.flush(genMAPPDBConnection);
 		EMBL_EchoBASE.flush(genMAPPDBConnection);
-		EMBL_GeneOntology.flush(genMAPPDBConnection);
 		
 		Blattner_InterPro.flush(genMAPPDBConnection);
 		Blattner_PDB.flush(genMAPPDBConnection);
 		Blattner_Pfam.flush(genMAPPDBConnection);
-		Blattner_GeneOntology.flush(genMAPPDBConnection);
 		
 		EcoGene_InterPro.flush(genMAPPDBConnection);
 		EcoGene_PDB.flush(genMAPPDBConnection);
 		EcoGene_Pfam.flush(genMAPPDBConnection);
 		EcoGene_Blattner.flush(genMAPPDBConnection);
 		EcoGene_EchoBASE.flush(genMAPPDBConnection);
-		EcoGene_GeneOntology.flush(genMAPPDBConnection);
 		
 		EchoBASE_InterPro.flush(genMAPPDBConnection);
 		EchoBASE_PDB.flush(genMAPPDBConnection);
 		EchoBASE_Pfam.flush(genMAPPDBConnection);
 		EchoBASE_Blattner.flush(genMAPPDBConnection);
+	}
+	
+	/**
+	 * Builds the GeneOntologyRelationTables.
+	 * @param genMAPPDBConnection
+	 * @throws Exception
+	 */
+	private static void buildGeneOntologyRelationTables(Connection genMAPPDBConnection) throws Exception {
+		
+		Table EMBL_GeneOntology = new RelationsTable("EMBL-GeneOntology");
+		Table Blattner_GeneOntology = new RelationsTable("Blattner-GeneOntology");
+		Table EcoGene_GeneOntology = new RelationsTable("EcoGene-GeneOntology");
+		Table EchoBASE_GeneOntology = new RelationsTable("EchoBASE-GeneOntology");
+		
+		PreparedStatement ps;
+		String bridge = "S";
+		ResultSet result;
+		
+	    ps = genMAPPDBConnection.prepareStatement(sqlQueryBuilder("UniProt-EMBL"));
+	    result = ps.executeQuery();
+	    while(result.next()) {
+	    	EMBL_GeneOntology.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
+	    }
+	    ps = genMAPPDBConnection.prepareStatement(sqlQueryBuilder("UniProt-Blattner"));
+	    result = ps.executeQuery();
+	    while(result.next()) {
+	    	Blattner_GeneOntology.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
+	    }
+	    ps = genMAPPDBConnection.prepareStatement(sqlQueryBuilder("UniProt-EcoGene"));
+	    result = ps.executeQuery();
+	    while(result.next()) {
+	    	EcoGene_GeneOntology.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
+	    }
+	    ps = genMAPPDBConnection.prepareStatement(sqlQueryBuilder("UniProt-EchoBASE"));
+	    result = ps.executeQuery();
+	    while(result.next()) {
+	    	EchoBASE_GeneOntology.insert(result.getString(1) + ";" + result.getString(2) + ";" + bridge);
+	    }
+	    
+	    result.close();
+	    ps.close();
+	    
+		//Build the remaining GenMAPP database.
+		EMBL_GeneOntology.flush(genMAPPDBConnection);
+		Blattner_GeneOntology.flush(genMAPPDBConnection);
+		EcoGene_GeneOntology.flush(genMAPPDBConnection);
 		EchoBASE_GeneOntology.flush(genMAPPDBConnection);
 	}
 	
+	/**
+	 * Helps build an sql statment for 
+	 * the buildGeneOntologyRelationTables() method.
+	 * @param tableName
+	 * @return
+	 */
+	private static String sqlQueryBuilder(String tableName) {
+		return "SELECT [" + tableName + "].Related, " +
+		"[UniProt-GeneOntology].Related " +
+		"FROM [" + tableName + "] " +
+		"INNER JOIN [UniProt-GeneOntology] " +
+		"ON [" + tableName + "].Primary = [UniProt-GeneOntology].Primary";
+	}
 	
 	/**
-	 * Extract all the table data
+	 * Build the OriginalRowCounts table.
+	 * @param genMAPPDBConnection
+	 * @throws Exception
+	 */
+	private static void buildOriginalRowCountsTable(Connection genMAPPDBConnection) throws Exception {
+		
+		Table originalRowCountsTable = new RowCountsTable("OriginalRowCounts");
+		
+		String sqlStatement;
+		PreparedStatement ps = null;
+		ResultSet result = null;
+
+		//List of all tables in the GenMAPP database.
+		String[] tableNames = new String[] {"Blattner-GeneOntology", 
+				"Blattner-InterPro", "Blattner-PDB", "Blattner-Pfam", 
+				"EchoBASE", "EchoBASE-Blattner", "EchoBASE-GeneOntology", 
+				"EchoBASE-InterPro", "EchoBASE-PDB", "EchoBASE-Pfam",
+				"EcoGene", "EcoGene-Blattner", "EcoGene-EchoBASE",
+				"EcoGene-GeneOntology", "EcoGene-InterPro", "EcoGene-PDB",
+				"EcoGene-Pfam", "EMBL", "EMBL-Blattner", "EMBL-EchoBASE", 
+				"EMBL-EcoGene", "EMBL-GeneOntology", "EMBL-InterPro",
+				"EMBL-PDB", "EMBL-Pfam", "GeneOntology", "GeneOntologyCount", 
+				"GeneOntologyStage", "GeneOntologyTree", "Info", "InterPro",
+				"Other", "PDB", "Pfam", "Relations", "Systems", "UniProt",
+				"UniProt-BLattner", "UniProt-EchoBASE", "UniProt-EcoGene",
+				"UniProt-EMBL", "UniProt-GeneOntology", "UniProt-InterPro",
+				"UniProt-PDB", "UniProt-Pfam"};
+				
+		for(String tableName : tableNames) {
+			sqlStatement = "SELECT Count(*) FROM [" + tableName + "]";
+			ps = genMAPPDBConnection.prepareStatement(sqlStatement);  
+		    result = ps.executeQuery();
+		    while(result.next()) {
+		    	originalRowCountsTable.insert(tableName + ";" + result.getString(1));
+		    }
+		    ps.close();
+		}
+		
+		//Build the table into the GenMAPP database.
+		originalRowCountsTable.flush(genMAPPDBConnection);
+	}
+	
+	
+
+	/**
+	 * Extract all the table data.
+	 * @param relationalDBConnetion
 	 * @throws SQLException
 	 */
 	private static void extractUniProtTableData(Connection relationalDBConnetion) throws SQLException {
@@ -626,12 +715,20 @@ public class ExportToGenMaPP {
 		relationalDBConnetion.close();
 		AccessFileCreator.closeConnection();
 
-		
-		// ********************************************************
-		// ************** EXPORT GO TABLES TO GENAMPP ********
-		// ********************************************************
-
+		//Build the GO tables.
 		(new ExportGoData(outputFile)).export();
+		
+		//Open a connection to the GenMAPP database file.
+		genMAPPDBConnection = AccessFileCreator.openConnection(outputFile);
+		
+		//Build the Relation tables.
+		buildGeneOntologyRelationTables(genMAPPDBConnection);	
+		
+		//Build OriginalRowCounts table.
+		buildOriginalRowCountsTable(genMAPPDBConnection);
+		
+		//Close the database connection.
+		AccessFileCreator.closeConnection();
 		
 		
 	}

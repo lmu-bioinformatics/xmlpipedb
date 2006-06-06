@@ -5,7 +5,9 @@
     <property name="lib.dir" location="lib" />
     <property name="dist.dir" location="dist" />
 	<property name="scripts.dir" value="scripts" />
-    <property name="jarfile" location="${dist.dir}/${ant.project.name}.jar" />
+	<!-- Put the jar file into the lib folder, since clicking on it would cause the 
+	program to run without the correct heap setting (1024M - see .bat or .sh file) -->
+    <property name="jarfile" location="${dist.dir}/lib/${ant.project.name}.jar" />
     <property name="compile.debug" value="true" />
 
     <fileset id="lib.dir.jars" dir="${lib.dir}">
@@ -56,7 +58,8 @@
 		<jar destfile="${jarfile}" basedir="${bin.dir}">
 			<manifest>
 				<attribute name="Main-Class" value="edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder" />
-				<attribute name="Class-Path" value="lib/antlr-2.7rcl.jar lib/asm.jar lib/cglib-2.1.3.jar lib/commons-beanutils.jar lib/commons-collections-2.1.1.jar lib/commons-logging-1.0.4.jar lib/dom4j-1.6.1.jar lib/ehcache-1.1.jar lib/godb.jar lib/hibernate3.jar lib/hyperjaxb2.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/jaxb-libs.jar lib/jta.jar lib/junit-3.8.1.jar lib/log4j-1.2.11.jar lib/postgresql-8.1-405.jdbc3.jar lib/relaxngDatatype.jar lib/shag-1.1.jar lib/uniprotdb.jar lib/xpdutils.jar lib/xsdlib.jar" />
+<!--				<attribute name="Class-Path" value="lib/antlr-2.7rcl.jar lib/asm.jar lib/cglib-2.1.3.jar lib/commons-beanutils.jar lib/commons-collections-2.1.1.jar lib/commons-logging-1.0.4.jar lib/dom4j-1.6.1.jar lib/ehcache-1.1.jar lib/godb.jar lib/hibernate3.jar lib/hyperjaxb2.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/jaxb-libs.jar lib/jta.jar lib/junit-3.8.1.jar lib/log4j-1.2.11.jar lib/postgresql-8.1-405.jdbc3.jar lib/relaxngDatatype.jar lib/shag-1.1.jar lib/uniprotdb.jar lib/xpdutils.jar lib/xsdlib.jar" />-->
+				<attribute name="Class-Path" value="lib/antlr-2.7rcl.jar asm.jar cglib-2.1.3.jar commons-beanutils.jar commons-collections-2.1.1.jar commons-logging-1.0.4.jar dom4j-1.6.1.jar ehcache-1.1.jar godb.jar hibernate3.jar hyperjaxb2.jar jaxb-api.jar jaxb-impl.jar jaxb-libs.jar jta.jar junit-3.8.1.jar log4j-1.2.11.jar postgresql-8.1-405.jdbc3.jar relaxngDatatype.jar shag-1.1.jar uniprotdb.jar xpdutils.jar xsdlib.jar" />
 			</manifest>
 		</jar>
     </target>

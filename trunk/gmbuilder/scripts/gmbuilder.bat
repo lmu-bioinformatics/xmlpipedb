@@ -1,3 +1,3 @@
 @echo off
 
-java -jar "gmbuilder.jar"
+java -Xmx1024m -jar "gmbuilder.jar"

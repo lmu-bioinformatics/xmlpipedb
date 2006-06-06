@@ -699,7 +699,6 @@ public class ExportToGenMaPP {
 		}
 		
 		//Free the UniProt data.
-		uniprotTable_ID = null;
 		uniprotTable_EntryName = null;
 		uniprotTable_GeneName = null;
 		uniprotTable_ProteinName = null;
@@ -710,6 +709,10 @@ public class ExportToGenMaPP {
 		
 		//Build the Relation tables.
 		buildRelationTables(relationalDBConnetion, genMAPPDBConnection);		
+		
+		//Free remaining tables.
+		uniprotTable_ID = null;
+		blattnerTable_IDs = null;
 		
 		//Close both database connections.
 		relationalDBConnetion.close();

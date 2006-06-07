@@ -210,8 +210,10 @@ public class ExportToGenMaPP {
 		String remarks = " ";
 		ResultSet result;
 		
+        // !!!!! This can be unified.
 	    ps.setString(1, "EMBL");
 	    result = ps.executeQuery();
+        // !!!!! More readable (and less error-prone) to use column names instead of relying on column order.
 	    while(result.next()) {
 			EMBL.insert(result.getString(1) + ";" + species + ";" + date + ";" + remarks);
 	    }	
@@ -300,11 +302,13 @@ public class ExportToGenMaPP {
 		//Extract the data.
 		//
 		
+        // !!!!! These can also be unified.
 		//All UniProt to x-tables.
 		PreparedStatement ps = relationalDBConnetion.prepareStatement("select hjvalue, id from dbreferencetype inner join entrytype_accession on entrytype_dbreference_hjid = entrytype_accession_hjid where type = ?");
 		String bridge = "S";
 		ResultSet result;
 
+        // !!!!! More readable (and less error-prone) to use column names instead of relying on column order.
 	    ps.setString(1, "EMBL");
 	    result = ps.executeQuery();
 	    while(result.next()) {
@@ -655,8 +659,8 @@ public class ExportToGenMaPP {
 		AccessFileCreator.createNewAccessFile(outputFile);
 		
 		//Open a connection to the relational database, requires a hibernate configuration.
-		Connection relationalDBConnetion = null;
-		Class.forName("org.postgresql.Driver");
+		Connection relationalDBConnetion = null; // !!!!! misspelled variable name
+		Class.forName("org.postgresql.Driver"); // !!!!! Hardcoded --- shouldn't this come from the config also?
 		Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
 		if (hibernateConfiguration != null) {
 			relationalDBConnetion = DriverManager.getConnection(

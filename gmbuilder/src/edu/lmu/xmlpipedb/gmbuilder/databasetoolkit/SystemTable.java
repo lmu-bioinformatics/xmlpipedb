@@ -25,6 +25,12 @@ public class SystemTable extends Table {
 				"Species","MEMO",
 				"\"Date\"","DATE",
 				"Remarks","MEMO"});
+        // Alternative column definitions when not using Access.
+//        super(tableName, new String[] {"id", "varchar(50) not null",
+//                "species", "varchar",
+//                "\"date\"", "varchar",
+//                "remarks", "varchar"
+//        });
 		//Automatically create this table.
 		create();
 	}

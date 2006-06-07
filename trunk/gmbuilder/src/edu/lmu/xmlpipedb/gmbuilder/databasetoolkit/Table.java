@@ -155,6 +155,7 @@ public abstract class Table {
 		String[] namesAndValues = values.split(";");
 		List<String> valueBag = new ArrayList<String>();
 		
+        // !!!!! StringBuffer is more efficient for this kind of string construction.
 		String sqlStatement = "INSERT INTO \"" + tableName + "\" (";
 			
 		for(int i = 0; i < namesAndValues.length; i+=2) {
@@ -165,7 +166,7 @@ public abstract class Table {
 				throw new Exception("Not a valid table column: " + namesAndValues[i]);
 			}
 			sqlStatement += namesAndValues[i] + ",";
-			valueBag.add(namesAndValues[i+1]);;
+			valueBag.add(namesAndValues[i+1]);; // !!!!! Double semi-colons...sloppy...
 		}
 		sqlStatement = sqlStatement.substring(0, sqlStatement.length()-1);
 		sqlStatement += ") VALUES (";

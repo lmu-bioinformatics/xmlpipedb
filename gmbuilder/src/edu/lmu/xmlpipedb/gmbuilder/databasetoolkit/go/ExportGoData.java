@@ -18,9 +18,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,6 +53,8 @@ public class ExportGoData {
 	private HashMap<String, Integer> goCount;
 	private HashMap<String, Boolean> duplicates;
 	
+	
+	
 	// GO DB variables 
 	private final int NUM_OF_GO_COLS	= 8;
 	private final int PARENT_COL		= 4 - 1;
@@ -71,6 +75,7 @@ public class ExportGoData {
 		goCount		= new HashMap<String, Integer>();
 		duplicates	= new HashMap<String, Boolean>();
 		createNamespaceMappings();
+				
 	}
 	
 	/**
@@ -94,6 +99,7 @@ public class ExportGoData {
 		populateGoTables();
 		godb.updateSystemsTable(connection, Date, "T");
 		closeConnection();
+		System.out.println("done!");
 	}
 	
 	/**
@@ -127,8 +133,92 @@ public class ExportGoData {
 		populateGeneOntologyTable(session);
 		populateGeneOntologyTree();
 		populateGeneOntologyCount();
+		populateUnitprotGoCount();
 		
 		session.close();		
+		
+	}
+	
+	private ResultSet getUniprotIds(String id, PreparedStatement ps) throws SQLException {
+		String sql = "select \"Primary\" from " + Go.UniProt_Go + " where Related = ?";
+		ps = connection.prepareStatement(sql);
+		ps.setString(1, id);
+		return ps.executeQuery();
+	}
+	
+	/**
+	 * Populates genMAPP's Uniprot-GOCount table
+	 * 
+	 * @throws SQLException
+	 */
+	private void populateUnitprotGoCount() throws SQLException {
+		System.out.println("creating: " + Go.UniProt_GoCount);
+		// Create an entry for each unique GO ID 
+		String sql = "select Id from " + Go.GeneOntologyCount;
+		ResultSet goids = connection.prepareStatement(sql).executeQuery();
+		while(goids.next())  {
+			String id = goids.getString(1);
+			sql = "select \"Primary\" from " + Go.UniProt_Go + " where Related = ?";
+			PreparedStatement ps = connection.prepareStatement(sql);
+			ps.setString(1, id);
+			ResultSet results = ps.executeQuery();
+			int count = 0;
+			HashMap<String, Boolean> uniprot_IDs = new HashMap<String, Boolean>();
+			// Count the number of times each GO ID maps to a unique UP ID 
+			// as defined in the Uniprot-GO table
+			while (results.next()) {
+				++count;
+				uniprot_IDs.put(results.getString(1), true);
+			}
+			ps.close();
+			// Count the number of times each GO ID child maps to a unique UP ID
+			// as defined in the Uniprot-GO table
+			getTotalCount(id, uniprot_IDs);
+			String[] values = new String[] {id, count + "" , uniprot_IDs.size() + ""};
+			godb.insert(connection, godb.UniProt_GoCount, values);
+		}
+		
+		// Get Overall Totals for Entire GO Tree
+		sql = "select COUNT(Primary) as total from (select DISTINCT Primary from " + Go.UniProt_Go + ")";
+		ResultSet r = connection.prepareStatement(sql).executeQuery();
+		r.next();
+		String total = r.getString(1);
+		godb.insert(connection, godb.UniProt_GoCount, new String[] {"GO", 0 + "", total});
+
+	}
+	
+	
+	/**
+	 * Recursively counts the number of time each GO ID maps to a unique Uniprot ID
+	 * as defined in the Uniprot-GO table
+	 * 
+	 * @param parent
+	 * 			parent GO ID
+	 * @param uniprot_IDs
+	 * 			map of existing Uniprot IDs
+	 * @throws SQLException
+	 */
+	private void getTotalCount(String parent, HashMap<String, Boolean> uniprot_IDs) throws SQLException {
+		String sql = "select Id from " + Go.GeneOntology + " where Parent = ?";
+		PreparedStatement ps = connection.prepareStatement(sql);
+		ps.setString(1, parent);
+		ResultSet goResults 	 = ps.executeQuery();
+		while(goResults.next()) {
+			PreparedStatement s = null;
+			String id = goResults.getString(1);
+			
+			String mysql = "select \"Primary\" from " + Go.UniProt_Go + " where Related = ?";
+			PreparedStatement myps = connection.prepareStatement(mysql);
+			myps.setString(1, id);
+			ResultSet upResults = myps.executeQuery();
+			while (upResults.next()) {
+				uniprot_IDs.put(upResults.getString(1), true);
+			}
+			myps.close();
+			getTotalCount(id, uniprot_IDs);
+			
+		}
+		ps.close();
 		
 	}
 	
@@ -143,6 +233,7 @@ public class ExportGoData {
 		File file = new File("src/edu/lmu/xmlpipedb/gmbuilder/resource/GoAssociations/associations.txt");
 		BufferedReader in = new BufferedReader(new FileReader(file.getCanonicalPath()));
 		String line = null;
+		String GO_ID;
 	    while ((line = in.readLine()) != null) {
 	    	// Grab the Uniprot ID 
 	    	Matcher m = Pattern.compile("UniProtKB/[\\w-]+:(\\w+)").matcher(line);

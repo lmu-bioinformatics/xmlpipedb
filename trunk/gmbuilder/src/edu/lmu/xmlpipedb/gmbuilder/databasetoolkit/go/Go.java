@@ -25,9 +25,17 @@ public class Go {
 	protected static String GeneOntologyStage	= "GeneOntologyStage";	
 	protected static String GeneOntologyCount	= "GeneOntologyCount";
 	protected static String UniProt_Go		    = "\"UniProt-GeneOntology\"";
+	protected static String UniProt_GoCount	    = "\"UniProt-GOCount\"";	
 	
 	
-	private String[] tables = {GeneOntology, GeneOntologyStage, GeneOntologyTree, GeneOntologyCount, UniProt_Go };
+	private String[] tables = {
+			GeneOntology, 
+			GeneOntologyStage, 
+			GeneOntologyTree, 
+			GeneOntologyCount, 
+			UniProt_Go,
+			UniProt_GoCount
+			};
 	
 	/**
 	 * Constuctor
@@ -118,7 +126,8 @@ public class Go {
 				{"ID", "NAME", "Type","Parent","Relation","Species", "\"Date\"", "Remarks"}, /* GO stage */
 				{"OrderNo", "\"Level\"", "ID", "NAME"}, /* GOTree */
 				{"ID", "Count"}, /* GOCount */
-				{"\"Primary\"", "Related", "Bridge"} /* Uniprot-Go */
+				{"\"Primary\"", "Related", "Bridge"}, /* Uniprot-Go */
+				{"GO", "Count", "Total"} /* Uniprot-GoCount */
 		       };
 		String[][] types  = new String[][]
 		       {
@@ -126,12 +135,12 @@ public class Go {
 				{"VARCHAR(50) NOT NULL", "MEMO", "VARCHAR(2)","VARCHAR(50)","CHAR","MEMO", "DATE", "MEMO"}, /* GO stage */
 				{"LONG", "Int", "VARCHAR(50)", "MEMO"}, /* GOTree */
 				{"VARCHAR(50) NOT NULL", "Int"}, /* GOCount */
-                // Alternative column definitions when not using Access.
-                //{"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO */
-                //{"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO stage*/
-                //{"varchar", "varchar", "VARCHAR(50)", "varchar"}, /* GOTree */
-                //{"VARCHAR(50) NOT NULL", "varchar"}, /* GOCount */
-				{"VARCHAR(50) NOT NULL", "VARCHAR(50) NOT NULL", "VARCHAR(3) NOT NULL"}  /* UniProt-Go */
+//                // Alternative column definitions when not using Access.
+//                //{"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO */
+//                //{"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO stage*/
+//                //{"varchar", "varchar", "VARCHAR(50)", "varchar"}, /* GOTree */
+				{"VARCHAR(50) NOT NULL", "VARCHAR(50) NOT NULL", "VARCHAR(3) NOT NULL"},  /* UniProt-Go */
+				{"VARCHAR(50) NOT NULL", "Int", "Long"}  /* UniProt-GoCount */
 		       };
 
 		

@@ -135,12 +135,15 @@ public class Go {
 				{"VARCHAR(50) NOT NULL", "MEMO", "VARCHAR(2)","VARCHAR(50)","CHAR","MEMO", "DATE", "MEMO"}, /* GO stage */
 				{"LONG", "Int", "VARCHAR(50)", "MEMO"}, /* GOTree */
 				{"VARCHAR(50) NOT NULL", "Int"}, /* GOCount */
-//                // Alternative column definitions when not using Access.
-//                //{"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO */
-//                //{"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO stage*/
-//                //{"varchar", "varchar", "VARCHAR(50)", "varchar"}, /* GOTree */
-				{"VARCHAR(50) NOT NULL", "VARCHAR(50) NOT NULL", "VARCHAR(3) NOT NULL"},  /* UniProt-Go */
-				{"VARCHAR(50) NOT NULL", "Int", "Long"}  /* UniProt-GoCount */
+                {"VARCHAR(50) NOT NULL", "VARCHAR(50) NOT NULL", "VARCHAR(3) NOT NULL"},  /* UniProt-Go */
+                {"VARCHAR(50) NOT NULL", "Int", "Long"}  /* UniProt-GoCount */
+                // Alternative column definitions when not using Access.
+//                {"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO */
+//                {"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO stage*/
+//                {"varchar", "varchar", "VARCHAR(50)", "varchar"}, /* GOTree */
+//                {"VARCHAR(50) NOT NULL", "varchar"}, /* GOCount */
+//                {"VARCHAR(50) NOT NULL", "VARCHAR(50) NOT NULL", "VARCHAR(3) NOT NULL"},  /* UniProt-Go */
+//                {"VARCHAR(50) NOT NULL", "varchar", "varchar"}  /* UniProt-GoCount */
 		       };
 
 		

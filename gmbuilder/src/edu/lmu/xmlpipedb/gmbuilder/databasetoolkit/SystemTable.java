@@ -26,10 +26,11 @@ public class SystemTable extends Table {
 				"\"Date\"","DATE",
 				"Remarks","MEMO"});
         // Alternative column definitions when not using Access.
-//        super(tableName, new String[] {"id", "varchar(50) not null",
-//                "species", "varchar",
-//                "\"date\"", "varchar",
-//                "remarks", "varchar"
+        // !!!!! Case must be preserved for now due to string-matching requirement.
+//        super(tableName, new String[] {"ID", "varchar(50) not null",
+//                "Species", "varchar",
+//                "\"Date\"", "varchar",
+//                "Remarks", "varchar"
 //        });
 		//Automatically create this table.
 		create();
@@ -50,6 +51,8 @@ public class SystemTable extends Table {
 			throw new Exception("Incorrect number of arguments" + values.length);
 		}
 		
+        // !!!!! Strings are copied here from the constructor --- should be specified in one place
+        // to avoid inadvertent string matching issues later.
 		String namesAndValues = "ID;" + values[0];
 		namesAndValues += ";Species;" + values[1];
 		namesAndValues += ";\"Date\";" + values[2];

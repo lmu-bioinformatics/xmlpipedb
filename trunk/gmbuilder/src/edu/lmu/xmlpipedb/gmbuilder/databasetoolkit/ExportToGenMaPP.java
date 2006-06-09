@@ -575,6 +575,12 @@ public class ExportToGenMaPP {
 		"FROM [" + tableName + "] " +
 		"INNER JOIN [UniProt-GeneOntology] " +
 		"ON [" + tableName + "].Primary = [UniProt-GeneOntology].Primary";
+        // Alternative query when using a database other than Access.
+//        return "SELECT \"" + tableName + "\".Related, " +
+//        "\"UniProt-GeneOntology\".Related " +
+//        "FROM \"" + tableName + "\" " +
+//        "INNER JOIN \"UniProt-GeneOntology\" " +
+//        "ON \"" + tableName + "\".\"Primary\" = \"UniProt-GeneOntology\".\"Primary\"";
 	}
 	
 	/**
@@ -608,6 +614,9 @@ public class ExportToGenMaPP {
 				
 		for(String tableName : tableNames) {
 			sqlStatement = "SELECT Count(*) FROM [" + tableName + "]";
+            // Alternative query when using a database other than Access.
+//            String delimiter = (tableName.indexOf("-") > -1) ? "\"" : "";
+//            sqlStatement = "SELECT Count(*) FROM " + delimiter + tableName + delimiter;
 			ps = genMAPPDBConnection.prepareStatement(sqlStatement);  
 		    result = ps.executeQuery();
 		    while(result.next()) {

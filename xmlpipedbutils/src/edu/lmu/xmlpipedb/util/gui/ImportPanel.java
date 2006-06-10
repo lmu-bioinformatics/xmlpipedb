@@ -179,6 +179,8 @@ public class ImportPanel extends JPanel {
                 InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(this, "Reading " + _xmlFile, new FileInputStream(_xmlFile)));
                 ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration);
                 importEngine.loadToDB(in);
+                // notify user when import is complete
+                JOptionPane.showMessageDialog(this, "Import Complete: " + _xmlFile, "Import Complete", JOptionPane.INFORMATION_MESSAGE);
             } catch(Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

@@ -33,10 +33,10 @@ Unix/Linux/OSX:
 
 
 --outputDirectory=dirname 
-The directory when generating the source code and file; defaults to dg-gen
+The directory when generating the source code and file; defaults to db-gen
 
 --bindings=filename       
-The binding file used when generation the data base source code and files for the time. Defaults to standard binding file supplied by XSD-To-DB
+The binding file used when generating the data base source code and files for the time. Defaults to standard binding file supplied by XSD-To-DB
 
 --xsdURL=url              
 The URL of the XSD to convert. This must be a URL on the web. A file URL will not work.

@@ -86,7 +86,7 @@ public class ExportGoData {
 	 * @throws IOException
 	 * @throws JAXBException
 	 */
-	public void export() throws ClassNotFoundException, 
+	public void export(File GOA_File) throws ClassNotFoundException, 
 			SQLException, HibernateException, 
 			SAXException, IOException, JAXBException {
 		
@@ -94,7 +94,7 @@ public class ExportGoData {
 		
 		openConnection();
 		godb.createTables(connection);
-		populateGoTables();
+		populateGoTables(GOA_File);
 		godb.updateSystemsTable(connection, Date, "T");
 		closeConnection();
 		System.out.println("done!");
@@ -119,7 +119,7 @@ public class ExportGoData {
 	 * @throws IOException
 	 * @throws JAXBException
 	 */
-	private void populateGoTables() throws SQLException, 
+	private void populateGoTables(File GOA_File) throws SQLException, 
 			HibernateException, SAXException, IOException, 
 			JAXBException {
 		
@@ -127,7 +127,7 @@ public class ExportGoData {
     	SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
 		Session session = sessionFactory.openSession(); // open Hibernate session
 
-		populateUniprotGoTable();
+		populateUniprotGoTable(GOA_File);
 		populateGeneOntologyTable(session);
 		populateGeneOntologyTree();
 		populateGeneOntologyCount();
@@ -222,16 +222,17 @@ public class ExportGoData {
 	 * @throws IOException
 	 * @throws SQLException
 	 */
-	private void populateUniprotGoTable() throws IOException, SQLException {
-
-		File file = new File("src/edu/lmu/xmlpipedb/gmbuilder/resource/GoAssociations/associations.txt");
-		BufferedReader in = new BufferedReader(new FileReader(file.getCanonicalPath()));
+	private void populateUniprotGoTable(File GOA_File) throws IOException, SQLException {
+		BufferedReader in = new BufferedReader(new FileReader(GOA_File.getCanonicalPath()));
 		String line = null;
 	    while ((line = in.readLine()) != null) {
 	    	// Grab the Uniprot ID 
-	    	Matcher m = Pattern.compile("UniProtKB/[\\w-]+:(\\w+)").matcher(line);
-	        if (m.find()) {
-	            String Up_ID = m.group(1);
+	    	Matcher m1 = Pattern.compile("UniProtKB/[\\w-]+:(\\w+)").matcher(line);
+	    	Matcher m2 = Pattern.compile("UniProt\\s+(\\w{6})").matcher(line);
+	    	boolean regexp1 = m1.find();
+	    	boolean regexp2 = m2.find();
+	    	if (regexp1 || regexp2) {
+	            String Up_ID = regexp1 ?  m1.group(1) : m2.group(1);
 	            // Grab the GO ID(s) 
 	            Matcher match  = Pattern.compile("GO:(\\w+)").matcher(line);
 	            while (match.find()) {

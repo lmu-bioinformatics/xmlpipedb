@@ -6,7 +6,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
 import javax.swing.ProgressMonitorInputStream;
 import javax.xml.bind.JAXBException;
 
@@ -16,6 +21,8 @@ import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.ImportEngine;
+import edu.lmu.xmlpipedb.util.engines.QueryEngine;
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class ImportUniprotTest extends TestCase {
@@ -54,7 +61,9 @@ public class ImportUniprotTest extends TestCase {
 			// second param does not need a real value, for our purposes here
 		    _configEng = new ConfigurationEngine("./src/edu/lmu/xmlpipedb/gmbuilder/test/hibernate.properties", "");
 		    _hibernateConfiguration = _configEng.getHibernateConfiguration();
-			
+			// copied from GenMAPPBuilder line 260
+		    _hibernateConfiguration.addJar(new File("./lib/uniprotdb.jar"));
+		    
 			in = new BufferedInputStream(new FileInputStream(_xmlFile));
 			// this is the same call being made by ImportPanel in line 151
 			importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration);
@@ -86,7 +95,32 @@ public class ImportUniprotTest extends TestCase {
 	
 	public void testImport(){
 		
-		
+        QueryEngine qe = new QueryEngine(_hibernateConfiguration);
+        Connection conn = qe.currentSession().connection();
+        PreparedStatement query = null;
+        ResultSet results = null;
+
+        try {
+            query = conn.prepareStatement("select count(*) from entrytype;");
+            results = query.executeQuery();
+            results.next();
+            Assert.assertEquals(1, results.getInt(1));
+            
+        } catch(SQLException sqle) {
+            //JOptionPane.showMessageDialog(this, sqle.getMessage());
+        } catch(Exception e) {
+            //reportException(e);
+        } finally {
+            try {
+                results.close();
+                query.close();
+                 conn.close();
+                // HibernateUtil.closeSession();
+            } catch(Exception e) {
+                //reportException(e);
+            } // Ignore the errors here, nothing we can do anyways.
+        }
+
 		
 		
 		

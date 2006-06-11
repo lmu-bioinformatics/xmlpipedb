@@ -680,7 +680,7 @@ public class ExportToGenMaPP {
 		
 		//Open a connection to the GenMAPP database file.
 		Connection genMAPPDBConnection = AccessFileCreator.openConnection(outputFile);
-		
+
 		//Update the "Info Table".
 		AccessFileCreator.updateInfoTable("Loyola Marymount University",
 				dateString1, "UniProt", "|Escherichia coli K12|",
@@ -730,9 +730,11 @@ public class ExportToGenMaPP {
 		//Close both database connections.
 		relationalDBConnetion.close();
 		AccessFileCreator.closeConnection();
+		
 
 		//Build the GO tables.
-		(new ExportGoData(outputFile)).export();
+		File file = new File("./18.E_coli_K12.goa");
+		(new ExportGoData(outputFile)).export(file);
 		
 		//Open a connection to the GenMAPP database file.
 		genMAPPDBConnection = AccessFileCreator.openConnection(outputFile);

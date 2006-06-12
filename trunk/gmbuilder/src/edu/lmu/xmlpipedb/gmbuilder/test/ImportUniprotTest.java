@@ -10,10 +10,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
-import javax.swing.JOptionPane;
-import javax.swing.ProgressMonitorInputStream;
 import javax.xml.bind.JAXBException;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
@@ -22,8 +24,6 @@ import org.xml.sax.SAXException;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.ImportEngine;
 import edu.lmu.xmlpipedb.util.engines.QueryEngine;
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 public class ImportUniprotTest extends TestCase {
 
@@ -49,7 +49,8 @@ public class ImportUniprotTest extends TestCase {
 		InputStream in;
 		
 		// path to test xml file
-		_xmlFile = new File("./src/edu/lmu/xmlpipedb/gmbuilder/test/uniprot_unit_test_02.xml");
+		// test_03 contains 5 "entry" records
+		_xmlFile = new File("./src/edu/lmu/xmlpipedb/gmbuilder/test/uniprot_unit_test_03.xml");
 		if( !(_xmlFile.exists()) )
 			throw new FileNotFoundException( "Could not find the xml file for testing.");
 			
@@ -93,18 +94,87 @@ public class ImportUniprotTest extends TestCase {
 		
 	}
 	
-	public void testImport(){
-		
-        QueryEngine qe = new QueryEngine(_hibernateConfiguration);
+	/* ### truths about Uniprot
+	 *  - based on the file uniprot_unit_test_03.xml
+	 *  - with entry 5 records
+	 *   
+	 * table			truth
+	 * -----			-----
+	 * copyright 		never has any records
+	 * entrytype		has 5 records or 1 record per "entry" record in xml file
+	 *					dataset="Swiss-Prot"
+	 * proteinnametype	must have 13 records 
+	 * genenametype		must have 12 records
+	 * dbreference		must have 74 records
+	 * organismnametype	must have 5 records, 1 for each "entry"
+	 * sequencetype		must have 5 records, 1 for each "entry"
+	 * 
+	 * ----
+	 * Organism entries are broken into 5 tables:
+	 * organismnametype
+	 * organismtype
+	 * organismtype_lineagetype
+	 * organismtype_lineagetype_taxon
+	 * dbreftype
+	 * The last table, dbreftype contains the dbreference from the organism
+	 *   entry as well as all the dbreference's for the entire entry. The number
+	 *   of dbreference's for the entry varies. It also contains dbReference records
+	 *   that are listed under "citation", nested under "reference". Duplicate 
+	 *   entries are kept.
+	 * 
+	 */
+	
+	
+	public void testImportCounts(){
+		// initialize expected test results
+		int copyrightcount = 0;
+		int entrytypecount = 5;
+		int proteinnametypecount = 13;
+		int genenametypecount = 12;
+		int dbreferencecount = 74;
+		int organismnametypecount = 5;
+		int sequencetypecount = 5;
+
+		QueryEngine qe = new QueryEngine(_hibernateConfiguration);
         Connection conn = qe.currentSession().connection();
         PreparedStatement query = null;
         ResultSet results = null;
 
         try {
+            query = conn.prepareStatement("select count(*) from copyright;");
+            results = query.executeQuery();
+            results.next();
+            Assert.assertEquals(copyrightcount, results.getInt(1));
+            
             query = conn.prepareStatement("select count(*) from entrytype;");
             results = query.executeQuery();
             results.next();
-            Assert.assertEquals(1, results.getInt(1));
+            Assert.assertEquals(entrytypecount, results.getInt(1));
+            
+            query = conn.prepareStatement("select count(*) from proteinnametype;");
+            results = query.executeQuery();
+            results.next();
+            Assert.assertEquals(proteinnametypecount, results.getInt(1));
+            
+            query = conn.prepareStatement("select count(*) from genenametype;");
+            results = query.executeQuery();
+            results.next();
+            Assert.assertEquals(genenametypecount, results.getInt(1));
+            
+            query = conn.prepareStatement("select count(*) from dbreference;");
+            results = query.executeQuery();
+            results.next();
+            Assert.assertEquals(dbreferencecount, results.getInt(1));
+            
+            query = conn.prepareStatement("select count(*) from organismnametype;");
+            results = query.executeQuery();
+            results.next();
+            Assert.assertEquals(organismnametypecount, results.getInt(1));
+            
+            query = conn.prepareStatement("select count(*) from sequencetype;");
+            results = query.executeQuery();
+            results.next();
+            Assert.assertEquals(sequencetypecount, results.getInt(1));
             
         } catch(SQLException sqle) {
             //JOptionPane.showMessageDialog(this, sqle.getMessage());
@@ -120,11 +190,49 @@ public class ImportUniprotTest extends TestCase {
                 //reportException(e);
             } // Ignore the errors here, nothing we can do anyways.
         }
+	} // end testImportCounts
 
+	public void testImportData(){
+		// initialize expected test results
+		HashMap sequences = new HashMap(5);
+			sequences.put("571", "MSQPWPAVEIARMILAGFDDYRDHFQRITLGARQRFEQARWQDIQQAAAARINLYEEKVAEVNGWLRQAFAAEVLLDVEQWPLVKNAYIHLIDPRLDDELAETWYNSLFCSLFSHDLISDGCMFIHTTRPSMRGRERAAQTRTYRLDGSLRNLLRAVFADYPFDMPYGDLEGDLARLEEQLRECLPDWVCKDPALAVELFVPVLYRNKGAYLVGRLYNSDEQWPLVIPLLHREGHGIEADALITDEAEVSIIFSFTRSYFMADVPVPAEFVNFLKRILPGKHIAELYTSIGFYKQGKSEFYRALINHLASSDDRFVMAPGVRGMVMSVFTLPGFNTVFKIIKDRFSPSKTVDRATVIDKYRLVKSVDRVGRMADTQEFADFRFPRSKFEPDCLAELLEVAPSTVALEGDTVLIRHCWTERRMTPLNLYLEQATEGQVLEALEDYGLAIKQLAAANIFPGDMLLKNFGVTRHGRVVFYDYDEISFLTEVNFRHIPPPRYPEDEMSGEPWYSIGPHDVFPEEFPPFLFADMGQRRLFSRLHGELYDADYWKGLQAAIREGKVIDVFPYRRKAR");
+			sequences.put("78", "MSTIEERVKKIVAEQLGVKEEEVTVEKSFVDDLGADSLDTVELVMALEEEFETEIPDEEAEKITTVQAAIDYVKAHQA");
+			sequences.put("653", "MSAAPLYPVRPEVAATTLTDEATYKAMYQQSVINPDGFWREQAQRIDWIKPFTKVKQTSFDDHHVDIKWFADGTLNVSSNCLDRHLEERGDQLAIIWEGDDPSEHRNITYRELHEQVCKFANALRGQDVHRGDVVTIYMPMIPEAVVAMLACARIGAIHSVVFGGFSPEALAGRIIDCKSKVVITADEGVRGGRRTPLKANVDLALTNPETSSVQKIIVCKRTGGDIAWHQHRDIWYEDLMKVASSHCAPKEMGAEEALFILYTSGSTGKPKGVLHTTGGYLVYAALTHERVFDYRPGEVYWCTADVGWVTGHSYIVYGPLANGATTLLFEGVPNYPDITRVSKIVDKHKVNILYTAPTAIRAMMAEGQAAVEGADGSSLRLLGSVGEPINPEAWNWYYKTVGKERCPIVDTWWQTETGGILISPLPGATGLKPGSATRPFFGVVPALVDNLGNLIDGAAEGNLVILDSWPGQSRSLYGDHDRFVDTYFKTFRGMYFTGDGARRDEDGYYWITGRVDDVLNVSGHRMGTAEIESAMVAHSKVAEAAVVGVPHDIKGQGIYVYVTLNAGIEASEQLRLELKNWVRKEIGPIASPDVIQWAPGLPKTRSGKIMRRILRKIATGEYDALGDISTLADPGVVQHLIDTHKAMNLASA");
+			sequences.put("644", "MFDIRKYPQALAVSQSAALTPEDYRRLYRQSVEDPDTFWAEQAKRLDWIKPWSSVQQCDLHTGKARWFDGAQLNVSYNCIDRHLAQRGEQTALLWEGDDPKDSKAITYRELHRQVCRLANAMKARGVKKGDRVSIYMPMIPEAAFAMLACTRIGAIHSVVFGGFSPDALRDRILDADCRTVITADEGVRGGKRIPLKQNVDKALASCPAVSSVLVVRRTGGDVAWTEGRDLWYHEATKDAGDDCPPEPMEAEDPLFILYTSGSTGKPKGVLHTTGGYLLQATMTFKVVFDYRDGEVFWCTADVGWVTGHSYIVYGPLANGAISLMFEGVPNYPDTSRFWQVVDKHQVNIFYTAPTALRALMREGSAPLQSTSRKSLRLLGSVGEPINPEAWEWYFEEVGQKRCPIVDTWWQTETGGIMLTPLPGTQSLKPGCATQPMFGVQPVLLDEKGKLIEGPGAGVLAIKASWPGQIRSVYGDHQRMVDTYFKPLPGYYFTGDGARRDADGDYWITGRIDDVINVSGHRIGTAEVESALVLHDSVAEAAVVGYPHDLKGQGVYAFVTTMNGVTPDDTLKAELLALVSKEIGSFAKPELIQWAPALPKTRSGKIMRRILRKIACNELENLGDTSTLADPSVVQGLIDKRLNQ");
+			sequences.put("315", "MYDWLNALPKAELHLHLEGSLEPELLFALAERNKIALPWADVETLRGAYAFNNLQEFLDLYYQGADVLRTEQDFYDLTWAYLQRCKAQNVIHTEPFFDPQTHTDRGIAFEVVLNGISQALKDGREQLGISSGLILSFLRHLSEDEAQKTLDQALPFRDAFIAVGLDSSEMGHPPSKFQRVFDRARSEGFVAVAHAGEEGPPEYIWEALDLLKIKRIDHGVRAIEDERLMQRIIDEQIPLTVCPLSNTKLCVFDHMSQHNILDMLERGVKVTVNSDDPAYFGGYVTENFHALHTHLGMTEDQARRLAQNSLDARLV");
+
+		QueryEngine qe = new QueryEngine(_hibernateConfiguration);
+        Connection conn = qe.currentSession().connection();
+        PreparedStatement query = null;
+        ResultSet results = null;
+
+        try {
+            query = conn.prepareStatement("select length, value from sequencetype;");
+            results = query.executeQuery();
+            results.beforeFirst();
+            while(results.next()){
+            	String testResult = (String)sequences.get(results.getString("length"));
+            	Assert.assertEquals(testResult, (String)results.getString("value"));
+            }
+            
+  
+        } catch(SQLException sqle) {
+            //JOptionPane.showMessageDialog(this, sqle.getMessage());
+        } catch(Exception e) {
+            //reportException(e);
+        } finally {
+            try {
+                results.close();
+                query.close();
+                 conn.close();
+                // HibernateUtil.closeSession();
+            } catch(Exception e) {
+                //reportException(e);
+            } // Ignore the errors here, nothing we can do anyways.
+        }
 		
 		
-		
-	}
+	} // end testImportData
 	
 	
 }

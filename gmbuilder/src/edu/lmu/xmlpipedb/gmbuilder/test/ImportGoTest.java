@@ -92,37 +92,7 @@ public class ImportGoTest extends TestCase {
 		}
 		
 	}
-	
-	/* ### truths about Uniprot
-	 *  - based on the file uniprot_unit_test_03.xml
-	 *  - with entry 5 records
-	 *   
-	 * table			truth
-	 * -----			-----
-	 * copyright 		never has any records
-	 * entrytype		has 5 records or 1 record per "entry" record in xml file
-	 *					dataset="Swiss-Prot"
-	 * proteinnametype	must have 13 records 
-	 * genenametype		must have 12 records
-	 * dbreference		must have 74 records
-	 * organismnametype	must have 5 records, 1 for each "entry"
-	 * sequencetype		must have 5 records, 1 for each "entry"
-	 * 
-	 * ----
-	 * Organism entries are broken into 5 tables:
-	 * organismnametype
-	 * organismtype
-	 * organismtype_lineagetype
-	 * organismtype_lineagetype_taxon
-	 * dbreftype
-	 * The last table, dbreftype contains the dbreference from the organism
-	 *   entry as well as all the dbreference's for the entire entry. The number
-	 *   of dbreference's for the entry varies. It also contains dbReference records
-	 *   that are listed under "citation", nested under "reference". Duplicate 
-	 *   entries are kept.
-	 * 
-	 */
-	
+
 	
 	public void testImportCounts(){
 		// initialize expected test results

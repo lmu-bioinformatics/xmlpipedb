@@ -3,7 +3,7 @@
 -- from the current ODBC bridge to the "proxy" database will
 -- reroute all subsequent queries to that database.
 
-create table info(
+create table "Info"(
     owner varchar,
     version varchar,
     modsystem varchar,
@@ -13,7 +13,7 @@ create table info(
     notes varchar
 );
 
-create table systems(
+create table "Systems"(
     -- Quotes are used here because the code refers to this field
     -- in a case-sensitive manner.
     "Date" varchar,
@@ -21,12 +21,22 @@ create table systems(
     systemcode varchar
 );
 
-create table relations(
+create table "Relations"(
     systemcode varchar,
     relatedcode varchar,
     relation varchar,
     type varchar,
     source varchar
+);
+
+create table "Other"(
+    id varchar,
+    systemcode varchar,
+    name varchar,
+    annotations varchar,
+    species varchar,
+    date varchar,
+    remarks varchar
 );
 
 -- Unfortunately, it is not enough to just create these tables.

@@ -225,6 +225,7 @@ public class ExportGoData {
 	private void populateUniprotGoTable(File GOA_File) throws IOException, SQLException {
 		BufferedReader in = new BufferedReader(new FileReader(GOA_File.getCanonicalPath()));
 		String line = null;
+		HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
 	    while ((line = in.readLine()) != null) {
 	    	// Grab the Uniprot ID 
 	    	Matcher m1 = Pattern.compile("UniProtKB/[\\w-]+:(\\w+)").matcher(line);
@@ -236,8 +237,13 @@ public class ExportGoData {
 	            // Grab the GO ID(s) 
 	            Matcher match  = Pattern.compile("GO:(\\w+)").matcher(line);
 	            while (match.find()) {
-	            	String[] values = new String[] {Up_ID, match.group(1), ""};
-	            	godb.insert(connection,Go.UniProt_Go, values);
+	            	String GO_ID  = match.group(1);
+	    			String key = Up_ID + "," +  GO_ID;
+	    			if (!unique.containsKey(key)) {
+	    				unique.put(key, true);
+	    				String[] values = new String[] {Up_ID, GO_ID, ""};
+	    				godb.insert(connection,Go.UniProt_Go, values);
+	    			}
 	            }
 	        }
 	     }

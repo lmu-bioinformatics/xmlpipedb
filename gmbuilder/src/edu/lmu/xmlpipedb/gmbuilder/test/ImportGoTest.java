@@ -51,7 +51,7 @@ public class ImportGoTest extends TestCase {
 		
 		// path to test xml file
 		// test_03 contains 5 "entry" records
-		_xmlFile = new File("./src/edu/lmu/xmlpipedb/gmbuilder/test/go_obo_unit_test_05.xml");
+		_xmlFile = new File("./src/edu/lmu/xmlpipedb/gmbuilder/test/go_obo_short.xml");
 		if( !(_xmlFile.exists()) )
 			throw new FileNotFoundException( "Could not find the xml file for testing.");
 			

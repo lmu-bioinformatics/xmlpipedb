@@ -58,7 +58,7 @@ Known Issues:
 
 
 Copyright Notice:
-(c) Copyright 2006 Loyola Marymount University Computer Science Deptartment.
+(c) Copyright 2006 Loyola Marymount University Computer Science Department.
 
 License:
 This program is covered under the Lesser GNU Public License. For details on this license, please refer to: http://www.gnu.org/licenses/lgpl.html

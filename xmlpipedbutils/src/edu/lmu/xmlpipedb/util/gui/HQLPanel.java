@@ -218,6 +218,7 @@ public class HQLPanel extends JPanel {
             populateTable(results);
         } catch(SQLException sqle) {
             JOptionPane.showMessageDialog(this, sqle.getMessage());
+            //Need to clean up connection after SQL exceptions
             qe.currentSession().reconnect();
         } catch(Exception e) {
             reportException(e);

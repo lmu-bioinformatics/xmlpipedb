@@ -9,6 +9,7 @@
 
 package edu.lmu.xmlpipedb.gmbuilder;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -17,25 +18,25 @@ import java.sql.SQLException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMaPP;
+import shag.App;
+import shag.dialog.ModalDialog;
+import shag.menu.WindowMenu;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
+import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
-
-import shag.App;
-import shag.dialog.ModalDialog;
-import shag.menu.WindowMenu;
 
 /**
  * GenMAPPBuilder is a GUI application for loading, querying, and exporting data
@@ -151,7 +152,12 @@ public class GenMAPPBuilder extends App {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-                doExportToGenMAPP();
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                    	doExportToGenMAPP();
+                    }
+                });
+                
             }
         };
     }
@@ -204,52 +210,43 @@ public class GenMAPPBuilder extends App {
      */
     private void doExportToGenMAPP() {
     	
-        // Prompt the user for the output (destination) file.
-    	JFileChooser chooser = new JFileChooser();
-    	int returnVal = chooser.showSaveDialog(this.getFrontmostWindow());
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-            // Now we have all the information we need; perform the actual export.
-    		try {
-				ExportToGenMaPP.exportToGenMaPP(chooser.getSelectedFile());
-			} catch (HibernateException e) {
-				ModalDialog.showErrorDialog("HIBERNATE error.");
-				e.printStackTrace();
-			} catch (SAXException e) {
-				ModalDialog.showErrorDialog("SAX error.");
-				e.printStackTrace();
-			} catch (JAXBException e) {
-				ModalDialog.showErrorDialog("JAXB error.");
-				e.printStackTrace();
-			} catch (SQLException e) {			
-                ModalDialog.showErrorDialog("SQL error.");
-                e.printStackTrace();
-    		} catch (IOException e) {
-    			ModalDialog.showErrorDialog("I/O error.");
-    			e.printStackTrace();
-    		} catch (ClassNotFoundException e) {
-    			ModalDialog.showErrorDialog("Database driver error.");
-    			e.printStackTrace();
-			} catch (Exception e) {
-				ModalDialog.showErrorDialog(e.toString());
-				e.printStackTrace();
-			}
-        }
-     
-        
-        // In the future, we also want to prompt the user for the organism to
-        // output for.
-        
-        // Prompt the user for the GO Associations file.
-        
+    	try {
+    		getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    		//TODO Fix this to update it to the new xpdutils stuff.
+			ExportToGenMAPP.init(GenMAPPBuilder.createHibernateConfiguration());
+			getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			new ExportWizard(this.getFrontmostWindow());
+			ExportToGenMAPP.cleanup();
 
-    	
-    	
+		} catch (HibernateException e) {
+			ModalDialog.showErrorDialog("HIBERNATE error.");
+			e.printStackTrace();
+		} catch (SAXException e) {
+			ModalDialog.showErrorDialog("SAX error.");
+			e.printStackTrace();
+		} catch (JAXBException e) {
+			ModalDialog.showErrorDialog("JAXB error.");
+			e.printStackTrace();
+		} catch (SQLException e) {			
+            ModalDialog.showErrorDialog("SQL error.");
+            e.printStackTrace();
+		} catch (IOException e) {
+			ModalDialog.showErrorDialog("I/O error.");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			ModalDialog.showErrorDialog("Database driver error.");
+			e.printStackTrace();
+		} catch (Exception e) {
+			ModalDialog.showErrorDialog(e.toString());
+			e.printStackTrace();
+		}
     }
 
     /**
      * Builds the current Hibernate configuration.
      */
     public static Configuration createHibernateConfiguration() {
+//    	TODO Fix this to update it to the new xpdutils stuff.
         Configuration hibernateConfiguration = null;
         try {
             hibernateConfiguration = (new ConfigurationEngine()).getHibernateConfiguration();

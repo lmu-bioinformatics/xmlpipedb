@@ -29,6 +29,7 @@ import org.hibernate.cfg.Configuration;
  */
 public class ConnectionManager {
 
+	//TODO Fix this to use getResource() rather than hardcoded
 	private static final File GENMAPP_DATABASE_TEMPLATE = new File(
 		"src/edu/lmu/xmlpipedb/gmbuilder/resource/dbFiles/GeneDBTmpl.mdb");
 	
@@ -257,7 +258,7 @@ public class ConnectionManager {
 	 * @throws ClassNotFoundException 
 	 */
 	private static void openRelationalDatabaseConnection(Configuration hibernateConfiguration) throws SQLException, ClassNotFoundException {
-		//TODO Fix THIS!!!!!!!!!!!!!!!!!!
+		//TODO Fix this to update it to the new xpdutils stuff.
 		Class.forName("org.postgresql.Driver");
 		relationalDBConnection = DriverManager.getConnection(
 				hibernateConfiguration.getProperty("hibernate.connection.url"), 

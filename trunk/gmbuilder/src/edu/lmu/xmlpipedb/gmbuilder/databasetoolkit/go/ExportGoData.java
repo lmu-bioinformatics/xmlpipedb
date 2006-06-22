@@ -33,7 +33,7 @@ import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.AccessFileCreator;
+import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import generated.impl.IdImpl;
 import generated.impl.IsAImpl;
 import generated.impl.NameImpl;
@@ -45,7 +45,6 @@ import generated.impl.ToImpl;
 public class ExportGoData {
 
 	private Connection connection 	= null;
-	private File outputFile 		= null;
 	private Go 		 godb;
 	private HashMap<String, String> namespace;
 	private HashMap<String, Integer> goCount;
@@ -66,8 +65,8 @@ public class ExportGoData {
 	 * @throws IOException
 	 * 			I/O error
 	 */
-	public ExportGoData(File outputFile) throws IOException {
-		this.outputFile = outputFile;
+	public ExportGoData(Connection connection) throws IOException {
+		this.connection = connection;
 		godb 		= new Go();
 		namespace 	= new HashMap<String, String>();
 		goCount		= new HashMap<String, Integer>();
@@ -91,10 +90,11 @@ public class ExportGoData {
 			SAXException, IOException, JAXBException {
 		
 		String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
-		
-		openConnection();
+		ExportWizard.updateExportProgress(3, "GeneOntology export - creating tables...");
 		godb.createTables(connection);
+		ExportWizard.updateExportProgress(10, "GeneOntology export - populating tables...");
 		populateGoTables(GOA_File);
+		ExportWizard.updateExportProgress(40, "GeneOntology export - flushing tables...");
 		godb.updateSystemsTable(connection, Date, "T");
 		closeConnection();
 		System.out.println("done!");
@@ -467,17 +467,6 @@ public class ExportGoData {
 		ps.close();
 	}
 	
-	/**
-	 * Open connection to the access database  
-	 * 
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 * @throws IOException 
-	 */
-	private void openConnection() throws ClassNotFoundException, 
-			SQLException, IOException {     
-        connection = AccessFileCreator.openConnection(outputFile);
-	}
 	/**
 	 * Close database connection
 	 * 

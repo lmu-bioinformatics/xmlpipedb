@@ -23,6 +23,11 @@ public class ExportGmDbTest extends TestCase {
 	
 	
 	protected void setUp() throws FileNotFoundException{
+        // Make a new database profile object.
+        // --- see UniProtDatabaseProfile
+        // Set the systems tables to use.
+        // Set the relationships tables to use.
+        // Tell it which species to use.
 //		try {
 //			ExportToGenMaPP.exportToGenMaPP(new File("./src/edu/lmu/xmlpipedb/gmbuilder/test/gmb_unit_test.mdb"));
 //		} catch (HibernateException e) {
@@ -50,7 +55,10 @@ public class ExportGmDbTest extends TestCase {
 	}
 	
 
-	
+	// TODO Tests to write:
+    //     testAvailableSpecies()
+    //     testRelationshipTables()
+    //     testTableManagers()
 	
 	public void testExportCounts(){
 		// init method vars

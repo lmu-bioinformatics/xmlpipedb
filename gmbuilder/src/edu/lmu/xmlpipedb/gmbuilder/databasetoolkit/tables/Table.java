@@ -147,6 +147,7 @@ public class Table {
 			}
 			
 			for(String tableName : tableNames) {
+                // TODO Would be better to decouple business logic from UI calls.
 				ExportWizard.updateExportProgress(66, "Creating tables - " + tableName + " table...");
 				create(tableName);
 			}

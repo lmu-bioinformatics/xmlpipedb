@@ -562,22 +562,15 @@ public abstract class DatabaseProfile extends Profile {
 				new String[] {"\"Table\""});
 
 		List<String> allTables = new ArrayList<String>();
+
+		PreparedStatement ps = ConnectionManager.getGenMAPPDBConnection().prepareStatement(
+				"select name from MSysObjects where ((type=1) and (flags=0))");
+		ResultSet result = ps.executeQuery();
 		
-		allTables.add("Info");
-		allTables.add("Relations");
-		allTables.add("Other");
-		allTables.add("Systems");
-		allTables.add("GeneOntologyTree");
-		allTables.add("GeneOntologyCount");
-		allTables.add("UniProt-GOCount");
-		
-		allTables.addAll(systemTables.keySet());
-		for(String relationshipTable : relationshipTables) {
-			allTables.add(relationshipTable);
+		while(result.next()) {
+			allTables.add(result.getString("name").trim());
 		}
-		
-		PreparedStatement ps = null;
-		ResultSet result;
+	
 		String sqlStatement; 
 		
 		for(String tableName : allTables) {

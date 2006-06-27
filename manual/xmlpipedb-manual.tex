@@ -58,7 +58,7 @@ If your primary interest is to use GenMAPP for a particular organism, please con
 
 GenMAPP Builder is an application for creating GenMAPP Gene Database files, or GDBs.  These files are actually Microsoft Access database files (MDBs) with a \texttt{.gdb} filename extension.\footnote{GenMAPP handles three types of MDB files, distinguished by an extension other than \texttt{.mdb}: Gene Databases (\texttt{.gdb}), MAPPs (\texttt{.mapp}), and Expression Datasets (\texttt{.gex}).}
 
-The application works by first importing supported data files into a relational database.  The database can then be queried by organism in order to produce a GenMAPP database file.  While one UniProt import per species would be the norm, there is no actual restriction on the content of the imported XML.  With a sufficiently large and fast workstation, one can theoretically import the entire UniProt dataset into GenMAPP Builder’s internal database.
+The application works by first importing supported data files into a relational database.  The database can then be queried by organism in order to produce a GenMAPP database file.  While one UniProt import per species would be the norm, there is no actual restriction on the content of the imported XML.  With a sufficiently large and fast workstation, one can theoretically import the entire UniProt dataset into GenMAPP Builder's internal database.
 
 %[I think this needs to be reworded; unless we decide later to work with the entire UniProt (or some other database) the files imported into the relational database will already be organism-specific data files.]  [yes, this general direction was the intent; in that case, would additional clarification still be necessary?  or, for simplicity, should we start by assuming that we have a single-organism assumption for now?] [We could say just that:  Currently, the program expects species-specific files; in the future, files that contain data from multiple species could be used and queried by species.]
 
@@ -69,11 +69,11 @@ The current version of GenMAPP Builder requires data from the following types of
 \begin{itemize}
 \item UniProt XML
 \item Gene Ontology (GO) OBO XML
-\item Tab-delimited GO associations (various sources, primarily GOA)
+\item Tab-delimited GO gene associations (various sources, primarily GOA)
 \end{itemize}
 Typically, the GO file need only be loaded once, since GO makes the entire set of terms available as a single download.  UniProt XML files can be downloaded by species from the Integr8 Web interface.  While one UniProt import per species would be the norm, there is no actual restriction on the content of the imported XML.  With a sufficiently large and fast workstation, one can theoretically import the entire UniProt dataset into GenMAPP Builder's internal database.
 
-Once the source files have been imported into the relational database, they are no longer needed; exports can be performed any number of times after that.  In practice, however, periodic reloads may be necessary in order to remain in sync with the datasets' providers.
+Once the source files have been imported into the relational database, they are no longer needed; exports can be performed any number of times after that.  In practice, however, periodic reloads will be necessary in order to remain in sync with the datasets' providers.
 
 \subsubsection{Requirements}
 
@@ -92,7 +92,7 @@ The built files can then be read directly by GenMAPP.
 
 \subsubsection{Database Setup}
 
-Using GenMAPP Builder requires one setup step that is external to the GenMAPP Builder application: setting up the intermediate relational database that GenMAPP Builder uses an intermediate relational database to store imported XML information. This database is technically any relational database for which a JDBC 3 driver is available, although thus far only PostgreSQL has been used and tested.
+Using GenMAPP Builder requires one setup step that is external to the GenMAPP Builder application: setting up the intermediate relational database that GenMAPP Builder uses to store imported XML information. This database is technically any relational database for which a JDBC 3 driver is available, although thus far only PostgreSQL has been used and tested.
 
 To set up the GenMAPP Builder intermediate database, perform the following steps:
 \begin{enumerate}
@@ -100,7 +100,7 @@ To set up the GenMAPP Builder intermediate database, perform the following steps
 
 \item Load the GenMAPP Builder schema file (\texttt{gmbuilder.sql}) into the relational database.  Specifics for this step also vary depending on the database server that is used.  For PostgreSQL, this step requires the creation of a named database using the \texttt{createdb} command, then importing the \texttt{gmbuilder.sql} file into that database through \texttt{psql}.
 \end{enumerate}
-Once the database has been setup, all other configuration activities can be performed from the GenMAPP Builder application.
+Once the database has been set up, all other configuration activities can be performed from the GenMAPP Builder application.
 
 \subsubsection{Configuration}
 
@@ -146,9 +146,7 @@ The \textsl{Pause} command allows you to stop the import operation temporarily, 
 
 %[nice feature!][yes, when it’s actually implemented ?  But I decided to specify it here now so that we don’t forget—if this is the manuel that we are intending on packaging with the program as a stand-in for help, we will need to note that it hasn’t been implemented yet. ;) KD]
 
-The \textsl{Cancel} command cancels the \emph{entire} import, including data that has already been read.  This command is useful if you change your mind during an import operation, and decide not to load any of that information into the relational database after all.
-
-The Cancel command cancels the entire import, including data that has already been read.  This command is useful if you change your mind during an import operation, and decide not to load any of that information into the relational database after all. %[this takes us back to the “fresh” install?]
+The \textsl{Cancel} command cancels the \emph{entire} import, including data that has already been read.  This command is useful if you change your mind during an import operation, and decide not to load any of that information into the relational database after all.%[this takes us back to the “fresh” install?]
 The database remains in precisely the state that it was prior to the import command, as if the import was never invoked at all.
 
 %[hope that sentence clarifies your question—maybe—I guess I’m just concerned that half-finished files aren’t hanging around to cause problems when trying to import a second time—KD]
@@ -161,7 +159,7 @@ GenMAPP Builder includes a query engine that allows you to browse the contents o
 
 %[what did you have in mind here? what comes to my mind is that we could run queries and export stuff for purposes other than GenMAPP.  For example, you could take a list of gene IDs and find all related IDs. see the Source database run by Stanford as an example:  http://source.stanford.edu/cgi-bin/source/sourceSearch]
 
-The query engine allows direct SQL or HQL queries, returning the results of these queries in a table or tree view (for SQL and HQL queries, respectively).  The direct queries allow for maximum flexibility in examining the loaded data, but they require detailed knowledge of the database schema.  For convenience, a number of particularly useful queries have been pre-loaded into GenMAPP Builder.
+The query engine allows direct SQL or HQL queries, returning the results of these queries in a table or tree view (for SQL and HQL queries, respectively).  The direct queries allow for maximum flexibility in examining the loaded data, but they require detailed knowledge of the intermediate relational database schema.  For convenience, a number of particularly useful queries have been pre-loaded into GenMAPP Builder.
 %(Kam — you can list as many queries here as you like; it can be an on-going task for someone to implement these queries and add them to the application as described)
 
 Preloaded queries are available in the \textsl{Query} menu.  When a preloaded query is invoked, a dialog may appear requesting required parameters such as taxon ID, protein name, etc.  Fill these parameters out and click on the \textsl{Perform Query} button to view the results.
@@ -170,7 +168,7 @@ A third query mechanism is available in the form of a Google-style ``free text''
 
 %[Whoa—I think this has bitten off more than I can chew; I’m not sure what you mean by all of this.  This would probably be best resolved by a conversation so you can explain to me what you mean by this.—KD]
 
-\subsubsection{Building a GenMAPP Database}
+\subsubsection{Building a GenMAPP Gene Database}
 
 Once the underlying relational database contains all of the information that you need (i.e., you have imported all of the XML data sets that you wish to export to a GenMAPP Gene Database), you can build a GenMAPP Gene Database file.  To do this, choose the \textsl{Export to GenMAPP} command from the \textsl{File} menu.
 
@@ -180,18 +178,18 @@ The export operation opens with a dialog that requests the following information
 
 \item The creation date of the database: This defaults to the current date, and goes in the \textsl{Version} and \textsl{Modify} fields of the \textsl{Info} table.
 
-\item The species to export: Specify the taxon ID for database retrieval and a genus-species name for GenMAPP use.
+\item The species to export:
 %[this is going to be pre-determined by the species-specific UniProt file that is pre-loaded, unless we move towards handling the entire UniProt database, which I don’t recommend because it will be HUGE.  Therefore, it seems that this step should be at the level of UniProt, GO Gene Associations import, not at the level of GenMAPP Export.  However, we do need to fill in the Species field of the Info table and the Species fields of all the systems tables.  Maybe the dialog can pop up the question “Is this the correct species for this database?” and have it pre-filled with the species from the UniProt import process.  We will need a way to correctly give the genus-species name since GenMAPP doesn’t use taxon IDs yet.  One thing we could do is maintain a table of taxonIDs-genus/species names that we get from NCBI.  This would just be for our purposes and not make it into the final Gene Database.  I’ve just looked into what we can download from NCBI and this may not be a trivial exercise after all.][yes, while in practice, we would probably never import the entire UniProt data set, I think stating the species at this point (even if the user has only loaded one organism) accommodates the spectrum of scenarios ranging from one, to a few, to all organisms.  The import routine actually does load in the taxon ID, so we can use that for record retrieval.][As of tonight, 6/13, Joey says he can make this a drop-down menu based on the species present in the UniProt database.]
-To assist in choosing the species, GenMAPP Builder examines the intermediate relational database and provides a drop-down menu for the species that are available there.
+GenMAPP Builder examines the intermediate relational database and provides a drop-down menu for the species that are available there.  Select the species for which you would like to export a Gene Database.  GenMAPP Builder will automatically use this information wherever this is needed in the Gene Database, such as the \textsl{Info} table and the \textsl{Species} fields of the systems tables.
 
 \item The Systems tables to include: GenMAPP Builder presents a checklist of what Systems tables are available.
 %[I would like this to be set up so that the user chooses from a list of Systems available.  For UniProt-centric Gene Databases, the user must at least choose UniProt as one of the systems.  The other Systems that can be included in a UniProt-centric Gene Database for any species are:  EMBL, InterPro, Pfam, PDB, and OrderedLocusNames.  Then there will be additional Systems available depending on the species.  For example, for E. coli we add EchoBASE and EcoGene.  We can attempt to generate this list based on the xrefs available in the XML file, but I’m afraid that not all of the xrefs that are there will be suitable for systems tables.  We will have to investigate to see if there’s some way to automatically and intelligently generate this list.  Gene Ontology will only need to be included as a system if the appropriate gene association table is available.  For each System chosen, the current date is added to the Date field of that record in the Systems table.][***NEW: Joey is going to make a list for the user to choose from, although I’m not sure how he’s generating this list, dynamically from the db xrefs or just based on the list we’ve given him—KD]
 
-\item One of these Systems tables then needs to be designated as the \emph{Model Organism} (MOD) table for the Gene Database.  For a UniProt-centric Gene Database, this would be UniProt.  The table name goes in the \textsl{MODSystem} field of the \textsl{Info} table.
+\item One of these Systems tables then needs to be designated as the \emph{Model Organism Database} (MOD) system for the Gene Database.  For a UniProt-centric Gene Database, this would be UniProt.  The table name goes in the \textsl{MODSystem} field of the \textsl{Info} table.
 
-\item Systems table display order: An explicit ordering can be specified for the Systems tables, determining the order in which the systems will display in the Gene Finder and on the Backpage.  This information is stored in the \textsl{DisplayOrder} field of the \textsl{Info} table.
+\item Systems table display order: An explicit ordering can be specified for the Systems tables, determining the order in which the systems will display in the GenMAPP Gene Finder and Backpage.  This information is stored in the \textsl{DisplayOrder} field of the \textsl{Info} table.
 
-\item ``Primary'' Systems tables: Systems tables whose database references are used to build the Relations tables (see next item) are considered to be \emph{primary}\/.  Relations tables that include such tables are said to be \emph{direct} relations, while Relations tables whose linkages are transitively built from primary database references are said to be \emph{inferred} (e.g., if UniProt is marked as a primary Systems table, and it contains references to PDB and EMBL, then UniProt-PDB and UniProt-EMBL Relations tables are direct, while a PDB-EMBL Relations table is inferred, because the UniProt references are used to determine related IDs between PDB and EMBL).
+\item ``Primary'' Systems tables: Systems tables whose database references are used to build the Relations tables (see next item) are considered to be \emph{primary}\/.  Relations tables that include such systems are said to have \emph{direct} relations, while Relations tables whose linkages are transitively built from primary database references are said to be \emph{inferred} (e.g., if UniProt is marked as a primary Systems table, and it contains references to PDB and EMBL, then UniProt-PDB and UniProt-EMBL Relations tables are direct, while a PDB-EMBL Relations table is inferred, because the UniProt references are used to determine related IDs between PDB and EMBL).
 
 \item The Relations tables to include: GenMAPP Builder automatically generates a default list according to an internal algorithm (specified in Section~\ref{databaseDetails}); the final list can then be modified (added to or deleted from) if desired.
 %[or should this even be allowed?—Sure, as Joey showed me tonight, he’s going to show the user a list of possible relations tables and then ones the user doesn’t want can be de-selected and others can be specified if they were missed by the algorithm.  We’ll have to see how this is implemented.  Having this be editable seems like a good idea to me--KD].[This list can be populated based on the Systems tables chosen above.  Note that InterPro and Pfam are used to relate to other systems, but not to each other.  The Other table does not relate to anything else. The Relations table needs to be populated with one record per relations table.—note: I wrote this before Dondi’s e-mail about an algorithm on how to determine the relations tables.]
@@ -210,7 +208,17 @@ The configuration, import, and query functions in GenMAPP Builder make direct us
 \subsubsection{Database Details}
 \label{databaseDetails}
 
-GenMAPP Builder performs the following specific details in generating a Gene Database file that can be used by GenMAPP.  Based on the chosen species, GenMAPP Builder first extracts the needed information from its intermediate relational database.  Once this information has been retrieved, it is written to the specified Gene Database file as follows:
+GenMAPP Builder performs the following specific details in generating a Gene Database file that can be used by GenMAPP.  Based on the chosen species, GenMAPP Builder first extracts the needed information from its intermediate relational database.  Once this information has been retrieved, it is written to the specified Gene Database file as detailed in the rest of this section.
+
+A sample GenMAPP Gene Database schema that results from the export operation appears in Figure~\ref{gdb-sample}.  The schema in the figure is the result of a GenMAPP Builder export for E.\ coli with UniProt as the model organism system table.
+
+\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
+   \centering
+   \includegraphics[width=7in,angle=90]{figures/e-coli-genmapp-schema.pdf} 
+   \caption{Sample GenMAPP Gene Database for E.\ coli.}
+   \label{gdb-sample}
+\end{figure}
+
 \begin{enumerate}
 \item The export begins by copying a blank GenMAPP Gene Database file, \texttt{GeneDBTmpl.gtp}, to the specified destination file (i.e., the one specified in the export dialog).  The file is provided by GenMAPP.org, and consists of the following four tables: \textsl{Info}, \textsl{Systems}, \textsl{Relations}, and \textsl{Other}.  The template file is actually a Microsoft Access database file with the extension \texttt{.gtp}.  GenMAPP Builder comes with a default template file, but a different template file may be used since it may be changed periodically by GenMAPP.org.
 %They are pretty good about keeping fields in there for historical reasons, the only changes might be additions.
@@ -229,20 +237,20 @@ GenMAPP Builder performs the following specific details in generating a Gene Dat
 
 \item In the export dialog, the user was asked to designate one system as the MOD for the database.  For UniProt-centric databases, it should be UniProt.  The \textsl{MODSystem} field of the \textsl{Info} table is set to the name of this MOD system.
 
-\item The \textsl{DisplayOrder} field of the \textsl{Info} table is set to the Systems table order specified in the export dialog.  The table sequence is specified by the abbreviated code of each Systems table delimited by the pipe character (e.g., ``$|S|R|$'').
+\item The \textsl{DisplayOrder} field of the \textsl{Info} table is set to the Systems table order specified in the export dialog.  The table sequence is specified by the abbreviated code of each Systems table delimited by the pipe character (e.g., ``$|$S$|$Em$|$'').
 
 \item The relations tables called for in the export dialog are created.  The default list of relations tables in that dialog is generated using the following algorithm: first, each system table is designated as being \emph{Proper} or \emph{Improper}\/, according to the \textsl{Misc} field in the \textsl{Systems} table of GenMAPP.org's existing Gene Database template file (the \textsl{Misc} field contains the string ``$|$I$|$'' if a systems table is improper).  ``Proper'' systems tables contain IDs that refer to individual genes or proteins as objects in the database and therefore can be used as IDs for genes/proteins on MAPPs and in Expression Datasets.  ``Improper'' systems store annotations that can refer to one or many different genes or proteins.  Pairwise relations tables between Proper systems, i.e., all possible Proper--Proper, are created, with repetitions removed (e.g., if \textsl{UniProt-EMBL} has been added to the relations tables list, then \textsl{EMBL-UniProt} will not be added).  Pairwise relations between Proper and Improper, i.e., all possible Proper--Improper, are also added to the relations tables list.  No Improper--Improper relations tables are added.
 
-For example, the E.\ coli systems tables are classified as follows: UniProt, EMBL, EchoBASE, EcoGene, ``Blattner,'' and PDB are proper, while InterPro, Pfam, and GeneOntology are improper.
+For example, the E.\ coli systems tables are classified as follows: UniProt, EMBL, EchoBASE, EcoGene, Blattner, and PDB are proper, while InterPro, Pfam, and GeneOntology are improper.
 
-\item System tables may be marked as ``primary'' in the export dialog.  The set of primary system tables determines whether a relationship is \emph{direct} or \emph{inferred}\/.  If a relations table includes a system table that has been marked as primary, then it is a ``direct'' relations table.  If neither system in the relation is marked primary, then the relations table is ``inferred.''
+\item System tables may be marked as ``primary'' in the export dialog.  The set of primary system tables determines whether a relationship is \emph{Direct} or \emph{Inferred}\/.  If a relations table includes a system table that has been marked as primary, then it is a Direct relations table.  If neither system in the relation is marked primary, then the relations table is Inferred.  The \textsl{Type} field of the \textsl{Relations} table holds this information for each relationship table.
 %[where are we storing this information?  The current GenMAPP Gene Database doesn’t store this anywhere.  Joey didn’t mention this when he told me about his implementation tonight 6/13—KD]
 
-For example, with E.\ coli, UniProt is the sole primary Systems table.  Thus, direct relations can be made between UniProt and InterPro, Pfam, PDB, EMBL, EcoGene, EchoBASE, and ``Blattner.'' All combinations between EMBL, EcoGene, EchoBASE, and ``Blattner'' and between these systems and InterPro, Pfam, and PDB are thus inferred relations.  We do not need to build indirect relations amongst InterPro and Pfam themselves, since these tables are classified by GenMAPP.org as Improper.
+For example, with E.\ coli, UniProt is the sole primary Systems table.  Thus, direct relations can be made between UniProt and InterPro, Pfam, PDB, EMBL, EcoGene, EchoBASE, and Blattner. All combinations between EMBL, EcoGene, EchoBASE, and Blattner and between these systems and InterPro, Pfam, and PDB are thus inferred relations.  We do not need to build indirect relations amongst InterPro and Pfam themselves, since these tables are classified by GenMAPP.org as Improper.
 
 \item The template-provided \textsl{Relations} table is then filled with one record for each relations table in the exported Gene Database.
 
-\item Gene ontology-related tables are then created, based on the system table that has been designated as the MOD for the exported database.  These tables are \textsl{GeneOntologyCount}, \textsl{GeneOntologyTree}, and \textsl{MODSystem-GOCount} (e.g., \textsl{UniProt-GOCount}, in the case where \textsl{UniProt} has been designated as the MOD system table).
+\item Gene Ontology-related tables are then created, based on the system table that has been designated as the MOD for the exported database.  These tables are \textsl{GeneOntologyCount}, \textsl{GeneOntologyTree}, and \textsl{MODSystem-GOCount} (e.g., \textsl{UniProt-GOCount}, in the case where \textsl{UniProt} has been designated as the MOD system table).
 
 \item The \textsl{OriginalRowCounts} table is created and populated; this table can be used to verify that the tables are complete.  The information in this table should correspond to the number of records for the chosen organism that were originally imported from XML into the intermediate relational database.
 %AT this point, I think Joey has made a script to count the number of records in the original UniProt XML file.  We should at least be able to compare this number to the number of records in the UniProt table in the Gene Database.
@@ -253,21 +261,14 @@ For example, in the case of E.\ coli, the following steps need to be taken:
 \begin{itemize}
 \item In a generic UniProt-centric Gene Database, an \textsl{OrderedLocusNames} table would be created.  However, in E.\ coli this table is called ``Blattner.''  Thus, for E.\ coli only, the \emph{OrderedLocusNames} system name must be changed to \emph{Blattner} in the \textsl{Systems} table.
 
+\item Further, a historical artifact with Blattner identifiers results in the inclusion of multiple IDs in a single field in some cases (e.g., ``b1964/b1965/b1966'').  These IDs have to be separated into distinct records in the final Blattner table.
+
 \item An E.\ coli Gene Database has UniProt as the MOD system table.  There are more annotation fields than are in the Ensembl-centric Gene Databases provided by GenMAPP.org; as a result, the \textsl{Columns} field of the \textsl{Systems} table's \emph{UniProt} record should be set to:
 \begin{verbatim}
 ID|EntryName\sBF|GeneName\sBF|ProteinName\BF|Function\BF|
 \end{verbatim}
 \end{itemize}
 \end{enumerate}
-
-A sample GenMAPP Gene Database schema that results from the export operation appears in Figure~\ref{gdb-sample}.  The schema in the figure is the result of a GenMAPP Builder export for E.\ coli with UniProt as the model organism system table.
-
-\begin{figure}[htbp] %  figure placement: here, top, bottom, or page
-   \centering
-   \includegraphics[width=6in]{figures/e-coli-genmapp-schema.pdf} 
-   \caption{Sample GenMAPP Gene Database for E.\ coli.}
-   \label{gdb-sample}
-\end{figure}
 
 \section{Database Libraries}
 \label{dblib}

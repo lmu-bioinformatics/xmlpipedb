@@ -91,7 +91,7 @@ public class ExportToGenMAPP {
 				selectedDatabaseProfile.getSecondPassTableManagers());
 		
 		
-		ExportWizard.updateExportProgress(98, "Preparing table - OriginalRowCounts table...");
+		ExportWizard.updateExportProgress(66, "Preparing table - OriginalRowCounts table...");
 		TableCoordinator.exportTable(
 				selectedDatabaseProfile.getExportConnection(),
 				selectedDatabaseProfile.getRowCountsTableManager());

@@ -96,7 +96,6 @@ public class ExportGoData {
 		populateGoTables(GOA_File);
 		ExportWizard.updateExportProgress(40, "GeneOntology export - flushing tables...");
 		godb.updateSystemsTable(connection, Date, "T");
-		closeConnection();
 		System.out.println("done!");
 	}
 	
@@ -126,15 +125,22 @@ public class ExportGoData {
 		Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
     	SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
 		Session session = sessionFactory.openSession(); // open Hibernate session
-
+		
 		populateUniprotGoTable(GOA_File);
 		populateGeneOntologyTable(session);
 		populateGeneOntologyTree();
 		populateGeneOntologyCount();
 		populateUniProtGoCount();
+		dropGOStage();
 		
 		session.close();		
 		
+	}
+	
+	private void dropGOStage() throws SQLException {
+		PreparedStatement ps = connection.prepareStatement("drop table " + Go.GeneOntologyStage);
+		ps.executeUpdate();
+		ps.close();
 	}
 	
 	private QueryHolder getUniProtIDs(String sql, String id) throws SQLException {
@@ -467,15 +473,6 @@ public class ExportGoData {
 		ps.close();
 	}
 	
-	/**
-	 * Close database connection
-	 * 
-	 * @throws SQLException
-	 */
-	private void closeConnection() throws SQLException {
-		connection.close();
-	}
-    
     private class QueryHolder {
         public PreparedStatement ps;
         public ResultSet rs;

@@ -105,15 +105,19 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
 			while(result.next()) {
 				typeToValue.put(result.getString("type"), result.getString("value"));
 			}
-			tableManager.submit("Blattner", QueryType.insert, new String[][] {
-					{"ID", typeToValue.get("ordered locus") != null ? 
+			String ids = typeToValue.get("ordered locus") != null ? 
 						typeToValue.get("ordered locus") : 
 						typeToValue.get("primary") != null ?
 						typeToValue.get("primary") :
-						typeToValue.get("synonym")}, 
-		    			{"Species", "|" + getSpeciesName() + "|"},
-		    			{"\"Date\"", new SimpleDateFormat("MM/dd/yyyy").format(version)},
-		    			{"UID", row.getValue("UID")}});
+						typeToValue.get("synonym");
+			
+			for (String id : ids.split("/")) {
+				tableManager.submit("Blattner", QueryType.insert, new String[][] {
+					{"ID", id}, 
+		    		{"Species", "|" + getSpeciesName() + "|"},
+		    		{"\"Date\"", new SimpleDateFormat("MM/dd/yyyy").format(version)},
+		    		{"UID", row.getValue("UID")}});
+			}
 		}
 		
 		return tableManager;
@@ -148,11 +152,14 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
 				    ps.setString(2, row.getValue("UID"));
 				    result = ps.executeQuery();
 				    while(result.next()) {
-				    	tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
-			        			{"\"Primary\"", row.getValue("ID")}, 
+				    	// Fix blattner IDs of the form xxxx/yyyy
+				    	for (String Blattner_ID : row.getValue("ID").split("/")) {
+				    		tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
+				    			{"\"Primary\"", Blattner_ID}, 
 			        			{"Related", result.getString("id")},
 			        			//TODO This is hard-coded.  Fix it. 
 			        			{"Bridge", "S"}});
+				    	}				    
 				    }
 		    	}
 		    }
@@ -180,12 +187,13 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
 			    	if(row.getValue(TableManager.TABLE_NAME_COLUMN).equals("Blattner") &&
 			    			row.getValue("UID").equals(primary)) {
 		    	
-			    		
-			    		tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
+			    		for (String Blattner_ID : row.getValue("ID").split("/")) {
+			    			tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
 				    			{"\"Primary\"", related}, 
-				    			{"Related", row.getValue("ID")},
+				    			{"Related", Blattner_ID},
 				    			//TODO This is hard-coded.  Fix it. 
-				    			{"Bridge", "S"}});
+				    			{"Bridge", "S"}}); 
+			    		}
 			    	}
 		    	}
 		    }
@@ -197,11 +205,13 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
 			    if(row1.getValue(TableManager.TABLE_NAME_COLUMN).equals("Blattner")) {
 			    	for(Row row2 : primarySystemTableManager.getRows()) {
 			    		if(row1.getValue("UID").equals(row2.getValue("UID"))) {
-			    			tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
+			    			for (String Blattner_ID : row1.getValue("ID").split("/")) {
+			    				tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
 					    			{"\"Primary\"", row2.getValue("ID")}, 
-					    			{"Related", row1.getValue("ID")},
+					    			{"Related", Blattner_ID},
 					    			//TODO This is hard-coded.  Fix it. 
 					    			{"Bridge", "S"}});
+			    			}
 			    			break;
 					    	
 			    		}

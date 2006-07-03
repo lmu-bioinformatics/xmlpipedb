@@ -14,6 +14,8 @@ package edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -34,6 +36,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentListener;
 
+import shag.LayoutConstants;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile;
@@ -179,8 +182,9 @@ public class ExportPanel1 extends JPanel {
         leftPanel.add(speciesCustomizeTextField);
         leftPanel.add(new JLabel("Modify (MM/dd/yyyy):"));
         leftPanel.add(modifyFormattedTextField);
-        leftPanel.add(new JLabel("DisplayOrder:"));
-        leftPanel.add(displayOrderComboBox);
+        // We're moving this to panel 4.
+//        leftPanel.add(new JLabel("DisplayOrder:"));
+//        leftPanel.add(displayOrderComboBox);
        
         SpringUtilities.makeCompactGrid(leftPanel,
                                         leftPanel.getComponentCount()/2, 2, //rows, cols
@@ -192,8 +196,15 @@ public class ExportPanel1 extends JPanel {
         rightPanel.add(speciesDescriptionTextArea);
         
         JPanel bottomPanel = new JPanel();
-        bottomPanel.add(new JLabel("Notes:"));
-        bottomPanel.add(notesTextArea);
+        bottomPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.insets.left = LayoutConstants.SPACE;
+        gbc.insets.top = LayoutConstants.SPACE * 2;
+        bottomPanel.add(new JLabel("Notes:"), gbc);
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        bottomPanel.add(notesTextArea, gbc);
         
         JPanel contentPanel = new JPanel(new BorderLayout());
         contentPanel.add(leftPanel, BorderLayout.WEST);
@@ -201,7 +212,6 @@ public class ExportPanel1 extends JPanel {
         contentPanel.add(bottomPanel, BorderLayout.SOUTH);
         
         return contentPanel;
-        
     }
 
 	/**

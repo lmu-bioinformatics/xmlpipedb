@@ -313,8 +313,18 @@ public abstract class DatabaseProfile extends Profile {
 		return systemTables;
 	}
 	
+    /**
+     * Returns the selected species profile chosen
+     * in the export wizard.
+     * 
+     * @param selectedProfile
+     */
+    public SpeciesProfile getSelectedSpeciesProfile() {
+        return speciesProfile;
+    }
+    
 	/**
-	 * Returns the selected species profile chosen
+	 * Sets the selected species profile chosen
 	 * in the export wizard.
 	 * 
 	 * @param selectedProfile

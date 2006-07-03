@@ -18,8 +18,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.Date;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -31,12 +31,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentListener;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 
 
 /**
@@ -100,13 +100,8 @@ public class ExportPanel2 extends JPanel {
     	JPanel genmappPanel = new JPanel();
     	genmappDatabaseTextField = new JTextField(15);
     	genmappDatabaseTextField.setEditable(false);
-	    Action chooseGenMAPPDatabaseAction = new AbstractAction("...") {
+	    Action chooseGenMAPPDatabaseAction = new AbstractAction("Specify File...") {
 			private static final long serialVersionUID = 3215450361259127899L;
-			{
-	            putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_O));
-	            putValue(Action.ACCELERATOR_KEY, KeyStroke
-	                    .getKeyStroke("control O"));
-	        }
 	
 	        public void actionPerformed(ActionEvent e) {
 	            chooseGenMAPPDatabase();
@@ -126,13 +121,8 @@ public class ExportPanel2 extends JPanel {
     	JPanel goPanel = new JPanel();
     	goAssocationsTextField = new JTextField(15);
     	goAssocationsTextField.setEditable(false);
-	    Action chooseGOAssociationsAction = new AbstractAction("...") {
+	    Action chooseGOAssociationsAction = new AbstractAction("Choose File...") {
 			private static final long serialVersionUID = 3215450361259127899L;
-			{
-	            putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_O));
-	            putValue(Action.ACCELERATOR_KEY, KeyStroke
-	                    .getKeyStroke("control O"));
-	        }
 	
 	        public void actionPerformed(ActionEvent e) {
 	            chooseGOAssociationFile();
@@ -145,7 +135,7 @@ public class ExportPanel2 extends JPanel {
 	 
     	
     	genmappRadioButton = new JRadioButton();
-    	genmappRadioButton.setText("GenMAPP Compatible Database");
+    	genmappRadioButton.setText("GenMAPP Gene Database File");
     	genmappRadioButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
@@ -195,12 +185,7 @@ public class ExportPanel2 extends JPanel {
 		goAssociationsFile = new File("");
 		goAssocationsTextField.setText("");
 		
-		genmappDatabaseTextField.setEnabled(false);
-		chooseGenMAPPDatabaseButton.setEnabled(false);
-		chooseGenMAPPDatabaseLabel.setEnabled(false);
-		otherDatabaseSettings.setEnabled(false);
-		
-		genmappRadioButton.setSelected(false);
+		genmappRadioButton.setSelected(true);
 		otherRadioButton.setSelected(false);
 		
 		DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
@@ -257,14 +242,16 @@ public class ExportPanel2 extends JPanel {
 	 */
 	protected void chooseGenMAPPDatabase() {
 		chooser = new JFileChooser(".");
-        chooser.showSaveDialog(this);
-        genmappDatabaseFile = chooser.getSelectedFile();
-        if (genmappDatabaseFile == null) {
-        	genmappDatabaseFile = new File("");
-        } else if(!genmappDatabaseFile.getName().endsWith(".mdb")) {
-        	genmappDatabaseFile = new File(genmappDatabaseFile.getAbsoluteFile() + ".mdb");
+        chooser.setSelectedFile(new File(GenMAPPBuilderUtilities.getDefaultGDBFilename(ExportToGenMAPP.getDatabaseProfile().getSelectedSpeciesProfile().getSpeciesName(), new Date())));
+        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            genmappDatabaseFile = chooser.getSelectedFile();
+            if (genmappDatabaseFile == null) {
+                genmappDatabaseFile = new File("");
+            } else if(!genmappDatabaseFile.getName().endsWith(".gdb")) {
+                genmappDatabaseFile = new File(genmappDatabaseFile.getAbsoluteFile() + ".gdb");
+            }
+            genmappDatabaseTextField.setText(genmappDatabaseFile.getName());
         }
-        genmappDatabaseTextField.setText(genmappDatabaseFile.getName());
 	}
 
 	/**
@@ -273,12 +260,13 @@ public class ExportPanel2 extends JPanel {
 	 */
 	protected void chooseGOAssociationFile() {
 		chooser = new JFileChooser(".");
-        chooser.showOpenDialog(this);
-        goAssociationsFile = chooser.getSelectedFile();
-        if (goAssociationsFile == null) {
-        	goAssociationsFile = new File("");
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            goAssociationsFile = chooser.getSelectedFile();
+            if (goAssociationsFile == null) {
+                goAssociationsFile = new File("");
+            }
+            goAssocationsTextField.setText(goAssociationsFile.getName());
         }
-        goAssocationsTextField.setText(goAssociationsFile.getName());
 	}
 	
 	/**

@@ -24,6 +24,9 @@ import javax.swing.JMenuBar;
 import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
@@ -67,6 +70,14 @@ public class GenMAPPBuilder extends App {
     public void run() {
         super.run();
         
+        // Set up logging.
+        BasicConfigurator.configure();
+        if (System.getProperty("log.level") != null) {
+            LogManager.getRootLogger().setLevel(Level.toLevel(System.getProperty("log.level")));
+        } else {
+            LogManager.getRootLogger().setLevel(Level.WARN);
+        }
+
         Configuration hc = createHibernateConfiguration();
         if (hc == null) {
             doConfigureDatabase();

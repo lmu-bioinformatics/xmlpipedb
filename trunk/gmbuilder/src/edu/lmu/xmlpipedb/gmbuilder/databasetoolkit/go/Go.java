@@ -16,6 +16,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class Go {
 	private HashMap<String, String> create_cmds;
 	private HashMap<String, String> insert_cmds;
@@ -27,6 +30,10 @@ public class Go {
 	protected static String UniProt_Go		    = "\"UniProt-GeneOntology\"";
 	protected static String UniProt_GoCount	    = "\"UniProt-GOCount\"";	
 	
+    /**
+     * Go class log.
+     */
+    private static final Log _Log = LogFactory.getLog(Go.class);
 	
 	private String[] tables = {
 			GeneOntology, 
@@ -84,7 +91,8 @@ public class Go {
     	for (int index = 1; index <= values.length; index++) {
     		ps.setString(index, values[index-1]);
     	}
-    	
+
+        _Log.debug("Performing insert: " + ps);
     	ps.executeUpdate();
     	ps.close();
  	}

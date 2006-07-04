@@ -18,6 +18,12 @@ public class GenMAPPBuilderUtilitiesTest {
 
     /**
      * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities#getDefaultGDBFilename(java.lang.String, java.util.Date)}.
+     * Ensure that the GMBUtilities getDefaultGDBFilename method works
+     * correctly. Specifically:
+     * - given a species and date, acorrect file name is returned
+     * - null is not accepted for the species name
+     * - null is not accepted for the date
+     * 
      */
     @Test
     public void testGetDefaultGDBFilename() {
@@ -33,13 +39,13 @@ public class GenMAPPBuilderUtilitiesTest {
         assertEquals("-Std_20060606.gdb", GenMAPPBuilderUtilities.getDefaultGDBFilename("", c.getTime()));
         try {
             GenMAPPBuilderUtilities.getDefaultGDBFilename(null, c.getTime());
-            fail("getDefaultGDBFilename() doesn't accept nulls");
+            fail("getDefaultGDBFilename() should not accept nulls");
         } catch(NullPointerException npexc) {
             // This is what we expect.
         }
         try {
             GenMAPPBuilderUtilities.getDefaultGDBFilename("escherichia coli", null);
-            fail("getDefaultGDBFilename() doesn't accept nulls");
+            fail("getDefaultGDBFilename() should not accept nulls");
         } catch(NullPointerException npexc) {
             // This is what we expect.
         }
@@ -47,6 +53,12 @@ public class GenMAPPBuilderUtilitiesTest {
 
     /**
      * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities#getGenusName(java.lang.String)}.
+     * Ensure that the GMBUtilities getGenusName method works
+     * correctly. Specifically:
+     * - empty string returns empty string (not a failure)
+     * - given a full genus and species name, the correct genus name is returned
+     * - null is not accepted as input
+     * 
      */
     @Test
     public void testGetGenusName() {
@@ -63,6 +75,13 @@ public class GenMAPPBuilderUtilitiesTest {
 
     /**
      * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities#getSpeciesName(java.lang.String)}.
+     * Ensure that the GMBUtilities getSpeciesName method works
+     * correctly. Specifically:
+     * - empty string returns empty string (not a failure)
+     * - given a genus only, empty string is returned for the species
+     * - given a full genus and species name, the correct species name is returned
+     * - null is not accepted as input
+     * 
      */
     @Test
     public void testGetSpeciesName() {

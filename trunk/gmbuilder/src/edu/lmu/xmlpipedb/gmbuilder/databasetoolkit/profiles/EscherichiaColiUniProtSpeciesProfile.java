@@ -26,6 +26,8 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.Syst
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 
 /**
  * @author Joey J. Barrett
@@ -123,107 +125,78 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
 		return tableManager;
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificRelationshipTable(java.lang.String, edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
-	 */
-	@Override
-	public TableManager getSpeciesSpecificRelationshipTable(String relationshipTable, 
-			TableManager primarySystemTableManager, TableManager systemTableManager, 
-			TableManager tableManager) throws SQLException, Exception {
-		
-		String systemTable1 = relationshipTable.split("-")[0];
-		String systemTable2 = relationshipTable.split("-")[1];
-		
-		//Blattner-X
-		if(getSpeciesSpecificSystemTables().containsKey(systemTable1)) {
-			
-		    PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement(
-		    		"SELECT id " +
-		    		"FROM dbreferencetype " +
-		    		"WHERE type = ? and " +
-		    		"entrytype_dbreference_hjid = ?");    
+	/**
+     * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificRelationshipTable(java.lang.String,
+     *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
+     *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
+     *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
+     */
+    @Override
+    public TableManager getSpeciesSpecificRelationshipTable(String relationshipTable, TableManager primarySystemTableManager, TableManager systemTableManager, TableManager tableManager) throws SQLException, Exception {
+        SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
 
-		    ps.setString(1, systemTable2);
-		    
-		    ResultSet result;
-		    
-		    for(Row row : systemTableManager.getRows()) {
-		    	if(row.getValue(TableManager.TABLE_NAME_COLUMN).equals("Blattner")) {
-				    ps.setString(2, row.getValue("UID"));
-				    result = ps.executeQuery();
-				    while(result.next()) {
-				    	// Fix blattner IDs of the form xxxx/yyyy
-				    	for (String Blattner_ID : row.getValue("ID").split("/")) {
-				    		tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
-				    			{"\"Primary\"", Blattner_ID}, 
-			        			{"Related", result.getString("id")},
-			        			//TODO This is hard-coded.  Fix it. 
-			        			{"Bridge", "S"}});
-				    	}				    
-				    }
-		    	}
-		    }
-		    
-			ps.close();
-			
-			//X-Blattner, excluding UniProt-Blattner
-		} else if(getSpeciesSpecificSystemTables().containsKey(systemTable2) && !systemTable1.equals("UniProt")) {
-			
-			PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement(
-					"SELECT entrytype_dbreference_hjid, id " +
-					"FROM dbreferencetype where type = ?");    
-		    
-		    ps.setString(1, systemTable1);  
-		    ResultSet result = ps.executeQuery();
-		    
-		    String primary = "";
-		    String related = "";
-		    while(result.next()) {
-	
-		    	primary = result.getString("id");
-		    	related = result.getString("entrytype_dbreference_hjid");
-		    	
-		    	for(Row row : systemTableManager.getRows()) {
-			    	if(row.getValue(TableManager.TABLE_NAME_COLUMN).equals("Blattner") &&
-			    			row.getValue("UID").equals(primary)) {
-		    	
-			    		for (String Blattner_ID : row.getValue("ID").split("/")) {
-			    			tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
-				    			{"\"Primary\"", related}, 
-				    			{"Related", Blattner_ID},
-				    			//TODO This is hard-coded.  Fix it. 
-				    			{"Bridge", "S"}}); 
-			    		}
-			    	}
-		    	}
-		    }
-		    ps.close();
-		    
-		} else {
-			
-		    for(Row row1 : systemTableManager.getRows()) {
-			    if(row1.getValue(TableManager.TABLE_NAME_COLUMN).equals("Blattner")) {
-			    	for(Row row2 : primarySystemTableManager.getRows()) {
-			    		if(row1.getValue("UID").equals(row2.getValue("UID"))) {
-			    			for (String Blattner_ID : row1.getValue("ID").split("/")) {
-			    				tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
-					    			{"\"Primary\"", row2.getValue("ID")}, 
-					    			{"Related", Blattner_ID},
-					    			//TODO This is hard-coded.  Fix it. 
-					    			{"Bridge", "S"}});
-			    			}
-			    			break;
-					    	
-			    		}
-			    	}
-			    } 	
-		    }
-			
-			
-		}
-		
-		return tableManager;
-	}
+        // Blattner-X
+        if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable1)) {
+            PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT id " + "FROM dbreferencetype " + "WHERE type = ? and " + "entrytype_dbreference_hjid = ?");
+            ps.setString(1, stp.systemTable2);
+            ResultSet result;
+            for (Row row : systemTableManager.getRows()) {
+                if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals("Blattner")) {
+                    ps.setString(2, row.getValue("UID"));
+                    result = ps.executeQuery();
+                    while (result.next()) {
+                        // Fix blattner IDs of the form xxxx/yyyy
+                        for (String Blattner_ID : row.getValue("ID").split("/")) {
+                            tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", Blattner_ID }, { "Related", result.getString("id") },
+                            // TODO This is hard-coded. Fix it.
+                            { "Bridge", "S" } });
+                        }
+                    }
+                }
+            }
+            ps.close();
+
+            // X-Blattner, excluding UniProt-Blattner
+        } else if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable2) && !stp.systemTable1.equals("UniProt")) {
+            PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT entrytype_dbreference_hjid, id " + "FROM dbreferencetype where type = ?");
+            ps.setString(1, stp.systemTable1);
+            ResultSet result = ps.executeQuery();
+
+            String primary = "";
+            String related = "";
+            while (result.next()) {
+                primary = result.getString("id");
+                related = result.getString("entrytype_dbreference_hjid");
+                for (Row row : systemTableManager.getRows()) {
+                    if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals("Blattner") && row.getValue("UID").equals(primary)) {
+                        for (String Blattner_ID : row.getValue("ID").split("/")) {
+                            tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", related }, { "Related", Blattner_ID },
+                            // TODO This is hard-coded. Fix it.
+                            { "Bridge", "S" } });
+                        }
+                    }
+                }
+            }
+            ps.close();
+        } else {
+            for (Row row1 : systemTableManager.getRows()) {
+                if (row1.getValue(TableManager.TABLE_NAME_COLUMN).equals("Blattner")) {
+                    for (Row row2 : primarySystemTableManager.getRows()) {
+                        if (row1.getValue("UID").equals(row2.getValue("UID"))) {
+                            for (String Blattner_ID : row1.getValue("ID").split("/")) {
+                                tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", row2.getValue("ID") }, { "Related", Blattner_ID },
+                                //TODO This is hard-coded.  Fix it. 
+                                { "Bridge", "S" } });
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return tableManager;
+    }
 	
 	/* (non-Javadoc)
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificSystemCode(java.util.List, java.util.Map)

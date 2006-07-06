@@ -9,6 +9,7 @@ import java.util.Calendar;
 import org.junit.Test;
 
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 
 /**
  * @author   xmlpipedb
@@ -23,7 +24,6 @@ public class GenMAPPBuilderUtilitiesTest {
      * - given a species and date, acorrect file name is returned
      * - null is not accepted for the species name
      * - null is not accepted for the date
-     * 
      */
     @Test
     public void testGetDefaultGDBFilename() {
@@ -58,7 +58,6 @@ public class GenMAPPBuilderUtilitiesTest {
      * - empty string returns empty string (not a failure)
      * - given a full genus and species name, the correct genus name is returned
      * - null is not accepted as input
-     * 
      */
     @Test
     public void testGetGenusName() {
@@ -81,7 +80,6 @@ public class GenMAPPBuilderUtilitiesTest {
      * - given a genus only, empty string is returned for the species
      * - given a full genus and species name, the correct species name is returned
      * - null is not accepted as input
-     * 
      */
     @Test
     public void testGetSpeciesName() {
@@ -92,6 +90,39 @@ public class GenMAPPBuilderUtilitiesTest {
         try {
             GenMAPPBuilderUtilities.getSpeciesName(null);
             fail("getSpeciesName() doesn't accept nulls");
+        } catch(NullPointerException npexc) {
+            // This is what we expect.
+        }
+    }
+
+    /**
+     * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities#parseRelationshipTableName(java.lang.String)}.
+     * 
+     * I'll leave the details to Jeffrey  :)
+     */
+    @Test
+    public void testParseRelationshipTableName() {
+        SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName("UniProt-EMBL");
+        assertEquals("UniProt", stp.systemTable1);
+        assertEquals("EMBL", stp.systemTable2);
+        
+        try {
+            stp = GenMAPPBuilderUtilities.parseRelationshipTableName("NotAValidRelationshipTableName");
+            fail("parseRelationshipTableName() assumes a valid relationship table name");
+        } catch(ArrayIndexOutOfBoundsException aioobexc) {
+            // This is what we expect.
+        }
+        
+        try {
+            stp = GenMAPPBuilderUtilities.parseRelationshipTableName("");
+            fail("parseRelationshipTableName() assumes a valid relationship table name");
+        } catch(ArrayIndexOutOfBoundsException aioobexc) {
+            // This is what we expect.
+        }
+        
+        try {
+            stp = GenMAPPBuilderUtilities.parseRelationshipTableName(null);
+            fail("parseRelationshipTableName() assumes a valid relationship table name");
         } catch(NullPointerException npexc) {
             // This is what we expect.
         }

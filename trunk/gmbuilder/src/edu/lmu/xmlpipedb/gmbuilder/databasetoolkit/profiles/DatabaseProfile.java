@@ -29,6 +29,8 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 
 /**
  * @author Joey J. Barrett Class: DatabaseProfile
@@ -486,12 +488,11 @@ public abstract class DatabaseProfile extends Profile {
     private TableManager getRelationsTableManager() throws Exception {
         TableManager tableManager = new TableManager(null, new String[] { "SystemCode", "RelatedCode" });
         for (String relationTable : relationshipTables) {
-            String systemTable1 = relationTable.split("-")[0];
-            String systemTable2 = relationTable.split("-")[1];
-            if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(systemTable1) | speciesProfile.getSpeciesSpecificSystemTables().containsKey(systemTable2)) {
-                tableManager = speciesProfile.getRelationsTableManagerCustomizations(systemTable1, systemTable2, templateDefinedSystemToSystemCode, tableManager);
+            SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationTable);
+            if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
+                tableManager = speciesProfile.getRelationsTableManagerCustomizations(stp.systemTable1, stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
             } else {
-                tableManager.submit("Relations", QueryType.insert, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get(systemTable1) }, { "RelatedCode", templateDefinedSystemToSystemCode.get(systemTable2) }, { "Relation", relationTable }, { "Type", systemTable1.equals(getPrimarySystemTable()) || systemTable2.equals(getPrimarySystemTable()) ? "Direct" : "Inferred" }, { "Source", "" } });
+                tableManager.submit("Relations", QueryType.insert, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get(stp.systemTable1) }, { "RelatedCode", templateDefinedSystemToSystemCode.get(stp.systemTable2) }, { "Relation", relationTable }, { "Type", stp.systemTable1.equals(getPrimarySystemTable()) || stp.systemTable2.equals(getPrimarySystemTable()) ? "Direct" : "Inferred" }, { "Source", "" } });
             }
         }
 

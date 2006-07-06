@@ -75,6 +75,31 @@ public class GenMAPPBuilderUtilities {
     }
 
     /**
+     * Helper class for holding a pair of system table names.
+     */
+    public static class SystemTablePair {
+        public String systemTable1;
+        public String systemTable2;
+    }
+    
+    /**
+     * Takes a relationship table name and returns the two system table names
+     * involved in this relationship.
+     * 
+     * @param relationshipTableName
+     *            The relationship table name (e.g., UniProt-EMBL)
+     * @return Object holding the two system table names derived from the given
+     *         relationship table name
+     */
+    public static SystemTablePair parseRelationshipTableName(String relationshipTableName) {
+        String[] splits = relationshipTableName.split("-");
+        SystemTablePair result = new SystemTablePair();
+        result.systemTable1 = splits[0];
+        result.systemTable2 = splits[1];
+        return result;
+    }
+
+    /**
      * Date format used for default GDB filenames.
      */
     private static final DateFormat GDB_DF = new SimpleDateFormat("yyyyMMdd");

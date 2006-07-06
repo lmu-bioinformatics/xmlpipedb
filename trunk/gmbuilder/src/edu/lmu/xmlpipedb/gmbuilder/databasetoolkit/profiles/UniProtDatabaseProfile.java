@@ -30,6 +30,8 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.gmbuilder.util.CaseInsensitiveStringComparator;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 
 /**
  * @author Joey J. Barrett Class: UniProtDatabaseProfile
@@ -281,68 +283,50 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         return tableManager;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getRelationshipTableManager()
      */
     @Override
     protected List<TableManager> getRelationshipTableManager() throws SQLException, Exception {
-
         List<TableManager> tableManagers = new ArrayList<TableManager>();
-
         TableManager tableManager;
-
         for (String relationshipTable : relationshipTables) {
-
-            String systemTable1 = relationshipTable.split("-")[0];
-            String systemTable2 = relationshipTable.split("-")[1];
+            SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
 
             ExportWizard.updateExportProgress(65, "Preparing tables - " + "Relationship table - " + relationshipTable + "...");
 
             tableManager = new TableManager(new String[][] { { "\"Primary\"", "VARCHAR(50) NOT NULL" }, { "Related", "VARCHAR(50) NOT NULL" }, { "Bridge", "VARCHAR(3)" } }, new String[] { "\"Primary\"", "Related" });
-
-            if (systemTable1.equals(getPrimarySystemTable()) && systemTable2.equals("GeneOntology")) {
+            if (stp.systemTable1.equals(getPrimarySystemTable()) && stp.systemTable2.equals("GeneOntology")) {
                 // do nothing, this is UniProt-GeneOntology or UniProt-species
 
                 // UniProt-X, UniProt-species/geneontology not included
-            } else if (systemTable1.equals("UniProt") && !getDatabaseSpecificSystemTables().containsKey(systemTable2)) {
-
+            } else if (stp.systemTable1.equals("UniProt") && !getDatabaseSpecificSystemTables().containsKey(stp.systemTable2)) {
                 PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT hjvalue, id " + "FROM dbreferencetype INNER JOIN entrytype_accession " + "ON (entrytype_dbreference_hjid = entrytype_accession_hjid) " + "WHERE type = ?");
-
-                ps.setString(1, systemTable2);
+                ps.setString(1, stp.systemTable2);
                 ResultSet result = ps.executeQuery();
 
                 String primary = "";
                 String related = "";
-
                 while (result.next()) {
-
                     primary = result.getString("hjvalue");
                     related = result.getString("id");
 
                     tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", primary != null ? primary : "" }, { "Related", related != null ? related : "" },
                     // TODO This is hard-coded. Fix it.
                     { "Bridge", "S" } });
-
                 }
                 ps.close();
-
             }
             // X-X
-            else if (!getDatabaseSpecificSystemTables().containsKey(systemTable1) && !getDatabaseSpecificSystemTables().containsKey(systemTable2)) {
-
+            else if (!getDatabaseSpecificSystemTables().containsKey(stp.systemTable1) && !getDatabaseSpecificSystemTables().containsKey(stp.systemTable2)) {
                 PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT dbref1.id as id1, " + "dbref2.id as id2 " + "FROM dbreferencetype as dbref1 " + "INNER JOIN dbreferencetype as dbref2 " + "USING (entrytype_dbreference_hjid) " + "WHERE dbref1.type <> dbref2.type " + "AND dbref1.type = ? " + "AND dbref2.type = ?");
-
-                ps.setString(1, systemTable1);
-                ps.setString(2, systemTable2);
+                ps.setString(1, stp.systemTable1);
+                ps.setString(2, stp.systemTable2);
                 ResultSet result = ps.executeQuery();
 
                 String primary;
                 String related;
-
                 while (result.next()) {
-
                     primary = result.getString("id1");
                     related = result.getString("id2");
 
@@ -352,18 +336,15 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 }
                 ps.close();
                 // Species-X or X-Species excluding geneontology
-            } else if ((speciesProfile.getSpeciesSpecificSystemTables().containsKey(systemTable1) || speciesProfile.getSpeciesSpecificSystemTables().containsKey(systemTable2)) && !systemTable2.equals("GeneOntology")) {
-
+            } else if ((speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) || speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) && !stp.systemTable2.equals("GeneOntology")) {
                 tableManager = speciesProfile.getSpeciesSpecificRelationshipTable(relationshipTable, getPrimarySystemTableManager(), getSystemTableManager(), tableManager);
 
                 // produce last X-geneontology anything
-            } else if (systemTable2.equals("GeneOntology")) {
-
+            } else if (stp.systemTable2.equals("GeneOntology")) {
                 produceLastRelationshipTables.add(relationshipTable);
 
                 // No way currently of producing these
             } else {
-
                 tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", "" }, { "Related", "" },
                 // TODO This is hard-coded. Fix it.
                 { "Bridge", "" } });
@@ -397,19 +378,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      * @throws Exception
      */
     private TableManager getSecondPassRelationshipTables() throws SQLException, Exception {
-
-        TableManager tableManager;
-
-        tableManager = new TableManager(new String[][] { { "\"Primary\"", "VARCHAR(50) NOT NULL" }, { "Related", "VARCHAR(50) NOT NULL" }, { "Bridge", "VARCHAR(3)" } }, new String[] { "\"Primary\"", "Related" });
+        TableManager tableManager = new TableManager(new String[][] { { "\"Primary\"", "VARCHAR(50) NOT NULL" }, { "Related", "VARCHAR(50) NOT NULL" }, { "Bridge", "VARCHAR(3)" } }, new String[] { "\"Primary\"", "Related" });
 
         PreparedStatement ps = null;
         ResultSet result = null;
-
         for (String relationshipTable : produceLastRelationshipTables.toArray(new String[0])) {
-
-            String systemTable1 = relationshipTable.split("-")[0];
-
-            String sqlStatement = "SELECT [UniProt-" + systemTable1 + "].Related as id1, " + "[UniProt-GeneOntology].Related as id2 " + "FROM [UniProt-" + systemTable1 + "] " + "INNER JOIN [UniProt-GeneOntology] " + "ON [UniProt-" + systemTable1 + "].Primary = [UniProt-GeneOntology].Primary";
+            SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
+            String sqlStatement = "SELECT [UniProt-" + stp.systemTable1 + "].Related as id1, " + "[UniProt-GeneOntology].Related as id2 " + "FROM [UniProt-" + stp.systemTable1 + "] " + "INNER JOIN [UniProt-GeneOntology] " + "ON [UniProt-" + stp.systemTable1 + "].Primary = [UniProt-GeneOntology].Primary";
 
             // Alternative query when using a database other than Access.
             // String sqlStatement = "SELECT \"" + tableName + "\".Related, " +

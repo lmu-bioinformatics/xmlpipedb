@@ -15,9 +15,11 @@ import java.awt.Cursor;
 
 import javax.swing.JFrame;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.nexes.wizard.Wizard;
 import com.nexes.wizard.WizardPanelDescriptor;
-
 
 /**
  * @author Joey J. Barrett
@@ -26,16 +28,18 @@ import com.nexes.wizard.WizardPanelDescriptor;
 public class ExportWizard {
     
 	private WizardPanelDescriptor descriptor5;
-	
+
+    /**
+     * Log object for this class.
+     */
+    private static final Log _Log = LogFactory.getLog(ExportWizard.class);
+    
 	/**
 	 * Constuctor.
 	 */
 	public ExportWizard(JFrame owner) {
-		
 		Wizard wizard = new Wizard(owner);
-		
 		wizard.getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		
 		wizard.getDialog().setTitle("Export Wizard Dialog");
 		
 		WizardPanelDescriptor descriptor1 = new ExportPanel1Descriptor();
@@ -69,9 +73,11 @@ public class ExportWizard {
      * @param progressText some description string.
 	 */
 	public static void updateExportProgress(int progressValue, String progressText) {
+        _Log.info(progressText);
 		ExportPanel5.setProgress(progressValue, progressText);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException ignored) {}
+        // Why was this here?
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException ignored) {}
 	}
 }

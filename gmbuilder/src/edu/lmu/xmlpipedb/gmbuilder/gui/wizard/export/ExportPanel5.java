@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -69,12 +70,19 @@ public class ExportPanel5 extends JPanel {
     
     /**
      * Sets the progress of the progress bar.
-     * @param i must be an integer between 0-100.
-     * @param s some description string.
+     * 
+     * @param i
+     *            must be an integer between 0-100.
+     * @param s
+     *            some description string.
      */
-    public static void setProgress(int i, String s) {
-    	progressSent.setValue(i);
-        progressDescription.setText(s);
+    public static void setProgress(final int i, final String s) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                progressSent.setValue(i);
+                progressDescription.setText(s);
+            }
+        });
     }
     
     /**

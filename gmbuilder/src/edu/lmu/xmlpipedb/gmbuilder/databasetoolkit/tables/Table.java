@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
@@ -36,7 +39,6 @@ import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
  * Class: Table
  */
 public class Table {
-	
 	/**
 	 * @author Joey J. Barrett
 	 * SQLStatement.  An sql statement and its corrisponding
@@ -130,52 +132,44 @@ public class Table {
 	}
 	
 	/**
-	 * @param exportConnection
-	 * @throws Exception
-	 */
-	public void export(Connection exportConnection) throws Exception {
-		
-		if(tableAttributes != null) {
-			
-			Set<String> tableNames = new HashSet<String>();
-	
-			for(Row row : tableManager.getRows()) {
-				
-				if(row.getValue(TableManager.QUERY_TYPE_COLUMN).equals(QueryType.insert.name())) {
-					tableNames.add(row.getValue(TableManager.TABLE_NAME_COLUMN));
-				}
-			}
-			
-			for(String tableName : tableNames) {
-                // TODO Would be better to decouple business logic from UI calls.
-				ExportWizard.updateExportProgress(66, "Creating tables - " + tableName + " table...");
-				create(tableName);
-			}
-		}
-		
-		String previousTableName = "";
-		
-		for(Row row : tableManager.getRows()) {
-			
-			if(!row.getValue(TableManager.TABLE_NAME_COLUMN).equals(previousTableName)) {
-				ExportWizard.updateExportProgress(66, "Populating tables - " + 
-						row.getValue(TableManager.TABLE_NAME_COLUMN) + " table...");
-			}
-			
-			if(row.getValue(TableManager.QUERY_TYPE_COLUMN).equals(QueryType.insert.name())) {
-				
-				insert(row.getValue(TableManager.TABLE_NAME_COLUMN), row.getRowAsMap());
-				
-			} else if(row.getValue(TableManager.QUERY_TYPE_COLUMN).equals(QueryType.update.name())) {
-				
-				update(row.getValue(TableManager.TABLE_NAME_COLUMN), row.getRowAsMap());
-			}
-		}
-		ExportWizard.updateExportProgress(66, "Flushing tables...");
-		
-		flush(exportConnection);
-		
-	}
+     * @param exportConnection
+     * @throws Exception
+     */
+    public void export(Connection exportConnection) throws Exception {
+        if (tableAttributes != null) {
+            Set<String> tableNames = new HashSet<String>();
+            for (Row row : tableManager.getRows()) {
+                if (row.getValue(TableManager.QUERY_TYPE_COLUMN).equals(QueryType.insert.name())) {
+                    tableNames.add(row.getValue(TableManager.TABLE_NAME_COLUMN));
+                }
+            }
+
+            for (String tableName : tableNames) {
+                // TODO Would be better to decouple business logic from UI
+                // calls.
+                ExportWizard.updateExportProgress(66, "Creating tables - " + tableName + " table...");
+                create(tableName);
+            }
+        }
+
+        String previousTableName = "";
+        Row[] rowsToProcess = tableManager.getRows();
+        _Log.info("Processing " + rowsToProcess.length + " rows");
+        for (Row row : rowsToProcess) {
+            if (!row.getValue(TableManager.TABLE_NAME_COLUMN).equals(previousTableName)) {
+                ExportWizard.updateExportProgress(66, "Populating tables - " + row.getValue(TableManager.TABLE_NAME_COLUMN) + " table...");
+                previousTableName = row.getValue(TableManager.TABLE_NAME_COLUMN);
+            }
+
+            if (row.getValue(TableManager.QUERY_TYPE_COLUMN).equals(QueryType.insert.name())) {
+                insert(row.getValue(TableManager.TABLE_NAME_COLUMN), row.getRowAsMap());
+            } else if (row.getValue(TableManager.QUERY_TYPE_COLUMN).equals(QueryType.update.name())) {
+                update(row.getValue(TableManager.TABLE_NAME_COLUMN), row.getRowAsMap());
+            }
+        }
+        ExportWizard.updateExportProgress(66, "Flushing tables...");
+        flush(exportConnection);
+    }
 	
 	/**
 	 * Create Table.  This call will prepare the create table sql statement
@@ -320,5 +314,10 @@ public class Table {
 			}
 		}
 	}
+    
+    /**
+     * Log object for this class.
+     */
+    private static final Log _Log = LogFactory.getLog(Table.class);
 } 
 	

@@ -26,14 +26,6 @@ import com.nexes.wizard.WizardPanelDescriptor;
  * Class: ExportWizard
  */
 public class ExportWizard {
-    
-	private WizardPanelDescriptor descriptor5;
-
-    /**
-     * Log object for this class.
-     */
-    private static final Log _Log = LogFactory.getLog(ExportWizard.class);
-    
 	/**
 	 * Constuctor.
 	 */
@@ -60,6 +52,7 @@ public class ExportWizard {
 		wizard.setCurrentPanel(ExportPanel1Descriptor.IDENTIFIER);
     
 		wizard.getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        wizard.getDialog().setLocationRelativeTo(owner);
 		
 		//0=Finish,1=Cancel,2=Error
 		wizard.showModalDialog();        
@@ -80,4 +73,11 @@ public class ExportWizard {
 //			Thread.sleep(1000);
 //		} catch (InterruptedException ignored) {}
 	}
+
+    /**
+     * Log object for this class.
+     */
+    private static final Log _Log = LogFactory.getLog(ExportWizard.class);    
+    
+    private WizardPanelDescriptor descriptor5;
 }

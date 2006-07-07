@@ -24,22 +24,28 @@ import javax.swing.JMenuBar;
 import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
-import shag.App;
-import shag.dialog.ModalDialog;
-import shag.menu.WindowMenu;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
+
+import shag.App;
+import shag.dialog.ModalDialog;
+import shag.menu.WindowMenu;
 
 /**
  * GenMAPPBuilder is a GUI application for loading, querying, and exporting data
@@ -87,6 +93,15 @@ public class GenMAPPBuilder extends App {
     }
 
     /**
+     * Returns the current Hibernate configuration.
+     * 
+     * @return The current Hibernate configuration
+     */
+    public Configuration getCurrentHibernateConfiguration() {
+        return _queryPanel.getHibernateConfiguration();
+    }
+
+    /**
      * Initializes the application.
      */
     private GenMAPPBuilder() {
@@ -119,6 +134,8 @@ public class GenMAPPBuilder extends App {
         m.addSeparator();
         m.add(_importUniprotAction);
         m.add(_importGOAction);
+        m.addSeparator();
+        m.add(_processGOAction);
         m.addSeparator();
         m.add(_exportToGenMAPPAction);
         mb.add(m);
@@ -158,6 +175,12 @@ public class GenMAPPBuilder extends App {
             }
         };
         
+        _processGOAction = new AbstractAction("Process GO Data...") {
+            public void actionPerformed(ActionEvent aevt) {
+                doProcessGO();
+            }
+        };
+        
         _exportToGenMAPPAction = new AbstractAction("Export to GenMAPP...") {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -192,7 +215,7 @@ public class GenMAPPBuilder extends App {
             _queryPanel.setHibernateConfiguration(createHibernateConfiguration());
         } catch(Exception exc) {
             ModalDialog.showErrorDialog("Unable to Configure Database", "Sorry, database configuration was unable to proceed.  This is most likely an error relating to file creation or modification on the system on which you are running.");
-            exc.printStackTrace();
+            _Log.error(exc);
         }
     }
 
@@ -206,11 +229,33 @@ public class GenMAPPBuilder extends App {
      *            import)
      */
     private void doImport(String jaxbContextPath, String title) {
-        Configuration hibernateConfiguration = createHibernateConfiguration();
+        Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         if (hibernateConfiguration != null) {
             ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration);
             importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             ModalDialog.showPlainDialog(title, importPanel);
+        }
+    }
+
+    /**
+     * Processes the current GO data into staging and cached tables. These
+     * tables are identical for every GenMAPP Gene Database export, so they can
+     * be built once and just read directly later.
+     */
+    private void doProcessGO() {
+        if (ModalDialog.showQuestionDialog("Process GO Data?", "Some processing of the raw Gene Ontology data needs to be performed.\nThis may take a few hours.  Proceed?")) {
+            try {
+                SessionFactory sessionFactory = getCurrentHibernateConfiguration().buildSessionFactory();
+                Session session = sessionFactory.openSession();
+                (new ExportGoData(session.connection())).populateGeneOntologyStage(getCurrentHibernateConfiguration());
+                session.close();
+            } catch(IOException e) {
+                ModalDialog.showErrorDialog("I/O error.");
+                _Log.error(e);
+            } catch(Exception e) {
+                ModalDialog.showErrorDialog("Unexpected error.");
+                _Log.error(e);
+            }
         }
     }
 
@@ -220,43 +265,40 @@ public class GenMAPPBuilder extends App {
      * native Access Jet engine.
      */
     private void doExportToGenMAPP() {
-    	
     	try {
     		getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    		//TODO Fix this to update it to the new xpdutils stuff.
-			ExportToGenMAPP.init(GenMAPPBuilder.createHibernateConfiguration());
+			ExportToGenMAPP.init(getCurrentHibernateConfiguration());
 			getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			new ExportWizard(this.getFrontmostWindow());
 			ExportToGenMAPP.cleanup();
-
 		} catch (HibernateException e) {
 			ModalDialog.showErrorDialog("HIBERNATE error.");
-			e.printStackTrace();
+            _Log.error(e);
 		} catch (SAXException e) {
 			ModalDialog.showErrorDialog("SAX error.");
-			e.printStackTrace();
+            _Log.error(e);
 		} catch (JAXBException e) {
 			ModalDialog.showErrorDialog("JAXB error.");
-			e.printStackTrace();
+            _Log.error(e);
 		} catch (SQLException e) {			
             ModalDialog.showErrorDialog("SQL error.");
-            e.printStackTrace();
+            _Log.error(e);
 		} catch (IOException e) {
 			ModalDialog.showErrorDialog("I/O error.");
-			e.printStackTrace();
+            _Log.error(e);
 		} catch (ClassNotFoundException e) {
 			ModalDialog.showErrorDialog("Database driver error.");
-			e.printStackTrace();
+            _Log.error(e);
 		} catch (Exception e) {
 			ModalDialog.showErrorDialog(e.toString());
-			e.printStackTrace();
+            _Log.error(e);
 		}
     }
 
     /**
      * Builds the current Hibernate configuration.
      */
-    public static Configuration createHibernateConfiguration() {
+    private static Configuration createHibernateConfiguration() {
 //    	TODO Fix this to update it to the new xpdutils stuff.
         Configuration hibernateConfiguration = null;
         try {
@@ -276,6 +318,11 @@ public class GenMAPPBuilder extends App {
     }
 
     /**
+     * The GenMAPPBuilder log.
+     */
+    private static final Log _Log = LogFactory.getLog(GenMAPPBuilder.class);
+
+    /**
      * Action object for configuring the database.
      */
     private Action _configureDBAction;
@@ -289,6 +336,11 @@ public class GenMAPPBuilder extends App {
      * Action object for importing a go file into the database.
      */
     private Action _importGOAction;
+
+    /**
+     * Action object for processing the currently stored GO data.
+     */
+    private Action _processGOAction;
 
     /**
      * Action object for exporting the current content of the database to a

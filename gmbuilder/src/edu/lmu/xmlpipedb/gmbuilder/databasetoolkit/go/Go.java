@@ -130,9 +130,9 @@ public class Go {
 		
 		String[][] fields = new String[][]
 		       {
-				{"ID", "NAME", "Type","Parent","Relation","Species", "\"Date\"", "Remarks"}, /* GO */
-				{"ID", "NAME", "Type","Parent","Relation","Species", "\"Date\"", "Remarks"}, /* GO stage */
-				{"OrderNo", "\"Level\"", "ID", "NAME"}, /* GOTree */
+				{"ID", "Name", "Type","Parent","Relation","Species", "\"Date\"", "Remarks"}, /* GO */
+				{"ID", "Name", "Type","Parent","Relation","Species", "\"Date\"", "Remarks"}, /* GO stage */
+				{"OrderNo", "\"Level\"", "ID", "Name"}, /* GOTree */
 				{"ID", "Count"}, /* GOCount */
 				{"\"Primary\"", "Related", "Bridge"}, /* Uniprot-Go */
 				{"GO", "Count", "Total"} /* Uniprot-GoCount */

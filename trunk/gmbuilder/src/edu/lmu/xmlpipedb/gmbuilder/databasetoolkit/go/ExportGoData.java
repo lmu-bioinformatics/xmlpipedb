@@ -368,23 +368,44 @@ public class ExportGoData {
      * @throws SQLException
      */
     private void populateGeneOntology() throws SQLException {
-        String sql = "select * from " + GOTable.GeneOntologyStage + " where Id in (select DISTINCT(Related) from " + GOTable.UniProt_Go + ") order by Id";
-        PreparedStatement ps = null;
+//        String sql = "select * from " + GOTable.GeneOntologyStage + " where Id in (select DISTINCT(Related) from " + GOTable.UniProt_Go + ") order by Id";
+        String relatedIDSQL = "select distinct(Related) from " + GOTable.UniProt_Go + " order by Related";
+        String stageSQL = "select * from " + GOTable.GeneOntologyStage + " where Id = ? order by Id";
+        PreparedStatement relatedPS = null;
+        PreparedStatement stagePS = null;
+        _Log.info("creating: " + GOTable.GeneOntology);
         try {
-            ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sql);
-            ResultSet results = ps.executeQuery();
-            _Log.info("creating: " + GOTable.GeneOntology);
-            while (results.next()) {
-                String[] values = getGoValues(results);
-                godb.insert(connection, GOTable.GeneOntology, values);
-                insertParents(values[PARENT_COL]);
+            // Grab the distinct related IDs from UniProt-GeneOntology.
+            relatedPS = connection.prepareStatement(relatedIDSQL);
+            stagePS = ConnectionManager.getRelationalDBConnection().prepareStatement(stageSQL);
+            
+            // For each of these IDs, grab the corresponding stage records, and process.
+            ResultSet relatedRS = relatedPS.executeQuery();
+            while (relatedRS.next()) {
+                stagePS.setString(1, relatedRS.getString("Related"));
+                ResultSet stageRS = stagePS.executeQuery();
+                while (stageRS.next()) {
+                    String[] values = getGoValues(stageRS);
+                    godb.insert(connection, GOTable.GeneOntology, values);
+                    insertParents(values[PARENT_COL]);
+                }
+                stageRS.close();
             }
+//            ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sql);
+//            ResultSet results = ps.executeQuery();
+//            _Log.info("creating: " + GOTable.GeneOntology);
+//            while (results.next()) {
+//                String[] values = getGoValues(results);
+//                godb.insert(connection, GOTable.GeneOntology, values);
+//                insertParents(values[PARENT_COL]);
+//            }
         } catch(SQLException sqlexc) {
             throw sqlexc;
         } catch(Exception exc) {
             _Log.error(exc);
         } finally {
-            try { ps.close(); } catch(Exception exc) { _Log.error(exc); }
+            try { stagePS.close(); } catch(Exception exc) { _Log.error(exc); }
+            try { relatedPS.close(); } catch(Exception exc) { _Log.error(exc); }
         }
     }
 

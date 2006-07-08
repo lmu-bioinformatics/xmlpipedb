@@ -386,8 +386,12 @@ public class ExportGoData {
                 ResultSet stageRS = stagePS.executeQuery();
                 while (stageRS.next()) {
                     String[] values = getGoValues(stageRS);
-                    godb.insert(connection, GOTable.GeneOntology, values);
-                    insertParents(values[PARENT_COL]);
+                    String key = values[ID_COL] + "," + values[PARENT_COL];
+                    if (!duplicates.containsKey(key)) {
+                        duplicates.put(key, true);
+                        godb.insert(connection, GOTable.GeneOntology, values);
+                        insertParents(values[PARENT_COL]);
+                    }
                 }
                 stageRS.close();
             }
@@ -547,6 +551,7 @@ public class ExportGoData {
     // GO DB variables
     private static final int NUM_OF_GO_COLS = 8;
     private static final int PARENT_COL = 4 - 1;
+    private static final int ID_COL 	= 1 - 1;
 
     private int orderNo;
     private Connection connection;

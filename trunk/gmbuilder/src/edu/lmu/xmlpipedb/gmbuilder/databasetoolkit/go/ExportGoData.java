@@ -383,17 +383,18 @@ public class ExportGoData {
             ResultSet relatedRS = relatedPS.executeQuery();
             while (relatedRS.next()) {
                 stagePS.setString(1, relatedRS.getString("Related"));
-                ResultSet stageRS = stagePS.executeQuery();
-                while (stageRS.next()) {
-                    String[] values = getGoValues(stageRS);
-                    String key = values[ID_COL] + "," + values[PARENT_COL];
-                    if (!duplicates.containsKey(key)) {
-                        duplicates.put(key, true);
-                        godb.insert(connection, GOTable.GeneOntology, values);
-                        insertParents(values[PARENT_COL]);
-                    }
-                }
-                stageRS.close();
+                processIDs(stagePS);
+//                ResultSet stageRS = stagePS.executeQuery();
+//                while (stageRS.next()) {
+//                    String[] values = getGoValues(stageRS);
+//                    String key = values[ID_COL] + "," + values[PARENT_COL];
+//                    if (!duplicates.containsKey(key)) {
+//                        duplicates.put(key, true);
+//                        godb.insert(connection, GOTable.GeneOntology, values);
+//                        insertParents(values[PARENT_COL]);
+//                    }
+//                }
+//                stageRS.close();
             }
 //            ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sql);
 //            ResultSet results = ps.executeQuery();
@@ -426,22 +427,41 @@ public class ExportGoData {
         try {
             ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sql);
             ps.setString(1, id);
-            ResultSet results = ps.executeQuery();
-            while (results.next()) {
-                String[] values = getGoValues(results);
-                String key = id + "," + values[PARENT_COL];
-                if (!duplicates.containsKey(key)) {
-                    duplicates.put(key, true);
-                    godb.insert(connection, GOTable.GeneOntology, values);
-                    insertParents(values[PARENT_COL]);
-                }
-            }
+            processIDs(ps);
+//            ResultSet results = ps.executeQuery();
+//            while (results.next()) {
+//                String[] values = getGoValues(results);
+//                String key = id + "," + values[PARENT_COL];
+//                if (!duplicates.containsKey(key)) {
+//                    duplicates.put(key, true);
+//                    godb.insert(connection, GOTable.GeneOntology, values);
+//                    insertParents(values[PARENT_COL]);
+//                }
+//            }
         } catch(SQLException sqlexc) {
             throw sqlexc;
         } catch(Exception exc) {
             _Log.error(exc);
         } finally {
             try { ps.close(); } catch(Exception exc) { _Log.error(exc); }
+        }
+    }
+
+    private void processIDs(PreparedStatement stagePS) throws SQLException {
+        ResultSet stageRS = null;
+        try {
+            stageRS = stagePS.executeQuery();
+            while (stageRS.next()) {
+                String[] values = getGoValues(stageRS);
+                String key = values[ID_COL] + "," + values[PARENT_COL];
+                if (!duplicates.containsKey(key)) {
+                    duplicates.put(key, true);
+                    godb.insert(connection, GOTable.GeneOntology, values);
+                    insertParents(values[PARENT_COL]);
+                }
+            }
+        } finally {
+            stageRS.close();
         }
     }
 

@@ -127,4 +127,20 @@ public class GenMAPPBuilderUtilitiesTest {
             // This is what we expect.
         }
     }
+    
+    /**
+     * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities#getSystemsDateString(java.util.Date)}.
+     */
+    @Test
+    public void testGetSystemsDateString() {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, 1999);
+        c.set(Calendar.MONTH, Calendar.FEBRUARY);
+        c.set(Calendar.DATE, 14);
+        assertEquals("02/14/1999", GenMAPPBuilderUtilities.getSystemsDateString(c.getTime()));
+        c.set(Calendar.YEAR, 2006);
+        c.set(Calendar.MONTH, Calendar.JUNE);
+        c.set(Calendar.DATE, 6);
+        assertEquals("06/06/2006", GenMAPPBuilderUtilities.getSystemsDateString(c.getTime()));
+    }
 }

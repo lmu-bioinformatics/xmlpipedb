@@ -100,7 +100,24 @@ public class GenMAPPBuilderUtilities {
     }
 
     /**
+     * Returns a formatted string for the given date that follows the date
+     * format expected in the Gene Database Systems table Date field.
+     * 
+     * @param d
+     *            The date to format
+     * @return The formatted string for that date
+     */
+    public static String getSystemsDateString(Date d) {
+        return SYSTEMS_DF.format(d);
+    }
+
+    /**
      * Date format used for default GDB filenames.
      */
     private static final DateFormat GDB_DF = new SimpleDateFormat("yyyyMMdd");
+    
+    /**
+     * Date format used for the Date field in the Systems table.
+     */
+    private static final DateFormat SYSTEMS_DF = new SimpleDateFormat("MM/dd/yyyy");
 }

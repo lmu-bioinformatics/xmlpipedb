@@ -14,7 +14,6 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -55,38 +54,29 @@ public class CustomUniProtSpeciesProfile extends SpeciesProfile {
 		return speciesSpecificAvailableSystemTables;
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, java.util.Date)
-	 */
-	@Override
-	public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws Exception {
-		PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement(
-				"SELECT value, type " +
-				"FROM genenametype INNER JOIN entrytype_genetype " +
-				"ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
-				"WHERE entrytype_gene_hjid = ?");
-		ResultSet result;
-		
-		for(Row row : primarySystemTableManager.getRows()) {
-			
-			ps.setString(1, row.getValue("UID"));
-			result = ps.executeQuery();
-			Map<String, String> typeToValue = new HashMap<String, String>();
-			while(result.next()) {
-				typeToValue.put(result.getString("type"), result.getString("value"));
-			}
-			tableManager.submit("OrderedLocusNames", QueryType.insert, new String[][] {
-					{"ID", typeToValue.get("ordered locus") != null ? 
-						typeToValue.get("ordered locus") : 
-						typeToValue.get("primary") != null ?
-						typeToValue.get("primary") :
-						typeToValue.get("synonym")}, 
-		    			{"Species", "|" + getSpeciesName() + "|"},
-		    			{"\"Date\"", new SimpleDateFormat("MM/dd/yyyy").format(version)}});
-		}
-		
-		return tableManager;
-	}
+	/**
+     * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
+     *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
+     *      java.util.Date)
+     */
+    @Override
+    public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws Exception {
+        PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " + "FROM genenametype INNER JOIN entrytype_genetype " + "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " + "WHERE entrytype_gene_hjid = ?");
+        ResultSet result;
+
+        for (Row row : primarySystemTableManager.getRows()) {
+
+            ps.setString(1, row.getValue("UID"));
+            result = ps.executeQuery();
+            Map<String, String> typeToValue = new HashMap<String, String>();
+            while (result.next()) {
+                typeToValue.put(result.getString("type"), result.getString("value"));
+            }
+            tableManager.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", typeToValue.get("ordered locus") != null ? typeToValue.get("ordered locus") : typeToValue.get("primary") != null ? typeToValue.get("primary") : typeToValue.get("synonym") }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) } });
+        }
+
+        return tableManager;
+    }
 
 	/* (non-Javadoc)
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getRelationsTableManagerCustomizations(java.lang.String, java.lang.String, java.util.Map, edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
@@ -182,7 +172,7 @@ public class CustomUniProtSpeciesProfile extends SpeciesProfile {
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemsTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
 	 */
 	@Override
-	public TableManager getSystemsTableManagerCustomizations(TableManager tableManager) throws Exception {
+	public TableManager getSystemsTableManagerCustomizations(TableManager tableManager, DatabaseProfile dbProfile) throws Exception {
 		return tableManager;
 	}
 

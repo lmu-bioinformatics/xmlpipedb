@@ -83,11 +83,12 @@ public abstract class SpeciesProfile extends Profile {
 	 * Returns a TableManager with the systems table
 	 * species specific changes.
 	 * @param tableManager
+	 * @param dbProfile TODO
 	 * @return
 	 * @throws Exception
 	 */
 	public abstract TableManager getSystemsTableManagerCustomizations(
-			TableManager tableManager) throws Exception;
+			TableManager tableManager, DatabaseProfile dbProfile) throws Exception;
 	
 	/**
 	 * Returns a TableManager with the species specific

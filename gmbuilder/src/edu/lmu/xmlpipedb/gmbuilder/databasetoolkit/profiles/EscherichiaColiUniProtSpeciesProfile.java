@@ -15,7 +15,6 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -73,57 +72,44 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
 		return tableManager;
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemsTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
-	 */
-	@Override
-	public TableManager getSystemsTableManagerCustomizations(TableManager tableManager) throws Exception {
-		tableManager.submit("Systems", QueryType.update, new String[][] {
-				{"SystemCode", "Ln"}, {"SystemName", "Blattner"}
-		});
-		return tableManager;
-	}
+	/**
+     * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemsTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, DatabaseProfile)
+     */
+    @Override
+    public TableManager getSystemsTableManagerCustomizations(TableManager tableManager, DatabaseProfile dbProfile) throws Exception {
+        tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", "Ln" }, { "System", "Blattner" } });
+        tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", "Ln" }, { "SystemName", "Blattner" } });
+        tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", "Ln" }, { "Species", "|" + getSpeciesName() + "|"} });
+        tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", "Ln" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(dbProfile.getVersion()) } });
+        return tableManager;
+    }
 
-	
-	
-	/* (non-Javadoc)
-	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, java.util.Date)
-	 */
-	@Override
-	public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws Exception {
-		
-		PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement(
-				"SELECT value, type " +
-				"FROM genenametype INNER JOIN entrytype_genetype " +
-				"ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
-				"WHERE entrytype_gene_hjid = ?");
-		ResultSet result;
-		
-		for(Row row : primarySystemTableManager.getRows()) {
-			
-			ps.setString(1, row.getValue("UID"));
-			result = ps.executeQuery();
-			Map<String, String> typeToValue = new HashMap<String, String>();
-			while(result.next()) {
-				typeToValue.put(result.getString("type"), result.getString("value"));
-			}
-			String ids = typeToValue.get("ordered locus") != null ? 
-						typeToValue.get("ordered locus") : 
-						typeToValue.get("primary") != null ?
-						typeToValue.get("primary") :
-						typeToValue.get("synonym");
-			
-			for (String id : ids.split("/")) {
-				tableManager.submit("Blattner", QueryType.insert, new String[][] {
-					{"ID", id}, 
-		    		{"Species", "|" + getSpeciesName() + "|"},
-		    		{"\"Date\"", new SimpleDateFormat("MM/dd/yyyy").format(version)},
-		    		{"UID", row.getValue("UID")}});
-			}
-		}
-		
-		return tableManager;
-	}
+	/**
+     * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
+     *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
+     *      java.util.Date)
+     */
+    @Override
+    public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws Exception {
+        PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " + "FROM genenametype INNER JOIN entrytype_genetype " + "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " + "WHERE entrytype_gene_hjid = ?");
+        ResultSet result;
+
+        for (Row row : primarySystemTableManager.getRows()) {
+            ps.setString(1, row.getValue("UID"));
+            result = ps.executeQuery();
+            Map<String, String> typeToValue = new HashMap<String, String>();
+            while (result.next()) {
+                typeToValue.put(result.getString("type"), result.getString("value"));
+            }
+
+            String ids = typeToValue.get("ordered locus") != null ? typeToValue.get("ordered locus") : typeToValue.get("primary") != null ? typeToValue.get("primary") : typeToValue.get("synonym");
+            for (String id : ids.split("/")) {
+                tableManager.submit("Blattner", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
+            }
+        }
+
+        return tableManager;
+    }
 
 	/**
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificRelationshipTable(java.lang.String,

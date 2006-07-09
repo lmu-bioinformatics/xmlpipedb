@@ -324,6 +324,15 @@ public abstract class DatabaseProfile extends Profile {
     }
 
     /**
+     * Returns the version date for the Gene Database to be exported.
+     * 
+     * @return The version date for the Gene Database to be exported
+     */
+    public Date getVersion() {
+        return this.version;
+    }
+
+    /**
      * Sets the version date for the Gene Database to be exported.
      * 
      * @param version

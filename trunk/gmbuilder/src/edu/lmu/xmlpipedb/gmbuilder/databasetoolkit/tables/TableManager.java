@@ -16,6 +16,7 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +26,6 @@ import java.util.Set;
  * Class: TableManager
  */
 public class TableManager {
-	
 	/**
 	 * @author Joey J. Barrett
 	 * Class: Row
@@ -33,13 +33,12 @@ public class TableManager {
 	 * virtual table.
 	 */
 	public class Row {
-		
-		private Map<String, String> row = new HashMap<String, String>();
-		
 		/**
 		 * Constructor
 		 */
-		protected Row() {}
+		protected Row() {
+            row = new HashMap<String, String>();
+        }
 		
 		/**
 		 * Add a column name and value to this row.
@@ -111,15 +110,13 @@ public class TableManager {
 		private Map<String, String> asMap() {
 			return row;
 		}
-	}
+
+        private Map<String, String> row;
+    }
 	
-	private String[][] tableDefinition;
-	private List<String> primaryKeys;
-	private List<Row> dataSet = new ArrayList<Row>();
 	public static enum QueryType {update, insert};
 	public static final String TABLE_NAME_COLUMN = "TABLE_NAME_COLUMN";
 	public static final String QUERY_TYPE_COLUMN = "QUERY_TYPE_COLUMN";
-	
 
 	/**
 	 * Constructor.
@@ -127,93 +124,130 @@ public class TableManager {
 	 * @param primaryKeys
 	 */
 	public TableManager(String[][] tableDefinition, String[] primaryKeys) {
-		
 		this.tableDefinition = tableDefinition;
-		
-		List<String> primaryKeyList = new ArrayList<String>();
-		primaryKeyList.add(TABLE_NAME_COLUMN);
-		primaryKeyList.add(QUERY_TYPE_COLUMN);
-		for(String primaryKey : primaryKeys) {
-			primaryKeyList.add(primaryKey);
-		}
-		this.primaryKeys = primaryKeyList;
-	}
-	
-	/**
-	 * Submit new names/values to the TableManager.  The
-	 * TableManager assumes nothing about rows/columns in 
-	 * a table and will accept a undefined column buffering
-	 * all other rows to also have the new row.  If this
-	 * TableManager has primary keys they are taken into
-	 * consideration during the inserting process.
-	 * @param tableName
-	 * @param queryType
-	 * @param columnNamesToValues
-	 * @throws Exception
-	 */
-	public void submit(String tableName, QueryType queryType, String[][] columnNamesToValues) throws Exception {
-	
-		//The new row.
-		Row newRow = new Row();
-		newRow.add(TABLE_NAME_COLUMN, tableName);
-		newRow.add(QUERY_TYPE_COLUMN, queryType.name());
-		
-		for(int i = 0; i < columnNamesToValues.length; i++) {
-			
-			if(columnNamesToValues[i].length != 2) {
-				throw new Exception("Incorrect number " +
-						"of arguments in DataSet submission.");
-			}
-			
-			//add the column to the new row.
-			newRow.add(columnNamesToValues[i][0], columnNamesToValues[i][1]);		
-		}
-		
-		if(primaryKeys.size() > 0) {
-			
-			//Requires a primary key check.
-			addRowWithPrimaryKey(newRow);
-		} else {
-			
-			//Just add the row.
-			addRow(newRow);
-		}
-	}
+        this.dataSet = new ArrayList<Row>();
+        this.tableNames = new HashSet<String>();
+		this.primaryKeys = new ArrayList<String>();
 
-	/**
-	 * Adds a row to the data set ignoring primary key(s).
-	 * @param columnNamesToValues
-	 * @throws Exception
-	 */
-	private void addRow(Row newRow) throws Exception {
-		
-		//Add any new columns to all current rows in data set.
-		for(String columnName : newRow.getColumnNames()) {
-			if(currentColumnNames() == null) {
-				for(Row row : dataSet) {
-					row.add(columnName, "");
-				}
-			} else if(!currentColumnNames().contains(columnName)) {
-				for(Row row : dataSet) {
-					row.add(columnName, "");
-				}
-			}
+        this.primaryKeys.add(TABLE_NAME_COLUMN);
+		this.primaryKeys.add(QUERY_TYPE_COLUMN);
+		for(String primaryKey : primaryKeys) {
+			this.primaryKeys.add(primaryKey);
 		}
-		
-		//Add any missing columns from the data set 
-		//to the new row.
-		if(currentColumnNames() != null) {
-			for(String columnName : currentColumnNames()) {
-				if(!newRow.containsKey(columnName)) {
-					newRow.add(columnName, "");
-				}
-			}
-		}
-		
-		//Add the new row.
-		dataSet.add(newRow);
 	}
 	
+	/**
+     * Submit new names/values to the TableManager. The TableManager assumes
+     * nothing about rows/columns in a table and will accept a undefined column
+     * buffering all other rows to also have the new row. If this TableManager
+     * has primary keys they are taken into consideration during the inserting
+     * process.
+     * 
+     * @param tableName
+     * @param queryType
+     * @param columnNamesToValues
+     * @throws Exception
+     */
+    public void submit(String tableName, QueryType queryType, String[][] columnNamesToValues) throws Exception {
+        // Add the table name to the set. Since it's a set, we don't have to
+        // worry about repeats.
+        tableNames.add(tableName);
+
+        // The new row.
+        Row newRow = new Row();
+        newRow.add(TABLE_NAME_COLUMN, tableName);
+        newRow.add(QUERY_TYPE_COLUMN, queryType.name());
+
+        for (int i = 0; i < columnNamesToValues.length; i++) {
+            if (columnNamesToValues[i].length != 2) {
+                throw new Exception("Incorrect number of arguments in DataSet submission.");
+            }
+
+            // add the column to the new row.
+            newRow.add(columnNamesToValues[i][0], columnNamesToValues[i][1]);
+        }
+
+        if (primaryKeys.size() > 0) {
+            // Requires a primary key check.
+            addRowWithPrimaryKey(newRow);
+        } else {
+            // Just add the row.
+            addRow(newRow);
+        }
+    }
+
+    /**
+     * Returns the rows in this TableManager.
+     * @return
+     */
+    public Row[] getRows() {
+        return dataSet.toArray(new Row[0]);
+    }
+
+    /**
+     * Returns the table definition in this
+     * TableManager.
+     * @return
+     */
+    public String[][] getTableDefinition() {
+        return tableDefinition;
+    }
+    
+    /**
+     * Returns the primary keys defined in this
+     * TableManager ignoring table name and
+     * query type.
+     * @return
+     */
+    public List<String> getPrimaryKeys() {
+        List<String> publicPrimaryKeys = primaryKeys;
+        publicPrimaryKeys.remove(TABLE_NAME_COLUMN);
+        publicPrimaryKeys.remove(QUERY_TYPE_COLUMN);
+        return publicPrimaryKeys;
+    }
+
+    /**
+     * Returns the table names that have been "submitted" to this TableManager.
+     * 
+     * @return The table names that have been "submitted" to this TableManager
+     */
+    public Set<String> getTableNames() {
+        return tableNames;
+    }
+
+    /**
+     * Adds a row to the data set ignoring primary key(s).
+     * 
+     * @param columnNamesToValues
+     * @throws Exception
+     */
+    private void addRow(Row newRow) throws Exception {
+        // Add any new columns to all current rows in data set.
+        for (String columnName : newRow.getColumnNames()) {
+            if (currentColumnNames() == null) {
+                for (Row row : dataSet) {
+                    row.add(columnName, "");
+                }
+            } else if (!currentColumnNames().contains(columnName)) {
+                for (Row row : dataSet) {
+                    row.add(columnName, "");
+                }
+            }
+        }
+
+        // Add any missing columns from the data set
+        // to the new row.
+        if (currentColumnNames() != null) {
+            for (String columnName : currentColumnNames()) {
+                if (!newRow.containsKey(columnName)) {
+                    newRow.add(columnName, "");
+                }
+            }
+        }
+
+        //Add the new row.
+        dataSet.add(newRow);
+    }
 	
 	/**
 	 * Adds a new row to the data set based on primary key(s).
@@ -221,7 +255,6 @@ public class TableManager {
 	 * @throws Exception
 	 */
 	private void addRowWithPrimaryKey(Row newRow) throws Exception {
-		
 		//Check new row for required primary keys.
 		if(!newRow.getColumnNames().containsAll(primaryKeys)) {
 			throw new Exception("Primary key(s) required " +
@@ -281,36 +314,12 @@ public class TableManager {
 		return true;
 	}
 
-	/**
-	 * Returns the rows in this TableManager.
-	 * @return
-	 */
-	public Row[] getRows() {
-		return dataSet.toArray(new Row[0]);
-	}
-
-	/**
-	 * Returns the table definition in this
-	 * TableManager.
-	 * @return
-	 */
-	public String[][] getTableDefinition() {
-		return tableDefinition;
-	}
-	
-	/**
-	 * Returns the primary keys defined in this
-	 * TableManager ignoring table name and
-	 * query type.
-	 * @return
-	 */
-	public List<String> getPrimaryKeys() {
-		List<String> publicPrimaryKeys = primaryKeys;
-		publicPrimaryKeys.remove(TABLE_NAME_COLUMN);
-		publicPrimaryKeys.remove(QUERY_TYPE_COLUMN);
-		return publicPrimaryKeys;
-	}
+    private String[][] tableDefinition;
+    private List<String> primaryKeys;
+    private List<Row> dataSet;
+    
+    /**
+     * The table names that have been "submitted" to this table manager.
+     */
+    private Set<String> tableNames;
 }
-	
-
-	

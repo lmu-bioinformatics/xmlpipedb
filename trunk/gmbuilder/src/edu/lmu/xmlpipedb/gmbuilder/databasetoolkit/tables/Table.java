@@ -20,7 +20,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,14 +136,14 @@ public class Table {
      */
     public void export(Connection exportConnection) throws Exception {
         if (tableAttributes != null) {
-            Set<String> tableNames = new HashSet<String>();
-            for (Row row : tableManager.getRows()) {
-                if (row.getValue(TableManager.QUERY_TYPE_COLUMN).equals(QueryType.insert.name())) {
-                    tableNames.add(row.getValue(TableManager.TABLE_NAME_COLUMN));
-                }
-            }
-
-            for (String tableName : tableNames) {
+//            Set<String> tableNames = new HashSet<String>();
+//            for (Row row : tableManager.getRows()) {
+//                if (row.getValue(TableManager.QUERY_TYPE_COLUMN).equals(QueryType.insert.name())) {
+//                    tableNames.add(row.getValue(TableManager.TABLE_NAME_COLUMN));
+//                }
+//            }
+            // Create the submitted tables.
+            for (String tableName : tableManager.getTableNames()) {
                 // TODO Would be better to decouple business logic from UI
                 // calls.
                 ExportWizard.updateExportProgress(66, "Creating tables - " + tableName + " table...");
@@ -167,6 +166,7 @@ public class Table {
                 update(row.getValue(TableManager.TABLE_NAME_COLUMN), row.getRowAsMap());
             }
         }
+
         ExportWizard.updateExportProgress(66, "Flushing tables...");
         flush(exportConnection);
     }

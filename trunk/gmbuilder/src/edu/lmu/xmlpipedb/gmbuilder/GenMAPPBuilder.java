@@ -172,6 +172,7 @@ public class GenMAPPBuilder extends App {
              */
             public void actionPerformed(ActionEvent aevt) {
                 doImport("generated", "Import GO XML File");
+                doProcessGO();
             }
         };
         

@@ -33,47 +33,38 @@ import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
  * Class: EscherichiaColiUniProtSpeciesProfile
  */
 public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
+    /**
+     * Creates the species profile.
+     */
+    public EscherichiaColiUniProtSpeciesProfile() {
+        super("Escherichia coli", "This profile defines the requirements for " + "an Escherichia Coli species within a UniProt database.");
+    }
 
-	public EscherichiaColiUniProtSpeciesProfile() {
-		super("Escherichia coli", "This profile defines the requirements for " +
-				"an Escherichia Coli species within a UniProt database.");
-	}
+    /**
+     * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificSystemTables()
+     */
+    @Override
+    protected Map<String, SystemType> getSpeciesSpecificSystemTables() {
+        Map<String, SystemType> speciesSpecificAvailableSystemTables = new HashMap<String, SystemType>();
 
-	/* (non-Javadoc)
-	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificSystemTables()
-	 */
-	@Override
-	protected Map<String, SystemType> getSpeciesSpecificSystemTables() {
-		Map<String, SystemType> speciesSpecificAvailableSystemTables = 
-				new HashMap<String, SystemType>();
-		
-		speciesSpecificAvailableSystemTables.put("Blattner", SystemType.Proper);
-		return speciesSpecificAvailableSystemTables;
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getRelationsTableManagerCustomizations(java.lang.String, java.lang.String, java.util.Map, edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
-	 */
-	@Override
-	public TableManager getRelationsTableManagerCustomizations(
-			String systemTable1, String systemTable2, 
-			Map<String, String> templateDefinedSystemToSystemCode, 
-			TableManager tableManager) throws Exception {
-		
-			tableManager.submit("Relations", QueryType.insert, new String[][] {
-					{"SystemCode", templateDefinedSystemToSystemCode.get(!systemTable1.equals("Blattner") ? systemTable1 : "OrderedLocusNames")},
-					{"RelatedCode", templateDefinedSystemToSystemCode.get(!systemTable2.equals("Blattner") ? systemTable2 : "OrderedLocusNames")},
-					{"Relation", systemTable1 + "-" + systemTable2},
-					{"Type", systemTable1.equals("UniProt") ||
-						systemTable2.equals("UniProt") ? "Direct" : "Inferred"},
-					{"Source", ""}
-			});
-		return tableManager;
-	}
+        speciesSpecificAvailableSystemTables.put("Blattner", SystemType.Proper);
+        return speciesSpecificAvailableSystemTables;
+    }
+
+    /**
+     * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getRelationsTableManagerCustomizations(java.lang.String,
+     *      java.lang.String, java.util.Map,
+     *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
+     */
+    @Override
+    public TableManager getRelationsTableManagerCustomizations(String systemTable1, String systemTable2, Map<String, String> templateDefinedSystemToSystemCode, TableManager tableManager) throws Exception {
+        tableManager.submit("Relations", QueryType.insert, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get(!systemTable1.equals("Blattner") ? systemTable1 : "OrderedLocusNames") }, { "RelatedCode", templateDefinedSystemToSystemCode.get(!systemTable2.equals("Blattner") ? systemTable2 : "OrderedLocusNames") }, { "Relation", systemTable1 + "-" + systemTable2 }, { "Type", systemTable1.equals("UniProt") || systemTable2.equals("UniProt") ? "Direct" : "Inferred" }, { "Source", "" } });
+        return tableManager;
+    }
 
 	/**
-     * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemsTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, DatabaseProfile)
+     * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemsTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
+     *      DatabaseProfile)
      */
     @Override
     public TableManager getSystemsTableManagerCustomizations(TableManager tableManager, DatabaseProfile dbProfile) throws Exception {
@@ -120,16 +111,14 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
     @Override
     public TableManager getSpeciesSpecificRelationshipTable(String relationshipTable, TableManager primarySystemTableManager, TableManager systemTableManager, TableManager tableManager) throws SQLException, Exception {
         SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
-
-        // Blattner-X
         if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable1)) {
+            // Blattner-X
             PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT id " + "FROM dbreferencetype " + "WHERE type = ? and " + "entrytype_dbreference_hjid = ?");
             ps.setString(1, stp.systemTable2);
-            ResultSet result;
             for (Row row : systemTableManager.getRows()) {
                 if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals("Blattner")) {
                     ps.setString(2, row.getValue("UID"));
-                    result = ps.executeQuery();
+                    ResultSet result = ps.executeQuery();
                     while (result.next()) {
                         // Fix blattner IDs of the form xxxx/yyyy
                         for (String Blattner_ID : row.getValue("ID").split("/")) {
@@ -138,31 +127,31 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
                             { "Bridge", "S" } });
                         }
                     }
+                    result.close();
                 }
             }
             ps.close();
-
-            // X-Blattner, excluding UniProt-Blattner
         } else if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable2) && !stp.systemTable1.equals("UniProt")) {
+            // X-Blattner, excluding UniProt-Blattner
             PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT entrytype_dbreference_hjid, id " + "FROM dbreferencetype where type = ?");
             ps.setString(1, stp.systemTable1);
             ResultSet result = ps.executeQuery();
 
-            String primary = "";
-            String related = "";
             while (result.next()) {
-                primary = result.getString("id");
-                related = result.getString("entrytype_dbreference_hjid");
+                String primary = result.getString("id");
+                String related = result.getString("entrytype_dbreference_hjid");
                 for (Row row : systemTableManager.getRows()) {
-                    if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals("Blattner") && row.getValue("UID").equals(primary)) {
+                    if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals("Blattner") && row.getValue("UID").equals(related)) {
                         for (String Blattner_ID : row.getValue("ID").split("/")) {
-                            tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", related }, { "Related", Blattner_ID },
+                            tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", primary }, { "Related", Blattner_ID },
                             // TODO This is hard-coded. Fix it.
                             { "Bridge", "S" } });
                         }
                     }
                 }
             }
+            
+            result.close();
             ps.close();
         } else {
             for (Row row1 : systemTableManager.getRows()) {
@@ -184,7 +173,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
         return tableManager;
     }
 	
-	/* (non-Javadoc)
+	/**
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificSystemCode(java.util.List, java.util.Map)
 	 */
 	@Override

@@ -1,0 +1,31 @@
+/* Overall layout styles. */
+.sidebar, .menubar, .header-logo { float: left; width: 12.5em }
+
+.main { margin-left: 14em; padding-left: 1em; padding-right: 1em }
+
+.header-logo, .header { height: 6em; padding-bottom: 0.25em }
+
+.header-logo { text-align: center; vertical-align: middle }
+
+.footer { text-align: center; }
+
+.body { }
+
+.fullname {
+    padding-top: 7px;  /* pixels because the padding matches the logo image's white border */
+    margin-bottom: 0.25em
+}
+
+.dataline { margin-top: 0; margin-bottom: 0 }
+.majorhead { /*text-align: center*/ text-align: left }
+.minorhead  { margin-top: 1em; margin-bottom: 0 }
+.announcement { padding-left: 1ex; padding-right: 1ex; margin: 1ex }
+
+.picset {
+    text-align: center
+}
+
+.bodypic {
+    display: inline;
+    padding: 0.5ex
+}

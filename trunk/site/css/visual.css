@@ -1,0 +1,112 @@
+/* This is a delta style sheet, adding visual overrides to layout.css in addition to other standard tags. */
+@import url(layout.css);
+
+body     
+{
+  margin: 25px 10px 25px 10px;
+  background: #f9f9f9;
+  font-family: Georgia, Serif;
+}
+
+/* "Live-link" styles. */
+a:link { color: maroon }
+
+a:visited {
+    color: #666;
+}
+
+a:hover {
+    color: #c03;
+    text-decoration: underline
+}
+
+a:active { color: #999 }
+
+/* Default to no image borders. */
+img { border: 0 }
+
+/* div visuals. */
+h3, .header { border-bottom: solid 1px #ccc; font-family: Georgia, Serif; }
+.footer { border-top: solid 1px #ccc; vertical-align:baseline; }
+h3 { padding-bottom: 0.25em }
+.majorhead h3 { border-bottom: none }
+.minorhead  { font-style: italic }
+.announcement { background-color: #fdd; border: solid 1px #fdd }
+
+/* menu visuals. */
+.menubar {
+    background-color: #ccc;
+    border: solid 1px #999;
+    padding: 1ex
+}
+
+/* Defined so that the top-level menu can have different visuals, if desired. */
+.menutop {
+    padding-left: 1ex
+}
+
+.menu {
+    font-size: 95%;
+    font-family: Georgia, Serif;
+    padding: 0em 0em 0.5ex 1em
+}
+
+.menu:first-child {
+    margin-top: 1ex
+}
+
+.menuitem, .menutitle {
+    padding-bottom: 1.0ex;
+    padding-top: 1.0ex;
+}
+
+.menutitle {
+}
+
+/* Other visuals. */
+ul  { padding-bottom: 0.25em }
+
+li ul {
+    padding-top: 1ex
+}
+
+ol  { padding-bottom: 0.25em }
+li  { padding-bottom: 0.25em }
+
+/* Even/odd coloring. */
+.even {
+    background-color: #ddd
+}
+
+.odd {
+    background-color: #eee
+}
+
+.cell {
+    vertical-align: text-top;
+    margin: 0;
+    padding: 1ex
+}
+
+/* Primarily used to mark external links (anchor tags). */
+.external, .google, .wp {
+    background-repeat: no-repeat;
+    background-position: center right
+}
+
+.external {
+    padding-right: 18px; /* corresponds to image width */
+    background-image: url(external-link.gif)
+}
+
+/* Special badge for Google search links. */
+.google {
+    padding-right: 26px; /* corresponds to image width */
+    background-image: url(google-link.gif)
+}
+
+/* Special badge for Wikipedia search links. */
+.wp {
+    padding-right: 26px; /* corresponds to image width */
+    background-image: url(wikipedia-link.gif)
+}

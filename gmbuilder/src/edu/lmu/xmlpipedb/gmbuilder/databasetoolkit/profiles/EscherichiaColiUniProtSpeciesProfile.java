@@ -88,14 +88,24 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
         for (Row row : primarySystemTableManager.getRows()) {
             ps.setString(1, row.getValue("UID"));
             result = ps.executeQuery();
-            Map<String, String> typeToValue = new HashMap<String, String>();
+//            Map<String, String> typeToValue = new HashMap<String, String>();
+//            while (result.next()) {
+//                typeToValue.put(result.getString("type"), result.getString("value"));
+//            }
+//
+//            String ids = typeToValue.get("ordered locus") != null ? typeToValue.get("ordered locus") : typeToValue.get("primary") != null ? typeToValue.get("primary") : typeToValue.get("synonym");
+//            for (String id : ids.split("/")) {
+//                tableManager.submit("Blattner", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
+//            }
+            // We actually want to keep the case where multiple ordered locus names appear.
             while (result.next()) {
-                typeToValue.put(result.getString("type"), result.getString("value"));
-            }
-
-            String ids = typeToValue.get("ordered locus") != null ? typeToValue.get("ordered locus") : typeToValue.get("primary") != null ? typeToValue.get("primary") : typeToValue.get("synonym");
-            for (String id : ids.split("/")) {
-                tableManager.submit("Blattner", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
+                String type = result.getString("type");
+                if ("ordered locus".equals(type) || "ORF".equals(type)) {
+                    // We want this name to appear in the Blattner system table.
+                    for (String id : result.getString("value").split("/")) {
+                        tableManager.submit("Blattner", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
+                    }
+                }
             }
         }
 

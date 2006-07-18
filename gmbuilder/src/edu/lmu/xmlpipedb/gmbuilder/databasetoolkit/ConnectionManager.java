@@ -31,7 +31,10 @@ public class ConnectionManager {
 
 	//TODO Fix this to use getResource() rather than hardcoded
 	private static final File GENMAPP_DATABASE_TEMPLATE = new File(
-		"src/edu/lmu/xmlpipedb/gmbuilder/resource/dbFiles/GeneDBTmpl.mdb");
+			"src/edu/lmu/xmlpipedb/gmbuilder/resource/dbFiles/GeneDBTmpl.mdb");
+	
+	private static final File TEMPORARY_GENMAPP_DATABASE_TEMPLATE = new File(
+			System.getProperty("user.dir") + "/GeneMAPPBuilder.db");
 	
 	private static File genMAPPDatabase = null;
 
@@ -111,16 +114,21 @@ public class ConnectionManager {
 	}
 	
 	/**
-	 * Opens a connection to the GenMAPP template database.  If the 
+	 * Opens a connection to the GenMAPP template database by copying the
+	 * template file to a temporary location.  If the 
 	 * connection is still open, an exception is thrown.  
 	 * NOTE: THIS CONNECTION SHOULD BE USED AS READ ONLY!!!
 	 * @throws Exception 
 	 * @throws Exception
 	 */
 	public static void openGenMAPPTemplateDB() throws Exception {
-		//Open a connection to the GenMAPP template database.
+		
 		if(genMAPPTemplateDBConnection == null) {
-			genMAPPTemplateDBConnection = openAccessDatabaseConnection(GENMAPP_DATABASE_TEMPLATE);
+			//Copy the template file to a temporary file.
+			copyFile(GENMAPP_DATABASE_TEMPLATE, TEMPORARY_GENMAPP_DATABASE_TEMPLATE);
+			
+			//Open a connection to the GenMAPP template database.
+			genMAPPTemplateDBConnection = openAccessDatabaseConnection(TEMPORARY_GENMAPP_DATABASE_TEMPLATE);
 		} else {
 			throw new Exception("A GenMAPP template database connection cannot be created " +
 			"while a previous connection is still open.");
@@ -233,6 +241,7 @@ public class ConnectionManager {
 	public static void closeGenMAPPTemplateDB() throws SQLException {
 		if(genMAPPTemplateDBConnection != null) {
 			genMAPPTemplateDBConnection.close();
+			TEMPORARY_GENMAPP_DATABASE_TEMPLATE.delete();
 			genMAPPTemplateDBConnection = null;
 		}
 	}
@@ -273,9 +282,10 @@ public class ConnectionManager {
 	 * @return
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
+	 * @throws IOException 
 	 */
-	private static Connection openAccessDatabaseConnection(File databaseFile) throws ClassNotFoundException, SQLException {
-			
+	private static Connection openAccessDatabaseConnection(File databaseFile) throws ClassNotFoundException, SQLException, IOException {
+		
 		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
 			   
 	    StringBuffer databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
@@ -290,8 +300,13 @@ public class ConnectionManager {
 	 * @throws IOException
 	 */
 	private static void createGenMAPPDatabase() throws IOException {
-		InputStream in = new FileInputStream(GENMAPP_DATABASE_TEMPLATE);
-		OutputStream out = new FileOutputStream(genMAPPDatabase);
+		copyFile(GENMAPP_DATABASE_TEMPLATE, genMAPPDatabase);
+    }
+	
+
+	private static void copyFile(File originalFile, File newFile) throws IOException {
+		InputStream in = new FileInputStream(originalFile);
+		OutputStream out = new FileOutputStream(newFile);
 	    
         // Transfer bytes from in to out
         byte[] buf = new byte[1024];
@@ -301,8 +316,6 @@ public class ConnectionManager {
         }
         in.close();
         out.close();
-    }
-	
-
+	}
 
 }

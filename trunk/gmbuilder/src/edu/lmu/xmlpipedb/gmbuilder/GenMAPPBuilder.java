@@ -271,7 +271,6 @@ public class GenMAPPBuilder extends App {
 			ExportToGenMAPP.init(getCurrentHibernateConfiguration());
 			getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			new ExportWizard(this.getFrontmostWindow());
-			ExportToGenMAPP.cleanup();
 		} catch (HibernateException e) {
 			ModalDialog.showErrorDialog("HIBERNATE error.");
             _Log.error(e);
@@ -293,6 +292,10 @@ public class GenMAPPBuilder extends App {
 		} catch (Exception e) {
 			ModalDialog.showErrorDialog(e.toString());
             _Log.error(e);
+		} finally {
+			try {
+				ExportToGenMAPP.cleanup();
+			} catch (SQLException ignored) {}
 		}
     }
 

@@ -191,7 +191,13 @@ public class ExportPanel2 extends JPanel {
 		DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
 		
 		if(databaseProfile.getGenMAPPDatabase() != null) {
-			genmappDatabaseFile = databaseProfile.getGenMAPPDatabase();
+			// DEV NOTE: JN 7/15/2006 -- I changed the next line from receiving the file directly
+			// to receiving a string and converting it to a file.
+			// I've been cleaning up the use of File references, by changing them
+			// to pass strings instead. All the previous changes were made in
+			// DatabaseProfile and ConnectionManager. I figure this is far enough
+			// for the present.
+			genmappDatabaseFile = new File(databaseProfile.getGenMAPPDatabase());
 			genmappDatabaseTextField.setText(genmappDatabaseFile.getName());
 			genmappDatabaseTextField.setEnabled(true);
 			chooseGenMAPPDatabaseButton.setEnabled(true);
@@ -286,8 +292,12 @@ public class ExportPanel2 extends JPanel {
 	 */
 	protected void submitInformationEntered() {
 		DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
+		/* JN 7/15/2006 -- I eliminated most (many?) of the uses of File in the
+		 * DatabaseProfile and ConnectionManager classes. The following line
+		 * now needs to pass a String, not a File (like it used to).
+		*/
 		databaseProfile.setDatabaseProperties(
-				genmappDatabaseFile,
+				genmappDatabaseFile.getAbsolutePath(),
 				null,
 				goAssociationsFile);
 		ExportToGenMAPP.setDatabaseProfile(databaseProfile);

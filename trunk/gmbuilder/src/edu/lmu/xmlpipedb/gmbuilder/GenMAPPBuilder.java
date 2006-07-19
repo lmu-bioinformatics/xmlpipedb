@@ -21,6 +21,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 
@@ -235,6 +236,9 @@ public class GenMAPPBuilder extends App {
             ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration);
             importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             ModalDialog.showPlainDialog(title, importPanel);
+        } else {
+        	//FIXME Put in English resources file 
+        	JOptionPane.showMessageDialog(this.getFrontmostWindow(), "No configuration was defined. Set the database configuration.", "No Configuration Defined", 0);
         }
     }
 
@@ -268,9 +272,18 @@ public class GenMAPPBuilder extends App {
     private void doExportToGenMAPP() {
     	try {
     		getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			ExportToGenMAPP.init(getCurrentHibernateConfiguration());
-			getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			new ExportWizard(this.getFrontmostWindow());
+
+    		Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
+	        if (hibernateConfiguration != null) {
+	        	ExportToGenMAPP.init(hibernateConfiguration);
+				getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				new ExportWizard(this.getFrontmostWindow());
+				ExportToGenMAPP.cleanup();
+	        } else {
+	        	//FIXME Get text strings from an English resources file: i.e. i18n 
+	        	JOptionPane.showMessageDialog(this.getFrontmostWindow(), "No configuration was defined. Set the database configuration.", "No Configuration Defined", 0);
+	        }
+
 		} catch (HibernateException e) {
 			ModalDialog.showErrorDialog("HIBERNATE error.");
             _Log.error(e);

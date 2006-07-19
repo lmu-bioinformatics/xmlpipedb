@@ -35,10 +35,9 @@ public class ConnectionManager {
 	//FIXME Fix this to use getResource() rather than hardcoded
 	private static final String GENMAPP_DATABASE_TEMPLATE = 
 		"/edu/lmu/xmlpipedb/gmbuilder/resource/dbfiles/GeneDBTmpl.mdb";
-//	FIXME - jn 7.16.2006 -- I consider these vars a kludge and judge them
+//	FIXME - jn 7.16.2006 -- I consider this var a kludge and judge them
 	// expendable at the next good opportunity.
 	private static URI _uri = null;
-	private static File _file = null;
 // FIXME - -END
 
 	private static final File TEMPORARY_GENMAPP_DATABASE_TEMPLATE = new File(
@@ -53,6 +52,7 @@ public class ConnectionManager {
 	static{
 		URL u = null;
 		try {
+			System.out.println("bloohy ::: connectionmanager static init :: ");
 			u = ConnectionManager.class.getResource(GENMAPP_DATABASE_TEMPLATE);
 			 _uri = new URI(u.getFile());
 		} catch (URISyntaxException e) {
@@ -62,7 +62,8 @@ public class ConnectionManager {
 			e.printStackTrace();
 		}
 		//FIXME - jn 7.16.2006 -- get rid of the file (and the reprocussions)
-		_file = new File(_uri.getPath());
+
+		
 	}
 	
 	/**
@@ -99,7 +100,7 @@ public class ConnectionManager {
 		if(genMAPPDatabase != null) {
 			if(genMAPPDBConnection == null) {
 				ConnectionManager.genMAPPDatabase = genMAPPDatabase;
-				copyFile(_file, new File(genMAPPDatabase));
+				copyFile(GENMAPP_DATABASE_TEMPLATE, new File(genMAPPDatabase));
 				genMAPPDBConnection = openAccessDatabaseConnection(genMAPPDatabase);
 			} else {				
 				throw new Exception("A GenMAPP database connection cannot be created " +
@@ -149,14 +150,13 @@ public class ConnectionManager {
 
 		if(genMAPPTemplateDBConnection == null) {
 			//Copy the template file to a temporary file.
-			copyFile(_file, TEMPORARY_GENMAPP_DATABASE_TEMPLATE);
+			copyFile(GENMAPP_DATABASE_TEMPLATE, TEMPORARY_GENMAPP_DATABASE_TEMPLATE);
 			/* JN - 7/15/2006 -- for some reason, there is a leading slash on the path returned
 			 * by uri.getPath, hence the .substring(1), which will return the string starting
 			 * at position 1, not position 0 (the slash). If you get a File object from this
 			 * path, the File object knows how to deal and is OK. The Connection object,
 			 * however, is not so cool and cannot deal.
 			 */
-			//System.out.println("bloohy 1 :: " + _uri.getPath().substring(1));
 			System.out.println("bloohy 1 :: " + TEMPORARY_GENMAPP_DATABASE_TEMPLATE.getAbsolutePath());
 			genMAPPTemplateDBConnection = openAccessDatabaseConnection(TEMPORARY_GENMAPP_DATABASE_TEMPLATE.getAbsolutePath());
 			
@@ -332,8 +332,8 @@ public class ConnectionManager {
 	}
 	
 
-	private static void copyFile(File originalFile, File newFile) throws IOException {
-		InputStream in = new FileInputStream(originalFile);
+	private static void copyFile(String originalFilePath, File newFile) throws IOException {
+		InputStream in = ConnectionManager.class.getResourceAsStream(originalFilePath);
 		OutputStream out = new FileOutputStream(newFile);
 
 	    

@@ -12,6 +12,7 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
 import java.io.File;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -61,7 +62,7 @@ public abstract class DatabaseProfile extends Profile {
     protected DisplayOrderPreset displayOrderPreset;
     protected String displayOrder;
     protected String notes;
-    protected File genMAPPDatabase = null;
+    protected String genMAPPDatabase = null; // jn - changed from File to String
     protected ConnectionConfiguration connectionConfiguration = null;
     protected File associationsFile = null;
     protected Map<String, SystemType> systemTables;
@@ -69,6 +70,7 @@ public abstract class DatabaseProfile extends Profile {
 
     protected TableManager primarySystemTableManager = null;
     protected TableManager systemTableManager = null;
+    public static URL url = null;
 
     // Get the systems and system types from the template file.
     static {
@@ -105,6 +107,23 @@ public abstract class DatabaseProfile extends Profile {
         super(name, description);
         this.speciesProfilesAvailable = speciesProfilesAvailable;
         this.displayOrderPreset = DisplayOrderPreset.alphabetical;
+        
+		//FIXME jn -- TEMP CODE START
+//        	URL u = getClass().getResource("/edu/lmu/xmlpipedb/gmbuilder/resource/dbfiles/GeneDBTmpl.mdb");
+//        	URI uri = null;
+//        	try {
+//				 uri = new URI(u.getFile());
+//			} catch (URISyntaxException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			uri.getPath();
+//			File f = new File(uri.getPath());
+//			f.exists();
+//			f.getAbsoluteFile();
+			
+		//FIXME jn -- TEMP CODE END
+		
     }
 
     /**
@@ -248,7 +267,7 @@ public abstract class DatabaseProfile extends Profile {
      * 
      * @return
      */
-    public File getGenMAPPDatabase() {
+    public String getGenMAPPDatabase() {
         return genMAPPDatabase;
     }
 
@@ -399,7 +418,7 @@ public abstract class DatabaseProfile extends Profile {
      * @param connectionConfiguration
      * @param associationsFile
      */
-    public void setDatabaseProperties(File genMAPPDatabase, ConnectionConfiguration connectionConfiguration, File associationsFile) {
+    public void setDatabaseProperties(String genMAPPDatabase, ConnectionConfiguration connectionConfiguration, File associationsFile) {
         this.genMAPPDatabase = genMAPPDatabase;
         this.connectionConfiguration = connectionConfiguration;
         this.associationsFile = associationsFile;

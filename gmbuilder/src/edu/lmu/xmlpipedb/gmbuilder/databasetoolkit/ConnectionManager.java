@@ -17,6 +17,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -29,18 +32,38 @@ import org.hibernate.cfg.Configuration;
  */
 public class ConnectionManager {
 
-	//TODO Fix this to use getResource() rather than hardcoded
-	private static final File GENMAPP_DATABASE_TEMPLATE = new File(
-			"src/edu/lmu/xmlpipedb/gmbuilder/resource/dbFiles/GeneDBTmpl.mdb");
-	
+	//FIXME Fix this to use getResource() rather than hardcoded
+	private static final String GENMAPP_DATABASE_TEMPLATE = 
+		"/edu/lmu/xmlpipedb/gmbuilder/resource/dbfiles/GeneDBTmpl.mdb";
+//	FIXME - jn 7.16.2006 -- I consider these vars a kludge and judge them
+	// expendable at the next good opportunity.
+	private static URI _uri = null;
+	private static File _file = null;
+// FIXME - -END
+
 	private static final File TEMPORARY_GENMAPP_DATABASE_TEMPLATE = new File(
 			System.getProperty("user.dir") + "/GeneMAPPBuilder.db");
-	
-	private static File genMAPPDatabase = null;
 
+	private static String genMAPPDatabase = null;
 	private static Connection relationalDBConnection = null;
 	private static Connection genMAPPDBConnection = null;
 	private static Connection genMAPPTemplateDBConnection = null;
+	
+	
+	static{
+		URL u = null;
+		try {
+			u = ConnectionManager.class.getResource(GENMAPP_DATABASE_TEMPLATE);
+			 _uri = new URI(u.getFile());
+		} catch (URISyntaxException e) {
+			System.out.printf("Error [%s] while creating URL from path. Paht = %s", e.toString(), GENMAPP_DATABASE_TEMPLATE);
+			
+			System.out.printf("Error while creating URI from URL. URL = %s", u.toString());
+			e.printStackTrace();
+		}
+		//FIXME - jn 7.16.2006 -- get rid of the file (and the reprocussions)
+		_file = new File(_uri.getPath());
+	}
 	
 	/**
 	 * Opens a connection to the relational database.  If the parameter 
@@ -71,12 +94,12 @@ public class ConnectionManager {
 	 * @param genMAPPDatabase
 	 * @throws Exception
 	 */
-	public static void openGenMAPPDB(File genMAPPDatabase) throws Exception {
+	public static void openGenMAPPDB(String genMAPPDatabase) throws Exception {
 		
 		if(genMAPPDatabase != null) {
 			if(genMAPPDBConnection == null) {
 				ConnectionManager.genMAPPDatabase = genMAPPDatabase;
-				createGenMAPPDatabase();
+				copyFile(_file, new File(genMAPPDatabase));
 				genMAPPDBConnection = openAccessDatabaseConnection(genMAPPDatabase);
 			} else {				
 				throw new Exception("A GenMAPP database connection cannot be created " +
@@ -122,13 +145,24 @@ public class ConnectionManager {
 	 * @throws Exception
 	 */
 	public static void openGenMAPPTemplateDB() throws Exception {
-		
+		//Open a connection to the GenMAPP template database.
+
 		if(genMAPPTemplateDBConnection == null) {
 			//Copy the template file to a temporary file.
-			copyFile(GENMAPP_DATABASE_TEMPLATE, TEMPORARY_GENMAPP_DATABASE_TEMPLATE);
+			copyFile(_file, TEMPORARY_GENMAPP_DATABASE_TEMPLATE);
+			/* JN - 7/15/2006 -- for some reason, there is a leading slash on the path returned
+			 * by uri.getPath, hence the .substring(1), which will return the string starting
+			 * at position 1, not position 0 (the slash). If you get a File object from this
+			 * path, the File object knows how to deal and is OK. The Connection object,
+			 * however, is not so cool and cannot deal.
+			 */
+			//System.out.println("bloohy 1 :: " + _uri.getPath().substring(1));
+			System.out.println("bloohy 1 :: " + TEMPORARY_GENMAPP_DATABASE_TEMPLATE.getAbsolutePath());
+			genMAPPTemplateDBConnection = openAccessDatabaseConnection(TEMPORARY_GENMAPP_DATABASE_TEMPLATE.getAbsolutePath());
 			
 			//Open a connection to the GenMAPP template database.
-			genMAPPTemplateDBConnection = openAccessDatabaseConnection(TEMPORARY_GENMAPP_DATABASE_TEMPLATE);
+// JN			genMAPPTemplateDBConnection = openAccessDatabaseConnection(TEMPORARY_GENMAPP_DATABASE_TEMPLATE);
+
 		} else {
 			throw new Exception("A GenMAPP template database connection cannot be created " +
 			"while a previous connection is still open.");
@@ -284,29 +318,24 @@ public class ConnectionManager {
 	 * @throws SQLException
 	 * @throws IOException 
 	 */
-	private static Connection openAccessDatabaseConnection(File databaseFile) throws ClassNotFoundException, SQLException, IOException {
-		
+	private static Connection openAccessDatabaseConnection(String databaseFile) throws ClassNotFoundException, SQLException {
+			
+
 		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
 			   
 	    StringBuffer databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
-	    databaseConnectionString.append(databaseFile.getAbsolutePath());
+	    System.out.println("bloohy 2 :: " + databaseFile);
+	    databaseConnectionString.append(databaseFile);
 	    databaseConnectionString.append(";DriverID=22;READONLY=false}"); 
 	        
 	    return DriverManager.getConnection(databaseConnectionString.toString(), "", "");
 	}
 	
-	/**
-	 * Create new GenMAPP database.
-	 * @throws IOException
-	 */
-	private static void createGenMAPPDatabase() throws IOException {
-		copyFile(GENMAPP_DATABASE_TEMPLATE, genMAPPDatabase);
-    }
-	
 
 	private static void copyFile(File originalFile, File newFile) throws IOException {
 		InputStream in = new FileInputStream(originalFile);
 		OutputStream out = new FileOutputStream(newFile);
+
 	    
         // Transfer bytes from in to out
         byte[] buf = new byte[1024];

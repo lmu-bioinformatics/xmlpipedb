@@ -2,6 +2,7 @@
 package edu.lmu.xmlpipedb.gmbuilder.util.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.util.Calendar;
@@ -142,5 +143,17 @@ public class GenMAPPBuilderUtilitiesTest {
         c.set(Calendar.MONTH, Calendar.JUNE);
         c.set(Calendar.DATE, 6);
         assertEquals("06/06/2006", GenMAPPBuilderUtilities.getSystemsDateString(c.getTime()));
+    }
+
+    /**
+     * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities#straightToCurly(String)}.
+     */
+    @Test
+    public void testGetStraightToCurly() {
+        assertNull(GenMAPPBuilderUtilities.straightToCurly(null));
+        assertEquals("no apostrophes here", GenMAPPBuilderUtilities.straightToCurly("no apostrophes here"));
+        assertEquals("\u2019apostrophe in the beginning", GenMAPPBuilderUtilities.straightToCurly("'apostrophe in the beginning"));
+        assertEquals("two \u2019apostrophes\u2019 here", GenMAPPBuilderUtilities.straightToCurly("two 'apostrophes' here"));
+        assertEquals("more than \u2019two\u2019 apos\u2019tro\u2019phe\u2019s", GenMAPPBuilderUtilities.straightToCurly("more than 'two' apos'tro'phe's"));
     }
 }

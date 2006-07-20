@@ -112,6 +112,18 @@ public class GenMAPPBuilderUtilities {
     }
 
     /**
+     * Replaces all occurrences of the "straight" apostrophe (') in the given
+     * String with its "curly" equivalent (&rsquo;).
+     * 
+     * @param s
+     *            The String to process
+     * @return The same String but with "straights turned into "curlies"
+     */
+    public static String straightToCurly(String s) {
+        return (s != null) ? s.replace('\'', '\u2019') : null;
+    }
+
+    /**
      * Date format used for default GDB filenames.
      */
     private static final DateFormat GDB_DF = new SimpleDateFormat("yyyyMMdd");

@@ -18,6 +18,8 @@ import java.sql.Statement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
+
 public class Go {
     /**
 	 * Create GO tables
@@ -56,7 +58,7 @@ public class Go {
         try {
             ps = connection.prepareStatement(table.getInsert());
             for (int index = 1; index <= values.length; index++) {
-                ps.setString(index, values[index-1]);
+                ps.setString(index, GenMAPPBuilderUtilities.straightToCurly(values[index-1]));
             }
             
             _Log.debug("Performing insert: " + ps);

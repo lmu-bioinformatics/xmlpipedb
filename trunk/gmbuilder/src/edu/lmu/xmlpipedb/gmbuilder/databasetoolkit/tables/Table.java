@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 
 /**
  * @author Joey J. Barrett
@@ -291,29 +292,35 @@ public class Table {
 		sqlBuffer.add(new SQLStatement(sqlStatement.toString(), valueBag.toArray(new String[0])));
 	}
 
-
 	/**
-	 * FLush the sqlBuffer to the database given by the connection.
-	 * @param connection
-	 * @throws SQLException
-	 */
-	private void flush(Connection connection) throws SQLException {
-		if(sqlBuffer.size() > 0) {
-			PreparedStatement ps = null;
-			for(SQLStatement sqlStatement : sqlBuffer.toArray(new SQLStatement[0])) {
-				ps = connection.prepareStatement(sqlStatement.getSQL());
-				if(sqlStatement.getValues() != null) {
-					for(int i = 0; i < sqlStatement.getValues().length; i++) {
-						
-						ps.setString(i+1, sqlStatement.getValues()[i]);
-					}
-				}
-			
-			    ps.executeUpdate();
-			    ps.close();
-			}
-		}
-	}
+     * Flush the sqlBuffer to the database given by the connection.
+     * 
+     * @param connection
+     * @throws SQLException
+     */
+    private void flush(Connection connection) throws SQLException {
+        if (sqlBuffer.size() > 0) {
+            PreparedStatement ps = null;
+            for (SQLStatement sqlStatement : sqlBuffer.toArray(new SQLStatement[0])) {
+                try {
+                    ps = connection.prepareStatement(sqlStatement.getSQL());
+                    if (sqlStatement.getValues() != null) {
+                        for (int i = 0; i < sqlStatement.getValues().length; i++) {
+                            ps.setString(i + 1, GenMAPPBuilderUtilities.straightToCurly(sqlStatement.getValues()[i]));
+                        }
+                    }
+
+                    ps.executeUpdate();
+                } finally {
+                    try {
+                        ps.close();
+                    } catch(Exception exc) {
+                        _Log.warn("Problem closing PreparedStatement");
+                    }
+                }
+            }
+        }
+    }
     
     /**
      * Log object for this class.

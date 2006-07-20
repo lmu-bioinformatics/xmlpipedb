@@ -52,7 +52,6 @@ public class ConnectionManager {
 	static{
 		URL u = null;
 		try {
-			System.out.println("bloohy ::: connectionmanager static init :: ");
 			u = ConnectionManager.class.getResource(GENMAPP_DATABASE_TEMPLATE);
 			 _uri = new URI(u.getFile());
 		} catch (URISyntaxException e) {
@@ -157,7 +156,6 @@ public class ConnectionManager {
 			 * path, the File object knows how to deal and is OK. The Connection object,
 			 * however, is not so cool and cannot deal.
 			 */
-			System.out.println("bloohy 1 :: " + TEMPORARY_GENMAPP_DATABASE_TEMPLATE.getAbsolutePath());
 			genMAPPTemplateDBConnection = openAccessDatabaseConnection(TEMPORARY_GENMAPP_DATABASE_TEMPLATE.getAbsolutePath());
 			
 			//Open a connection to the GenMAPP template database.
@@ -324,7 +322,6 @@ public class ConnectionManager {
 		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
 			   
 	    StringBuffer databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
-	    System.out.println("bloohy 2 :: " + databaseFile);
 	    databaseConnectionString.append(databaseFile);
 	    databaseConnectionString.append(";DriverID=22;READONLY=false}"); 
 	        

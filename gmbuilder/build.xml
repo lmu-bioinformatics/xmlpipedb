@@ -63,7 +63,7 @@
 		<jar destfile="${jarfile}" basedir="${bin.dir}">
 			<manifest>
 				<attribute name="Main-Class" value="edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder" />
-				<attribute name="Class-Path" value="lib/antlr-2.7rcl.jar asm.jar cglib-2.1.3.jar commons-beanutils.jar commons-collections-2.1.1.jar commons-logging-1.0.4.jar dom4j-1.6.1.jar ehcache-1.1.jar godb.jar hibernate3.jar hyperjaxb2.jar jaxb-api.jar jaxb-impl.jar jaxb-libs.jar jta.jar junit-3.8.1.jar log4j-1.2.11.jar postgresql-8.1-405.jdbc3.jar relaxngDatatype.jar shag-1.1.jar uniprotdb.jar xpdutils.jar wizard.jar xsdlib.jar" />
+				<attribute name="Class-Path" value="antlr-2.7.6rc1.jar asm.jar cglib-2.1.3.jar commons-beanutils.jar commons-collections-2.1.1.jar commons-logging-1.0.4.jar dom4j-1.6.1.jar ehcache-1.1.jar godb.jar hibernate3.jar hyperjaxb2.jar jaxb-api.jar jaxb-impl.jar jaxb-libs.jar jta.jar junit-3.8.1.jar log4j-1.2.11.jar postgresql-8.1-405.jdbc3.jar relaxngDatatype.jar shag-1.1.jar uniprotdb.jar xpdutils.jar wizard.jar xsdlib.jar" />
 			</manifest>
 		</jar>
     </target>

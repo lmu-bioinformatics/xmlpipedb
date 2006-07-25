@@ -22,10 +22,26 @@
     
     <property name="output" value="${basedir}" />
 
+    <patternset id="not-on-web" excludes=".project,build.xml,build.number,*.bz2">
+    </patternset>
+
     <!-- ================================= 
           target: default              
          ================================= -->
     <target name="default" depends="site.tar.bz2" description="The website tarball">
+    </target>
+
+    <!-- =================================
+          target: localdeploy
+          
+          This requires that the localdestdir property be set.
+         ================================= -->
+    <target name="localdeploy" description="Locally deploy the website files" if="localdestdir">
+        <copy todir="${localdestdir}" overwrite="yes">
+            <fileset dir="${basedir}">
+                <patternset refid="not-on-web"/>
+            </fileset>
+        </copy>
     </target>
 
     <!--
@@ -43,8 +59,9 @@
     <target name="site.tar.bz2" depends="init">
         <tar destfile="${output}/${ant.project.name}-${build.id}.tar.bz2"
             compression="bzip2"
-            basedir="${basedir}"
-            excludes=".project,build.xml,build.number,*.bz2"/>
+            basedir="${basedir}">
+            <patternset refid="not-on-web"/>
+        </tar>
     </target>
 
     <target name="clean" depends="" description="Clean it all!">

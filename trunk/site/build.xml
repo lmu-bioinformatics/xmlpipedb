@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     Web site assembler/deployer
+
+     Original by caskey
+     Tweaked by dondi
+     ====================================================================== -->
+<project name="xmlpipedb-public_html" default="default">
+    <description>
+        Web site assembler/deployer script
+    </description>
+
+    <!-- Build numbers, increment minor on new versions,
+         release on minor updates, reserve major for true,
+         major changes that restructure the layout.
+    -->
+    <property name="build.version.major" value="1" />
+    <property name="build.version.minor" value="0" />
+    <property name="build.version.release" value="0" />    
+
+    <property name="build.version" value="${build.version.major}.${build.version.minor}.${build.version.release}" />
+    
+    <property name="output" value="${basedir}" />
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="site.tar.bz2" description="The website tarball">
+    </target>
+
+    <!--
+      This target prepares the output directory and
+      increments the buildnumber.
+    -->
+    <target name="init">
+        <mkdir dir="${output}"/>
+        <buildnumber/>
+        <property name="build.id" value="${build.version}-${build.number}" />
+        <echo>Build ${build.version}-${build.number}</echo>
+        <echo>Build ${build.id}</echo>
+    </target>
+
+    <target name="site.tar.bz2" depends="init">
+        <tar destfile="${output}/${ant.project.name}-${build.id}.tar.bz2"
+            compression="bzip2"
+            basedir="${basedir}"
+            excludes=".project,build.xml,build.number,*.bz2"/>
+    </target>
+
+    <target name="clean" depends="" description="Clean it all!">
+        <delete dir="${output}" />
+    </target>
+</project>

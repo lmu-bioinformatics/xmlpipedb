@@ -4,7 +4,7 @@
 body     
 {
   margin: 25px 10px 25px 10px;
-  background: #f9f9f9;
+  background: white;
   font-family: Georgia, Serif;
 }
 
@@ -35,9 +35,10 @@ h3 { padding-bottom: 0.25em }
 
 /* menu visuals. */
 .menubar {
-    background-color: #ccc;
-    border: solid 1px #999;
-    padding: 1ex
+    background-color: white;
+    border: solid 1px #ccc;
+    padding: 1ex;
+    padding-left: 1em;
 }
 
 /* Defined so that the top-level menu can have different visuals, if desired. */

@@ -9,3 +9,5 @@
     load("html/about.shtml", "content");
     document.getElementById("lastModified").innerHTML = '<!--#flastmod file="html/about.shtml" -->';
 </script>
+    </body>
+</html>

@@ -1,4 +1,3 @@
-<!-- That's it!  Everything else should be uniform. -->
 <!--#include virtual="html/template.shtml" -->
 
 <!-- Populate the page.
@@ -7,6 +6,6 @@
      a single, consistent variable for both JavaScript and SSI, so we
      are forced to replicate the page below. -->
 <script type="text/javascript">
-    load("html/home.shtml", "content");
-    document.getElementById("lastModified").innerHTML = '<!--#flastmod file="html/home.shtml" -->';
+    load("html/download.html", "content");
+    document.getElementById("lastModified").innerHTML = '<!--#flastmod file="html/download.html" -->';
 </script>

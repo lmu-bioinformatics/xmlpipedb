@@ -1,18 +1,6 @@
 <h2>People</h2>
 
-<p>XMLPipeDB was created by the Bioinformatics Group at Loyola
-Marymount University, a collaborative research group founded by Dr. Kam
-D. Dahlquist (<a href="http://www.lmu.edu/Page31.aspx">Department of
-Biology</a>) and Dr. John David N. Dionisio (Department of Electrical
-Engineering and <a href="http://www.cs.lmu.edu">Computer Science</a>).
-XMLPipeDB development began in Spring 2006 as a group project in a
-special studies course in Bioinformatics (CMSI698/BIOL498) team-taught
-by Drs. Dahlquist and Dionisio. Development continued in a second
-special studies course, Open Source Software Development Workshop
-(CMSI698/598) and is ongoing. XMLPipeDB also follows the philosophy of
-Dr. Dionisio&rsquo;s <a href="http://recourse.cs.lmu.edu">Recourse</a>
-project, which seeks to introduce an open source culture into the
-computer science curriculum.</p>
+<!--#include virtual="briefsketch.html" -->
 
 <h3>Principal Investigators</h3>
 
@@ -48,7 +36,7 @@ Nakamoto</a></p>
 <div class="contributorBlock">
 <h4>UniProtDB</h4>
 <p class="dataline">Joe Boyle</p>
-<p class="dataline">oey Barrett</p>
+<p class="dataline">Joey Barrett</p>
 </div>
 
 <div class="contributorBlock">
@@ -68,4 +56,24 @@ Nakamoto</a></p>
 <h4>Web Site</h4>
 <p class="dataline"><a href="http://cs.lmu.edu/~nak/" title="nak">Ryan
 Nakamoto</a></p>
+<p class="dataline">Wesley Citti (XMLPipeDB logo)</p>
 </div>
+
+<p>If you would like to participate in or contribute to XMLPipeDB,
+please contact <a href="mailto:kdahlquist@lmu.edu">Dr. Dahlquist</a> or
+<a href="mailto:dondi@lmu.edu">Dr. Dionisio</a> either directly or
+through our <a href="http://sourceforge.net/projects/xmlpipedb">SourceForge
+project</a>.</p>
+
+<h3>Acknowledgments</h3>
+
+<div class="contributorBlock">We would like to thank the <a
+    href="http://www.genmapp.org">GenMAPP.org</a> Development Group,
+especially Bruce R. Conklin, Steven C. Lawlor, and Scott W. Doniger. We
+also wish to thank the LMU Departments of Biology and Electrical
+Engineering &amp; Computer Science for giving us the opportunity to
+team-teach bioinformatics at LMU, as well as the <a
+    href="http://cse.lmu.edu">Seaver College of Science &amp;
+Engineering</a> for encouraging interdisciplinary research. Thank you also
+to <a href="http://www.technocage.com/~caskey">Caskey Dickson</a> for
+all of his technical assistance.</div>

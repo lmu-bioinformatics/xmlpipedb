@@ -6,8 +6,8 @@
      a single, consistent variable for both JavaScript and SSI, so we
      are forced to replicate the page below. -->
 <script type="text/javascript">
-    load("html/people.html", "content");
-    document.getElementById("lastModified").innerHTML = '<!--#flastmod file="html/people.html" -->';
+    load("html/people.shtml", "content");
+    document.getElementById("lastModified").innerHTML = '<!--#flastmod file="html/people.shtml" -->';
 </script>
     </body>
 </html>

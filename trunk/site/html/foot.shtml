@@ -1,0 +1,15 @@
+            <div class="footer">
+                <div class="footermenu"><!--#include virtual="contents.html" --></div>
+                <div class="footermenu">
+                    <ul>
+                        <li><a href="http://www.lmu.edu">LMU</a></li>
+                        <li><a href="http://cse.lmu.edu">Seaver College of Science &amp; Engineering</a></li>
+                        <li><a href="http://www.lmu.edu/Page31.aspx">LMU Biology</a></li>
+                        <li><a href="http://www.cs.lmu.edu">LMU Computer Science</a></li>
+                    </ul>
+                </div>
+                <p class="footnote">Last modified on <span id="lastModified"></span>.</p>
+            </div>
+        </div>
+    </body>
+</html>

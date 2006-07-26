@@ -9,3 +9,5 @@
     load("html/faq.html", "content");
     document.getElementById("lastModified").innerHTML = '<!--#flastmod file="html/faq.html" -->';
 </script>
+    </body>
+</html>

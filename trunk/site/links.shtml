@@ -9,3 +9,5 @@
     load("html/links.html", "content");
     document.getElementById("lastModified").innerHTML = '<!--#flastmod file="html/links.html" -->';
 </script>
+    </body>
+</html>

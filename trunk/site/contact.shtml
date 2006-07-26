@@ -9,3 +9,5 @@
     load("html/contact.html", "content");
     document.getElementById("lastModified").innerHTML = '<!--#flastmod file="html/contact.html" -->';
 </script>
+    </body>
+</html>

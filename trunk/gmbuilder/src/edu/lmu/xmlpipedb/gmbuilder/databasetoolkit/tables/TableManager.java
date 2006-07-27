@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * @author Joey J. Barrett
  * Class: TableManager
@@ -148,7 +151,7 @@ public class TableManager {
      * @param columnNamesToValues
      * @throws Exception
      */
-    public void submit(String tableName, QueryType queryType, String[][] columnNamesToValues) throws Exception {
+    public void submit(String tableName, QueryType queryType, String[][] columnNamesToValues) {
         // Add the table name to the set. Since it's a set, we don't have to
         // worry about repeats.
         tableNames.add(tableName);
@@ -160,7 +163,7 @@ public class TableManager {
 
         for (int i = 0; i < columnNamesToValues.length; i++) {
             if (columnNamesToValues[i].length != 2) {
-                throw new Exception("Incorrect number of arguments in DataSet submission.");
+                _Log.fatal("Incorrect number of arguments in DataSet submission.");
             }
 
             // add the column to the new row.
@@ -221,7 +224,7 @@ public class TableManager {
      * @param columnNamesToValues
      * @throws Exception
      */
-    private void addRow(Row newRow) throws Exception {
+    private void addRow(Row newRow) {
         // Add any new columns to all current rows in data set.
         for (String columnName : newRow.getColumnNames()) {
             if (currentColumnNames() == null) {
@@ -254,11 +257,10 @@ public class TableManager {
 	 * @param newRow
 	 * @throws Exception
 	 */
-	private void addRowWithPrimaryKey(Row newRow) throws Exception {
+	private void addRowWithPrimaryKey(Row newRow) {
 		//Check new row for required primary keys.
 		if(!newRow.getColumnNames().containsAll(primaryKeys)) {
-			throw new Exception("Primary key(s) required " +
-					"for DataSet submission.");
+			_Log.fatal("Primary key(s) required for DataSet submission.");
 		}
 		
 		//Look for a primary key match.
@@ -272,7 +274,6 @@ public class TableManager {
 		}
 		
 		if(primaryKeyMatch == null) {
-			
 			//Did not find a match, just add the new row.
 			addRow(newRow);
 		} else {
@@ -314,6 +315,8 @@ public class TableManager {
 		return true;
 	}
 
+    private static final Log _Log = LogFactory.getLog(TableManager.class);
+    
     private String[][] tableDefinition;
     private List<String> primaryKeys;
     private List<Row> dataSet;

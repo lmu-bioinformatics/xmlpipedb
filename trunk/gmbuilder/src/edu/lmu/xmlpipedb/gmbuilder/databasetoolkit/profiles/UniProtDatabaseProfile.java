@@ -167,7 +167,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getSystemsTableManager()
      */
     @Override
-    protected TableManager getSystemsTableManager() throws Exception {
+    protected TableManager getSystemsTableManager() {
         TableManager tableManager;
 
         tableManager = new TableManager(null, new String[] { "SystemCode" });
@@ -191,7 +191,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getPrimarySystemTableManager()
      */
     @Override
-    protected TableManager getPrimarySystemTableManager() throws Exception {
+    protected TableManager getPrimarySystemTableManager() throws SQLException {
         if (primarySystemTableManager != null) {
             return primarySystemTableManager;
         }
@@ -249,14 +249,12 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getSystemTableManager()
      */
     @Override
-    protected TableManager getSystemTableManager() throws Exception {
+    protected TableManager getSystemTableManager() throws SQLException {
         if (systemTableManager != null) {
             return systemTableManager;
         }
 
-        TableManager tableManager;
-
-        tableManager = new TableManager(new String[][] { { "ID", "VARCHAR(50) NOT NULL" }, { "Species", "MEMO" }, { "\"Date\"", "DATE" }, { "Remarks", "MEMO" } }, new String[] { "ID" });
+        TableManager tableManager = new TableManager(new String[][] { { "ID", "VARCHAR(50) NOT NULL" }, { "Species", "MEMO" }, { "\"Date\"", "DATE" }, { "Remarks", "MEMO" } }, new String[] { "ID" });
 
         PreparedStatement ps;
         ResultSet result;
@@ -284,7 +282,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getRelationshipTableManager()
      */
     @Override
-    protected List<TableManager> getRelationshipTableManager() throws SQLException, Exception {
+    protected List<TableManager> getRelationshipTableManager() throws SQLException {
         List<TableManager> tableManagers = new ArrayList<TableManager>();
         TableManager tableManager;
         for (String relationshipTable : relationshipTables) {
@@ -357,7 +355,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getSecondPassTableManagers()
      */
     @Override
-    public TableManager[] getSecondPassTableManagers() throws SQLException, Exception {
+    public TableManager[] getSecondPassTableManagers() throws SQLException {
         List<TableManager> tableManagers = new ArrayList<TableManager>();
         ExportWizard.updateExportProgress(66, "Preparing tables - Second pass Relationship tables...");
         tableManagers.add(getSecondPassRelationshipTables());
@@ -372,7 +370,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      * @throws SQLException
      * @throws Exception
      */
-    private TableManager getSecondPassRelationshipTables() throws SQLException, Exception {
+    private TableManager getSecondPassRelationshipTables() throws SQLException {
         TableManager tableManager = new TableManager(new String[][] { { "\"Primary\"", "VARCHAR(50) NOT NULL" }, { "Related", "VARCHAR(50) NOT NULL" }, { "Bridge", "VARCHAR(3)" } }, new String[] { "\"Primary\"", "Related" });
 
         PreparedStatement ps = null;

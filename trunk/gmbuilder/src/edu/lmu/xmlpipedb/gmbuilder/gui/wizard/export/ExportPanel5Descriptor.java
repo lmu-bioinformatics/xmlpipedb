@@ -13,6 +13,15 @@
 package edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export;
 
 import java.awt.Cursor;
+import java.io.IOException;
+import java.sql.SQLException;
+
+import javax.xml.bind.JAXBException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
+import org.xml.sax.SAXException;
 
 import com.nexes.wizard.WizardPanelDescriptor;
 
@@ -67,32 +76,39 @@ public class ExportPanel5Descriptor extends WizardPanelDescriptor {
         
     }
     
-    /* (non-Javadoc)
+    /**
      * @see com.nexes.wizard.WizardPanelDescriptor#displayingPanel()
      */
     public void displayingPanel() {
-    	
-            Thread t = new Thread() {
+
+        Thread t = new Thread() {
 
             public void run() {
-
                 try {
-                	getWizard().getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    ExportToGenMAPP.export();     
+                    getWizard().getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    ExportToGenMAPP.export();
                     ExportPanel5.setProgress(100, "Export completed successfully.");
-                    getWizard().setNextFinishButtonEnabled(true);                   
-  
-                } catch (Exception e) {
-                	//ExportPanel5.setProgress(0, "An Error Has Occurred.");
-                	e.printStackTrace();
-
-				} finally {
-					getWizard().getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-				}
-
+                    getWizard().setNextFinishButtonEnabled(true);
+                } catch(HibernateException e) {
+                    _Log.fatal("Export problem", e);
+                } catch(ClassNotFoundException e) {
+                    _Log.fatal("Export problem", e);
+                } catch(SQLException e) {
+                    _Log.fatal("Export problem", e);
+                } catch(SAXException e) {
+                    _Log.fatal("Export problem", e);
+                } catch(IOException e) {
+                    _Log.fatal("Export problem", e);
+                } catch(JAXBException e) {
+                    _Log.fatal("Export problem", e);
+                } finally {
+                    getWizard().getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
             }
         };
 
         t.start();
-    }          
+    }
+    
+    private static final Log _Log = LogFactory.getLog(ExportPanel5Descriptor.class);
 }

@@ -21,7 +21,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 
@@ -237,8 +236,7 @@ public class GenMAPPBuilder extends App {
             importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             ModalDialog.showPlainDialog(title, importPanel);
         } else {
-        	//FIXME Put in English resources file 
-        	JOptionPane.showMessageDialog(this.getFrontmostWindow(), "No configuration was defined. Set the database configuration.", "No Configuration Defined", 0);
+            showConfigurationError();
         }
     }
 
@@ -254,6 +252,7 @@ public class GenMAPPBuilder extends App {
                 Session session = sessionFactory.openSession();
                 (new ExportGoData(session.connection())).populateGeneOntologyStage(getCurrentHibernateConfiguration());
                 session.close();
+                ModalDialog.showInformationDialog("GO Processing Complete", "GO processing completed successfully.");
             } catch(IOException e) {
                 ModalDialog.showErrorDialog("I/O error.");
                 _Log.error(e);
@@ -280,8 +279,7 @@ public class GenMAPPBuilder extends App {
 				new ExportWizard(this.getFrontmostWindow());
 				ExportToGenMAPP.cleanup();
 	        } else {
-	        	//FIXME Get text strings from an English resources file: i.e. i18n 
-	        	JOptionPane.showMessageDialog(this.getFrontmostWindow(), "No configuration was defined. Set the database configuration.", "No Configuration Defined", 0);
+                showConfigurationError();
 	        }
 
 		} catch (HibernateException e) {
@@ -310,6 +308,14 @@ public class GenMAPPBuilder extends App {
 				ExportToGenMAPP.cleanup();
 			} catch (SQLException ignored) {}
 		}
+    }
+
+    /**
+     * Displays a message reporting a problem with database configuration.
+     */
+    private void showConfigurationError() {
+        //FIXME Get text strings from an English resources file: i.e. i18n
+        ModalDialog.showErrorDialog("No Configuration Defined", "No configuration was defined. Please set the database configuration.");
     }
 
     /**

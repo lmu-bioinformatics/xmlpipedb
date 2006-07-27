@@ -74,13 +74,13 @@ public class Table {
 		 * @param attributes
 		 * @throws Exception
 		 */
-		public Attributes(String[][] attributes) throws Exception {
+		public Attributes(String[][] attributes) {
 			
 			nameToType = new LinkedHashMap<String, String>();
 			
 			for(int i = 0; i < attributes.length; i++) {
-				if(attributes[i].length != 2) {
-					throw new Exception("Incorrect number of arugments");
+				if (attributes[i].length != 2) {
+					_Log.error("Incorrect number of arguments");
 				}
 				nameToType.put(attributes[i][0], attributes[i][1]);
 			}
@@ -120,8 +120,7 @@ public class Table {
 	 * @param tableManager
 	 * @throws Exception
 	 */
-	public Table(TableManager tableManager) throws Exception {
-		
+	public Table(TableManager tableManager) {
 		this.tableManager = tableManager;
 		
 		if(tableManager.getTableDefinition() != null) {
@@ -135,7 +134,7 @@ public class Table {
      * @param exportConnection
      * @throws Exception
      */
-    public void export(Connection exportConnection) throws Exception {
+    public void export(Connection exportConnection) throws SQLException {
         if (tableAttributes != null) {
 //            Set<String> tableNames = new HashSet<String>();
 //            for (Row row : tableManager.getRows()) {
@@ -198,7 +197,7 @@ public class Table {
 	 * @param namesAndValues
 	 * @throws Exception
 	 */
-	private void insert(String tableName, Map<String, String> namesAndValues) throws Exception {
+	private void insert(String tableName, Map<String, String> namesAndValues) {
 		
 		List<String> valueBag = new ArrayList<String>();
 		
@@ -245,11 +244,12 @@ public class Table {
 	 * @param namesAndValues
 	 * @throws Exception
 	 */
-	private void update(String tableName, Map<String, String> namesAndValues) throws Exception {
+	private void update(String tableName, Map<String, String> namesAndValues) {
 		
-		if(tableAttributes == null && tableManager.getPrimaryKeys().size() == 0) {
-			throw new Exception("Cannot due an update query with out a " +
+		if (tableAttributes == null && tableManager.getPrimaryKeys().size() == 0) {
+			_Log.error("Cannot do an update query with out a " +
 					"table definition or primary keys for table: " + tableName);
+            return;
 		}
 		
 		List<String> valueBag = new ArrayList<String>();

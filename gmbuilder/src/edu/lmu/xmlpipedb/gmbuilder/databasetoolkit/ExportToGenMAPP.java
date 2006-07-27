@@ -10,11 +10,16 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit;
 
+import java.io.IOException;
 import java.sql.SQLException;
+
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
+import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
@@ -78,7 +83,7 @@ public class ExportToGenMAPP {
      * 
      * @throws Exception
      */
-    public static void export() throws Exception {
+    public static void export() throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
         ExportWizard.updateExportProgress(1, "Starting GeneOntology export...");
         (new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getAssociationsFile());
 

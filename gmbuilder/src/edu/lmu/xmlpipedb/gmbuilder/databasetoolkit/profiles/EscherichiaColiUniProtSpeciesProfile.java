@@ -57,7 +57,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
      *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
      */
     @Override
-    public TableManager getRelationsTableManagerCustomizations(String systemTable1, String systemTable2, Map<String, String> templateDefinedSystemToSystemCode, TableManager tableManager) throws Exception {
+    public TableManager getRelationsTableManagerCustomizations(String systemTable1, String systemTable2, Map<String, String> templateDefinedSystemToSystemCode, TableManager tableManager) {
         tableManager.submit("Relations", QueryType.insert, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get(!systemTable1.equals("Blattner") ? systemTable1 : "OrderedLocusNames") }, { "RelatedCode", templateDefinedSystemToSystemCode.get(!systemTable2.equals("Blattner") ? systemTable2 : "OrderedLocusNames") }, { "Relation", systemTable1 + "-" + systemTable2 }, { "Type", systemTable1.equals("UniProt") || systemTable2.equals("UniProt") ? "Direct" : "Inferred" }, { "Source", "" } });
         return tableManager;
     }
@@ -67,7 +67,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
      *      DatabaseProfile)
      */
     @Override
-    public TableManager getSystemsTableManagerCustomizations(TableManager tableManager, DatabaseProfile dbProfile) throws Exception {
+    public TableManager getSystemsTableManagerCustomizations(TableManager tableManager, DatabaseProfile dbProfile) {
         tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", "Ln" }, { "System", "Blattner" } });
         tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", "Ln" }, { "SystemName", "Blattner" } });
         tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", "Ln" }, { "Species", "|" + getSpeciesName() + "|"} });
@@ -81,22 +81,14 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
      *      java.util.Date)
      */
     @Override
-    public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws Exception {
+    public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws SQLException {
         PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " + "FROM genenametype INNER JOIN entrytype_genetype " + "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " + "WHERE entrytype_gene_hjid = ?");
         ResultSet result;
 
         for (Row row : primarySystemTableManager.getRows()) {
             ps.setString(1, row.getValue("UID"));
             result = ps.executeQuery();
-//            Map<String, String> typeToValue = new HashMap<String, String>();
-//            while (result.next()) {
-//                typeToValue.put(result.getString("type"), result.getString("value"));
-//            }
-//
-//            String ids = typeToValue.get("ordered locus") != null ? typeToValue.get("ordered locus") : typeToValue.get("primary") != null ? typeToValue.get("primary") : typeToValue.get("synonym");
-//            for (String id : ids.split("/")) {
-//                tableManager.submit("Blattner", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
-//            }
+
             // We actually want to keep the case where multiple ordered locus names appear.
             while (result.next()) {
                 String type = result.getString("type");
@@ -119,7 +111,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
      *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
      */
     @Override
-    public TableManager getSpeciesSpecificRelationshipTable(String relationshipTable, TableManager primarySystemTableManager, TableManager systemTableManager, TableManager tableManager) throws SQLException, Exception {
+    public TableManager getSpeciesSpecificRelationshipTable(String relationshipTable, TableManager primarySystemTableManager, TableManager systemTableManager, TableManager tableManager) throws SQLException {
         SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
         if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable1)) {
             // Blattner-X

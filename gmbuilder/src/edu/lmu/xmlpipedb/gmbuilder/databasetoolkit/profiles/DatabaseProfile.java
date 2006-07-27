@@ -463,7 +463,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    public TableManager[] getFirstPassTableManagers() throws Exception {
+    public TableManager[] getFirstPassTableManagers() throws SQLException {
         List<TableManager> tableManagers = new ArrayList<TableManager>();
         ExportWizard.updateExportProgress(53, "Preparing tables - Info table...");
         tableManagers.add(getInfoTableManager());
@@ -491,7 +491,7 @@ public abstract class DatabaseProfile extends Profile {
      * @throws SQLException
      * @throws Exception
      */
-    public abstract TableManager[] getSecondPassTableManagers() throws SQLException, Exception;
+    public abstract TableManager[] getSecondPassTableManagers() throws SQLException;
 
     /**
      * Prepares a TableManager for this database.
@@ -499,7 +499,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    private TableManager getInfoTableManager() throws Exception {
+    private TableManager getInfoTableManager() {
         TableManager tableManager = new TableManager(null, new String[] {});
         tableManager.submit("Info", QueryType.insert, new String[][] { { "Owner", owner }, { "Version", new SimpleDateFormat("yyyyMMdd").format(version) }, { "MODSystem", modSystem }, { "Species", speciesProfile.getSpeciesName() }, { "Modify", new SimpleDateFormat("yyyyMMdd").format(modify) }, { "DisplayOrder", displayOrder }, { "Notes", notes } });
         return tableManager;
@@ -513,7 +513,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    private TableManager getRelationsTableManager() throws Exception {
+    private TableManager getRelationsTableManager() {
         TableManager tableManager = new TableManager(null, new String[] { "SystemCode", "RelatedCode" });
         for (String relationTable : relationshipTables) {
             SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationTable);
@@ -543,7 +543,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    protected abstract TableManager getSystemsTableManager() throws Exception;
+    protected abstract TableManager getSystemsTableManager();
 
     /**
      * This function must be implemented by an X-centric database and should
@@ -553,7 +553,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    protected abstract TableManager getPrimarySystemTableManager() throws Exception;
+    protected abstract TableManager getPrimarySystemTableManager() throws SQLException;
 
     /**
      * This function must be implemented by an X-centric database and should
@@ -562,7 +562,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    protected abstract TableManager getSystemTableManager() throws Exception;
+    protected abstract TableManager getSystemTableManager() throws SQLException;
 
     /**
      * This function must be implemented by an X-centric database and should
@@ -572,7 +572,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    protected abstract List<TableManager> getRelationshipTableManager() throws Exception;
+    protected abstract List<TableManager> getRelationshipTableManager() throws SQLException;
 
     /**
      * Creates the OriginalRowCounts TableManager. This function should be fixed
@@ -583,7 +583,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    public TableManager getRowCountsTableManager() throws Exception {
+    public TableManager getRowCountsTableManager() throws SQLException {
         TableManager tableManager;
 
         tableManager = new TableManager(new String[][] { { "\"Table\"", "VARCHAR(50) NOT NULL" }, { "Rows", "VARCHAR(50) NOT NULL" } }, new String[] { "\"Table\"" });
@@ -622,7 +622,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    public Connection getExportConnection() throws Exception {
+    public Connection getExportConnection() {
         if (genMAPPDatabase != null) {
             if (ConnectionManager.isGenMAPPDBConnectionOpen()) {
                 return ConnectionManager.getGenMAPPDBConnection();

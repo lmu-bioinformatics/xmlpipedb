@@ -77,7 +77,7 @@ public abstract class SpeciesProfile extends Profile {
 	public abstract TableManager getRelationsTableManagerCustomizations(
 			String systemTable1, String systemTable2, 
 			Map<String, String> templateDefinedSystemToSystemCode, 
-			TableManager tableManager) throws Exception;
+			TableManager tableManager);
 	
 	/**
 	 * Returns a TableManager with the systems table
@@ -88,7 +88,7 @@ public abstract class SpeciesProfile extends Profile {
 	 * @throws Exception
 	 */
 	public abstract TableManager getSystemsTableManagerCustomizations(
-			TableManager tableManager, DatabaseProfile dbProfile) throws Exception;
+			TableManager tableManager, DatabaseProfile dbProfile);
 	
 	/**
 	 * Returns a TableManager with the species specific
@@ -102,7 +102,7 @@ public abstract class SpeciesProfile extends Profile {
 	public abstract TableManager getSystemTableManagerCustomizations(
 			TableManager tableManager, 
 			TableManager primarySystemTableManager, 
-			Date version) throws Exception;
+			Date version) throws SQLException;
 
 	/**
 	 * Returns a TableManager with a species specific
@@ -116,7 +116,7 @@ public abstract class SpeciesProfile extends Profile {
 	 * @throws Exception
 	 */
 	public abstract TableManager getSpeciesSpecificRelationshipTable(String relationshipTable, 
-			TableManager uniprotTableManager, TableManager blattnerTableManager, TableManager tableManager) throws SQLException, Exception;
+			TableManager uniprotTableManager, TableManager blattnerTableManager, TableManager tableManager) throws SQLException;
 
 
 	

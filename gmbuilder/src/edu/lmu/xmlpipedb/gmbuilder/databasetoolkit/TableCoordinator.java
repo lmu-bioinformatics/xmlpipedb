@@ -32,7 +32,7 @@ public class TableCoordinator {
 	 * @throws SQLException
 	 * @throws Exception
 	 */
-	public static void exportTables(Connection exportConnection, TableManager[] tableManagers) throws SQLException, Exception {
+	public static void exportTables(Connection exportConnection, TableManager[] tableManagers) throws SQLException {
 		for(TableManager tableManager : tableManagers) {
 			new Table(tableManager).export(exportConnection);
 		}
@@ -45,7 +45,7 @@ public class TableCoordinator {
 	 * @throws SQLException
 	 * @throws Exception
 	 */
-	public static void exportTable(Connection exportConnection, TableManager tableManager) throws SQLException, Exception {
+	public static void exportTable(Connection exportConnection, TableManager tableManager) throws SQLException {
 		new Table(tableManager).export(exportConnection);
 	}
 

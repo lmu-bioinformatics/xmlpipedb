@@ -1,15 +1,23 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<?xml-stylesheet type="text/css" href="css/layout.css" ?>
+<!--
+    This is the template file to follow when creating new pages.
+      1. Copy this file into newpage.shtml.
+      2. Fill out the custom content (marked with TODOs).
+      3. Delete this comment and the blank line after it!
+      4. Make sure you do step 3!
+ -->
 
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--#include virtual="html/start-to-head-except-title.html" -->
+    <title>TODO (put the title here)</title>
+<!--#include virtual="html/end-of-head-to-start-of-content.shtml" -->
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--
+    Page-specific content starts here.
+-->
+<!--#include virtual="TODO (put content page here)" -->
 
-<!--#include virtual="head.shtml" -->
+<!--#include virtual="html/end-of-content-to-before-last-modified.shtml" -->
 
-<div id="content">
-</div>
-
-<!--#include virtual="foot.shtml" -->
+<!--
+    Last-modified datestamp.  The absence of whitespace is intentional: don't change it!
+-->
+<!--#flastmod file="TODO (put file whose last-modified datestamp you want here [usually the same as the content page])" --><!--#include virtual="html/end-of-last-modified-to-the-very-very-end-of-the-page.html" -->

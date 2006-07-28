@@ -1,8 +1,7 @@
 body {
     margin: 0em 1em 0em 1em;
     background: white;
-    font-family: Georgia, Serif;;
-    background: white;
+    font-family: Georgia, Serif;
 }
 
 /* "Live-link" styles. */
@@ -116,8 +115,7 @@ li {
 .announcement {
     padding-left: 1ex;
     padding-right: 1ex;
-    margin: 1ex; background-color : #fdd;
-    border: solid 1px #fdd;
+    margin: 1ex;
     background-color: #fdd;
 }
 
@@ -138,8 +136,7 @@ li {
 .menubar {
     background-color: white;
     border: solid 1px #ccc;
-    padding: 1ex;
-    padding-left: 1em;
+    padding: 1ex 1ex 1ex 1em;
 }
 
 .menubar ul {

@@ -3,6 +3,7 @@
     <property name="src.dir" location="src" />
     <property name="bin.dir" location="bin" />
     <property name="lib.dir" location="lib" />
+	<property name="xml.dir" location="xml" />
     <property name="dist.dir" location="dist" />
 	<property name="scripts.dir" value="scripts" />
     <property name="sql.dir" value="sql" />
@@ -41,6 +42,12 @@
         <mkdir dir="${bin.dir}" />
         <copy todir="${dist.dir}">
     		<fileset dir="${scripts.dir}" includes="*.bat,*.sh" />
+            <fileset dir="${basedir}">
+            	<include name="readme.txt"/>
+            </fileset>
+        	<fileset dir="${xml.dir}">
+            	<include name="18.E_coli_K12.goa"/>
+            </fileset>
     	</copy>
     	
         <tstamp />

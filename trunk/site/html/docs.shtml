@@ -1,7 +1,13 @@
 <h2>Documentation</h2>
 
-<p><a href="docs/xmlpipedb-manual.pdf" title="Manual">XMLPipeDB
-Manual (450K PDF)</a></p>
+<ul>
+    <!--#include virtual="doclist.html" -->
+
+    <li><a href="docs/ReadMeEcoliK12_20060731.pdf"
+        title="E. coli Gene Database Read Me">Read Me</a> (359K PDF) for
+    <a href="download.shtml#e.coliK12"><i>Escherichia coli</i> K12
+    Gene Database</a></li>
+</ul>
 
 <p>XMLPipeDB is an open source suite of Java-based tools for
 automatically building relational databases from an XML schema (XSD).
@@ -36,10 +42,10 @@ more robust to changes in the source files made by the data providers.</p>
 designers: the XSD-to-DB application takes a well-formed XSD or DTD file
 and converts it into a collection of Java source code and Hibernate
 mapping files that allows XML files based on that definition file to be
-read into a relational database. XSD-to-DB's conversion functions are
-based on the open source <a href="https://hyperjaxb2.dev.java.net">Hyperjaxb2</a>
+read into a relational database. XSD-to-DB&rsquo;s conversion functions
+are based on the open source <a href="https://hyperjaxb2.dev.java.net">Hyperjaxb2</a>
 project, which adds <a href="http://www.hibernate.org">Hibernate</a>
-functionality to Sun Microsystems' <a
+functionality to Sun Microsystems&rsquo; <a
     href="http://java.sun.com/webservices/jaxb">JAXB</a> library. The
 XMLPipeDB Utilities library is a suite of Java classes that provide
 functions needed by many XMLPipeDB database applications. Specifically,
@@ -50,27 +56,13 @@ Language) or SQL, and configuring a client application to communicate
 with a relational database. Finally, GenMAPP Builder is an application
 for creating the GenMAPP Gene Database files.</p>
 
-<p>XMLPipeDB has the following tools for developers and database
-designers: the XSD-to-DB application takes a well-formed XSD or DTD file
-and converts it into a collection of Java source code and Hibernate
-mapping files that allows XML files based on that definition file to be
-read into a relational database. XSD-to-DB's conversion functions are
-based on the open source Hyperjaxb2 project, which adds Hibernate
-functionality to Sun Microsystems' JAXB library. The XMLPipeDB Utilities
-library is a suite of Java classes that provide functions needed by many
-XMLPipeDB database applications. Specifically, the library includes
-reusable classes for: importing XML files into Java objects, saving
-these XML-derived Java objects to a relational database, querying the
-relational database using either HQL (Hibernate Query Language) or SQL,
-and configuring a client application to communicate with a relational
-database. Finally, GenMAPP Builder is an application for creating the
-GenMAPP Gene Database files. GenMAPP Builder's UniProt and Gene Ontology
-database libraries were generated with XSD-to-DB, and the application
-itself uses the XMLPipeDB Utilities library. The application works by
-first importing UniProt and Gene Ontology XML files as well as a
-tab-delimited UniProt-to-GO associations file into a relational
-database. The database can then be queried by organism in order to
-produce a GenMAPP Gene Database.</p>
+<p>GenMAPP Builder&rsquo;s UniProt and Gene Ontology database
+libraries were generated with XSD-to-DB, and the application itself uses
+the XMLPipeDB Utilities library. The application works by first
+importing UniProt and Gene Ontology XML files as well as a tab-delimited
+UniProt-to-GO associations file into a relational database. The database
+can then be queried by organism in order to produce a GenMAPP Gene
+Database.</p>
 
 <p>GenMAPP Builder has been tested for use with the open source <a
     href="http://www.postgresql.org">PostgreSQL</a> relational database,

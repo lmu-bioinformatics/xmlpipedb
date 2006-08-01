@@ -12,16 +12,24 @@ interested in the releases available from <a
 <p>Source code and executable packages are available from the
 XMLPipeDB project site on SourceForge:</p>
 
-<!--ReadMe (available as .txt and .pdf)-->
+<ul>
+    <li><a
+        href="http://sourceforge.net/project/showfiles.php?group_id=158533">XMLPipeDB
+    on Sourceforge</a></li>
 
-<p class="dataline"><a
-    href="http://sourceforge.net/project/showfiles.php?group_id=158533">XMLPipeDB
-on Sourceforge</a></p>
+    <!--#include virtual="doclist.html" -->
+</ul>
 
 <h3><a name="gdb">Gene Databases</a></h3>
 
-<p>Coming soon: GenMAPP Gene Database for <i>Escherichia coli</i>
-K12</p>
+<h4><a name="e.coliK12">GenMAPP Gene Database for <i>Escherichia
+coli</i> K12</a></h4>
+<ul>
+    <li><a href="downloads/Ec-Std_20060731.zip">Release
+    20060731</a> (2.9M ZIP)</li>
+    <li><a href="docs/ReadMeEcoliK12_20060731.pdf"
+        title="E. coli Gene Database Read Me">Read Me</a> (359K PDF)</li>
+</ul>
 
 <h3>System Requirements</h3>
 

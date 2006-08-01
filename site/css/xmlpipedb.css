@@ -46,7 +46,7 @@ li {
 
 /* Heading defaults. */
 #content h2,h3 {
-    padding-bottom: 0.25em
+    padding-bottom: 0.25em;
 }
 
 #content h2,h3,.header {
@@ -56,6 +56,7 @@ li {
 
 #content h4 {
     margin-bottom: 0;
+    font-family: sans-serif;
 }
 
 .sidebar,.menubar,.header-logo {

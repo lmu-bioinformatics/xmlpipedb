@@ -5,11 +5,11 @@
 <!--
     Page-specific content starts here.
 -->
-<!--#include virtual="html/docs.html" -->
+<!--#include virtual="html/docs.shtml" -->
 
 <!--#include virtual="html/end-of-content-to-before-last-modified.shtml" -->
 
 <!--
     Last-modified datestamp.  The absence of whitespace is intentional: don't change it!
 -->
-<!--#flastmod file="html/docs.html" --><!--#include virtual="html/end-of-last-modified-to-the-very-very-end-of-the-page.html" -->
+<!--#flastmod file="html/docs.shtml" --><!--#include virtual="html/end-of-last-modified-to-the-very-very-end-of-the-page.html" -->

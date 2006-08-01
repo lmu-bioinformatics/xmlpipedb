@@ -22,7 +22,7 @@
     
     <property name="output" value="${basedir}" />
 
-    <patternset id="not-on-web" excludes=".project,build.xml,build.number,*.bz2">
+    <patternset id="not-on-web" excludes=".project,build.xml,build.number,*.bz2,downloads/**">
     </patternset>
 
     <!-- ================================= 
@@ -42,6 +42,7 @@
                 <patternset refid="not-on-web"/>
             </fileset>
         </copy>
+        <antcall target=".download-disclaimer"></antcall>
     </target>
 
     <!--
@@ -62,9 +63,15 @@
             basedir="${basedir}">
             <patternset refid="not-on-web"/>
         </tar>
+        <antcall target=".download-disclaimer"></antcall>
     </target>
 
     <target name="clean" depends="" description="Clean it all!">
         <delete dir="${output}" />
+    </target>
+
+    <target name=".download-disclaimer">
+        <echo>IMPORTANT: We don't include downloads in the build due to their size.</echo>
+        <echo>Please upload/copy those manually.</echo>
     </target>
 </project>

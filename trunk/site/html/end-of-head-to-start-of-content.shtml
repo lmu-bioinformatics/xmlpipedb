@@ -2,7 +2,12 @@
 
 <body>
     <div class="sidebar">
-        <div class="header-logo"><a href="http://sourceforge.net/projects/xmlpipedb"><img src="img/logo-BlackOutlineWhite-Pipe.jpg" alt="XMLPipeDB Logo" height="100" width="175"/></a></div>
+        <div class="header-logo"><a href="http://sourceforge.net/projects/xmlpipedb">
+            <object type="application/x-shockwave-flash" data="img/AnimatedPipeLogo-single.swf" width="175" height="100">
+                <param name="movie" value="img/AnimatedPipeLogo-single.swf" />
+                <img src="img/logo-BlackOutlineWhite-Pipe.jpg" alt="XMLPipeDB Logo" width="175" height="100"/>
+            </object>
+        </a></div>
         <div class="menubar">
             <ul>
             <!--#include virtual="contents.html" -->

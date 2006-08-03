@@ -14,9 +14,20 @@ XMLPipeDB project site on SourceForge:</p>
 
 <ul>
     <li><a
-        href="http://sourceforge.net/project/showfiles.php?group_id=158533">XMLPipeDB
-    on Sourceforge</a></li>
+        href="http://sourceforge.net/project/showfiles.php?group_id=158533">All
+    XMLPipeDB file releases</a></li>
 
+    <li><a
+        href="http://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=198529">GenMAPP
+    Builder</a></li>
+
+    <li><a
+        href="http://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=177646">XSD-to-DB</a></li>
+</ul>
+
+<p>Technical documentation is also available:</p>
+
+<ul>
     <!--#include virtual="doclist.html" -->
 </ul>
 
@@ -25,9 +36,11 @@ XMLPipeDB project site on SourceForge:</p>
 <h4><a name="e.coliK12">GenMAPP Gene Database for <i>Escherichia
 coli</i> K12</a></h4>
 <ul>
-    <li><a href="downloads/Ec-Std_20060731.zip">Release
-    20060731</a> (2.9M ZIP)</li>
-    <li><a href="docs/ReadMeEcoliK12_20060731.pdf"
+    <li><a
+        href="http://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=199426&amp;release_id=436841">Release
+    20060731</a></li>
+    <li><a
+        href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMeEcoliK12_20060731.pdf?download"
         title="E. coli Gene Database Read Me">Read Me</a> (359K PDF)</li>
 </ul>
 

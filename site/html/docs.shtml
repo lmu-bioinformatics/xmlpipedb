@@ -3,10 +3,10 @@
 <ul>
     <!--#include virtual="doclist.html" -->
 
-    <li><a href="docs/ReadMeEcoliK12_20060731.pdf"
-        title="E. coli Gene Database Read Me">Read Me</a> (359K PDF) for
-    <a href="download.shtml#e.coliK12"><i>Escherichia coli</i> K12
-    Gene Database</a></li>
+    <li><a
+        href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMeEcoliK12_20060731.pdf?download">Read
+    Me</a> (359K PDF) for <a href="download.shtml#e.coliK12"><i>Escherichia
+    coli</i> K12 Gene Database</a></li>
 </ul>
 
 <p>XMLPipeDB is an open source suite of Java-based tools for

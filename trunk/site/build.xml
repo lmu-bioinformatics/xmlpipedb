@@ -72,6 +72,7 @@
 
     <target name=".download-disclaimer">
         <echo>IMPORTANT: We don't include downloads in the build due to their size.</echo>
-        <echo>Please upload/copy those manually.</echo>
+        <echo>Please upload/copy those manually.  Or better yet, use SourceForge</echo>
+        <echo>and link to our release pages there.</echo>
     </target>
 </project>

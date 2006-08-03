@@ -274,13 +274,19 @@ Regenerating GODB is a multi-step process:
 \item Run ANT using the \texttt{build.xml} in the root of the GODB directory.
 \end{enumerate}
 
-\section{Database Administration and Setup}
+\subsection{Database Administration and Setup}
 \label{dbsetup}
 
-The applications in XMLPipeDB require any relational database for which a JDBC driver exists.  Thus, they all require some degree of configuration, for specifying the database server, database name, username, password, etc.  To facilitate this, XMLPipeDB includes a common database configuration GUI in all of its applications.
+The applications and libraries in XMLPipeDB require any relational database for which a JDBC driver exists.  Thus, they all require some degree of configuration, for specifying the database server, database name, username, password, etc.  To facilitate this, XMLPipeDB includes a common database configuration GUI in all of its applications.  Any other mechanism may also be used if desired, since database access is strictly ``standard'' JDBC and/or Hibernate.
+
+Once a JDBC-ready database server has been successfully installed, the schema for the database needs to be instantiated within that server.  XMLPipeDB modules provide one or more \texttt{.sql} files for doing this; executing the commands in those files within the database server instantiates the schema.  In the case of UniProtDB and GODB, the schema file is called \texttt{schema.sql}.  For GenMAPP Builder, the file is \texttt{gmbuilder.sql}
+
+%to be written: specific steps for PostgreSQL
 
 \section{End-User Software}
 \label{endUserSoftware}
+
+XSD-to-DB, XMLPipeDB Utilities, UniProtDB, and GODB are primarily for software developers.  This section discusses the components of XMLPipeDB that are geared toward end-users, particularly bioinformaticians.
 
 \subsection{Pre-Built GenMAPP Gene Database Files}
 \label{gdb}
@@ -288,9 +294,109 @@ The applications in XMLPipeDB require any relational database for which a JDBC d
 If your primary interest is to use GenMAPP for a particular organism, please consult the following list for GenMAPP files that have already been created using GenMAPP Builder (Section~\ref{genmappbuilder}).  In many cases, you can simply download them and point GenMAPP to them, and you'll be ready to load up expression data sets.  Full details on GenMAPP are available on the GenMAPP Web site (\url{http://www.genmapp.org}).
 
 \begin{itemize}
-\item \species{Escherichia coli K12}
-\item \species{Pseudomonas putida}
-\item \species{Bacillus subtilis}
+\item \species{Escherichia coli} K12
+%\item \species{Pseudomonas putida}
+%\item \species{Bacillus subtilis}
+\end{itemize}
+
+\subsubsection{Overview of the GenMAPP Application and Accessory Programs}
+
+GenMAPP (Gene Map Annotator and Pathway Profiler) is a free computer application for 
+viewing and analyzing DNA microarray and other genomic and proteomic data on biological pathways.   MAPPFinder is an accessory program that works with GenMAPP and Gene Ontology to identify global biological trends in gene expression data. The GenMAPP Gene Database (file with the extension \texttt{.gdb}) is used to relate gene IDs on MAPPs (\texttt{.mapp}, representations of pathways and other functional groupings of genes) to data in Expression Datasets (\texttt{.gex}, DNA microarray or other high-throughput data).  GenMAPP is a stand-alone application that requires the Gene Database, MAPPs, and Expression Dataset files to be 
+stored on the user's computer. GenMAPP and its accessory programs and files may be downloaded from \url{http://www.GenMAPP.org}.  GenMAPP requires a separate Gene Database for each species.
+
+\subsubsection{System Requirements and Compatibility}
+The Gene Databases produced by XMLPipeDB are compatible with GenMAPP 2.0 and 2.1 and MAPPFinder 2.0.  These programs can be downloaded from \url{http://www.genmapp.org}.  GenMAPP 2.0/2.1 and MAPPFinder 2.0 have the following requirements:
+\begin{itemize}
+\item \emph{Operating system:} Windows 98 or higher, Windows NT 4.0 or higher (2000, XP, etc.) 
+\item \emph{Monitor resolution:} 800 $\times$ 600 screen or greater (SVGA)
+\item \emph{Web browser:} Microsoft Internet Explorer 5.0 or later
+\item \emph{Minimum hardware configuration:}
+\begin{itemize}
+\item \emph{Memory:} 128 MB (512 MB or more recommended) 
+\item \emph{Processor:} Pentium III
+\item \emph{Disk space:} 300 MB disk (more recommended if multiple databases will be used) 
+\end{itemize}
+\end{itemize}
+ 
+\subsubsection{Usage}
+
+\begin{enumerate}
+\item Extract the zipped archive and place the \texttt{.gdb} file in the folder you use to 
+store Gene Databases for GenMAPP. If you accept the default folder during the GenMAPP 
+installation process, this folder will be \texttt{C:$\backslash$GenMAPP 2 Data$\backslash$Gene Databases}.
+
+\item To use the Gene Database, launch GenMAPP and go to the menu item \uilabel{Data} $>$ \uilabel{Choose Gene Database}. Alternatively, you can launch MAPPFinder and go to the menu item \uilabel{File} $>$ \uilabel{Choose Gene Database}.
+\end{enumerate}
+
+\subsubsection{\species{E.\ Coli} K12 Gene Database Specifications}
+
+\paragraph{Gene ID Systems}
+
+The \species{Escherichia coli} K12 Gene Database is ``UniProt-centric'' in that the main data 
+source (primary ID system) for gene IDs and annotations is the UniProt complete proteome set 
+for \species{Escherichia coli} K12, made available as an XML download by the Integr8 resource. In addition to UniProt IDs, this database provides the following proper gene ID systems that were cross-referenced by the UniProt data: Blattner, EchoBASE, and EcoGene.  It also supplies 
+UniProt-derived annotation links from the following systems: EMBL, InterPro, PDB, and Pfam.  The Gene Ontology data has been acquired directly from the Gene Ontology Project.  The GOA 
+project was used to link Gene Ontology terms to UniProt IDs.  Links to data sources are listed in the section below.
+
+\paragraph{Species}
+
+The Gene Database is based on the UniProt proteome set for \species{Escherichia coli} K12, taxon ID 83333.  Two substrains of \species{E.\ coli} K12 have had their genome sequenced, MG1655 and W3110.  This Gene Database contains data for the MG1655 strain (Blattner IDs). UniProt has a separate proteome set for the W3110 strain (taxon ID 316407).  The W3110 strain uses IDs of the form ``JWxxxx'' and are not supported in this Gene Database. 
+
+\paragraph{Data Sources and Versions}
+
+The current \species{Escherichia coli} K12 Gene Database was built on July 31, 2006; this build date is reflected in the filename \texttt{Ec-Std\_20060731.gdb}.  All date fields internal to the Gene Database (and not usually seen by regular GenMAPP users) have been filled with the build date.  Versioning information for the individual data sources is given below.
+\begin{itemize}
+\item UniProt complete proteome set for \species{Escherichia coli} K12, made available as an XML download by the Integr8 resource:
+
+\url{http://www.ebi.ac.uk/integr8/FtpSearch.do?orgProteomeId=18}
+
+The XML filename is \texttt{18.E\_coli\_K12.xml}, downloaded as a compressed \texttt{.gz} file and extracted.  Version information for the proteome sets can be found at:
+
+\url{http://www.ebi.ac.uk/integr8/HelpAction.do?action=searchById&refId=5}
+
+The proteome set used for this version of the \species{Escherichia coli} K12 Gene Database was based on UniProt Knowledgebase release 8.3 on July 11, 2006.
+
+\item Gene Ontology gene associations are provided by the GOA project: 
+
+\url{http://www.ebi.ac.uk/GOA}
+
+The gene associations are represented as a tab-delimited text file. The \species{Escherichia coli} K12 GOA file was accessed from the Integr8 proteome set download page:
+
+\url{http://www.ebi.ac.uk/integr8/FtpSearch.do?orgProteomeId=18}
+
+The GOA filename is \texttt{18.E\_coli\_K12.goa}, downloaded as a compressed \texttt{.gz} file and extracted.  The GOA file for this version of the \species{Escherichia coli} K12 Gene Database was based on the July 2006 release of GOA (version information can be found as a date field within the GOA file itself).
+
+\item Gene Ontology data is downloaded from:
+
+\url{http://www.godatabase.org/dev/database/}
+ 
+We use the monthly release available at the first of every month.  For this version of the 
+\species{Escherichia coli} K12 Gene Database, we used the July 1, 2006 release.  The file's name is \texttt{go\_200607-termdb.obo-xml.gz}.  We extract the file and reverse the period and 
+hyphen in the filename so it reads \texttt{go\_200607-termdb-obo.xml}.
+\end{itemize}
+
+\paragraph{Database Report}
+
+\begin{itemize}
+\item UniProt is the primary ID system for the \species{Escherichia coli} K12 Gene Database. The UniProt table contains all 4329 UniProt IDs reported in the UniProt proteome set for this species.
+
+\item The Blattner IDs were derived from the cross-references in the UniProt XML for \species{Escherichia coli} K12.  We compared our Blattner table with the table in the supplementary material from \cite{riley-e-coli}, \texttt{Supplementary\_Table\_1\_Annotation\_E.\_coli\_Genes.xls}.  Our Blattner table contains 4466 identifiers. There are 219 Blattner IDs reported in the Riley et.\ al.\ table that are not in our Gene Database.  Of these:
+\begin{itemize}
+\item 157 are RNA genes (tRNA, rRNA, or misc\_RNA) 
+\item 1 is the origin of replication 
+\item 51 are protein coding sequences (CDS) 
+\item 10 do not have a feature designation 
+\end{itemize}
+Conversely, there are 200 Blattner IDs in our table that are not in the Riley table:
+\begin{itemize}
+\item 104 are in the form of ``ECOK12Fxxx'' and correspond to proteins encoded by plasmid F
+\item 51 contain a period in the ID, such as ``bxxxx.y''
+\item 45 are IDs that have been supplanted by a new ID, but are reported in UniProt as 
+synonyms to other Blattner IDs
+\end{itemize}
+
+\item The \species{Escherichia coli} K12 Gene Database also contains 4156 EchoBASE IDs and 4224 EcoGene IDs that were cross-referenced by the UniProt XML.
 \end{itemize}
 
 \subsection{GenMAPP Builder}
@@ -298,7 +404,9 @@ If your primary interest is to use GenMAPP for a particular organism, please con
 
 GenMAPP Builder is an application for creating GenMAPP Gene Database files, or GDBs.  These files are actually Microsoft Access database files (MDBs) with a \texttt{.gdb} filename extension.\footnote{GenMAPP handles three types of MDB files, distinguished by an extension other than \texttt{.mdb}: Gene Databases (\texttt{.gdb}), MAPPs (\texttt{.mapp}), and Expression Datasets (\texttt{.gex}).}
 
-The application works by first importing supported data files into a relational database.  The database can then be queried by organism in order to produce a GenMAPP database file.  While one UniProt import per species would be the norm, there is no actual restriction on the content of the imported XML.  With a sufficiently large and fast workstation, one can theoretically import the entire UniProt dataset into GenMAPP Builder's internal database.
+The application works by first importing supported data files into a relational database.  The database can then be queried %by organism <--- bug fix needed first!
+in order to produce a GenMAPP database file.  %(restore when fix is done) While one UniProt import per species would be the norm, there is no actual restriction on the content of the imported XML.  With a sufficiently large and fast workstation, one can theoretically import the entire UniProt dataset into GenMAPP Builder's internal database.
+At this writing, only one species may be imported into the relational database.  Future versions of GenMAPP Builder will be able to store and export multiple species.
 
 %[I think this needs to be reworded; unless we decide later to work with the entire UniProt (or some other database) the files imported into the relational database will already be organism-specific data files.]  [yes, this general direction was the intent; in that case, would additional clarification still be necessary?  or, for simplicity, should we start by assuming that we have a single-organism assumption for now?] [We could say just that:  Currently, the program expects species-specific files; in the future, files that contain data from multiple species could be used and queried by species.]
 
@@ -311,7 +419,7 @@ The current version of GenMAPP Builder requires data from the following types of
 \item Gene Ontology (GO) OBO XML
 \item Tab-delimited GO gene associations (various sources, primarily GOA)
 \end{itemize}
-Typically, the GO file need only be loaded once, since GO makes the entire set of terms available as a single download.  UniProt XML files can be downloaded by species from the Integr8 Web interface.  While one UniProt import per species would be the norm, there is no actual restriction on the content of the imported XML.  With a sufficiently large and fast workstation, one can theoretically import the entire UniProt dataset into GenMAPP Builder's internal database.
+Typically, the GO file need only be loaded once, since GO makes the entire set of terms available as a single download.  UniProt XML files can be downloaded by species from the Integr8 Web interface.  %While one UniProt import per species would be the norm, there is no actual restriction on the content of the imported XML.  With a sufficiently large and fast workstation, one can theoretically import the entire UniProt dataset into GenMAPP Builder's internal database.
 
 Once the source files have been imported into the relational database, they are no longer needed; exports can be performed any number of times after that.  In practice, however, periodic reloads will be necessary in order to remain in sync with the datasets' providers.
 
@@ -326,6 +434,7 @@ To use GenMAPP Builder, you need:
 Once these are properly installed and operational, you can perform these primary functions:
 \begin{enumerate}
 \item Import one or more supported data files into the GenMAPP Builder database
+\item Perform pre-processing on the imported Gene Ontology terms
 \item Build a GenMAPP Gene Database file based on a particular species in the database
 \end{enumerate}
 The built files can then be read directly by GenMAPP.
@@ -361,7 +470,7 @@ The configuration dialog provides an interface for a wide variety of database-re
 \end{enumerate}
 The example shown in Figure~\ref{config} shows a GenMAPP Builder installation that uses a PostgreSQL relational database called \emph{gmbuilder} on a server that is running on the same machine as GenMAPP Builder (\emph{localhost}\/) using the default PostgreSQL network port, 5432.  The standard PostgreSQL database driver is used (\emph{org.postgresql.Driver}\/), and the database username is \emph{jsmith} with an accompanying password.
 
-Most of the time, these are the only settings to modify.  Click the \uilabel{Save} button when configuration is complete.
+Most of the time, these are the only settings to modify.  Click the \uilabel{Save} button when configuration is complete, then click \uilabel{Close} to dismiss the configuration dialog.
 
 GenMAPP Builder relies on the Hibernate library for its database interactions; a full reference of all settable parameters can be found on the Hibernate Web site (\url{http://www.hibernate.org}).
 
@@ -380,37 +489,44 @@ A ``fresh'' install of GenMAPP Builder contains no data --- supported files must
 
 %[we’ll need an option here for the GO gene associations file] [yes, agreed; right now, the gene associations are read in at export time.  However, I don’t see why they can’t be loaded into the database beforehand, just as with all other files.—OK-KD]
 
-Each import command works in the same way: once chosen, a file chooser dialog appears.  Locate the file to be imported through this dialog, then click on \uilabel{Import}.  The import process then begins.  A progress display tracks the status of the import, from which two commands are available: \uilabel{Pause} or \uilabel{Cancel}.
+Each import command works in the same way: once chosen, a file chooser dialog appears.  Locate the file to be imported through this dialog, then click on \uilabel{Import}.  The import process then begins.  % TODO A progress display tracks the status of the import, from which two commands are available: \uilabel{Pause} or \uilabel{Cancel}.
+A dialog will notify you when the import completes; click the \uilabel{Close} button to dismiss the import dialog.
 
-The \uilabel{Pause} command allows you to stop the import operation temporarily, to be resumed at a later time.  This may be useful for large data sets on a computer that can't be ``left alone'' to complete the entire import operation.  GenMAPP Builder tracks the list of paused imports for you; the primary requirement is that you do \emph{not} delete the files being imported until the operation is complete.
+% TODO The \uilabel{Pause} command allows you to stop the import operation temporarily, to be resumed at a later time.  This may be useful for large data sets on a computer that can't be ``left alone'' to complete the entire import operation.  GenMAPP Builder tracks the list of paused imports for you; the primary requirement is that you do \emph{not} delete the files being imported until the operation is complete.
 
 %[nice feature!][yes, when it’s actually implemented ?  But I decided to specify it here now so that we don’t forget—if this is the manuel that we are intending on packaging with the program as a stand-in for help, we will need to note that it hasn’t been implemented yet. ;) KD]
 
-The \uilabel{Cancel} command cancels the \emph{entire} import, including data that has already been read.  This command is useful if you change your mind during an import operation, and decide not to load any of that information into the relational database after all.%[this takes us back to the “fresh” install?]
-The database remains in precisely the state that it was prior to the import command, as if the import was never invoked at all.
+% TODO The \uilabel{Cancel} command cancels the \emph{entire} import, including data that has already been read.  This command is useful if you change your mind during an import operation, and decide not to load any of that information into the relational database after all.%[this takes us back to the “fresh” install?]
+%The database remains in precisely the state that it was prior to the import command, as if the import was never invoked at all.
 
 %[hope that sentence clarifies your question—maybe—I guess I’m just concerned that half-finished files aren’t hanging around to cause problems when trying to import a second time—KD]
 
 Once an import operation finishes, the data in the imported file now becomes accessible as a set of relational database tables.
 
+\subsubsection{GO Pre-Processing}
+
+In the case of a GO OBO XML import, upon import completion GenMAPP Builder will ask if you would like to perform pre-processing of the imported GO data.  This pre-processing step is required in order for Gene Ontology-related tables to be exported correctly into the Gene Database.  Click \uilabel{OK} to proceed with pre-processing, which may take around 30 minutes.  A dialog will notify you when the GO pre-processing step completes.
+
+The GO pre-processing step can also be performed at any time after a GO import takes place.  Choose \uilabel{File} $>$ \uilabel{Process GO Data\ldots} to do this.
+
 \subsubsection{Browsing the Database}
 
-GenMAPP Builder includes a query engine that allows you to browse the contents of the underlying relational database.  With this engine, you can look at the species that are available and all imported information about the species' genes and proteins.  If a compatible GO gene associations file has also been imported into the database, you can browse the GO terms that have been associated with that species as well.
+GenMAPP Builder uses the query engine from XMLPipeDB Utilities to allows you to browse the contents of the underlying relational database.  With this engine, you can look at the species that are available and all imported information about the species' genes and proteins.  % TODO If a compatible GO gene associations file has also been imported into the database, you can browse the GO terms that have been associated with that species as well.
 
 %[what did you have in mind here? what comes to my mind is that we could run queries and export stuff for purposes other than GenMAPP.  For example, you could take a list of gene IDs and find all related IDs. see the Source database run by Stanford as an example:  http://source.stanford.edu/cgi-bin/source/sourceSearch]
 
-The query engine allows direct SQL or HQL queries, returning the results of these queries in a table or tree view (for SQL and HQL queries, respectively).  The direct queries allow for maximum flexibility in examining the loaded data, but they require detailed knowledge of the intermediate relational database schema.  For convenience, a number of particularly useful queries have been pre-loaded into GenMAPP Builder.
+The query engine allows direct SQL or HQL queries, returning the results of these queries in a table or tree view (for SQL and HQL queries, respectively).  The direct queries allow for maximum flexibility in examining the loaded data, but they require detailed knowledge of the intermediate relational database schema.  % TODO For convenience, a number of particularly useful queries have been pre-loaded into GenMAPP Builder.
 %(Kam — you can list as many queries here as you like; it can be an on-going task for someone to implement these queries and add them to the application as described)
 
-Preloaded queries are available in the \uilabel{Query} menu.  When a preloaded query is invoked, a dialog may appear requesting required parameters such as taxon ID, protein name, etc.  Fill these parameters out and click on the \uilabel{Perform Query} button to view the results.
+% TODO Preloaded queries are available in the \uilabel{Query} menu.  When a preloaded query is invoked, a dialog may appear requesting required parameters such as taxon ID, protein name, etc.  Fill these parameters out and click on the \uilabel{Perform Query} button to view the results.
 
-A third query mechanism is available in the form of a Google-style ``free text'' query.  For this type of query, enter the text that you would like to find, and GenMAPP Builder will return all records that somehow match this text.  The query is a simple substring search on the following fields: (this list is to be specified).
+% TODO A third query mechanism is available in the form of a Google-style ``free text'' query.  For this type of query, enter the text that you would like to find, and GenMAPP Builder will return all records that somehow match this text.  The query is a simple substring search on the following fields: (this list is to be specified).
 
 %[Whoa—I think this has bitten off more than I can chew; I’m not sure what you mean by all of this.  This would probably be best resolved by a conversation so you can explain to me what you mean by this.—KD]
 
 \subsubsection{Building a GenMAPP Gene Database}
 
-Once the underlying relational database contains all of the information that you need (i.e., you have imported all of the XML data sets that you wish to export to a GenMAPP Gene Database), you can build a GenMAPP Gene Database file.  To do this, choose the \uilabel{Export to GenMAPP} command from the \uilabel{File} menu.
+Once the underlying relational database contains all of the information that you need (i.e., you have imported all of the XML data sets that you wish to export to a GenMAPP Gene Database), you can build a GenMAPP Gene Database file.  To do this, choose the \uilabel{Export to GenMAPP\ldots} command from the \uilabel{File} menu.
 
 \paragraph{Definitions}
 
@@ -439,7 +555,7 @@ The export operation opens with a dialog that requests the following information
 %[this is going to be pre-determined by the species-specific UniProt file that is pre-loaded, unless we move towards handling the entire UniProt database, which I don’t recommend because it will be HUGE.  Therefore, it seems that this step should be at the level of UniProt, GO Gene Associations import, not at the level of GenMAPP Export.  However, we do need to fill in the Species field of the Info table and the Species fields of all the systems tables.  Maybe the dialog can pop up the question “Is this the correct species for this database?” and have it pre-filled with the species from the UniProt import process.  We will need a way to correctly give the genus-species name since GenMAPP doesn’t use taxon IDs yet.  One thing we could do is maintain a table of taxonIDs-genus/species names that we get from NCBI.  This would just be for our purposes and not make it into the final Gene Database.  I’ve just looked into what we can download from NCBI and this may not be a trivial exercise after all.][yes, while in practice, we would probably never import the entire UniProt data set, I think stating the species at this point (even if the user has only loaded one organism) accommodates the spectrum of scenarios ranging from one, to a few, to all organisms.  The import routine actually does load in the taxon ID, so we can use that for record retrieval.][As of tonight, 6/13, Joey says he can make this a drop-down menu based on the species present in the UniProt database.]
 GenMAPP Builder examines the intermediate relational database and provides a drop-down menu for the species that are available there.  Select the species for which you would like to export a Gene Database.  GenMAPP Builder will automatically use this information wherever this is needed in the Gene Database, such as the \gdbtable{Info} table and the \gdbfield{Species} fields of the systems tables.
 
-\item The systems tables to include: GenMAPP Builder presents a checklist of what systems tables are available.
+% TODO \item The systems tables to include: GenMAPP Builder presents a checklist of what systems tables are available.
 %[I would like this to be set up so that the user chooses from a list of systems available.  For UniProt-centric Gene Databases, the user must at least choose UniProt as one of the systems.  The other systems that can be included in a UniProt-centric Gene Database for any species are:  EMBL, InterPro, Pfam, PDB, and OrderedLocusNames.  Then there will be additional systems available depending on the species.  For example, for E. coli we add EchoBASE and EcoGene.  We can attempt to generate this list based on the xrefs available in the XML file, but I’m afraid that not all of the xrefs that are there will be suitable for systems tables.  We will have to investigate to see if there’s some way to automatically and intelligently generate this list.  Gene Ontology will only need to be included as a system if the appropriate gene association table is available.  For each system chosen, the current date is added to the Date field of that record in the Systems table.][***NEW: Joey is going to make a list for the user to choose from, although I’m not sure how he’s generating this list, dynamically from the db xrefs or just based on the list we’ve given him—KD]
 
 \item One of these systems tables then needs to be designated as the \emph{Model Organism Database} (MOD) system for the Gene Database.  For a UniProt-centric Gene Database, this would be UniProt.  The table name goes in the \gdbfield{MODSystem} field of the \gdbtable{Info} table.
@@ -453,14 +569,13 @@ GenMAPP Builder examines the intermediate relational database and provides a dro
 
 \item The location and name of the destination Gene Database file: As required by GenMAPP, the file has a \texttt{.gdb} extension.  In addition, while not strictly enforced, the filename itself should follow this naming convention: two-letter code for genus/species, dash, the letters ``Std'' meaning standard or official, underscore, date in \texttt{yyyymmdd} format, file extension \texttt{.gdb}.  For example, an \species{E.\ coli} Gene Database generated on June 6, 2006 should, by convention, have the filename \texttt{Ec-Std\_20060606.gdb}.
 \end{itemize}
-When these export parameters have been set, the export operation begins.  As with the import operation, a progress display tracks the status of the export.  \uilabel{Pause} and \uilabel{Cancel} commands, which operate in the same way as their import operation counterparts, are also available while the export operation is taking place.
+When these export parameters have been set, the export operation begins.  % TODO As with the import operation, a progress display tracks the status of the export.  \uilabel{Pause} and \uilabel{Cancel} commands, which operate in the same way as their import operation counterparts, are also available while the export operation is taking place.
 %[same thing about noting whether this is actually implemented yet—KD]
-
 Once the export operation finishes, the specified destination file can be opened and used by GenMAPP.
 
 \subsubsection{Implementation Notes}
 
-The configuration, import, and query functions in GenMAPP Builder make direct use of the XMLPipeDB Utilities (\emph{xmlpipedbutils}) library.
+The configuration, import, and query functions in GenMAPP Builder make direct use of the XMLPipeDB Utilities library.
 
 \subsubsection{Database Details}
 \label{databaseDetails}

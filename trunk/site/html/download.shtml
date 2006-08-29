@@ -39,9 +39,14 @@ coli</i> K12</a></h4>
     <li><a
         href="http://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=199426&amp;release_id=436841">Release
     20060731</a></li>
-    <li><a
-        href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMeEcoliK12_20060731.pdf?download"
-        title="E. coli Gene Database Read Me">Read Me</a> (359K PDF)</li>
+    <li>Read Me (359K PDF)
+        <ul>
+            <li><a href="docs/ReadMeEcoliK12_20060731.pdf">Direct from this site</a></li>
+            <li><a
+                href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMeEcoliK12_20060731.pdf?download">SourceForge
+            mirror</a></li>
+        </ul>
+    </li>
 </ul>
 
 <h3>System Requirements</h3>

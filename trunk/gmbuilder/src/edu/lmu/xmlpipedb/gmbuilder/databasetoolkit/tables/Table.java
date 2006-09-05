@@ -298,7 +298,7 @@ public class Table {
      * @param connection
      * @throws SQLException
      */
-    private void flush(Connection connection) throws SQLException {
+    private void flush(Connection connection) {
         if (sqlBuffer.size() > 0) {
             PreparedStatement ps = null;
             for (SQLStatement sqlStatement : sqlBuffer.toArray(new SQLStatement[0])) {
@@ -311,6 +311,15 @@ public class Table {
                     }
 
                     ps.executeUpdate();
+                } catch( SQLException e ){
+                	StringBuffer errText = new StringBuffer("An SQLException occurred while writing to the database. ");
+                	errText.append(" sqlStatement ToString: " + sqlStatement.toString());
+                	errText.append(" sqlStatement getValues: " + sqlStatement.getValues());
+                	errText.append(" sqlStatement getSQL: " + sqlStatement.getSQL());
+                	errText.append(" Error Code: " + e.getErrorCode());
+                	errText.append(" Message: " + e.getMessage());
+                	
+                	_Log.error(errText);
                 } finally {
                     try {
                         ps.close();

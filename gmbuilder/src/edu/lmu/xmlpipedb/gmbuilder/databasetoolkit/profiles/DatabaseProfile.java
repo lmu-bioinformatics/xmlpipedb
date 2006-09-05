@@ -499,7 +499,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    private TableManager getInfoTableManager() {
+    public TableManager getInfoTableManager() {
         TableManager tableManager = new TableManager(null, new String[] {});
         tableManager.submit("Info", QueryType.insert, new String[][] { { "Owner", owner }, { "Version", new SimpleDateFormat("yyyyMMdd").format(version) }, { "MODSystem", modSystem }, { "Species", speciesProfile.getSpeciesName() }, { "Modify", new SimpleDateFormat("yyyyMMdd").format(modify) }, { "DisplayOrder", displayOrder }, { "Notes", notes } });
         return tableManager;
@@ -513,7 +513,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    private TableManager getRelationsTableManager() {
+    public TableManager getRelationsTableManager() {
         TableManager tableManager = new TableManager(null, new String[] { "SystemCode", "RelatedCode" });
         for (String relationTable : relationshipTables) {
             SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationTable);
@@ -532,7 +532,7 @@ public abstract class DatabaseProfile extends Profile {
      * 
      * @return
      */
-    private TableManager getOtherTableManager() {
+    public TableManager getOtherTableManager() {
         return new TableManager(null, new String[] {});
     }
 
@@ -543,7 +543,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    protected abstract TableManager getSystemsTableManager();
+    public abstract TableManager getSystemsTableManager();
 
     /**
      * This function must be implemented by an X-centric database and should
@@ -553,7 +553,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    protected abstract TableManager getPrimarySystemTableManager() throws SQLException;
+    public abstract TableManager getPrimarySystemTableManager() throws SQLException;
 
     /**
      * This function must be implemented by an X-centric database and should
@@ -562,7 +562,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    protected abstract TableManager getSystemTableManager() throws SQLException;
+    public abstract TableManager getSystemTableManager() throws SQLException;
 
     /**
      * This function must be implemented by an X-centric database and should
@@ -572,7 +572,7 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      * @throws Exception
      */
-    protected abstract List<TableManager> getRelationshipTableManager() throws SQLException;
+    public abstract List<TableManager> getRelationshipTableManager() throws SQLException;
 
     /**
      * Creates the OriginalRowCounts TableManager. This function should be fixed

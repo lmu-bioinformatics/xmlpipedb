@@ -299,6 +299,10 @@ public class Table {
      * @throws SQLException
      */
     private void flush(Connection connection) {
+    	/* The code was not written to submit and commit batches of records. 
+    	 * Rather it goes record by record. This is a possible area of 
+    	 * performance enhancement later on.
+    	 */
         if (sqlBuffer.size() > 0) {
             PreparedStatement ps = null;
             for (SQLStatement sqlStatement : sqlBuffer.toArray(new SQLStatement[0])) {

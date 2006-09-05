@@ -34,9 +34,12 @@ public class TableCoordinator {
 	 */
 	public static void exportTables(Connection exportConnection, TableManager[] tableManagers) throws SQLException {
 		for(TableManager tableManager : tableManagers) {
-			new Table(tableManager).export(exportConnection);
+//			JN -- replaced this with the call to exportTable, below
+//			new Table(tableManager).export(exportConnection);
+			exportTable( exportConnection, tableManager );
 		}
 	}
+	
 	
 	/**
 	 * Exports a single table given a table manager.

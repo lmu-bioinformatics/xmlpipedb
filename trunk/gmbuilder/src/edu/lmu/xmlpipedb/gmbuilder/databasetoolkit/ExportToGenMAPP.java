@@ -12,6 +12,7 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
@@ -90,11 +91,43 @@ public class ExportToGenMAPP {
         ExportWizard.updateExportProgress(50, "Finished GeneOntology export...");
         ExportWizard.updateExportProgress(51, "Starting first pass table creation...");
 
+        // original code by Joey Barrett
+//        _Log.info("Getting first-pass table managers");
+//        TableManager[] firstPass = selectedDatabaseProfile.getFirstPassTableManagers();
+//        _Log.info("Exporting first-pass tables");
+//        TableCoordinator.exportTables(selectedDatabaseProfile.getExportConnection(), firstPass);
+        
+        // JN - in-lining of calls with immediate write to gmb 
         _Log.info("Getting first-pass table managers");
-        TableManager[] firstPass = selectedDatabaseProfile.getFirstPassTableManagers();
-        _Log.info("Exporting first-pass tables");
-        TableCoordinator.exportTables(selectedDatabaseProfile.getExportConnection(), firstPass);
-
+        ExportWizard.updateExportProgress(53, "Preparing tables - Info table...");
+        TableManager tmA = selectedDatabaseProfile.getInfoTableManager();
+        TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmA);
+        
+        ExportWizard.updateExportProgress(55, "Preparing tables - Relations table...");
+        TableManager tmB = selectedDatabaseProfile.getRelationsTableManager();
+        TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmB);
+        
+        ExportWizard.updateExportProgress(57, "Preparing tables - Other table...");
+        TableManager tmC = selectedDatabaseProfile.getOtherTableManager();
+        TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmC);
+        
+        ExportWizard.updateExportProgress(59, "Preparing tables - Systems table...");
+        TableManager tmD = selectedDatabaseProfile.getSystemsTableManager();
+        TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmD);
+        
+        ExportWizard.updateExportProgress(61, "Preparing tables - Primary System table...");
+        TableManager tmE = selectedDatabaseProfile.getPrimarySystemTableManager();
+        TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmE);
+        
+        ExportWizard.updateExportProgress(63, "Preparing tables - System tables...");
+        TableManager tmF = selectedDatabaseProfile.getSystemTableManager();
+        TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmF);
+        
+        ExportWizard.updateExportProgress(65, "Preparing tables - Relationship table...");
+        List<TableManager> tmG = selectedDatabaseProfile.getRelationshipTableManager();
+        TableCoordinator.exportTables(selectedDatabaseProfile.getExportConnection(), (TableManager[])tmG.toArray());
+        // end in-lining
+        
         ExportWizard.updateExportProgress(66, "Starting second pass table creation...");
         _Log.info("Getting second-pass table managers");
         TableManager[] secondPass = selectedDatabaseProfile.getSecondPassTableManagers();

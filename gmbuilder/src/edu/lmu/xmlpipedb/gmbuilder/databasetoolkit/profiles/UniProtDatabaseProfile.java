@@ -166,8 +166,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     /**
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getSystemsTableManager()
      */
-    @Override
-    protected TableManager getSystemsTableManager() {
+    public @Override TableManager getSystemsTableManager() {
         TableManager tableManager;
 
         tableManager = new TableManager(null, new String[] { "SystemCode" });
@@ -190,8 +189,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      * 
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getPrimarySystemTableManager()
      */
-    @Override
-    protected TableManager getPrimarySystemTableManager() throws SQLException {
+    public @Override TableManager getPrimarySystemTableManager() throws SQLException {
         if (primarySystemTableManager != null) {
             return primarySystemTableManager;
         }
@@ -248,8 +246,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     /**
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getSystemTableManager()
      */
-    @Override
-    protected TableManager getSystemTableManager() throws SQLException {
+    public @Override TableManager getSystemTableManager() throws SQLException {
         if (systemTableManager != null) {
             return systemTableManager;
         }
@@ -281,8 +278,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     /**
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getRelationshipTableManager()
      */
-    @Override
-    protected List<TableManager> getRelationshipTableManager() throws SQLException {
+    public @Override List<TableManager> getRelationshipTableManager() throws SQLException {
         List<TableManager> tableManagers = new ArrayList<TableManager>();
         TableManager tableManager;
         for (String relationshipTable : relationshipTables) {

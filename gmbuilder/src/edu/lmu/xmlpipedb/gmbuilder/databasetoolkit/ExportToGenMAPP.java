@@ -125,9 +125,7 @@ public class ExportToGenMAPP {
         
         ExportWizard.updateExportProgress(65, "Preparing tables - Relationship table...");
         List<TableManager> tmG = selectedDatabaseProfile.getRelationshipTableManager();
-        TableManager[] tmGarray = {}; 
-        tmGarray = tmG.toArray(tmGarray);
-        TableCoordinator.exportTables(selectedDatabaseProfile.getExportConnection(), tmGarray);
+        TableCoordinator.exportTables(selectedDatabaseProfile.getExportConnection(), tmG.toArray(new TableManager[0]));
         // end in-lining
         
         ExportWizard.updateExportProgress(66, "Starting second pass table creation...");

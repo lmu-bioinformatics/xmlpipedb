@@ -57,6 +57,30 @@ public class Table {
 		protected String[] getValues() {
 			return values;
 		}
+		/**
+		 * The getQuery method is an attempt to print out the query with the 
+		 * values in the correct spots (in place of the question marks). 
+		 * However, when doing this, we must also put quotation marks in
+		 * all the right places and leave them out of the wrong places.
+		 * That is: single quotes around strings, possibly around dates,
+		 * but never around numbers.
+		 * Therefore, the data produced by this method is highly suspect.
+		 * In this case, no quotes are put around any values and the
+		 * user of such queries must insert their own quotes.
+		 * @return
+		 */
+		protected String getQuery(){
+			String query = this.sqlStatement;
+            if (values != null && values.length > 0) {
+                for (int i = 0; i < values.length; i++) {
+                	query.indexOf("?");
+                	query = query.substring(0, query.indexOf("?")) 
+                		+ GenMAPPBuilderUtilities.straightToCurly(values[i])
+                		+ query.substring( query.indexOf("?")+1 );
+                }
+            }
+            return query;
+		}
 	}
 	
 	/**
@@ -313,7 +337,7 @@ public class Table {
                             ps.setString(i + 1, GenMAPPBuilderUtilities.straightToCurly(sqlStatement.getValues()[i]));
                         }
                     }
-
+                   
                     ps.executeUpdate();
                 } catch( SQLException e ){
                 	StringBuffer errText = new StringBuffer("An SQLException occurred while writing to the database. ");

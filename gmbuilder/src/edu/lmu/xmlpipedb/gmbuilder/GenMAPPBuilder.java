@@ -35,6 +35,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
+import shag.App;
+import shag.dialog.ModalDialog;
+import shag.menu.WindowMenu;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
@@ -42,10 +45,6 @@ import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
-
-import shag.App;
-import shag.dialog.ModalDialog;
-import shag.menu.WindowMenu;
 
 /**
  * GenMAPPBuilder is a GUI application for loading, querying, and exporting data
@@ -76,8 +75,13 @@ public class GenMAPPBuilder extends App {
     public void run() {
         super.run();
         
-        // Set up logging.
+        // Set up logging. next line just uses basic logging
         BasicConfigurator.configure();
+        // We will use logging properties set in a file. This will give us
+        // greater flexibility and control over our logging
+        //FIXME: This is a complete kludge cuz I can't find how to set it to get the log4j.properties from the classpath. After this is working, we should use this in place of BasicConfigurator
+//        PropertyConfigurator.configure("/eclipse projects/gmbuilder/log4j.properties");
+
         if (System.getProperty("log.level") != null) {
             LogManager.getRootLogger().setLevel(Level.toLevel(System.getProperty("log.level")));
         } else {

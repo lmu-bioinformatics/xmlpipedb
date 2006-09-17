@@ -170,6 +170,7 @@ public class ImportGoTest extends TestCase {
 			results = query.executeQuery();
 			results.next();
 			Assert.assertEquals(acccount, results.getInt(1));
+			
 			query = conn.prepareStatement("select count(*) from altid");
 			results = query.executeQuery();
 			results.next();
@@ -439,11 +440,16 @@ public class ImportGoTest extends TestCase {
 			Assert.assertEquals(xrefunknowncount, results.getInt(1));
 
         	
-        } catch(SQLException sqle) {
-            // JOptionPane.showMessageDialog(this, sqle.getMessage());
+        } catch(SQLException e) {
+            System.out.print("An SQLException was thrown while running this test. A stack trace follows:\n");
+            e.printStackTrace();
         } catch(Exception e) {
-            // reportException(e);
-        } finally {
+        	System.out.print("An Unspecified Exception was thrown while running this test. A stack trace follows:\n");
+            e.printStackTrace();
+        } /*catch( Throwable t ){
+        	System.out.print("An Throwable was thrown while running this test. A stack trace follows:\n");
+            t.printStackTrace();
+        }*/ finally {
             try {
                 results.close();
                 query.close();

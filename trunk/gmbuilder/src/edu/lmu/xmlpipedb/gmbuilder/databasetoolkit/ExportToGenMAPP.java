@@ -86,7 +86,7 @@ public class ExportToGenMAPP {
      */
     public static void export() throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
         ExportWizard.updateExportProgress(1, "Starting GeneOntology export...");
-        (new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getAssociationsFile());
+//JN test        (new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getAssociationsFile());
 
         ExportWizard.updateExportProgress(50, "Finished GeneOntology export...");
         ExportWizard.updateExportProgress(51, "Starting first pass table creation...");

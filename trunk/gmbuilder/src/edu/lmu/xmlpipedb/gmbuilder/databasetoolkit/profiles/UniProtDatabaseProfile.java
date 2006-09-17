@@ -92,7 +92,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             }
 
             if (!speciesProfileFound) {
-                speciesProfilesFound.add(new CustomUniProtSpeciesProfile(speciesName, "This profile defines the requirements for " + "a custom species profile within a UniProt database."));
+                speciesProfilesFound.add(new UniProtSpeciesProfile(speciesName, "This profile defines the requirements for " + "a custom species profile within a UniProt database."));
             }
         }
 

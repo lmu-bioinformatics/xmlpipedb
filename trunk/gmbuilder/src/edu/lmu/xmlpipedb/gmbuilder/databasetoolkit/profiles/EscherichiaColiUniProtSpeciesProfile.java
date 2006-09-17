@@ -1,5 +1,5 @@
 /********************************************************
- * Filename: CustomUniProtSpeciesProfile.java
+ * Filename: UniProtSpeciesProfile.java
  * Author: Joey J. Barrett
  * Program: gmBuilder
  * Description: This an instance of a Escherichia Coli
@@ -32,7 +32,7 @@ import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
  * @author Joey J. Barrett
  * Class: EscherichiaColiUniProtSpeciesProfile
  */
-public class EscherichiaColiUniProtSpeciesProfile extends SpeciesProfile {
+public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile {
     /**
      * Creates the species profile.
      */

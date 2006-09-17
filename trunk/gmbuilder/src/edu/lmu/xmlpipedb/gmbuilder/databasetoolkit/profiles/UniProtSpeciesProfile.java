@@ -1,5 +1,5 @@
 /********************************************************
- * Filename: CustomUniProtSpeciesProfile.java
+ * Filename: UniProtSpeciesProfile.java
  * Author: Joey J. Barrett
  * Program: gmBuilder
  * Description: This an instance of a custom species
@@ -29,16 +29,16 @@ import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 
 /**
  * @author Joey J. Barrett
- * Class: CustomUniProtSpeciesProfile
+ * Class: UniProtSpeciesProfile
  */
-public class CustomUniProtSpeciesProfile extends SpeciesProfile {
+public class UniProtSpeciesProfile extends SpeciesProfile {
 
 	/**
 	 * Creates a custom species profile for a UniProt centric database.
 	 * @param name
 	 * @param description
 	 */
-	public CustomUniProtSpeciesProfile(String name, String description) {
+	public UniProtSpeciesProfile(String name, String description) {
 		super(name, description);
 	}
 

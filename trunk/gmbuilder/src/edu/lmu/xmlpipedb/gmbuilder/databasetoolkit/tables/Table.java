@@ -17,6 +17,7 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables;
 
 import java.sql.Connection;
+import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -341,13 +342,28 @@ public class Table {
                     ps.executeUpdate();
                 } catch( SQLException e ){
                 	StringBuffer errText = new StringBuffer("An SQLException occurred while writing to the database. ");
-                	errText.append(" sqlStatement ToString: " + sqlStatement.toString());
-                	errText.append(" sqlStatement getValues: " + sqlStatement.getValues());
-                	errText.append(" sqlStatement getSQL: " + sqlStatement.getSQL());
+                	//errText.append(" sqlStatement getSQL: " + sqlStatement.getSQL());
+                	//errText.append(" sqlStatement getValues: " + sqlStatement.getValues());
                 	errText.append(" Error Code: " + e.getErrorCode());
                 	errText.append(" Message: " + e.getMessage());
-                	
                 	_Log.error(errText);
+                	
+                	// start - rebuild the query that failed
+                	String values = "";
+                	if (sqlStatement.getValues() != null) {
+                        for (int i = 0; i < sqlStatement.getValues().length; i++) {
+                            values += "\'" + GenMAPPBuilderUtilities.straightToCurly(sqlStatement.getValues()[i] + "\', ");
+                        }
+                    }
+                	// remove the last comma
+                	values = values.substring(values.lastIndexOf(","));
+                	
+                	String sql = sqlStatement.getSQL();
+                	sql = sql.substring(0, sql.indexOf("VALUES"));
+                	sql += "VALUES( " + values + " )";
+                	// end  - rebuild
+
+                	_Log.error(sql);
                 } finally {
                     try {
                         ps.close();

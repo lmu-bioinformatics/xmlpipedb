@@ -86,17 +86,12 @@ public class ExportToGenMAPP {
      */
     public static void export() throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
         ExportWizard.updateExportProgress(1, "Starting GeneOntology export...");
-//JN test        (new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getAssociationsFile());
+        (new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getAssociationsFile());
 
         ExportWizard.updateExportProgress(50, "Finished GeneOntology export...");
         ExportWizard.updateExportProgress(51, "Starting first pass table creation...");
 
-        // original code by Joey Barrett
-//        _Log.info("Getting first-pass table managers");
-//        TableManager[] firstPass = selectedDatabaseProfile.getFirstPassTableManagers();
-//        _Log.info("Exporting first-pass tables");
-//        TableCoordinator.exportTables(selectedDatabaseProfile.getExportConnection(), firstPass);
-        
+
         // JN - in-lining of calls with immediate write to gmb 
         _Log.info("Getting first-pass table managers");
         ExportWizard.updateExportProgress(53, "Preparing tables - Info table...");
@@ -128,12 +123,16 @@ public class ExportToGenMAPP {
         TableCoordinator.exportTables(selectedDatabaseProfile.getExportConnection(), tmG.toArray(new TableManager[0]));
         // end in-lining
         
+        //JN - "in-lining" is not needed here since the call getSecondPassTableManagers 
+        //     contains only one call, which is immediately written out, here.
         ExportWizard.updateExportProgress(66, "Starting second pass table creation...");
         _Log.info("Getting second-pass table managers");
         TableManager[] secondPass = selectedDatabaseProfile.getSecondPassTableManagers();
         _Log.info("Exporting second-pass tables");
         TableCoordinator.exportTables(selectedDatabaseProfile.getExportConnection(), secondPass);
 
+        //JN - Like "SecondPass", above, this method is only creating 1 TableManager
+        //		and therefore does not require "in-lining".
         ExportWizard.updateExportProgress(66, "Preparing table - OriginalRowCounts table...");
         _Log.info("Getting row counts table manager");
         TableManager rowCounts = selectedDatabaseProfile.getRowCountsTableManager();

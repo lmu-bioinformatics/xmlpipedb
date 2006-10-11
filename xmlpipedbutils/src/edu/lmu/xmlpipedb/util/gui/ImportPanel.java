@@ -19,6 +19,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -32,25 +33,26 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ProgressMonitorInputStream;
+import javax.swing.filechooser.FileFilter;
 
 import org.hibernate.cfg.Configuration;
 
 import edu.lmu.xmlpipedb.util.engines.ImportEngine;
-import javax.swing.filechooser.FileFilter;
 
 /**
  *
  * @author Dave Hoffman
  */
 public class ImportPanel extends JPanel {
-    /**
+	/**
      * Creates a new instance of ImportPanel
      * @param hibernateConfiguration The hibernate configuration to save to
      * @param jaxbContextPath The context path for the jaxb
      */
-    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration) {
+    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration, String topLevelElement) {
         _jaxbContextPath = jaxbContextPath;
         _hibernateConfiguration = hibernateConfiguration;
+        _topLevelElement = topLevelElement;
         createComponents();
         createActions();
         layoutComponents();
@@ -177,10 +179,13 @@ public class ImportPanel extends JPanel {
             try {
                 // does the progress monitor popup
                 InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(this, "Reading " + _xmlFile, new FileInputStream(_xmlFile)));
-                ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration);
+                ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration, _topLevelElement);
                 importEngine.loadToDB(in);
                 // notify user when import is complete
                 JOptionPane.showMessageDialog(this, "Import Complete: " + _xmlFile, "Import Complete", JOptionPane.INFORMATION_MESSAGE);
+            } catch( IOException e ){
+            	e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "An I/O exception occured while trying to read the file " + _xmlFile, "Error", JOptionPane.ERROR_MESSAGE);
             } catch(Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -190,6 +195,7 @@ public class ImportPanel extends JPanel {
         }
     }
 
+   
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {
         JFileChooser fc = new JFileChooser();
         fc.setFileFilter(new XMLFilter()); 
@@ -270,6 +276,7 @@ public class ImportPanel extends JPanel {
     }
     private String _jaxbContextPath;
     private Configuration _hibernateConfiguration;
+    private String _topLevelElement;
     private JButton _previewButton;
     private JTextField _textFieldPath;
     private JScrollPane _xmlScrollArea;

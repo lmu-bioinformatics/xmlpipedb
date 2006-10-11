@@ -171,7 +171,10 @@ public class MainController implements ActionListener {
             _configPanel = null;
             Configuration hibernateConfiguration = getHibernateConfig();
             if (hibernateConfiguration != null) {
-                _importPanel = new ImportPanel(AppResources.optionString("jaxbContextPath"), hibernateConfiguration);
+                _importPanel = new ImportPanel(AppResources
+						.optionString("jaxbContextPath"),
+						hibernateConfiguration, AppResources
+								.optionString("topLevelElement"));
                 _importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
                 _initialFrame.setContentPane(_importPanel);
             }

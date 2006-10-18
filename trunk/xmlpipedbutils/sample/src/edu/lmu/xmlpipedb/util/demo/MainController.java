@@ -14,13 +14,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -29,6 +36,8 @@ import org.hibernate.cfg.Configuration;
 
 import edu.lmu.xmlpipedb.util.demo.resources.AppResources;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
+import edu.lmu.xmlpipedb.util.engines.Criterion;
+import edu.lmu.xmlpipedb.util.engines.TallyEngine;
 import edu.lmu.xmlpipedb.util.exceptions.CouldNotLoadPropertiesException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
@@ -152,6 +161,14 @@ public class MainController implements ActionListener {
         menuItem.setActionCommand("config_platform");
         menuItem.addActionListener(this);
         menuTools.add(menuItem);
+        
+        // Set up menu item.
+        menuItem = new JMenuItem(AppResources.messageString("menu_tools_tally"));
+        menuItem.setMnemonic(KeyEvent.VK_T);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, accelMask));
+        menuItem.setActionCommand("tally");
+        menuItem.addActionListener(this);
+        menuTools.add(menuItem);
 
         // Set up the last menu item.
         menuItem = new JMenuItem(AppResources.messageString("menu_tools_quit"));
@@ -191,13 +208,65 @@ public class MainController implements ActionListener {
             _importPanel = null;
             _queryPanel = null;
             doConfigPanel();
+        } else if ("tally".equals(e.getActionCommand())) {
+            _importPanel = null;
+            _queryPanel = null;
+            _configPanel = null;
+            doGetTallies();
         } else { // quit
             System.exit(0);
         }
         _initialFrame.validate();
     }
 
-    public void validate() {
+    private void doGetTallies() {
+    	HashMap<String, Criterion> criteria = new HashMap<String, Criterion>();
+    	String e = null;
+    	e = AppResources.optionString("ElementLevel1");
+		if(!e.equals("") && e != null)
+			criteria.put(e, new Criterion("", e, ""));
+    	e = AppResources.optionString("ElementLevel2");
+    	if(!e.equals("") && e != null)
+			criteria.put(e, new Criterion("", e, ""));
+		e = AppResources.optionString("ElementLevel3");
+		if(!e.equals("") && e != null)
+			criteria.put(e, new Criterion("", e, ""));
+		e = AppResources.optionString("ElementLevel4");
+		if(!e.equals("") && e != null)
+			criteria.put(e, new Criterion("", e, ""));
+		
+//		Create a file chooser and setup the input stream
+		InputStream is = null;
+		final JFileChooser fc = new JFileChooser();
+		fc.setCurrentDirectory(new File("."));
+		int returnVal = fc.showOpenDialog(null);
+		
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+    		try {
+    			is = new FileInputStream(fc.getSelectedFile());
+    		} catch (FileNotFoundException e1) {
+    			// TODO Auto-generated catch block
+    			e1.printStackTrace();
+    		}
+        } else {
+        	JOptionPane.showMessageDialog(null, "No file choosen. Command aborted.");
+        }
+		
+		TallyEngine te = new TallyEngine(criteria);
+		criteria = te.getXmlFileCounts(is);
+		
+		String display = "Path \t Count";
+		
+		Set set = criteria.keySet();
+		Iterator iter = set.iterator();
+		while(iter.hasNext()){
+			Criterion crit = criteria.get(iter.next());
+			display += "\n" + crit.getDigesterPath() + " \t " + crit.getCount();
+		}
+		JOptionPane.showMessageDialog(null, display);
+	}
+
+	public void validate() {
         _initialFrame.validate();
     }
 

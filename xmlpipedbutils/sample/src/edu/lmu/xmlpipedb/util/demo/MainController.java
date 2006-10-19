@@ -37,8 +37,11 @@ import org.hibernate.cfg.Configuration;
 import edu.lmu.xmlpipedb.util.demo.resources.AppResources;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.Criterion;
+import edu.lmu.xmlpipedb.util.engines.QueryEngine;
 import edu.lmu.xmlpipedb.util.engines.TallyEngine;
 import edu.lmu.xmlpipedb.util.exceptions.CouldNotLoadPropertiesException;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
+import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
@@ -221,19 +224,24 @@ public class MainController implements ActionListener {
 
     private void doGetTallies() {
     	HashMap<String, Criterion> criteria = new HashMap<String, Criterion>();
-    	String e = null;
-    	e = AppResources.optionString("ElementLevel1");
-		if(!e.equals("") && e != null)
-			criteria.put(e, new Criterion("", e, ""));
-    	e = AppResources.optionString("ElementLevel2");
-    	if(!e.equals("") && e != null)
-			criteria.put(e, new Criterion("", e, ""));
-		e = AppResources.optionString("ElementLevel3");
-		if(!e.equals("") && e != null)
-			criteria.put(e, new Criterion("", e, ""));
-		e = AppResources.optionString("ElementLevel4");
-		if(!e.equals("") && e != null)
-			criteria.put(e, new Criterion("", e, ""));
+    	String element = null;
+    	String table = null;
+    	element = AppResources.optionString("ElementLevel1");
+    	table = AppResources.optionString("TableLevel1");
+		if(!element.equals("") && element != null)
+			criteria.put(element, new Criterion("", element, table));
+    	element = AppResources.optionString("ElementLevel2");
+    	table = AppResources.optionString("TableLevel2");
+    	if(!element.equals("") && element != null)
+			criteria.put(element, new Criterion("", element, table));
+		element = AppResources.optionString("ElementLevel3");
+		table = AppResources.optionString("TableLevel3");
+		if(!element.equals("") && element != null)
+			criteria.put(element, new Criterion("", element, table));
+		element = AppResources.optionString("ElementLevel4");
+		table = AppResources.optionString("TableLevel4");
+		if(!element.equals("") && element != null)
+			criteria.put(element, new Criterion("", element, table));
 		
 //		Create a file chooser and setup the input stream
 		InputStream is = null;
@@ -253,15 +261,22 @@ public class MainController implements ActionListener {
         }
 		
 		TallyEngine te = new TallyEngine(criteria);
-		criteria = te.getXmlFileCounts(is);
+		try {
+			criteria = te.getXmlFileCounts(is);
+			criteria = te.getDbCounts(new QueryEngine(getHibernateConfig()));
+		} catch (InvalidParameterException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		} catch (XpdException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
 		
-		String display = "Path \t Count";
+		String display = "Path: \t XML Count   \t||   Table: \t DB Count";
 		
 		Set set = criteria.keySet();
 		Iterator iter = set.iterator();
 		while(iter.hasNext()){
 			Criterion crit = criteria.get(iter.next());
-			display += "\n" + crit.getDigesterPath() + " \t " + crit.getCount();
+			display += "\n" + crit.getDigesterPath() + ": \t " + crit.getXmlCount() + "   \t||   " +  crit.getTable() + ": \t " + crit.getDbCount();
 		}
 		JOptionPane.showMessageDialog(null, display);
 	}

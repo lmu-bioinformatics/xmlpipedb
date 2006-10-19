@@ -1,6 +1,6 @@
 package edu.lmu.xmlpipedb.util.exceptions;
 
-public class NoHibernatePropertiesException extends Exception {
+public class NoHibernatePropertiesException extends XpdException {
 
 	private static final long serialVersionUID = 1L;
 

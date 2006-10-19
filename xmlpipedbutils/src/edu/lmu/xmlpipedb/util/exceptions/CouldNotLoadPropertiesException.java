@@ -1,6 +1,6 @@
 package edu.lmu.xmlpipedb.util.exceptions;
 
-public class CouldNotLoadPropertiesException extends Exception {
+public class CouldNotLoadPropertiesException extends XpdException {
 
 
 	private static final long serialVersionUID = 1L;

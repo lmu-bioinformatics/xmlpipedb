@@ -2,6 +2,10 @@ package edu.lmu.xmlpipedb.util.engines;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -11,7 +15,9 @@ import org.apache.commons.digester.Rule;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.xml.sax.SAXException;
 
-import edu.lmu.xmlpipedb.util.engines.ImportEngine.EndOfRecordRule;
+import edu.lmu.xmlpipedb.util.exceptions.HibernateQueryException;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
+import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 
 public class TallyEngine {
 
@@ -19,14 +25,66 @@ public class TallyEngine {
 		_criteria = criteria;
 	}
 	
-	public HashMap getXmlFileCounts(InputStream xmlFile){
+	public HashMap<String, Criterion> getXmlFileCounts(InputStream xmlFile) throws XpdException{
+		// validate params
+		if( xmlFile == null ){
+			//TODO: Log exception
+			throw new InvalidParameterException("The InputStream passed must not be null.");
+		}
+		
 		digestXmlFile(xmlFile);
 		return _criteria;
 	}
 	
-	public HashMap getDbCounts(){
+	public HashMap<String, Criterion> getDbCounts( QueryEngine qe ) throws XpdException{
+		// validate params
+		if( qe == null )
+			throw new InvalidParameterException("The QueryEngine passed must not be null.");
 		
-		return _criteria;
+		HashMap<String, Criterion> retMap = new HashMap<String, Criterion>();
+		// setup query engine
+		Connection conn = qe.currentSession().connection();
+        PreparedStatement query = null;
+        ResultSet results = null;
+
+        Set set = _criteria.keySet();
+		Iterator iter = set.iterator();
+		while(iter.hasNext()){
+			Criterion crit = _criteria.get(iter.next());
+			// check if there is a valid table entry, if not go on to the next record
+			if( crit.getTable() == null || crit.getTable().equals("")){
+				continue;
+			}
+			try {
+	            query = conn.prepareStatement("select count(*) from " + crit.getTable() );
+	            results = query.executeQuery();
+
+				results.next();
+				crit.setDbCount(results.getInt("count"));
+				retMap.put(crit.getDigesterPath(), crit);
+
+			} catch(SQLException sqle) {
+//				TODO: Log exception
+				//came from HQLPanel -- probably not needed here qe.currentSession().reconnect();
+				throw new HibernateQueryException(  sqle.getMessage() );
+				//Need to clean up connection after SQL exceptions
+	        } catch(Exception e) {
+//	        	TODO: Log exception
+	            throw new XpdException(e.getMessage());
+	        } finally {
+	            try {
+	                results.close();
+	                query.close();
+
+	               //We need to be sure to NOT close the connection or the session here. Leave it open!
+	            } catch(Exception e) {
+//	            	TODO: Log exception
+	                
+	            } // Ignore the errors here, nothing we can do anyways.
+	        }
+		}
+		
+		return retMap;
 	}
 
 	public void setCriteria( HashMap<String, Criterion> criteria ){
@@ -58,6 +116,8 @@ public class TallyEngine {
 			while(iter.hasNext()){
 				Criterion crit = _criteria.get(iter.next());
 				digester.addRule(crit.getDigesterPath(), new EndOfRecordRule());
+				// initialize the count to 0, since I am trying to count this item
+				crit.setXmlCount(0);
 			}
 			digester.setValidating(false);
 			digester.setLogger(logger);
@@ -89,7 +149,7 @@ public class TallyEngine {
     	public void end(String namespace, String name){
     		Digester tempDig = getDigester();
     		Criterion tempCrit = _criteria.get(tempDig.getMatch());
-    		tempCrit.setCount(tempCrit.getCount() + 1 );
+    		tempCrit.setXmlCount(tempCrit.getXmlCount() + 1 );
     	}
     }
     

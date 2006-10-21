@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.digester.Digester;
@@ -25,7 +26,7 @@ public class TallyEngine {
 		_criteria = criteria;
 	}
 	
-	public HashMap<String, Criterion> getXmlFileCounts(InputStream xmlFile) throws XpdException{
+	public Map<String, Criterion> getXmlFileCounts(InputStream xmlFile) throws XpdException{
 		// validate params
 		if( xmlFile == null ){
 			//TODO: Log exception
@@ -36,7 +37,7 @@ public class TallyEngine {
 		return _criteria;
 	}
 	
-	public HashMap<String, Criterion> getDbCounts( QueryEngine qe ) throws XpdException{
+	public Map<String,Criterion> getDbCounts( QueryEngine qe ) throws XpdException{
 		// validate params
 		if( qe == null )
 			throw new InvalidParameterException("The QueryEngine passed must not be null.");
@@ -87,8 +88,8 @@ public class TallyEngine {
 		return retMap;
 	}
 
-	public void setCriteria( HashMap<String, Criterion> criteria ){
-		_criteria = criteria;
+	public void setCriteria( Map<String, Criterion> criteria ){
+		_criteria.putAll(criteria);
 	}
 	
     

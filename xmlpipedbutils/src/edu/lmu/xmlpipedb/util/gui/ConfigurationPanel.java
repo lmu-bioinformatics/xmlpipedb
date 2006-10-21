@@ -140,7 +140,9 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         //buttonBox.add(Box.createHorizontalStrut(5));
         //buttonBox.add(_revertButton);
        // buttonBox.add(Box.createHorizontalStrut(5));
-        buttonBox.add(_saveButton);
+        buttonBox.add(_applyButton);
+        buttonBox.add(Box.createHorizontalStrut(5));
+        buttonBox.add(_okButton);
         buttonBox.add(Box.createHorizontalStrut(5));
         buttonBox.add(_cancelButton);
         add(buttonBox, BorderLayout.SOUTH);
@@ -177,7 +179,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         getFields((String)_typeCombo.getSelectedItem());
 
         // *** instantiate the static action components (buttons) ***
-        _saveButton = new JButton(AppResources.messageString("config_save"));
+        _applyButton = new JButton(AppResources.messageString("config_apply"));
+        _okButton = new JButton(AppResources.messageString("config_ok"));
         _cancelButton = new JButton(AppResources.messageString("config_cancel"));
         
         // *** these buttons may be enabled, but some changes need to be made
@@ -427,7 +430,8 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      */
     private void startListeningToUI() {
         // FIXME Dondi - This is a very fragile binding...must redesign...
-        _saveButton.addActionListener(this);
+    	_applyButton.addActionListener(this);
+    	_okButton.addActionListener(this);
         _cancelButton.addActionListener(this);
         //_revertButton.addActionListener(this);
         //_defaultButton.addActionListener(this);
@@ -500,10 +504,15 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent aevt) {
-        if (aevt.getSource() == _saveButton) {
+        if (aevt.getSource() == _okButton) {
         	// do save
             saveAction();
-
+//          make the main panel invisible
+            this.setVisible(false);
+            this.validate();
+        } else if (aevt.getSource() == _applyButton) {
+//        	 do save
+            saveAction();
         } else if (aevt.getSource() == _cancelButton) {
         	// make the main panel invisible
             this.setVisible(false);
@@ -531,7 +540,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     private JCheckBox[] _propSelected;
     private JTextField[] _propValue;
     private JRadioButton _categoryRB;
-    private JButton _saveButton, _cancelButton /*, _revertButton, _defaultButton*/;
+    private JButton _okButton, _cancelButton, _applyButton /*, _revertButton, _defaultButton*/;
     private JComboBox _typeCombo;
 
     //private Box _centerBox;

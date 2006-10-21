@@ -22,15 +22,21 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.Syst
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 
 /**
- * @author Joey J. Barrett
- * Class: SpeciesProfile
+ * Generic species profile regardless of data source. This class must
+ *  be extended by data source, for example UniProt or TIGR. That class
+ *  must then be extended by species,if any species specific processing
+ *  needs to occur.
+ * 
+ * @author Joey J. Barrett Class: SpeciesProfile
+ * @author Jeffrey Nicholas
  */
 public abstract class SpeciesProfile extends Profile {
 
 	private String customizedName = null;
-	
+
 	/**
 	 * Constructor.
+	 * 
 	 * @param name
 	 * @param description
 	 */
@@ -39,20 +45,21 @@ public abstract class SpeciesProfile extends Profile {
 	}
 
 	/**
-	 * Returns a customized species name.  Customizable
-	 * in the export wizard.
+	 * Returns a customized species name. Customizable in the export wizard.
+	 * 
 	 * @param speciesCustomizedName
 	 */
 	public void setCustomizedName(String speciesCustomizedName) {
 		customizedName = speciesCustomizedName;
 	}
-	
+
 	/**
 	 * Returns the species name.
+	 * 
 	 * @return
 	 */
 	public String getSpeciesName() {
-		if(customizedName == null) {
+		if (customizedName == null) {
 			return getName();
 		}
 		return customizedName;
@@ -60,13 +67,15 @@ public abstract class SpeciesProfile extends Profile {
 
 	/**
 	 * Returns the species specific system tables.
+	 * 
 	 * @return
 	 */
 	protected abstract Map<String, SystemType> getSpeciesSpecificSystemTables();
 
 	/**
-	 * Returns a table manager with the species specific
-	 * relations table customizations.
+	 * Returns a table manager with the species specific relations table
+	 * customizations.
+	 * 
 	 * @param systemTable1
 	 * @param systemTable2
 	 * @param templateDefinedSystemToSystemCode
@@ -75,24 +84,25 @@ public abstract class SpeciesProfile extends Profile {
 	 * @throws Exception
 	 */
 	public abstract TableManager getRelationsTableManagerCustomizations(
-			String systemTable1, String systemTable2, 
-			Map<String, String> templateDefinedSystemToSystemCode, 
+			String systemTable1, String systemTable2,
+			Map<String, String> templateDefinedSystemToSystemCode,
 			TableManager tableManager);
-	
+
 	/**
-	 * Returns a TableManager with the systems table
-	 * species specific changes.
+	 * Returns a TableManager with the systems table species specific changes.
+	 * 
 	 * @param tableManager
-	 * @param dbProfile TODO
+	 * @param dbProfile
+	 *            TODO
 	 * @return
 	 * @throws Exception
 	 */
 	public abstract TableManager getSystemsTableManagerCustomizations(
 			TableManager tableManager, DatabaseProfile dbProfile);
-	
+
 	/**
-	 * Returns a TableManager with the species specific
-	 * system tables.
+	 * Returns a TableManager with the species specific system tables.
+	 * 
 	 * @param tableManager
 	 * @param primarySystemTableManager
 	 * @param version
@@ -100,13 +110,12 @@ public abstract class SpeciesProfile extends Profile {
 	 * @throws Exception
 	 */
 	public abstract TableManager getSystemTableManagerCustomizations(
-			TableManager tableManager, 
-			TableManager primarySystemTableManager, 
+			TableManager tableManager, TableManager primarySystemTableManager,
 			Date version) throws SQLException;
 
 	/**
-	 * Returns a TableManager with a species specific
-	 * relationship table added.
+	 * Returns a TableManager with a species specific relationship table added.
+	 * 
 	 * @param relationshipTable
 	 * @param uniprotTableManager
 	 * @param blattnerTableManager
@@ -115,16 +124,20 @@ public abstract class SpeciesProfile extends Profile {
 	 * @throws SQLException
 	 * @throws Exception
 	 */
-	public abstract TableManager getSpeciesSpecificRelationshipTable(String relationshipTable, 
-			TableManager uniprotTableManager, TableManager blattnerTableManager, TableManager tableManager) throws SQLException;
-
-
+	public abstract TableManager getSpeciesSpecificRelationshipTable(
+			String relationshipTable, TableManager uniprotTableManager,
+			TableManager blattnerTableManager, TableManager tableManager)
+			throws SQLException;
+//FIXME: In this class it should not take a blattnerTableManager or a uniprotTableManager, since that is not generic
 	
 	/**
 	 * Returns the species specific system code.
+	 * 
 	 * @param systemCodes
 	 * @param templateDefinedSystemToSystemCode
 	 * @return
 	 */
-	public abstract List<String> getSpeciesSpecificSystemCode(List<String> systemCodes, Map<String, String> templateDefinedSystemToSystemCode);
+	public abstract List<String> getSpeciesSpecificSystemCode(
+			List<String> systemCodes,
+			Map<String, String> templateDefinedSystemToSystemCode);
 }

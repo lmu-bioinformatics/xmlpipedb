@@ -49,6 +49,22 @@ public class ImportPanel extends JPanel {
      * @param hibernateConfiguration The hibernate configuration to save to
      * @param jaxbContextPath The context path for the jaxb
      */
+    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration) {
+        _jaxbContextPath = jaxbContextPath;
+        _hibernateConfiguration = hibernateConfiguration;
+        _topLevelElement = "";
+        createComponents();
+        createActions();
+    }
+	
+	/**
+	 * @deprecated
+	 * 
+     * Creates a new instance of ImportPanel
+     * @param hibernateConfiguration The hibernate configuration to save to
+     * @param jaxbContextPath The context path for the jaxb
+     * @param topLevelElement Used only if the advanced import with Digester is working.
+     */
     public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration, String topLevelElement) {
         _jaxbContextPath = jaxbContextPath;
         _hibernateConfiguration = hibernateConfiguration;
@@ -100,6 +116,7 @@ public class ImportPanel extends JPanel {
                 previewButtonActionPerformed(evt);
             }
         });
+
     }
     /*
      *
@@ -122,6 +139,7 @@ public class ImportPanel extends JPanel {
 
         Box importBox = Box.createHorizontalBox();
         importBox.add(_previewButton);
+        importBox.add(Box.createHorizontalStrut(10));
         importBox.add(Box.createHorizontalGlue());
         importBox.add(_importButton);
         southBox.add(importBox);
@@ -151,6 +169,7 @@ public class ImportPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Please Open a Valid XML File", "Missing or Invalid File", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
     /*
      *
      * When something is typed in the text field the buttons are enabled. 
@@ -179,7 +198,7 @@ public class ImportPanel extends JPanel {
             try {
                 // does the progress monitor popup
                 InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(this, "Reading " + _xmlFile, new FileInputStream(_xmlFile)));
-                ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration, _topLevelElement);
+                ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration);
                 importEngine.loadToDB(in);
                 // notify user when import is complete
                 JOptionPane.showMessageDialog(this, "Import Complete: " + _xmlFile, "Import Complete", JOptionPane.INFORMATION_MESSAGE);

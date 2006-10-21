@@ -193,8 +193,7 @@ public class MainController implements ActionListener {
             if (hibernateConfiguration != null) {
                 _importPanel = new ImportPanel(AppResources
 						.optionString("jaxbContextPath"),
-						hibernateConfiguration, AppResources
-								.optionString("topLevelElement"));
+						hibernateConfiguration, "");
                 _importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
                 _initialFrame.setContentPane(_importPanel);
             }
@@ -258,12 +257,13 @@ public class MainController implements ActionListener {
     		}
         } else {
         	JOptionPane.showMessageDialog(null, "No file choosen. Command aborted.");
+        	return;
         }
 		
 		TallyEngine te = new TallyEngine(criteria);
 		try {
-			criteria = te.getXmlFileCounts(is);
-			criteria = te.getDbCounts(new QueryEngine(getHibernateConfig()));
+			criteria.putAll(te.getXmlFileCounts(is));
+			criteria.putAll( te.getDbCounts( new QueryEngine(getHibernateConfig() ) ) );
 		} catch (InvalidParameterException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		} catch (XpdException e) {

@@ -10,40 +10,28 @@
 
 package edu.lmu.xmlpipedb.util.engines;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.NodeCreateRule;
-import org.apache.commons.digester.ObjectCreateRule;
 import org.apache.commons.digester.Rule;
 import org.apache.commons.logging.impl.SimpleLog;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.dom4j.dom.DOMDocument;
-import org.dom4j.dom.DOMElement;
-import org.dom4j.tree.DefaultDocumentType;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-
-import org.xml.sax.Attributes;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
 import com.sun.org.apache.xerces.internal.dom.DocumentTypeImpl;
-import com.sun.org.apache.xerces.internal.dom.ElementImpl;
 
 /**
  * This class imports an xml file into a database.
@@ -52,6 +40,24 @@ import com.sun.org.apache.xerces.internal.dom.ElementImpl;
 public class ImportEngine {
 	
     /**
+     * Creates a new instance of ImportEngine
+     * @param jaxbContextPath The jaxbContext path
+     * @param hibernateConfiguration A hibernate configuration as the configuration to import
+     * the xml to the database
+     * @throws javax.xml.bind.JAXBException For JaxB Exceptions
+     * @throws org.xml.sax.SAXException for SAX Exceptions
+     * @throws java.io.IOException for IO exceptions
+     * @throws org.hibernate.HibernateException all hibernate exceptions
+     */
+    public ImportEngine(String jaxbContextPath, Configuration hibernateConfiguration) throws JAXBException, SAXException, IOException, HibernateException {
+        jaxbContext = JAXBContext.newInstance(jaxbContextPath);
+        unmarshaller = jaxbContext.createUnmarshaller();
+        sessionFactory = hibernateConfiguration.buildSessionFactory();
+        _topLevelElement = "";
+    }
+    
+    /**
+     * @deprecated
      * Creates a new instance of ImportEngine
      * @param jaxbContextPath The jaxbContext path
      * @param hibernateConfiguration A hibernate configuration as the configuration to import
@@ -101,7 +107,7 @@ public class ImportEngine {
         saveEntry(xml);
     	
 //		#2 Extra Crispy
-        //digestXmlFile(xml);
+//        digestXmlFile(xml);
         
         
         /*
@@ -166,23 +172,35 @@ public class ImportEngine {
 
     	
     	Digester digester = new Digester();
-    	NodeCreateRule ncRule;
+//    	Digester dig2 = new Digester();
+//    	NodeCreateRule topNcRule; 
+//    	NodeCreateRule ncRule;
 		try {
-			ncRule = new NodeCreateRule();
+//			topNcRule = new NodeCreateRule();
+//			ncRule = new NodeCreateRule();
 			
-			digester.addRule(_topLevelElement, ncRule);
+			
+			//FIXME: IF this works, use a variable here
+			//digester.addRule("bookstore", topNcRule);
+//			digester.addRule(_topLevelElement, ncRule);
 			// NOTE-- this did not work out for me.
 			//digester.addRule(_topLevelElement, new ObjectCreateRule("java.lang.StringBuffer"));
+//			digester.addRule("bookstore", new TopEndOfRecordRule());
 			digester.addRule(_topLevelElement, new EndOfRecordRule());
 			digester.setValidating(false);
 			digester.setLogger(logger);
-			
 			digester.parse(xml);
+			
+//			dig2.addRule(_topLevelElement, ncRule);
+//			dig2.addRule(_topLevelElement, new EndOfRecordRule());
+//			dig2.setValidating(false);
+//			dig2.setLogger(logger);
+//			dig2.parse(xml);
 
 			
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//		} catch (ParserConfigurationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -191,6 +209,24 @@ public class ImportEngine {
 			e.printStackTrace();
 		}	
     	
+    }
+    
+    /**
+     * When end of the an element is reached, a custom, EndOfRecordRule
+     * will be fired, which pops this Node from the stack as an Element
+     * and passes it to the saveEntry method, which uses JAXB and Hibernate
+     * to save the contents to the database.
+     * 
+     * @author Jeffrey Nicholas
+     *
+     */
+    protected class TopEndOfRecordRule extends Rule{
+    	public void end(String namespace, String name){
+    		System.out.println("\nTopEndOfRecordRule.end()");
+    		Digester mydigester = this.getDigester();
+			_top = (Element) mydigester.pop();
+			//saveEntry(_top);
+    	}
     }
     
     /**
@@ -240,23 +276,37 @@ public class ImportEngine {
     	 */
     	public void end(String namespace, String name){
     		_recordCount++;
-    		System.out.println("\nwe got the end now. Record #: " + _recordCount);
-    		Digester mydigester = this.getDigester();
+    		Digester tempDig = getDigester();
+    		System.out.println("\n" + tempDig.getMatch() + " Record #: " + _recordCount);
+//    		Digester mydigester = this.getDigester();
     		// this is not really needed, but you can only pop once, so
     		// this way, the results will be available below, if imanutjob
-    		Object o = mydigester.pop();
-    		org.w3c.dom.Element elem = (org.w3c.dom.Element) o;
-    		saveEntry(elem);
+//    		Object o = mydigester.pop();
+//    		org.w3c.dom.Element elem = (org.w3c.dom.Element) o;
+//    		saveEntry(elem);
     		
     		/*
     		 * my little way of controlling whether I go into this code or not
     		 * :)
     		 */
-    		boolean imanutjob = false;
-    		
-    		if(imanutjob == true){
-	    		DocumentTypeImpl dti = new DocumentTypeImpl(null, "bookstore");
-	    		DocumentImpl doc;
+//    		boolean imanutjob = false;
+//    		
+//    		if(imanutjob == true){
+//    			Object o = null;
+//    			//if(!mydigester.isEmpty(""))
+//    			o = mydigester.pop();
+//        		org.w3c.dom.Element elem = (org.w3c.dom.Element) o;
+//        		 
+//        		_top.appendChild(elem);
+//    			saveEntry(elem);
+//    			
+//    			
+//    			
+//    			if(true) return;
+//    			
+//    			
+//    			DocumentTypeImpl dti = new DocumentTypeImpl(null, "bookstore");
+//	    		DocumentImpl doc;
 	//    		DocumentBuilderFactory factory =
 	//                DocumentBuilderFactory.newInstance();
 	            //factory.setValidating(true);   
@@ -265,16 +315,16 @@ public class ImportEngine {
 	              // DocumentBuilder builder = factory.newDocumentBuilder();
 	             //  doc = builder.newDocument();
 	             //  doc.appendChild((Element)mydigester.pop());
-	              doc = new DocumentImpl( dti );
+//	              doc = new DocumentImpl( dti );
 	//              DefaultDocumentType ddt = new DefaultDocumentType();
 	//              ddt.setElementName("bookstore");
 	//              doc.setsetDocType(ddt);
 	            //  Node n = (Node)mydigester.pop();
 	             // doc.appendChild(n);
 	
-	              org.w3c.dom.Element elem2 = doc.createElement(null);
-	              elem2 = (org.w3c.dom.Element)o;
-	              
+//	              org.w3c.dom.Element elem2 = doc.createElement(null);
+//	              elem2 = (org.w3c.dom.Element)o;
+//	              
 	              //doc.addEventListener((Element)o);
 	             
 	               // should this be a documentroot object???
@@ -314,7 +364,7 @@ public class ImportEngine {
 	    		//Element elem = (Element)mydigester.pop();
 	    		
 	    		//saveEntry(doc);
-    		}
+//    		}
     	}
     }
     
@@ -323,7 +373,7 @@ public class ImportEngine {
      * 
      * @param elem
      */
-    private void saveEntry(org.w3c.dom.Element elem){
+    private void saveEntry(org.w3c.dom.Node node){
     	Transaction transaction = null;
     	Session saveSession = null;
     	
@@ -336,7 +386,7 @@ public class ImportEngine {
     		 * look for only "bookstore" then the Element created will
     		 * unmarshal correctly! :D -- always good to know, right
     		 */
-    		Object object = unmarshaller.unmarshal(elem);
+    		Object object = unmarshaller.unmarshal(node);
     		saveSession = sessionFactory.openSession();
             transaction = saveSession.beginTransaction();
             saveSession.saveOrUpdate(object);
@@ -398,4 +448,5 @@ public class ImportEngine {
     private SessionFactory sessionFactory;
     private String _topLevelElement; // this is used to capture each top level record in the xml file
 	private int _recordCount = 0;
+	private Element _top = null;
 }

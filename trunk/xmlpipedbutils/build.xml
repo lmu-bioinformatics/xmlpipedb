@@ -2,7 +2,7 @@
     <property name="component.jarfilename" value="xpdutils" />
     <property name="demo.jarfilename" value="xpdutils-demo" />
     <property name="mainclass" value="edu.lmu.xmlpipedb.util.demo.XMLPipeDBUtils" />
-	<property name="lib.list" value="bookdb.jar lib/${component.jarfilename}.jar lib/antlr.jar lib/asm.jar lib/cglib.jar lib/commons-beanutils.jar lib/commons-collections.jar lib/commons-io.jar lib/commons-lang.jar lib/commons-logging.jar lib/dom.jar lib/dom4j.jar lib/ehcache-0.9.jar  lib/hibernate3.jar lib/hyperjaxb2.jar lib/jax-qname.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/jaxb-libs.jar lib/jaxb-xjc.jar lib/jaxp-api.jar lib/jta.jar lib/namespace.jar lib/postgresql-8.0-313.jdbc3.jar lib/relaxngDatatype.jar lib/sax.jar lib/xalan.jar lib/xercesImpl.jar lib/xsdlib.jar" />
+	<property name="lib.list" value="sample/lib/bookdb.jar lib/${component.jarfilename}.jar lib/antlr.jar lib/asm.jar lib/cglib.jar lib/commons-beanutils-core-1.7.jar lib/commons-collections.jar lib/commons-digester-1.7.jar lib/commons-io.jar lib/commons-lang.jar lib/commons-logging-1.1.jar lib/dom.jar lib/dom4j.jar lib/ehcache-0.9.jar lib/hibernate3.jar lib/hyperjaxb2.jar lib/jaxb-api.jar lib/jax-qname.jar lib/jaxb-impl.jar lib/jaxb-libs.jar lib/jaxb-xjc.jar lib/jaxp-api.jar lib/jta.jar lib/namespace.jar lib/postgresql-8.0-313.jdbc3.jar lib/relaxngDatatype.jar lib/sax.jar lib/xalan.jar lib/xercesImpl.jar lib/xsdlib.jar" />
     <property name="resources" value="edu/lmu/xmlpipedb/util/resources" />
     <property name="project.title" value="GUI to XML Pipe DB" />
     <property name="src.dir" value="src" />
@@ -80,9 +80,22 @@
         </copy>
         <copy todir="${dist.dir}">
             <fileset dir="${scripts.dir}" includes="*.bat,*.sh" />
-            <fileset dir="sample/lib" includes="*.jar" />
         </copy>
+    	<!-- copy sample files to dist dir -->
+    	<copy todir="${dist.dir}/sample/lib">
+    	    <fileset dir="sample/lib" includes="*.jar" />
+    	</copy>
+    	<copy todir="${dist.dir}/sample/data">
+    	    <fileset dir="sample/data" includes="*.xml" />
+    	</copy>
+    	<copy todir="${dist.dir}/sample/schema">
+    	    <fileset dir="sample/schema" includes="*.xsd" />
+       	</copy>
+    	<copy todir="${dist.dir}/sample/sql">
+    	    <fileset dir="sample/sql" includes="*.sql" />
+       	</copy>
 
+    	
         <!-- Jar the utility classes and copy to dist -->
         <jar destfile="${dist.dir}/lib/${component.jarfilename}.jar" basedir="${build.dir}" excludes="**/demo/**">
         </jar>

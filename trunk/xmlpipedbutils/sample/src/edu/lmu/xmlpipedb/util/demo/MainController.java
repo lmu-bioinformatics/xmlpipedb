@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 
 import edu.lmu.xmlpipedb.util.demo.resources.AppResources;
@@ -246,7 +247,7 @@ public class MainController implements ActionListener {
 		InputStream is = null;
 		final JFileChooser fc = new JFileChooser();
 		fc.setCurrentDirectory(new File("."));
-		int returnVal = fc.showOpenDialog(null);
+		int returnVal = fc.showOpenDialog(this._initialFrame);
 		
         if (returnVal == JFileChooser.APPROVE_OPTION) {
     		try {
@@ -263,11 +264,29 @@ public class MainController implements ActionListener {
 		TallyEngine te = new TallyEngine(criteria);
 		try {
 			criteria.putAll(te.getXmlFileCounts(is));
+			/*
+			 * Here I am explicitly catching the HibernateException, which is a
+			 * pretty clear indication that the configuration was not done.
+			 * 
+			 * TODO: Add an isConfigured() method to the ConfigurationEngine.
+			 * This could be checked before getting the config. Or could be used
+			 * to disable menus before the config is done.
+			 */
 			criteria.putAll( te.getDbCounts( new QueryEngine(getHibernateConfig() ) ) );
 		} catch (InvalidParameterException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(this._initialFrame, e.getMessage());
 		} catch (XpdException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(this._initialFrame, e.getMessage());
+		} catch (HibernateException e){
+			JOptionPane
+					.showMessageDialog(
+							this._initialFrame,
+							"A Hibernate exception was caught. If you have not configured your hibernate properties, Do so now! Exception text: "
+									+ e.getMessage());
+		} catch (Exception e){
+			JOptionPane.showMessageDialog(this._initialFrame,
+					"An unexpected Exception was caught. Exception text: "
+							+ e.getMessage());
 		}
 		
 		String display = "Path: \t XML Count   \t||   Table: \t DB Count";

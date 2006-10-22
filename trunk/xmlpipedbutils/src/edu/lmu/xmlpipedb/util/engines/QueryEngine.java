@@ -17,8 +17,12 @@ import org.hibernate.cfg.Configuration;
  * 
  */
 public class QueryEngine {
-    public QueryEngine(Configuration hibernateConfiguration) {
-        sessionFactory = hibernateConfiguration.buildSessionFactory();
+    public QueryEngine(Configuration hibernateConfiguration) throws HibernateException {
+        try{
+        	sessionFactory = hibernateConfiguration.buildSessionFactory();
+        } catch( HibernateException e ){
+        	throw e;
+        }
     }
 
     /**

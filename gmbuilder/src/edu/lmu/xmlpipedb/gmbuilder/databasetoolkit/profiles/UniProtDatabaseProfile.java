@@ -37,6 +37,7 @@ import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 
 /**
  * @author Joey J. Barrett Class: UniProtDatabaseProfile
+ * @author Jeffrey Nicholas
  */
 public class UniProtDatabaseProfile extends DatabaseProfile {
 
@@ -46,7 +47,12 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      * Constuctor.
      */
     public UniProtDatabaseProfile() {
-        super("org.uniprot.uniprot.Uniprot", "This profile defines the requirements " + "for any UniProt centric gene database.", new SpeciesProfile[] { new EscherichiaColiUniProtSpeciesProfile() });
+        super("org.uniprot.uniprot.Uniprot",
+				"This profile defines the requirements "
+						+ "for any UniProt centric gene database.",
+				new SpeciesProfile[] {
+						new EscherichiaColiUniProtSpeciesProfile(),
+						new ArabidopsisThalianaUniProtSpeciesProfile() });
     }
 
     /*
@@ -92,7 +98,11 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             }
 
             if (!speciesProfileFound) {
-                speciesProfilesFound.add(new UniProtSpeciesProfile(speciesName, "This profile defines the requirements for " + "a custom species profile within a UniProt database."));
+                speciesProfilesFound
+						.add(new UniProtSpeciesProfile(
+								speciesName,
+								"This profile defines the requirements for "
+										+ "a custom species profile within a UniProt database."));
             }
         }
 
@@ -251,11 +261,16 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             return systemTableManager;
         }
 
-        TableManager tableManager = new TableManager(new String[][] { { "ID", "VARCHAR(50) NOT NULL" }, { "Species", "MEMO" }, { "\"Date\"", "DATE" }, { "Remarks", "MEMO" } }, new String[] { "ID" });
+        // create a new TableManager, which will define the columns and key for the table.
+        TableManager tableManager = new TableManager(new String[][] {
+				{ "ID", "VARCHAR(50) NOT NULL" }, { "Species", "MEMO" },
+				{ "\"Date\"", "DATE" }, { "Remarks", "MEMO" } },
+				new String[] { "ID" });
 
         PreparedStatement ps;
         ResultSet result;
 
+        // loop through the list of System tables and for each one, ... do some evaluation??? need to look at this more closely.
         for (Entry<String, SystemType> systemTable : systemTables.entrySet()) {
             if ((!getDatabaseSpecificSystemTables().containsKey(systemTable.getKey())) && (!speciesProfile.getSpeciesSpecificSystemTables().containsKey(systemTable.getKey()))) {
 

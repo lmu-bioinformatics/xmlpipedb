@@ -24,6 +24,7 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.UniProtDatabaseProfi
 /**
  * @author Joey J. Barrett
  * Class: DatabaseInspector
+ * @author Jeffrey Nicholas
  */
 public class DatabaseInspector {
 
@@ -49,10 +50,10 @@ public class DatabaseInspector {
 		
 		//Recognize all valid profiles for the given 
 		//database connection.
-		for(DatabaseProfile profile : databaseProfiles) {	
-			if(profile.isAvailable(connection)) {
-				profile.checkRequirements(connection);
-				profilesInUse.add(profile);
+		for(DatabaseProfile dbProfile : databaseProfiles) {	
+			if(dbProfile.isAvailable(connection)) {
+				dbProfile.checkRequirements(connection);
+				profilesInUse.add(dbProfile);
 			}		
 		}
 		

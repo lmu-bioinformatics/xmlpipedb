@@ -32,6 +32,20 @@ import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
  */
 public class ExportToGenMAPP {
 
+	/*
+	 * These are static so they can be accessed by the ExportPanel1, 2, etc. 
+	 * without passing a reference to the ExportToGenMapp class 
+	 * 
+	 * The array of DatabaseProfiles called availableDatabaseProfiles holds all
+	 * the available database profiles. This accomodates the possibility of 
+	 * supporting more than just UniProt, for example TIGR could be in the list,
+	 * too.
+	 * 
+	 * The selectedDatabaseProfile is which one we actually selected.
+	 */
+	//FIXME: REFACTOR: These should be stored somewhere else.
+	// availableProfiles should be in a GuiConfig object (or some such)
+	// selected... goes into an ExportProperties object
     private static DatabaseProfile[] availableDatabaseProfiles;
     private static DatabaseProfile selectedDatabaseProfile;
 
@@ -86,7 +100,7 @@ public class ExportToGenMAPP {
      */
     public static void export() throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
         ExportWizard.updateExportProgress(1, "Starting GeneOntology export...");
-        (new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getAssociationsFile());
+        //(new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getAssociationsFile());
 
         ExportWizard.updateExportProgress(50, "Finished GeneOntology export...");
         ExportWizard.updateExportProgress(51, "Starting first pass table creation...");

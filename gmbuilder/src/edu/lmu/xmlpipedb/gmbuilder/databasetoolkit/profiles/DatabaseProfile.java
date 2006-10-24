@@ -34,10 +34,22 @@ import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 
 /**
+ * DatabaseProfiles contain the SpeciesProfiles for the species supported by that
+ * database that are available in our system for export. For example, if the 
+ * DatabaseProfile is for Uniprot and we have imported data for E.coli and 
+ * A.thaliana, there would be 2 SpeciesProfiles in the speciesProfilesAvailable
+ * array. Once one of those is selected, that SpeciesProfile will be set in
+ * the speciesProfile object.
+ * 
+ * Currently, DatabaseProfile objects are created by the ExportToGenMAPP 
+ * in the static initializer. The DP objects are then updated by getting 
+ * references to them through static methods in ExportToGenMAPP.
+ * 
  * @author Joey J. Barrett Class: DatabaseProfile
+ * @author Jeffrey Nicholas
  */
 public abstract class DatabaseProfile extends Profile {
-    // Static Variables
+    // Static Variables -- these are used in the ExportWizard GUI
     public static enum DisplayOrderPreset {
         alphabetical
     };
@@ -97,7 +109,8 @@ public abstract class DatabaseProfile extends Profile {
     }
 
     /**
-     * Constructor.
+     * The constructor creates a DatabaseProfile object that contains an array
+     * of SpeciesProfile objects.
      * 
      * @param name
      * @param description
@@ -307,8 +320,10 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Returns a map of the chosen system tables from the export wizard.
+     * System tables may include: UniProt, PDB, Pfam, InterPro, or GeneOntology
+     * for UniProt's E.coli database, for example. 
      * 
-     * @return
+     * @return Map
      */
     public Map<String, SystemType> getSystemTables() {
         return systemTables;
@@ -496,7 +511,7 @@ public abstract class DatabaseProfile extends Profile {
     /**
      * Prepares a TableManager for this database.
      * 
-     * @return
+     * @return TableManager
      * @throws Exception
      */
     public TableManager getInfoTableManager() {
@@ -517,6 +532,7 @@ public abstract class DatabaseProfile extends Profile {
         TableManager tableManager = new TableManager(null, new String[] { "SystemCode", "RelatedCode" });
         for (String relationTable : relationshipTables) {
             SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationTable);
+            //FIXME: Why is this NOT using the short-circuit OR (||)???
             if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
                 tableManager = speciesProfile.getRelationsTableManagerCustomizations(stp.systemTable1, stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
             } else {
@@ -565,9 +581,11 @@ public abstract class DatabaseProfile extends Profile {
     public abstract TableManager getSystemTableManager() throws SQLException;
 
     /**
-     * This function must be implemented by an X-centric database and should
+     * This function must be implemented by an Xcentric database and should
      * return a TableManager List with all the relationship tables for the
-     * database.
+     * database. Relationship tables are tables like: UniProt-EMBL, UniProt-PDB,
+     * and UniProt-Blattner. There are likely to be several tables of this type
+     * in an Export.
      * 
      * @return
      * @throws Exception
@@ -619,7 +637,7 @@ public abstract class DatabaseProfile extends Profile {
     /**
      * Returns the chosen export connection from the export wizard.
      * 
-     * @return
+     * @return Connection
      * @throws Exception
      */
     public Connection getExportConnection() {

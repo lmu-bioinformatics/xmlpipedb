@@ -79,6 +79,7 @@ public class ExportPanel1 extends JPanel {
         titlePanel.add(textLabel, BorderLayout.CENTER);
         titlePanel.add(new JSeparator(), BorderLayout.SOUTH);
 
+        // This initializes all the fields and puts them in a panel for display
         JPanel contentPanel = getContentPanel();
         contentPanel.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
 
@@ -210,8 +211,9 @@ public class ExportPanel1 extends JPanel {
             profileDescriptionTextArea.setText(selectedProfile.getDescription());
             modSystemTextField.setText(selectedProfile.getMODSystem());
 
+            //This is populating the list of items in the speciesProfile combobox
+            // based on what database was selected.
             speciesComboBox.removeAllItems();
-
             for (SpeciesProfile speciesProfile : selectedProfile.getSpeciesProfilesFound()) {
                 speciesComboBox.addItem(speciesProfile);
             }
@@ -220,6 +222,8 @@ public class ExportPanel1 extends JPanel {
 
     /**
      * Adjusts the dynamic content when a species profile is selected.
+     * Since only UniProt is supported, this selection will always be UniProt.
+     * However, the SpeciesProfile is also being set here. 
      * 
      * @param selectedItem
      */
@@ -246,15 +250,25 @@ public class ExportPanel1 extends JPanel {
     }
 
     /**
-     * Submits all information collected on the panel.
+     * Submits all information collected on the panel to the DatabaseProfile
+     * object of the Database that was selected (Uniprot, TIGR, or whatever),
+     * then stores this DatabaseProfile back in the ExportToGenMAPP object. 
      * 
      * @throws ParseException
      */
+    //FIXME: All this config data should be in an ExportProperties model object
     protected void submitInformationEntered() throws ParseException {
+    	/*
+    	 * ExportToGenMAPP is not a static class but has some static members and
+    	 * static methods. This is used to store the DatabaseProfile without
+    	 * passing an instance of the class around.
+    	 */
+    	// get a reference to the DBProfile
         DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
         databaseProfile.setOwner(ownerTextField.getText());
         databaseProfile.setVersion(new SimpleDateFormat("MM/dd/yyyy").parse(versionFormattedTextField.getText()));
         databaseProfile.setMODSystem(modSystemTextField.getText());
+        // set the species name
         databaseProfile.setSpeciesName(speciesCustomizeTextField.getText());
         databaseProfile.setModify(new SimpleDateFormat("MM/dd/yyyy").parse(modifyFormattedTextField.getText()));
         databaseProfile.setNotes(notesTextArea.getText());

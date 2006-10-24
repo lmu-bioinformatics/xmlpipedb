@@ -1,13 +1,13 @@
 /********************************************************
- * Filename: UniProtSpeciesProfile.java
- * Author: Joey J. Barrett
+ * Filename: ArabidopsisThalianaUniProtSpeciesProfile.java
+ * Author: Jeffrey Nicholas
  * Program: gmBuilder
- * Description: This an instance of a Escherichia Coli
+ * Description: This an instance of a Arabidopsis thaliana
  * species for the UniProt centric database.  This object
  * defines all properties for this species.
  *     
  * Revision History:
- * 20060620: Initial Revision.
+ * 20061024: Initial Revision.
  * *****************************************************/
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
@@ -29,16 +29,20 @@ import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 
 /**
- * @author Joey J. Barrett Class: EscherichiaColiUniProtSpeciesProfile
+ * SpeciesProfile implementation for A.thaliana.
+ * 
+ * @author Jeffrey Nicholas Class: ArabidopsisThalianaUniProtSpeciesProfile
+ * @author Joey J. Barrett
  */
-public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile {
+public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProfile {
 	/**
-	 * Creates the UniProt E.coli species profile. This profile defines the requirements for 
-	 * an Escherichia Coli species within a UniProt database.
+	 * Creates the UniProt A.thaliana species profile. This profile defines the requirements for 
+	 * an Arabidopsis thaliana species within a UniProt database.
 	 */
-	public EscherichiaColiUniProtSpeciesProfile() {
-		super("Escherichia coli", "This profile defines the requirements for "
-				+ "an Escherichia Coli species within a UniProt database.");
+	//FIXME: THIS CLASS IS A COPY AND MUST BE UPDATED TO BE VALID
+	public ArabidopsisThalianaUniProtSpeciesProfile() {
+		super("Arabidopsis thaliana", "This profile defines the requirements for "
+				+ "an Arabidopsis thaliana species within a UniProt database.");
 	}
 
 	/**

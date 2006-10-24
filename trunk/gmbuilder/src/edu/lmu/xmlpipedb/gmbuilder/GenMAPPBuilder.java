@@ -286,38 +286,38 @@ public class GenMAPPBuilder extends App {
         	String table = null;
         	
         	// *** UniProt ***
-        	element = AppResources.optionString("UniprotElementLevel1");
-        	table = AppResources.optionString("UniprotTableLevel1");
+        	element = AppResources.optionString("UniprotElementLevel1").trim();
+        	table = AppResources.optionString("UniprotTableLevel1").trim();
     		if(!element.equals("") && element != null)
     			uniprotCriteria.put(element, new Criterion("", element, table));
-        	element = AppResources.optionString("UniprotElementLevel2");
-        	table = AppResources.optionString("UniprotTableLevel2");
+        	element = AppResources.optionString("UniprotElementLevel2").trim();
+        	table = AppResources.optionString("UniprotTableLevel2").trim();
         	if(!element.equals("") && element != null)
         		uniprotCriteria.put(element, new Criterion("", element, table));
-    		element = AppResources.optionString("UniprotElementLevel3");
-    		table = AppResources.optionString("UniprotTableLevel3");
+    		element = AppResources.optionString("UniprotElementLevel3").trim();
+    		table = AppResources.optionString("UniprotTableLevel3").trim();
     		if(!element.equals("") && element != null)
     			uniprotCriteria.put(element, new Criterion("", element, table));
-    		element = AppResources.optionString("UniprotElementLevel4");
-    		table = AppResources.optionString("UniprotTableLevel4");
+    		element = AppResources.optionString("UniprotElementLevel4").trim();
+    		table = AppResources.optionString("UniprotTableLevel4").trim();
     		if(!element.equals("") && element != null)
     			uniprotCriteria.put(element, new Criterion("", element, table));
     		
     		// *** GO ***
-    		element = AppResources.optionString("GoElementLevel1");
-        	table = AppResources.optionString("GoTableLevel1");
+    		element = AppResources.optionString("GoElementLevel1").trim();
+        	table = AppResources.optionString("GoTableLevel1").trim();
     		if(!element.equals("") && element != null)
     			goCriteria.put(element, new Criterion("", element, table));
-        	element = AppResources.optionString("GoElementLevel2");
-        	table = AppResources.optionString("GoTableLevel2");
+        	element = AppResources.optionString("GoElementLevel2").trim();
+        	table = AppResources.optionString("GoTableLevel2").trim();
         	if(!element.equals("") && element != null)
         		goCriteria.put(element, new Criterion("", element, table));
-    		element = AppResources.optionString("GoElementLevel3");
-    		table = AppResources.optionString("GoTableLevel3");
+    		element = AppResources.optionString("GoElementLevel3").trim();
+    		table = AppResources.optionString("GoTableLevel3").trim();
     		if(!element.equals("") && element != null)
     			goCriteria.put(element, new Criterion("", element, table));
-    		element = AppResources.optionString("GoElementLevel4");
-    		table = AppResources.optionString("GoTableLevel4");
+    		element = AppResources.optionString("GoElementLevel4").trim();
+    		table = AppResources.optionString("GoTableLevel4").trim();
     		if(!element.equals("") && element != null)
     			goCriteria.put(element, new Criterion("", element, table));
     		
@@ -466,6 +466,9 @@ public class GenMAPPBuilder extends App {
 
     		Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
 	        if (hibernateConfiguration != null) {
+	        	/*
+	        	 * ExportToGenMAPP is initialized
+	        	 */
 	        	ExportToGenMAPP.init(hibernateConfiguration);
 				getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				new ExportWizard(this.getFrontmostWindow());

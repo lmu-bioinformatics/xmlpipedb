@@ -123,8 +123,14 @@ public class TableManager {
 
 	/**
 	 * Constructor.
-	 * @param tableDefinition
-	 * @param primaryKeys
+	 * 
+	 * @param tableDefinition -
+	 *            A two-dimensional array containing the column name and the
+	 *            data type of the column.
+	 * @param primaryKeys -
+	 *            An array containing the name of the column that will be the
+	 *            primary key for the table. This must be one of the strings
+	 *            that was passed in the tableDefinition parameter.
 	 */
 	public TableManager(String[][] tableDefinition, String[] primaryKeys) {
 		this.tableDefinition = tableDefinition;

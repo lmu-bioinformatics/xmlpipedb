@@ -42,6 +42,10 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	}
 
 	/**
+	 * This method is overridden from the super class, because E.coli
+	 * requires Blattner tables. This method is called by the Export
+	 * Dialog when populating the list of Proper System Tables.
+	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificSystemTables()
 	 */
 	@Override
@@ -53,6 +57,8 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	}
 
 	/**
+	 * This function is specific E.coli, due to use of Blattner as a condition.
+	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getRelationsTableManagerCustomizations(java.lang.String,
 	 *      java.lang.String, java.util.Map,
 	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
@@ -83,6 +89,8 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	}
 
 	/**
+	 * This method is E.coli specific, due to presence of Blattner tables.
+	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemsTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
 	 *      DatabaseProfile)
 	 */
@@ -106,6 +114,8 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	}
 
 	/**
+	 * Contains Blattner in processing criteria.
+	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
 	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
 	 *      java.util.Date)
@@ -158,6 +168,9 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	}
 
 	/**
+	 * This method is specific to E.coli, since it contains Blattner specific
+	 * processing.
+	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificRelationshipTable(java.lang.String,
 	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
 	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
@@ -266,10 +279,12 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	}
 
 	/**
+	 *  
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificSystemCode(java.util.List,
 	 *      java.util.Map)
 	 */
 	@Override
+	//FIXME: This can be deleted, since UniprotSpeciesProfile has a method that does the exact same thing.
 	public List<String> getSpeciesSpecificSystemCode(List<String> systemCodes,
 			Map<String, String> templateDefinedSystemToSystemCode) {
 		systemCodes.add(2, templateDefinedSystemToSystemCode

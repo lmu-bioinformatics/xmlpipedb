@@ -441,7 +441,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Sets the table properties, specifically the system tables (both proper
-     * and improper) from the export wizard.
+     * and improper) from the export wizard. ExportPanel3 gets these values
      * 
      * @param properSystemTables
      * @param improperSystemTables

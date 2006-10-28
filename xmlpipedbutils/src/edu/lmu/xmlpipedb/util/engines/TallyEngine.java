@@ -13,6 +13,8 @@ import java.util.Set;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.xml.sax.SAXException;
 
@@ -148,6 +150,7 @@ public class TallyEngine {
     protected class EndOfRecordRule extends Rule{
 
     	public void end(String namespace, String name){
+            _Log.debug("end of record: " + namespace + ", " + name);
     		Digester tempDig = getDigester();
     		Criterion tempCrit = _criteria.get(tempDig.getMatch());
     		tempCrit.setXmlCount(tempCrit.getXmlCount() + 1 );
@@ -155,6 +158,7 @@ public class TallyEngine {
     }
     
 
+    private static Log _Log = LogFactory.getLog(TallyEngine.class);
 	
 	// CLASS MEMBERS
 	HashMap<String, Criterion> _criteria;

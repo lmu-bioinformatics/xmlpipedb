@@ -50,11 +50,7 @@ public class ImportPanel extends JPanel {
      * @param jaxbContextPath The context path for the jaxb
      */
     public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration) {
-        _jaxbContextPath = jaxbContextPath;
-        _hibernateConfiguration = hibernateConfiguration;
-        _topLevelElement = "";
-        createComponents();
-        createActions();
+        this(jaxbContextPath, hibernateConfiguration, "");
     }
 	
 	/**
@@ -73,6 +69,7 @@ public class ImportPanel extends JPanel {
         createActions();
         layoutComponents();
     }
+
     /*
      *
      * Create all swing components

@@ -17,9 +17,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -28,7 +28,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 
@@ -43,9 +43,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
-import shag.App;
-import shag.dialog.ModalDialog;
-import shag.menu.WindowMenu;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
@@ -59,6 +56,13 @@ import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
+
+import shag.App;
+import shag.dialog.ModalDialog;
+import shag.menu.WindowMenu;
+import shag.table.BeanColumn;
+import shag.table.BeanTableModel;
+import shag.table.UsefulTable;
 
 /**
  * GenMAPPBuilder is a GUI application for loading, querying, and exporting data
@@ -261,7 +265,7 @@ public class GenMAPPBuilder extends App {
     private void doImport(String jaxbContextPath, String title) {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         if (hibernateConfiguration != null) {
-            ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration, "");
+            ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration);
             importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             ModalDialog.showPlainDialog(title, importPanel);
         } else {
@@ -274,8 +278,6 @@ public class GenMAPPBuilder extends App {
      * Runs XML file and database tallies for UniProt and GO. The user is 
      * prompted for the 2 XML files, then all the processing is done. 
      * The results are presented in a dialog box from which they can be copied.
-     * 
-     *  
      */
     private void doTallies() {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
@@ -287,76 +289,76 @@ public class GenMAPPBuilder extends App {
         	
         	// *** UniProt ***
         	element = AppResources.optionString("UniprotElementLevel1").trim();
-        	table = AppResources.optionString("UniprotTableLevel1").trim();
-    		if(!element.equals("") && element != null)
-    			uniprotCriteria.put(element, new Criterion("", element, table));
-        	element = AppResources.optionString("UniprotElementLevel2").trim();
-        	table = AppResources.optionString("UniprotTableLevel2").trim();
-        	if(!element.equals("") && element != null)
-        		uniprotCriteria.put(element, new Criterion("", element, table));
-    		element = AppResources.optionString("UniprotElementLevel3").trim();
-    		table = AppResources.optionString("UniprotTableLevel3").trim();
-    		if(!element.equals("") && element != null)
-    			uniprotCriteria.put(element, new Criterion("", element, table));
-    		element = AppResources.optionString("UniprotElementLevel4").trim();
-    		table = AppResources.optionString("UniprotTableLevel4").trim();
-    		if(!element.equals("") && element != null)
-    			uniprotCriteria.put(element, new Criterion("", element, table));
+            table = AppResources.optionString("UniprotTableLevel1").trim();
+            if (!element.equals("") && element != null)
+                uniprotCriteria.put(element, new Criterion("", element, table));
+            element = AppResources.optionString("UniprotElementLevel2").trim();
+            table = AppResources.optionString("UniprotTableLevel2").trim();
+            if (!element.equals("") && element != null)
+                uniprotCriteria.put(element, new Criterion("", element, table));
+            element = AppResources.optionString("UniprotElementLevel3").trim();
+            table = AppResources.optionString("UniprotTableLevel3").trim();
+            if (!element.equals("") && element != null)
+                uniprotCriteria.put(element, new Criterion("", element, table));
+            element = AppResources.optionString("UniprotElementLevel4").trim();
+            table = AppResources.optionString("UniprotTableLevel4").trim();
+            if (!element.equals("") && element != null)
+                uniprotCriteria.put(element, new Criterion("", element, table));
     		
     		// *** GO ***
     		element = AppResources.optionString("GoElementLevel1").trim();
-        	table = AppResources.optionString("GoTableLevel1").trim();
-    		if(!element.equals("") && element != null)
-    			goCriteria.put(element, new Criterion("", element, table));
-        	element = AppResources.optionString("GoElementLevel2").trim();
-        	table = AppResources.optionString("GoTableLevel2").trim();
-        	if(!element.equals("") && element != null)
-        		goCriteria.put(element, new Criterion("", element, table));
-    		element = AppResources.optionString("GoElementLevel3").trim();
-    		table = AppResources.optionString("GoTableLevel3").trim();
-    		if(!element.equals("") && element != null)
-    			goCriteria.put(element, new Criterion("", element, table));
-    		element = AppResources.optionString("GoElementLevel4").trim();
-    		table = AppResources.optionString("GoTableLevel4").trim();
-    		if(!element.equals("") && element != null)
-    			goCriteria.put(element, new Criterion("", element, table));
-    		
-//    		Create a file chooser and setup the UniProt and GO input streams
-    		InputStream uniprotInputStream = null;
-    		InputStream goInputStream = null;
-    		int returnVal; // used by 
-    		final JFileChooser fc = new JFileChooser();
-    		fc.setCurrentDirectory(new File("."));
+            table = AppResources.optionString("GoTableLevel1").trim();
+            if (!element.equals("") && element != null)
+                goCriteria.put(element, new Criterion("", element, table));
+            element = AppResources.optionString("GoElementLevel2").trim();
+            table = AppResources.optionString("GoTableLevel2").trim();
+            if (!element.equals("") && element != null)
+                goCriteria.put(element, new Criterion("", element, table));
+            element = AppResources.optionString("GoElementLevel3").trim();
+            table = AppResources.optionString("GoTableLevel3").trim();
+            if (!element.equals("") && element != null)
+                goCriteria.put(element, new Criterion("", element, table));
+            element = AppResources.optionString("GoElementLevel4").trim();
+            table = AppResources.optionString("GoTableLevel4").trim();
+            if (!element.equals("") && element != null)
+                goCriteria.put(element, new Criterion("", element, table));
+
+            // Create a file chooser and setup the UniProt and GO input streams
+            InputStream uniprotInputStream = null;
+            InputStream goInputStream = null;
+            int returnVal; // used by
+            final JFileChooser fc = new JFileChooser();
+            fc.setCurrentDirectory(new File(System.getProperty("user.home")));
     		
     		// Get UniProt XML file
-    		returnVal= fc.showDialog(this.getFrontmostWindow(), "Select UniProt XML file");
+    		returnVal = fc.showDialog(getFrontmostWindow(), "Select UniProt XML file");
             if (returnVal == JFileChooser.APPROVE_OPTION) {
         		try {
         			uniprotInputStream = new FileInputStream(fc.getSelectedFile());
         		} catch (FileNotFoundException e1) {
-        			JOptionPane.showMessageDialog(null, "The choosen file was not accessible. Try again.");
-        			// TODO Auto-generated catch block
-        			e1.printStackTrace();
+        			ModalDialog.showErrorDialog("File Not Found", "The chosen file was not accessible. Try again.");
+                    _Log.error(e1);
         			return;
         		}
             } else {
-            	JOptionPane.showMessageDialog(null, "No file choosen. Command aborted.");
+            	ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
             	return;
             }
             
             // Get GO XML File
-            returnVal = fc.showDialog(this.getFrontmostWindow(), "Select GO XML file");
+            // FIXME The two file selection sequences are redundant.
+            // Find a way to unify them.
+            returnVal = fc.showDialog(getFrontmostWindow(), "Select GO XML file");
             if (returnVal == JFileChooser.APPROVE_OPTION) {
         		try {
         			goInputStream = new FileInputStream(fc.getSelectedFile());
         		} catch (FileNotFoundException e1) {
-        			JOptionPane.showMessageDialog(null, "The choosen file was not accessible. Try again.");
-        			// TODO Auto-generated catch block
-        			e1.printStackTrace();
+        			ModalDialog.showErrorDialog("File Not Found", "The chosen file was not accessible. Try again.");
+                    _Log.error(e1);
         			return;
         		}
             } else {
-            	JOptionPane.showMessageDialog(null, "No file choosen. Command aborted.");
+            	ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
             	return;
             }
     		
@@ -367,21 +369,23 @@ public class GenMAPPBuilder extends App {
     			 * Here I am explicitly catching the HibernateException, which is a
     			 * pretty clear indication that the configuration was not done.
     			 */
-    			uniprotCriteria.putAll( te.getDbCounts( new QueryEngine(hibernateConfiguration ) ) );
+    			uniprotCriteria.putAll(te.getDbCounts(new QueryEngine(hibernateConfiguration)));
     		} catch (InvalidParameterException e) {
-    			JOptionPane.showMessageDialog(this.getFrontmostWindow(), e.getMessage());
+    			ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
+                _Log.error(e);
     		} catch (XpdException e) {
-    			JOptionPane.showMessageDialog(this.getFrontmostWindow(), e.getMessage());
+                ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
+                _Log.error(e);
     		} catch (HibernateException e){
-    			JOptionPane
-    					.showMessageDialog(
-    							this.getFrontmostWindow(),
-    							"A Hibernate exception was caught. If you have not configured your hibernate properties, Do so now! Exception text: "
-    									+ e.getMessage());
-    		} catch (Exception e){
-    			JOptionPane.showMessageDialog(this.getFrontmostWindow(),
+                // TODO Well, strictly speaking, this command should never have
+                // been selectable in the first place, if there is no valid
+                // Hibernate configuration.
+    			ModalDialog.showErrorDialog("Problem with Hibernate", "A Hibernate exception was caught. If you have not configured your Hibernate properties, Do so now! Exception text: " + e.getMessage());
+    		} catch (Exception e) {
+    			ModalDialog.showErrorDialog(e.getClass().getName(),
     					"An unexpected Exception was caught. Exception text: "
     							+ e.getMessage());
+                _Log.error(e);
     		}
     		
     		TallyEngine goTallies = new TallyEngine(goCriteria);
@@ -393,45 +397,45 @@ public class GenMAPPBuilder extends App {
     			 */
     			goCriteria.putAll( goTallies.getDbCounts( new QueryEngine(hibernateConfiguration ) ) );
     		} catch (InvalidParameterException e) {
-    			JOptionPane.showMessageDialog(this.getFrontmostWindow(), e.getMessage());
+                // FIXME Help me...I'm seeing double!  Triple!  Quadruple!  :-)
+                ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
+                _Log.error(e);
     		} catch (XpdException e) {
-    			JOptionPane.showMessageDialog(this.getFrontmostWindow(), e.getMessage());
+                ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
+                _Log.error(e);
     		} catch (HibernateException e){
-    			JOptionPane
-    					.showMessageDialog(
-    							this.getFrontmostWindow(),
-    							"A Hibernate exception was caught. If you have not configured your hibernate properties, Do so now! Exception text: "
-    									+ e.getMessage());
+                ModalDialog.showErrorDialog("Problem with Hibernate", "A Hibernate exception was caught. If you have not configured your Hibernate properties, Do so now! Exception text: " + e.getMessage());
     		} catch (Exception e){
-    			JOptionPane.showMessageDialog(this.getFrontmostWindow(),
-    					"An unexpected Exception was caught. Exception text: "
-    							+ e.getMessage());
+                ModalDialog.showErrorDialog(e.getClass().getName(),
+                        "An unexpected Exception was caught. Exception text: "
+                                + e.getMessage());
+                _Log.error(e);
     		}
-    		
-    		String display = "Path: \t XML Count   \t||   Table: \t DB Count";
-    		display += "\n**** Uniprot Tallies ****\n";
-    		Set set = uniprotCriteria.keySet();
-    		Iterator iter = set.iterator();
-    		while(iter.hasNext()){
-    			Criterion crit = uniprotCriteria.get(iter.next());
-    			display += "\n" + crit.getDigesterPath() + ": \t " + crit.getXmlCount() + "   \t||   " +  crit.getTable() + ": \t " + crit.getDbCount();
-    		}
-    		
-    		display += "\n\n**** GO Tallies ****\n";
-    		set = goCriteria.keySet();
-    		iter = set.iterator();
-    		while(iter.hasNext()){
-    			Criterion crit = goCriteria.get(iter.next());
-    			display += "\n" + crit.getDigesterPath() + ": \t " + crit.getXmlCount() + "   \t||   " +  crit.getTable() + ": \t " + crit.getDbCount();
-    		}
-    		
-    		JOptionPane.showMessageDialog(this.getFrontmostWindow(), display);
 
+            // Gather the criteria into a list so that we can display them
+            // in a UsefulTable.
+            BeanTableModel btm = new BeanTableModel(TALLY_COLUMNS);
+            List<Criterion> criteria = new ArrayList<Criterion>(uniprotCriteria.size() + goCriteria.size());
+            criteria.addAll(uniprotCriteria.values());
+            criteria.addAll(goCriteria.values());
+            btm.setData(criteria.toArray());
+            UsefulTable t = new UsefulTable(btm);
+            ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
         } else {
             showConfigurationError();
         }
     }
 
+    /**
+     * Columns used for displaying tally results.
+     */
+    private static final BeanColumn[] TALLY_COLUMNS = {
+        BeanColumn.create("XML Path", "digesterPath", String.class),
+        BeanColumn.create("XML Count", "xmlCount", Integer.class),
+        BeanColumn.create("Database Table", "table", String.class),
+        BeanColumn.create("Database Count", "dbCount", Integer.class)
+    };
+    
     /**
      * Processes the current GO data into staging and cached tables. These
      * tables are identical for every GenMAPP Gene Database export, so they can

@@ -1,5 +1,5 @@
 // Created by xmlpipedb, Jul 3, 2006.
-package edu.lmu.xmlpipedb.gmbuilder.util.test;
+package edu.lmu.xmlpipedb.gmbuilder.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -9,7 +9,6 @@ import java.util.Calendar;
 
 import org.junit.Test;
 
-import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 
 /**

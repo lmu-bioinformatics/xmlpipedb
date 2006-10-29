@@ -92,6 +92,10 @@ public class ExportPanel1 extends JPanel {
 
     /**
      * Init is called from constructor. Does basic pre-setup work.
+     * That is: it calls the <i>STATIC</i> ExportToGenMAPP.getAvailableDatabaseProfiles()
+     * to add all available DbProfiles to the comboBox. One of these DbProfiles
+     * (normally there is only one, I think --JN) will become the basis for 
+     * all the export work about to be done.
      */
     private void init() {
         for (DatabaseProfile profile : ExportToGenMAPP.getAvailableDatabaseProfiles()) {

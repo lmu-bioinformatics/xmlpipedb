@@ -257,7 +257,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getSystemTableManager()
      */
     public @Override TableManager getSystemTableManager() throws SQLException {
-        if (systemTableManager != null) {
+        // If this work has already been done (and a non-null object exists) just return it.
+    	if (systemTableManager != null) {
             return systemTableManager;
         }
 

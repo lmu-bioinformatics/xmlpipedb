@@ -116,6 +116,11 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	/**
 	 * Contains Blattner in processing criteria.
 	 * 
+	 * Change to call super.getSystemTableManagerCustomizations()
+	 *  and store result in TableManger
+	 *  
+	 * The way this is implemented, it is prone to side effects
+	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
 	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
 	 *      java.util.Date)
@@ -177,6 +182,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
 	 */
 	@Override
+	//FIXME: Change all these signatures to take an ExportObject and only an ExportObject
 	public TableManager getSpeciesSpecificRelationshipTable(
 			String relationshipTable, TableManager primarySystemTableManager,
 			TableManager systemTableManager, TableManager tableManager)

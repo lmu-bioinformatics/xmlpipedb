@@ -100,7 +100,6 @@ public class ExportToGenMAPP {
      */
     public static void export() throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
         ExportWizard.updateExportProgress(1, "Starting GeneOntology export...");
-        //FIXME: JN -- UNCOMMENT BEFORE COMMIT -- 
         (new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getAssociationsFile());
 
         ExportWizard.updateExportProgress(50, "Finished GeneOntology export...");
@@ -109,30 +108,37 @@ public class ExportToGenMAPP {
 
         // JN - in-lining of calls with immediate write to gmb 
         _Log.info("Getting first-pass table managers");
+        // No species specific processing
         ExportWizard.updateExportProgress(53, "Preparing tables - Info table...");
         TableManager tmA = selectedDatabaseProfile.getInfoTableManager();
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmA);
         
+//      This uses SpeciesProfile
         ExportWizard.updateExportProgress(55, "Preparing tables - Relations table...");
         TableManager tmB = selectedDatabaseProfile.getRelationsTableManager();
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmB);
         
+        // No species specific processing
         ExportWizard.updateExportProgress(57, "Preparing tables - Other table...");
         TableManager tmC = selectedDatabaseProfile.getOtherTableManager();
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmC);
         
+//      This uses SpeciesProfile
         ExportWizard.updateExportProgress(59, "Preparing tables - Systems table...");
         TableManager tmD = selectedDatabaseProfile.getSystemsTableManager();
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmD);
         
+        // No species specific processing
         ExportWizard.updateExportProgress(61, "Preparing tables - Primary System table...");
         TableManager tmE = selectedDatabaseProfile.getPrimarySystemTableManager();
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmE);
         
+//      This uses SpeciesProfile
         ExportWizard.updateExportProgress(63, "Preparing tables - System tables...");
         TableManager tmF = selectedDatabaseProfile.getSystemTableManager();
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmF);
         
+//      This uses SpeciesProfile
         ExportWizard.updateExportProgress(65, "Preparing tables - Relationship table...");
         List<TableManager> tmG = selectedDatabaseProfile.getRelationshipTableManager();
         TableCoordinator.exportTables(selectedDatabaseProfile.getExportConnection(), tmG.toArray(new TableManager[0]));
@@ -142,6 +148,7 @@ public class ExportToGenMAPP {
         //     contains only one call, which is immediately written out, here.
         ExportWizard.updateExportProgress(66, "Starting second pass table creation...");
         _Log.info("Getting second-pass table managers");
+        // No species specific processing
         TableManager[] secondPass = selectedDatabaseProfile.getSecondPassTableManagers();
         _Log.info("Exporting second-pass tables");
         TableCoordinator.exportTables(selectedDatabaseProfile.getExportConnection(), secondPass);
@@ -150,6 +157,7 @@ public class ExportToGenMAPP {
         //		and therefore does not require "in-lining".
         ExportWizard.updateExportProgress(66, "Preparing table - OriginalRowCounts table...");
         _Log.info("Getting row counts table manager");
+        //No species specific processing
         TableManager rowCounts = selectedDatabaseProfile.getRowCountsTableManager();
         _Log.info("Exporting row counts tables");
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), rowCounts);

@@ -520,7 +520,7 @@ public class GenMAPPBuilder extends App {
     /**
      * Builds the current Hibernate configuration.
      */
-    private static Configuration createHibernateConfiguration() {
+    public static Configuration createHibernateConfiguration() {
 //    	TODO Fix this to update it to the new xpdutils stuff.
         Configuration hibernateConfiguration = null;
         try {

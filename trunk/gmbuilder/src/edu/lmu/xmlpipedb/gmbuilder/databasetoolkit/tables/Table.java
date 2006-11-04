@@ -171,7 +171,8 @@ public class Table {
             for (String tableName : tableManager.getTableNames()) {
                 // TODO Would be better to decouple business logic from UI
                 // calls.
-                ExportWizard.updateExportProgress(66, "Creating tables - " + tableName + " table...");
+//            	FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+//                ExportWizard.updateExportProgress(66, "Creating tables - " + tableName + " table...");
                 create(tableName);
             }
         }

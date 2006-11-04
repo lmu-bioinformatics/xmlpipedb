@@ -2,7 +2,6 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,21 +9,18 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.cfg.Configuration;
 import org.junit.Test;
 
 import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.TableCoordinator;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
-import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
-import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
-import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 
 /**
@@ -49,7 +45,7 @@ public class GenMAPPBuilderSpeciesProfileTest {
 	 */
 	@Test
 	public void testGetRelationsTableManager() throws FileNotFoundException {
-        Row[] r = null;
+        Row[] rows = null;
 		
 		// setup environment
 		DatabaseProfile dp = doSetupOfExportEnvironment();
@@ -57,14 +53,40 @@ public class GenMAPPBuilderSpeciesProfileTest {
 		// do tests
 //      This uses SpeciesProfile
         TableManager tmB = dp.getRelationsTableManager();
-        r = tmB.getRows();
+        rows = tmB.getRows();
+        assertEquals(26, rows.length);
+        int count=0;
+        for( Row r: rows){
+        	System.out.println("\nrow #: " + ++count);
+        	Map rowMap = r.getRowAsMap();
+        	
+        	Iterator i = rowMap.keySet().iterator();
+        	while(i.hasNext()){
+        		String s = (String)i.next();
+        		System.out.print(s + "     " + r.getValue(s) + "  |x|   ");
+        	}
 
+        }
+        
         TableManager tmD = dp.getSystemsTableManager();
-        r = tmB.getRows();
+        rows = tmD.getRows();
+        assertEquals(9, rows.length);
+        count=0;
+        for( Row r: rows){
+        	System.out.println("\nrow #: " + ++count);
+        	Map rowMap = r.getRowAsMap();
+        	
+        	Iterator i = rowMap.keySet().iterator();
+        	while(i.hasNext()){
+        		String s = (String)i.next();
+        		System.out.print(s + "     " + r.getValue(s) + "  |x|   ");
+        	}
+        }
         
         try {
 			TableManager tmF = dp.getSystemTableManager();
-			r = tmB.getRows();
+			rows = tmF.getRows();
+			assertEquals(184, rows.length);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -72,7 +94,7 @@ public class GenMAPPBuilderSpeciesProfileTest {
 		
         try {
 			List<TableManager> tmG = dp.getRelationshipTableManager();
-			r = tmB.getRows();
+			assertEquals(22, tmG.size());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -89,17 +111,37 @@ public class GenMAPPBuilderSpeciesProfileTest {
 	 * @return DatabaseProfile
 	 */
 	private DatabaseProfile doSetupOfExportEnvironment(){
+		if(_hibernateConfiguration == null) getHibernateConfig();
 		DatabaseProfile result = null;
 		// do stuff
+			
+			try {
+//				Copied from GenMAPPBuilder.java
+				ExportToGenMAPP.init(_hibernateConfiguration);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		
 			// Copied from ExportPanel1.init()
 			// The method ExportToGenMAPP.getAvailableDatabaseProfiles() is STATIC
 		 	for (DatabaseProfile profile : ExportToGenMAPP.getAvailableDatabaseProfiles()) {
 	            // Find the first occurance that is UniProt, grab it, and jump out
 		 		if( profile.toString().equalsIgnoreCase("org.uniprot.uniprot.Uniprot")){
-	            	result = profile;
+		 			// store the uniprot db profile in the result
+		 			result = profile;
+		 			
+		 			for (SpeciesProfile speciesProfile : profile.getSpeciesProfilesFound()) {
+		 				// find the species we want and put it in the result db profile
+		                if( speciesProfile.getName().equals("Escherichia coli")){
+		                	result.setSelectedSpeciesProfile(speciesProfile);
+		                	break;
+		                } // end if
+		            } // end inner for
+	            	
 	            	break;
-	            }
-	        }
+	            } // end if
+	        } // end outer for
 		 	
 		 	// populate dbProfile with everything it needs
 		       try {
@@ -110,8 +152,9 @@ public class GenMAPPBuilderSpeciesProfileTest {
 							.parse("1/1/1776"));
 		
 					result.setMODSystem("UniProt");
-					// set the species name
-					result.setSpeciesName("Escherichia Coli");
+					//// set the species name
+					//!! not needed since the species was set above
+					/// result.setSpeciesName("Escherichia Coli");
 					result.setModify(new SimpleDateFormat("MM/dd/yyyy")
 							.parse("1/1/1888"));
 					result.setNotes("This test better work");
@@ -145,6 +188,22 @@ public class GenMAPPBuilderSpeciesProfileTest {
 		
 		return result;
 	}// end doSetup...
+	
+	private void getHibernateConfig(){
+	       try {
+	    	    ConfigurationEngine ce = new ConfigurationEngine("./test/edu/lmu/xmlpipedb/gmbuilder/databasetoolkit/profiles/hibernate.properties", "");
+	            _hibernateConfiguration = ce.getHibernateConfiguration();
+	            
+	            // TODO: Find a way to make this independent of the current
+	            // directory, or at least ensure that the working directory of this
+	            // program is indeed the top-level directory of the distribution.
+	            _hibernateConfiguration.addJar(new File("lib/uniprotdb.jar"));
+	            _hibernateConfiguration.addJar(new File("lib/godb.jar"));
+	        } catch(Exception exc) {
+	            // This may be a normal occurrence (particularly when starting up
+	            // for the first time), so we don't do anything in this case.
+	        }
+	}
 	
     /**
      * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities#getDefaultGDBFilename(java.lang.String, java.util.Date)}.

@@ -57,7 +57,12 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	}
 
 	/**
-	 * This function is specific E.coli, due to use of Blattner as a condition.
+	 * This method will normalize the systemTables input, then pass the 
+	 * normalized values to the Super class's method of the same name. This 
+	 * elminates redundant logic in parent and child classes and ensures  
+	 * that species not needing extra processing can choose to not override
+	 * this method secure in the knowledge that their results will be 
+	 * correct.
 	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getRelationsTableManagerCustomizations(java.lang.String,
 	 *      java.lang.String, java.util.Map,
@@ -68,28 +73,38 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 			String systemTable1, String systemTable2,
 			Map<String, String> templateDefinedSystemToSystemCode,
 			TableManager tableManager) {
-		tableManager.submit("Relations", QueryType.insert, new String[][] {
-				{
-						"SystemCode",
-						templateDefinedSystemToSystemCode.get(!systemTable1
-								.equals("Blattner") ? systemTable1
-								: "OrderedLocusNames") },
-				{
-						"RelatedCode",
-						templateDefinedSystemToSystemCode.get(!systemTable2
-								.equals("Blattner") ? systemTable2
-								: "OrderedLocusNames") },
-				{ "Relation", systemTable1 + "-" + systemTable2 },
-				{
-						"Type",
-						systemTable1.equals("UniProt")
-								|| systemTable2.equals("UniProt") ? "Direct"
-								: "Inferred" }, { "Source", "" } });
+		
+		
+// ### create some local vars and set them
+		String systemCode = null;
+		String relatedCode = null;
+
+//		 if SystemTable1 is NOT blattner, then use it :: if SystemTable1 IS blattner, call it OrderedLocusNames
+		if( !systemTable1.equals("Blattner") ){
+			systemCode = systemTable1;
+		} else {
+			systemCode = "OrderedLocusNames";
+		}
+		
+//		 If SystemTable2 is NOT blattner, then use it :: if SystemTable2 IS blattner, call it OrderedLocusNames
+		if( !systemTable2.equals("Blattner") ){
+			relatedCode = systemTable2;
+		} else {
+			relatedCode = "OrderedLocusNames";
+		}
+// ### local vars finished
+		
+		// Call the super class's method, now that blattner specific normalization
+		// has been done
+		tableManager = super.getRelationsTableManagerCustomizations(systemCode, relatedCode, templateDefinedSystemToSystemCode, tableManager);
+
+		
 		return tableManager;
 	}
 
 	/**
-	 * This method is E.coli specific, due to presence of Blattner tables.
+	 * Add 2 Blattner specific items to the tableManager, then call the
+	 * super class to add the items all species will need.
 	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemsTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
 	 *      DatabaseProfile)
@@ -97,19 +112,17 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	@Override
 	public TableManager getSystemsTableManagerCustomizations(
 			TableManager tableManager, DatabaseProfile dbProfile) {
+				
 		tableManager.submit("Systems", QueryType.update, new String[][] {
 				{ "SystemCode", "Ln" }, { "System", "Blattner" } });
+		
 		tableManager.submit("Systems", QueryType.update, new String[][] {
 				{ "SystemCode", "Ln" }, { "SystemName", "Blattner" } });
-		tableManager.submit("Systems", QueryType.update, new String[][] {
-				{ "SystemCode", "Ln" },
-				{ "Species", "|" + getSpeciesName() + "|" } });
-		tableManager.submit("Systems", QueryType.update, new String[][] {
-				{ "SystemCode", "Ln" },
-				{
-						"\"Date\"",
-						GenMAPPBuilderUtilities.getSystemsDateString(dbProfile
-								.getVersion()) } });
+		
+		// JN - the only reason this is last is that it was like that from
+		// the start. Order may not matter, but I chose not to mess with it.
+		tableManager = super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
+		
 		return tableManager;
 	}
 
@@ -120,6 +133,14 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	 *  and store result in TableManger
 	 *  
 	 * The way this is implemented, it is prone to side effects
+	 * 
+	 * idea 1
+	 * :: CREATe 2 protected methods in super. let this and the super call those methods as needed to elminate redundant code
+	 * 
+	 * idea 2
+	 * :: Change this method and the super to call another protected method in the super which does all the work.
+	 * :::: Create a protected method in the super that takes all the params of this method plus an array of Strings, these are used in the tableManager.submit call(s) during the for loop.
+	 * 
 	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
 	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
@@ -284,17 +305,4 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 		return tableManager;
 	}
 
-	/**
-	 *  
-	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificSystemCode(java.util.List,
-	 *      java.util.Map)
-	 */
-	@Override
-	//FIXME: This can be deleted, since UniprotSpeciesProfile has a method that does the exact same thing.
-	public List<String> getSpeciesSpecificSystemCode(List<String> systemCodes,
-			Map<String, String> templateDefinedSystemToSystemCode) {
-		systemCodes.add(2, templateDefinedSystemToSystemCode
-				.get("OrderedLocusNames"));
-		return systemCodes;
-	}
 }

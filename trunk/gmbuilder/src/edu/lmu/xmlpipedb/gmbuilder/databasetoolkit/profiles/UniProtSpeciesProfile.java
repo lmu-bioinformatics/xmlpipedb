@@ -94,14 +94,35 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 			Map<String, String> templateDefinedSystemToSystemCode, 
 			TableManager tableManager) {
 		
-			tableManager.submit("Relations", QueryType.insert, new String[][] {
-					{"SystemCode", templateDefinedSystemToSystemCode.get(!systemTable1.equals("OrderedLocusNames") ? systemTable1 : "OrderedLocusNames")},
-					{"RelatedCode", templateDefinedSystemToSystemCode.get(!systemTable2.equals("OrderedLocusNames") ? systemTable2 : "OrderedLocusNames")},
+		String relation = systemTable1 + "-" + systemTable2;
+		String type = null;
+
+		if( systemTable1.equals("UniProt") || systemTable2.equals("UniProt") ){
+			type = "Direct";
+		} else {
+			type = "Inferred"; 
+		}
+		
+		tableManager.submit("Relations", QueryType.insert, 				
+				new String[][] {
+					{ "SystemCode", systemTable1 },
+					{"RelatedCode", systemTable2 },
+					{ "Relation", relation },
+					{ "Type", type }, 
+					{ "Source", "" }
+				}
+			);
+		
+			/*tableManager.submit("Relations", QueryType.insert, new String[][] {
+					//{"SystemCode", templateDefinedSystemToSystemCode.get(!systemTable1.equals("OrderedLocusNames") ? systemTable1 : "OrderedLocusNames")},
+					{"SystemCode", templateDefinedSystemToSystemCode.get(systemTable1)},
+					//{"RelatedCode", templateDefinedSystemToSystemCode.get(!systemTable2.equals("OrderedLocusNames") ? systemTable2 : "OrderedLocusNames")},
+					{"RelatedCode", templateDefinedSystemToSystemCode.get(systemTable2)},
 					{"Relation", systemTable1 + "-" + systemTable2},
 					{"Type", systemTable1.equals("UniProt") ||
 						systemTable2.equals("UniProt") ? "Direct" : "Inferred"},
 					{"Source", ""}
-			});
+			});*/
 		return tableManager;
 	}
 	
@@ -181,6 +202,17 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 	 */
 	@Override
 	public TableManager getSystemsTableManagerCustomizations(TableManager tableManager, DatabaseProfile dbProfile) {
+		tableManager.submit("Systems", QueryType.update, new String[][] {
+				{ "SystemCode", "Ln" },
+				{ "Species", "|" + getSpeciesName() + "|" } });
+		
+		tableManager.submit("Systems", QueryType.update, new String[][] {
+				{ "SystemCode", "Ln" },
+				{
+						"\"Date\"",
+						GenMAPPBuilderUtilities.getSystemsDateString(dbProfile
+								.getVersion()) } });
+		
 		return tableManager;
 	}
 }

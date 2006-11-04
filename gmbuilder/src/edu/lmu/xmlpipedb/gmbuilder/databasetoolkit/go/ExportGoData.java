@@ -76,11 +76,14 @@ public class ExportGoData {
      */
     public void export(File GOA_File) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
         String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
-        ExportWizard.updateExportProgress(3, "GeneOntology export - creating tables...");
+//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+//        ExportWizard.updateExportProgress(3, "GeneOntology export - creating tables...");
         godb.createTables(connection);
-        ExportWizard.updateExportProgress(10, "GeneOntology export - populating tables...");
+//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+//        ExportWizard.updateExportProgress(10, "GeneOntology export - populating tables...");
         populateGoTables(GOA_File);
-        ExportWizard.updateExportProgress(40, "GeneOntology export - flushing tables...");
+//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+//        ExportWizard.updateExportProgress(40, "GeneOntology export - flushing tables...");
         godb.updateSystemsTable(connection, Date, "T");
         _Log.info("done!");
     }

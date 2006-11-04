@@ -310,8 +310,9 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 produceLastRelationshipTables.add(relationshipTable);
                 continue;
             }
-
-            ExportWizard.updateExportProgress(65, "Preparing tables - " + "Relationship table - " + relationshipTable + "...");
+            
+            //FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+            //ExportWizard.updateExportProgress(65, "Preparing tables - " + "Relationship table - " + relationshipTable + "...");
 
             tableManager = new TableManager(new String[][] { { "\"Primary\"", "VARCHAR(50) NOT NULL" }, { "Related", "VARCHAR(50) NOT NULL" }, { "Bridge", "VARCHAR(3)" } }, new String[] { "\"Primary\"", "Related" });
             tableManager.getTableNames().add(relationshipTable);
@@ -369,7 +370,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     @Override
     public TableManager[] getSecondPassTableManagers() throws SQLException {
         List<TableManager> tableManagers = new ArrayList<TableManager>();
-        ExportWizard.updateExportProgress(66, "Preparing tables - Second pass Relationship tables...");
+//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+//        ExportWizard.updateExportProgress(66, "Preparing tables - Second pass Relationship tables...");
         tableManagers.add(getSecondPassRelationshipTables());
         return tableManagers.toArray(new TableManager[0]);
     }

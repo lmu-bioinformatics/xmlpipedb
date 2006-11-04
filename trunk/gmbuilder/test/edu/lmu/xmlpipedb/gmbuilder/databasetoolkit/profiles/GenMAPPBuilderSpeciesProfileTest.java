@@ -100,7 +100,8 @@ public class GenMAPPBuilderSpeciesProfileTest {
 			e.printStackTrace();
 		}
         
-        
+        String defaultDisplayOrder = dp.getDefaultDisplayOrder();
+        assertEquals( "|S|T|Ln|Ec|Eg|Em|I|Pd|Pf|", defaultDisplayOrder );
         
 	}// end testGetReleations...
 	

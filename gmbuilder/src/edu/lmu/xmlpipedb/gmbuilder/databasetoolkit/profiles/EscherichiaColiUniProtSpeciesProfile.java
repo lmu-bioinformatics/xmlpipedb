@@ -12,26 +12,24 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
-import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
-import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 
 /**
  * @author Joey J. Barrett Class: EscherichiaColiUniProtSpeciesProfile
+ * @author Jeffrey Nicholas
  */
 public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile {
+	
+	private final String SPECIES_TABLE = "TAIR";
+
+	
 	/**
 	 * Creates the UniProt E.coli species profile. This profile defines the requirements for 
 	 * an Escherichia Coli species within a UniProt database.
@@ -42,8 +40,8 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	}
 
 	/**
-	 * This method is overridden from the super class, because E.coli
-	 * requires Blattner tables. This method is called by the Export
+	 * This method is overridden from the super class, because this species
+	 * requires a species specific SPECIES_TABLE. This method is called by the Export
 	 * Dialog when populating the list of Proper System Tables.
 	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificSystemTables()
@@ -52,7 +50,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	protected Map<String, SystemType> getSpeciesSpecificSystemTables() {
 		Map<String, SystemType> speciesSpecificAvailableSystemTables = new HashMap<String, SystemType>();
 
-		speciesSpecificAvailableSystemTables.put("Blattner", SystemType.Proper);
+		speciesSpecificAvailableSystemTables.put(SPECIES_TABLE, SystemType.Proper);
 		return speciesSpecificAvailableSystemTables;
 	}
 
@@ -79,22 +77,22 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 		String systemCode = null;
 		String relatedCode = null;
 
-//		 if SystemTable1 is NOT blattner, then use it :: if SystemTable1 IS blattner, call it OrderedLocusNames
-		if( !systemTable1.equals("Blattner") ){
+//		 if SystemTable1 is NOT SPECIES_TABLE, then use it :: if SystemTable1 IS the SPECIES_TABLE, call it OrderedLocusNames
+		if( !systemTable1.equals(SPECIES_TABLE) ){
 			systemCode = systemTable1;
 		} else {
 			systemCode = "OrderedLocusNames";
 		}
 		
-//		 If SystemTable2 is NOT blattner, then use it :: if SystemTable2 IS blattner, call it OrderedLocusNames
-		if( !systemTable2.equals("Blattner") ){
+//		 If SystemTable2 is NOT SPECIES_TABLE, then use it :: if SystemTable2 IS the SPECIES_TABLE, call it OrderedLocusNames
+		if( !systemTable2.equals(SPECIES_TABLE) ){
 			relatedCode = systemTable2;
 		} else {
 			relatedCode = "OrderedLocusNames";
 		}
 // ### local vars finished
 		
-		// Call the super class's method, now that blattner specific normalization
+		// Call the super class's method, now that SPECIES_TABLE specific normalization
 		// has been done
 		tableManager = super.getRelationsTableManagerCustomizations(systemCode, relatedCode, templateDefinedSystemToSystemCode, tableManager);
 
@@ -103,7 +101,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	}
 
 	/**
-	 * Add 2 Blattner specific items to the tableManager, then call the
+	 * Add 2 SPECIES_TABLE specific items to the tableManager, then call the
 	 * super class to add the items all species will need.
 	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemsTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
@@ -114,10 +112,10 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 			TableManager tableManager, DatabaseProfile dbProfile) {
 				
 		tableManager.submit("Systems", QueryType.update, new String[][] {
-				{ "SystemCode", "Ln" }, { "System", "Blattner" } });
+				{ "SystemCode", "Ln" }, { "System", SPECIES_TABLE } });
 		
 		tableManager.submit("Systems", QueryType.update, new String[][] {
-				{ "SystemCode", "Ln" }, { "SystemName", "Blattner" } });
+				{ "SystemCode", "Ln" }, { "SystemName", SPECIES_TABLE } });
 		
 		// JN - the only reason this is last is that it was like that from
 		// the start. Order may not matter, but I chose not to mess with it.
@@ -127,20 +125,8 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	}
 
 	/**
-	 * Contains Blattner in processing criteria.
-	 * 
-	 * Change to call super.getSystemTableManagerCustomizations()
-	 *  and store result in TableManger
-	 *  
-	 * The way this is implemented, it is prone to side effects
-	 * 
-	 * idea 1
-	 * :: CREATe 2 protected methods in super. let this and the super call those methods as needed to elminate redundant code
-	 * 
-	 * idea 2
-	 * :: Change this method and the super to call another protected method in the super which does all the work.
-	 * :::: Create a protected method in the super that takes all the params of this method plus an array of Strings, these are used in the tableManager.submit call(s) during the for loop.
-	 * 
+	 * This method calls a helper method in the super class, passing the species
+	 * specific table name to be used.
 	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
 	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
@@ -151,7 +137,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 			TableManager tableManager, TableManager primarySystemTableManager,
 			Date version) throws SQLException {
 		
-		tableManager = super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "Blattner");
+		tableManager = super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, SPECIES_TABLE);
 		
 /*		PreparedStatement ps = ConnectionManager
 				.getRelationalDBConnection()
@@ -197,8 +183,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	}
 
 	/**
-	 * This method is specific to E.coli, since it contains Blattner specific
-	 * processing.
+	 * This method contains SPECIES_TABLE specific processing.
 	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificRelationshipTable(java.lang.String,
 	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
@@ -212,7 +197,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 			TableManager systemTableManager, TableManager tableManager)
 			throws SQLException {
 		
-		tableManager = super.speciesSpecificRelationshipTableHelper(relationshipTable, primarySystemTableManager, systemTableManager, tableManager, "Blattner", "Bridge", "S");
+		tableManager = super.speciesSpecificRelationshipTableHelper(relationshipTable, primarySystemTableManager, systemTableManager, tableManager, SPECIES_TABLE, "Bridge", "S");
 		
 		/*SystemTablePair stp = GenMAPPBuilderUtilities
 				.parseRelationshipTableName(relationshipTable);
@@ -296,4 +281,4 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 		return tableManager;
 	}
 
-}
+} // end class

@@ -27,7 +27,7 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType
  */
 public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile {
 	
-	private final String SPECIES_TABLE = "TAIR";
+	private final String SPECIES_TABLE = "Blattner";
 
 	
 	/**

@@ -150,7 +150,10 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	public TableManager getSystemTableManagerCustomizations(
 			TableManager tableManager, TableManager primarySystemTableManager,
 			Date version) throws SQLException {
-		PreparedStatement ps = ConnectionManager
+		
+		tableManager = super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "Blattner");
+		
+/*		PreparedStatement ps = ConnectionManager
 				.getRelationalDBConnection()
 				.prepareStatement(
 						"SELECT value, type "
@@ -188,7 +191,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 					}
 				}
 			}
-		}
+		}*/
 
 		return tableManager;
 	}
@@ -208,15 +211,15 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 			String relationshipTable, TableManager primarySystemTableManager,
 			TableManager systemTableManager, TableManager tableManager)
 			throws SQLException {
-		SystemTablePair stp = GenMAPPBuilderUtilities
+		
+		tableManager = super.speciesSpecificRelationshipTableHelper(relationshipTable, primarySystemTableManager, systemTableManager, tableManager, "Blattner", "Bridge", "S");
+		
+		/*SystemTablePair stp = GenMAPPBuilderUtilities
 				.parseRelationshipTableName(relationshipTable);
 		if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable1)) {
 			// Blattner-X
 			PreparedStatement ps = ConnectionManager
-					.getRelationalDBConnection().prepareStatement(
-							"SELECT id " + "FROM dbreferencetype "
-									+ "WHERE type = ? and "
-									+ "entrytype_dbreference_hjid = ?");
+					.getRelationalDBConnection().prepareStatement("SELECT id " + "FROM dbreferencetype " + "WHERE type = ? and " + "entrytype_dbreference_hjid = ?");
 			ps.setString(1, stp.systemTable2);
 			for (Row row : systemTableManager.getRows()) {
 				if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(
@@ -226,20 +229,8 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 					while (result.next()) {
 						// Fix blattner IDs of the form xxxx/yyyy
 						for (String Blattner_ID : row.getValue("ID").split("/")) {
-							tableManager
-									.submit(
-											relationshipTable,
-											QueryType.insert,
-											new String[][] {
-													{ "\"Primary\"",
-															Blattner_ID },
-													{
-															"Related",
-															result
-																	.getString("id") },
-													// TODO This is hard-coded.
-													// Fix it.
-													{ "Bridge", "S" } });
+							tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", Blattner_ID }, { "Related", result.getString("id") },
+							 TODO This is hard-coded. Fix it.{ "Bridge", "S" } });
 						}
 					}
 					result.close();
@@ -301,7 +292,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 				}
 			}
 		}
-
+*/
 		return tableManager;
 	}
 

@@ -34,6 +34,7 @@ import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.gmbuilder.util.CaseInsensitiveStringComparator;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
  * @author Joey J. Barrett Class: UniProtDatabaseProfile
@@ -133,8 +134,10 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     @Override
     public String getDefaultDisplayOrder() {
         List<String> systemCodes = new ArrayList<String>();
+        Map<String, SystemType> uniprotSpecificSystemTables = getDatabaseSpecificSystemTables();
+        Map<String, SystemType> speciesSpecificSystemTables = speciesProfile.getSpeciesSpecificSystemTables();
         for (Entry<String, SystemType> systemTable : systemTables.entrySet()) {
-            if (!getDatabaseSpecificSystemTables().containsKey(systemTable.getKey()) && !speciesProfile.getSpeciesSpecificSystemTables().containsKey(systemTable.getKey())) {
+            if (!uniprotSpecificSystemTables.containsKey(systemTable.getKey()) && !speciesSpecificSystemTables.containsKey(systemTable.getKey())) {
                 systemCodes.add(templateDefinedSystemToSystemCode.get(systemTable.getKey()));
             }
         }
@@ -254,9 +257,10 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     }
 
     /**
+     * @throws InvalidParameterException 
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getSystemTableManager()
      */
-    public @Override TableManager getSystemTableManager() throws SQLException {
+    public @Override TableManager getSystemTableManager() throws SQLException, InvalidParameterException {
         // If this work has already been done (and a non-null object exists) just return it.
     	if (systemTableManager != null) {
             return systemTableManager;
@@ -292,9 +296,10 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     }
 
     /**
+     * @throws InvalidParameterException 
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getRelationshipTableManager()
      */
-    public @Override List<TableManager> getRelationshipTableManager() throws SQLException {
+    public @Override List<TableManager> getRelationshipTableManager() throws SQLException, InvalidParameterException {
         List<TableManager> tableManagers = new ArrayList<TableManager>();
         TableManager tableManager;
         for (String relationshipTable : relationshipTables) {
@@ -384,33 +389,49 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      * @throws SQLException
      * @throws Exception
      */
-    private TableManager getSecondPassRelationshipTables() throws SQLException {
+    private TableManager getSecondPassRelationshipTables(){
         TableManager tableManager = new TableManager(new String[][] { { "\"Primary\"", "VARCHAR(50) NOT NULL" }, { "Related", "VARCHAR(50) NOT NULL" }, { "Bridge", "VARCHAR(3)" } }, new String[] { "\"Primary\"", "Related" });
 
-        PreparedStatement ps = null;
-        ResultSet result = null;
-        for (String relationshipTable : produceLastRelationshipTables) {
-            SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
+			PreparedStatement ps = null;
+			ResultSet result = null;
+			String sqlStatement = null;
 
-            String sqlStatement = "SELECT [UniProt-" + stp.systemTable1 + "].Related as id1, " + "[UniProt-GeneOntology].Related as id2 " + "FROM [UniProt-" + stp.systemTable1 + "] " + "INNER JOIN [UniProt-GeneOntology] " + "ON [UniProt-" + stp.systemTable1 + "].Primary = [UniProt-GeneOntology].Primary";
-
-            // Alternative query when using a database other than Access.
-            // String sqlStatement = "SELECT \"" + tableName + "\".Related, " +
-            // "\"UniProt-GeneOntology\".Related " +
-            // "FROM \"" + tableName + "\" " +
-            // "INNER JOIN \"UniProt-GeneOntology\" " +
-            // "ON \"" + tableName + "\".\"Primary\" =
-            // \"UniProt-GeneOntology\".\"Primary\"";
-            _Log.info("Second-pass query: " + sqlStatement);
-            ps = getExportConnection().prepareStatement(sqlStatement);
-
-            result = ps.executeQuery();
-            while (result.next()) {
-                tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", result.getString("id1") }, { "Related", result.getString("id2") },
-                // TODO This is hard-coded. Fix it.
-                { "Bridge", "S" } });
-            }
-        }
+		try{			
+			for (String relationshipTable : produceLastRelationshipTables) {
+			    SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
+			
+			    sqlStatement = "SELECT [UniProt-" + stp.systemTable1 + "].Related as id1, " + "[UniProt-GeneOntology].Related as id2 " + "FROM [UniProt-" + stp.systemTable1 + "] " + "INNER JOIN [UniProt-GeneOntology] " + "ON [UniProt-" + stp.systemTable1 + "].Primary = [UniProt-GeneOntology].Primary";
+			
+			    // Alternative query when using a database other than Access.
+			    // String sqlStatement = "SELECT \"" + tableName + "\".Related, " +
+			    // "\"UniProt-GeneOntology\".Related " +
+			    // "FROM \"" + tableName + "\" " +
+			    // "INNER JOIN \"UniProt-GeneOntology\" " +
+			    // "ON \"" + tableName + "\".\"Primary\" =
+			    // \"UniProt-GeneOntology\".\"Primary\"";
+			    _Log.info("Second-pass query: " + sqlStatement);
+			    ps = getExportConnection().prepareStatement(sqlStatement);
+			
+			    result = ps.executeQuery();
+			    while (result.next()) {
+			        tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", result.getString("id1") }, { "Related", result.getString("id2") },
+			        // TODO This is hard-coded. Fix it.
+			        { "Bridge", "S" } });
+			    }
+			}
+	    } catch( SQLException e ){
+	    	StringBuffer errText = new StringBuffer("An SQLException occurred in getSecondPassRelationshipTables() while reading from the database. ");
+	    	errText.append(" Error Code: " + e.getErrorCode());
+	    	errText.append(" Message: " + e.getMessage());
+	    	_Log.error(errText);
+	    	_Log.error(sqlStatement);
+	    } finally {
+	        try {
+	            ps.close();
+	        } catch(Exception exc) {
+	            _Log.warn("Problem closing PreparedStatement");
+	        }
+	    }
         return tableManager;
     }
     

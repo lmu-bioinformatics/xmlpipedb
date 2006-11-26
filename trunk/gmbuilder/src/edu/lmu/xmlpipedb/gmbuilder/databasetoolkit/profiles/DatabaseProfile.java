@@ -32,6 +32,7 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
  * DatabaseProfiles contain the SpeciesProfiles for the species supported by that
@@ -476,9 +477,10 @@ public abstract class DatabaseProfile extends Profile {
      * preparing.
      * 
      * @return
+     * @throws InvalidParameterException 
      * @throws Exception
      */
-    public TableManager[] getFirstPassTableManagers() throws SQLException {
+    public TableManager[] getFirstPassTableManagers() throws SQLException, InvalidParameterException {
         List<TableManager> tableManagers = new ArrayList<TableManager>();
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(53, "Preparing tables - Info table...");
@@ -583,9 +585,10 @@ public abstract class DatabaseProfile extends Profile {
      * return a TableManager with all system tables.
      * 
      * @return
+     * @throws InvalidParameterException 
      * @throws Exception
      */
-    public abstract TableManager getSystemTableManager() throws SQLException;
+    public abstract TableManager getSystemTableManager() throws SQLException, InvalidParameterException;
 
     /**
      * This function must be implemented by an Xcentric database and should
@@ -595,9 +598,10 @@ public abstract class DatabaseProfile extends Profile {
      * in an Export.
      * 
      * @return
+     * @throws InvalidParameterException 
      * @throws Exception
      */
-    public abstract List<TableManager> getRelationshipTableManager() throws SQLException;
+    public abstract List<TableManager> getRelationshipTableManager() throws SQLException, InvalidParameterException;
 
     /**
      * Creates the OriginalRowCounts TableManager. This function should be fixed

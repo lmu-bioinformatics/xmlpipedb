@@ -13,6 +13,7 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.Map;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
  * @author Joey J. Barrett Class: EscherichiaColiUniProtSpeciesProfile
@@ -127,6 +129,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	/**
 	 * This method calls a helper method in the super class, passing the species
 	 * specific table name to be used.
+	 * @throws InvalidParameterException 
 	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
 	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
@@ -135,9 +138,13 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	@Override
 	public TableManager getSystemTableManagerCustomizations(
 			TableManager tableManager, TableManager primarySystemTableManager,
-			Date version) throws SQLException {
+			Date version) throws SQLException, InvalidParameterException {
 		
-		tableManager = super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, SPECIES_TABLE);
+    	ArrayList<String> comparisonList = new ArrayList<String>(2);
+    	comparisonList.add("ordered locus");
+    	comparisonList.add("ORF");
+		
+		tableManager = super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, SPECIES_TABLE, comparisonList);
 		
 /*		PreparedStatement ps = ConnectionManager
 				.getRelationalDBConnection()

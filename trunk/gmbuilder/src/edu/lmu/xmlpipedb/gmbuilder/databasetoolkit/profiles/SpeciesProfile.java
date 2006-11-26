@@ -20,6 +20,7 @@ import java.util.Map;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
  * Generic species profile regardless of data source. This class must
@@ -107,11 +108,12 @@ public abstract class SpeciesProfile extends Profile {
 	 * @param primarySystemTableManager
 	 * @param version
 	 * @return
+	 * @throws InvalidParameterException 
 	 * @throws Exception
 	 */
 	public abstract TableManager getSystemTableManagerCustomizations(
 			TableManager tableManager, TableManager primarySystemTableManager,
-			Date version) throws SQLException;
+			Date version) throws SQLException, InvalidParameterException;
 
 	/**
 	 * Returns a TableManager with a species specific relationship table added.

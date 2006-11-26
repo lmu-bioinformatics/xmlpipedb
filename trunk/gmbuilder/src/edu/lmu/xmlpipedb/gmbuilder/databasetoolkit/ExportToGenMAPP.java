@@ -26,6 +26,7 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
  * @author Joey J. Barrett Class: ExportToGenMAPP
@@ -95,10 +96,11 @@ public class ExportToGenMAPP {
 
     /**
      * Runs the export on the selectedDatabaseProfile.
+     * @throws InvalidParameterException 
      * 
      * @throws Exception
      */
-    public static void export() throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
+    public static void export() throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException, InvalidParameterException {
         ExportWizard.updateExportProgress(1, "Starting GeneOntology export...");
         (new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getAssociationsFile());
 

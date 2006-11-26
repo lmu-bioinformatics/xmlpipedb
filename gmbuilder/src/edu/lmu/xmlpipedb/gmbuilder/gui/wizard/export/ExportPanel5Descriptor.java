@@ -26,6 +26,7 @@ import org.xml.sax.SAXException;
 import com.nexes.wizard.WizardPanelDescriptor;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 
 /**
@@ -101,7 +102,9 @@ public class ExportPanel5Descriptor extends WizardPanelDescriptor {
                     _Log.fatal("Export problem", e);
                 } catch(JAXBException e) {
                     _Log.fatal("Export problem", e);
-                } finally {
+                } catch (InvalidParameterException e) {
+                	_Log.fatal("Export problem", e);
+				} finally {
                     getWizard().getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
             }

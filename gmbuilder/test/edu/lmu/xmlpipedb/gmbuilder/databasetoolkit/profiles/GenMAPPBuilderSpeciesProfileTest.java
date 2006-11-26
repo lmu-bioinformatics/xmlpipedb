@@ -22,6 +22,7 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
  * @author   Jeffrey Nicholas
@@ -42,9 +43,10 @@ public class GenMAPPBuilderSpeciesProfileTest {
 	 * 
 	 * Compared to what??? Not sure.
 	 * Based on what input??? Not sure.
+	 * @throws InvalidParameterException 
 	 */
 	@Test
-	public void testGetRelationsTableManager() throws FileNotFoundException {
+	public void testGetRelationsTableManager() throws FileNotFoundException, InvalidParameterException {
         Row[] rows = null;
 		
 		// setup environment

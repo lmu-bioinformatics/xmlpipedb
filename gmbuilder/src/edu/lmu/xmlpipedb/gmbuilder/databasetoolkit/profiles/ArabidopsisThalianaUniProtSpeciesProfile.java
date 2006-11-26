@@ -13,6 +13,7 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.Map;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
  * SpeciesProfile implementation for A.thaliana.
@@ -58,6 +60,9 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	}
 
 	/**
+	 * It seems that getRelationsTableManagerCustomizations is not needed for A.thaliana
+	 * based on feedback from Kam.
+	 * 
 	 * This method will normalize the systemTables input, then pass the 
 	 * normalized values to the Super class's method of the same name. This 
 	 * elminates redundant logic in parent and child classes and ensures  
@@ -69,7 +74,7 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	 *      java.lang.String, java.util.Map,
 	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
 	 */
-	@Override
+/*	@Override
 	public TableManager getRelationsTableManagerCustomizations(
 			String systemTable1, String systemTable2,
 			Map<String, String> templateDefinedSystemToSystemCode,
@@ -79,7 +84,13 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 // ### create some local vars and set them
 		String systemCode = null;
 		String relatedCode = null;
-
+ !!!!  
+ * !!!!
+ * Check here for use of OrderedLocusNames -- s/n/b used 
+ * !!!!
+ * !!!!
+ * 
+ 
 //		 if SystemTable1 is NOT SPECIES_TABLE, then use it :: if SystemTable1 IS the SPECIES_TABLE, call it OrderedLocusNames
 		if( !systemTable1.equals(SPECIES_TABLE) ){
 			systemCode = systemTable1;
@@ -101,7 +112,7 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 
 		
 		return tableManager;
-	}
+	}*/
 
 	/**
 	 * Add 2 SPECIES_TABLE specific items to the tableManager, then call the
@@ -130,6 +141,7 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	/**
 	 * This method calls a helper method in the super class, passing the species
 	 * specific table name to be used.
+	 * @throws InvalidParameterException 
 	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
 	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
@@ -138,9 +150,12 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	@Override
 	public TableManager getSystemTableManagerCustomizations(
 			TableManager tableManager, TableManager primarySystemTableManager,
-			Date version) throws SQLException {
+			Date version) throws SQLException, InvalidParameterException {
 		
-		tableManager = super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, SPECIES_TABLE);
+    	ArrayList<String> comparisonList = new ArrayList<String>(2);
+    	comparisonList.add("ORF");
+		
+		tableManager = super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, SPECIES_TABLE, comparisonList);
 		
 
 		return tableManager;

@@ -14,6 +14,7 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
  * @author Joey J. Barrett
@@ -55,16 +57,21 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 	}
 
 	/**
-     * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
+     * @throws InvalidParameterException 
+	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
      *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
      *      java.util.Date)
      */
     @Override
-    public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws SQLException {
+    public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws SQLException, InvalidParameterException {
         // TODO This is virtually identical to the e. coli version; find a way to unify.
         // TODO (for that matter, find a way to unify the whole thing)
     	
-    	tableManager = systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "OrderedLocusNames");
+    	ArrayList<String> comparisonList = new ArrayList<String>(2);
+    	comparisonList.add("ordered locus");
+    	comparisonList.add("ORF");
+    	
+    	tableManager = systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "OrderedLocusNames", comparisonList );
     	
 /*        PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " + "FROM genenametype INNER JOIN entrytype_genetype " + "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " + "WHERE entrytype_gene_hjid = ?");
         ResultSet result;
@@ -89,12 +96,17 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
     }
 
 	/**
-     * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
+     * @param comparisonList TODO
+	 * @throws InvalidParameterException 
+	 * @throws SQLException 
+	 * @throws Exception 
+	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
      *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
      *      java.util.Date)
      */
-    protected TableManager systemTableManagerCustomizationsHelper(TableManager tableManager, TableManager primarySystemTableManager, Date version, String substituteTable ) throws SQLException {
-        PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " + "FROM genenametype INNER JOIN entrytype_genetype " + "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " + "WHERE entrytype_gene_hjid = ?");
+    protected TableManager systemTableManagerCustomizationsHelper(TableManager tableManager, TableManager primarySystemTableManager, Date version, String substituteTable, ArrayList<String> comparisonList ) throws InvalidParameterException, SQLException  {
+    	if( comparisonList == null ) throw new InvalidParameterException("comparisonList may not be null. Ensure you are passing a valid ArrayList<String>, even if it is empty.");
+    	PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " + "FROM genenametype INNER JOIN entrytype_genetype " + "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " + "WHERE entrytype_gene_hjid = ?");
         ResultSet result;
 
         for (Row row : primarySystemTableManager.getRows()) {
@@ -104,7 +116,8 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
             // We actually want to keep the case where multiple ordered locus names appear.
             while (result.next()) {
                 String type = result.getString("type");
-                if ("ordered locus".equals(type) || "ORF".equals(type)) {
+                //if ("ordered locus".equals(type) || "ORF".equals(type)) {
+                if (comparisonList.contains(type)) {
                     // We want this name to appear in the OrderedLocusNames system table.
                     for (String id : result.getString("value").split("/")) {
                         tableManager.submit(substituteTable, QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
@@ -124,6 +137,8 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 			String systemTable1, String systemTable2, 
 			Map<String, String> templateDefinedSystemToSystemCode, 
 			TableManager tableManager) {
+		
+		//'UniProt-GeneOntology
 		
 		String relation = systemTable1 + "-" + systemTable2;
 		String type = null;
@@ -219,7 +234,17 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
      *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
      */
     public TableManager speciesSpecificRelationshipTableHelper(String relationshipTable, TableManager uniprotTableManager, TableManager systemTableManager, TableManager tableManager, String criteria, String finalColumnName, String finalColumnValue) throws SQLException {
+        		//Separate the String relationshipTable into two parts based on the dash ("-") in the String
+		// Store the two parts as systemTable1 and systemTable2 in the SystemTablePair object
         SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
+
+		// Get a Map, which in the case of E.coli only contains one entry (for Blattner) as a "proper" system table
+		//   The gist of the following if / elseif / else block is:
+		//     if      stp.systemTable1 == Blatter, then do some stuff
+		//     elseif  stp.systemTable2 == Blatter AND systemTable1 is NOT UniProt, then do some other stuff
+		//     else    do some different stuff
+		
+
         if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable1)) {
             PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT id " + "FROM dbreferencetype " + "WHERE type = ? and " + "entrytype_dbreference_hjid = ?");
             ps.setString(1, stp.systemTable2);
@@ -257,6 +282,12 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
             }
             ps.close();
         } else {
+    			// Go through each row (AKA row1) in the systemTableManager that was passed in, checking for "Blattner"
+    			//  If we find "Blattner", go through every row (AKA row2) in the primarySystemTableManger
+    			//    check if row1's UID value is the same as row2's UID value,
+    			//		if yes, loop some more!! (yippee), this time we are getting the value of the ID field,
+    			//			then we'll write out a record.
+
             for (Row row1 : systemTableManager.getRows()) {
                 if (row1.getValue(TableManager.TABLE_NAME_COLUMN).equals(criteria)) {
                     for (Row row2 : uniprotTableManager.getRows()) {

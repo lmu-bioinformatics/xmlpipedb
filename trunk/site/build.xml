@@ -67,7 +67,9 @@
     </target>
 
     <target name="clean" depends="" description="Clean it all!">
-        <delete dir="${output}" />
+        <delete>
+            <fileset dir="${basedir}" includes="*.bz2" />
+        </delete>
     </target>
 
     <target name=".download-disclaimer">

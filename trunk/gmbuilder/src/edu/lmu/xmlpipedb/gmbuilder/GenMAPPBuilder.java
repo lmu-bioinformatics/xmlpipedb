@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
+import shag.App;
+import shag.dialog.ModalDialog;
+import shag.menu.WindowMenu;
+import shag.table.BeanColumn;
+import shag.table.BeanTableModel;
+import shag.table.UsefulTable;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
@@ -56,13 +63,6 @@ import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
-
-import shag.App;
-import shag.dialog.ModalDialog;
-import shag.menu.WindowMenu;
-import shag.table.BeanColumn;
-import shag.table.BeanTableModel;
-import shag.table.UsefulTable;
 
 /**
  * GenMAPPBuilder is a GUI application for loading, querying, and exporting data
@@ -186,7 +186,7 @@ public class GenMAPPBuilder extends App {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-                doImport("org.uniprot.uniprot", "Import UniProtDB XML File");
+            	doImport("org.uniprot.uniprot", "Import UniProtDB XML File");
             }
         };
         
@@ -285,43 +285,43 @@ public class GenMAPPBuilder extends App {
         	HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
         	HashMap<String, Criterion> goCriteria = new HashMap<String, Criterion>();
         	String element = null;
-        	String table = null;
+        	String query = null;
         	
         	// *** UniProt ***
         	element = AppResources.optionString("UniprotElementLevel1").trim();
-            table = AppResources.optionString("UniprotTableLevel1").trim();
-            if (!element.equals("") && element != null)
-                uniprotCriteria.put(element, new Criterion("", element, table));
+            query = AppResources.optionString("UniprotQueryLevel1").trim();
+            if (!element.equals("") && element != null && query != null)
+                uniprotCriteria.put(element, new Criterion("", element, query));
             element = AppResources.optionString("UniprotElementLevel2").trim();
-            table = AppResources.optionString("UniprotTableLevel2").trim();
-            if (!element.equals("") && element != null)
-                uniprotCriteria.put(element, new Criterion("", element, table));
+            query = AppResources.optionString("UniprotQueryLevel2").trim();
+            if (!element.equals("") && element != null && query != null)
+                uniprotCriteria.put(element, new Criterion("", element, query));
             element = AppResources.optionString("UniprotElementLevel3").trim();
-            table = AppResources.optionString("UniprotTableLevel3").trim();
-            if (!element.equals("") && element != null)
-                uniprotCriteria.put(element, new Criterion("", element, table));
+            query = AppResources.optionString("UniprotQueryLevel3").trim();
+            if (!element.equals("") && element != null && query != null)
+                uniprotCriteria.put(element, new Criterion("", element, query));
             element = AppResources.optionString("UniprotElementLevel4").trim();
-            table = AppResources.optionString("UniprotTableLevel4").trim();
-            if (!element.equals("") && element != null)
-                uniprotCriteria.put(element, new Criterion("", element, table));
+            query = AppResources.optionString("UniprotQueryLevel4").trim();
+            if (!element.equals("") && element != null && query != null)
+                uniprotCriteria.put(element, new Criterion("", element, query));
     		
     		// *** GO ***
     		element = AppResources.optionString("GoElementLevel1").trim();
-            table = AppResources.optionString("GoTableLevel1").trim();
+            query = AppResources.optionString("GoQueryLevel1").trim();
             if (!element.equals("") && element != null)
-                goCriteria.put(element, new Criterion("", element, table));
+                goCriteria.put(element, new Criterion("", element, query));
             element = AppResources.optionString("GoElementLevel2").trim();
-            table = AppResources.optionString("GoTableLevel2").trim();
+            query = AppResources.optionString("GoQueryLevel2").trim();
             if (!element.equals("") && element != null)
-                goCriteria.put(element, new Criterion("", element, table));
+                goCriteria.put(element, new Criterion("", element, query));
             element = AppResources.optionString("GoElementLevel3").trim();
-            table = AppResources.optionString("GoTableLevel3").trim();
+            query = AppResources.optionString("GoQueryLevel3").trim();
             if (!element.equals("") && element != null)
-                goCriteria.put(element, new Criterion("", element, table));
+                goCriteria.put(element, new Criterion("", element, query));
             element = AppResources.optionString("GoElementLevel4").trim();
-            table = AppResources.optionString("GoTableLevel4").trim();
+            query = AppResources.optionString("GoQueryLevel4").trim();
             if (!element.equals("") && element != null)
-                goCriteria.put(element, new Criterion("", element, table));
+                goCriteria.put(element, new Criterion("", element, query));
 
             // Create a file chooser and setup the UniProt and GO input streams
             InputStream uniprotInputStream = null;

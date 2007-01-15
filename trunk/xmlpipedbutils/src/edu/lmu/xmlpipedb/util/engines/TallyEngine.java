@@ -55,11 +55,11 @@ public class TallyEngine {
 		while(iter.hasNext()){
 			Criterion crit = _criteria.get(iter.next());
 			// check if there is a valid table entry, if not go on to the next record
-			if( crit.getTable() == null || crit.getTable().equals("")){
+			if( crit.getQuery() == null || crit.getQuery().equals("")){
 				continue;
 			}
 			try {
-	            query = conn.prepareStatement("select count(*) from " + crit.getTable() );
+	            query = conn.prepareStatement( crit.getQuery() );
 	            results = query.executeQuery();
 
 				results.next();
@@ -109,7 +109,7 @@ public class TallyEngine {
      */
     private void digestXmlFile(InputStream xml){
     	//Look Ma, I'm actually logging stuff (albeit not pretty)
-		SimpleLog logger = new SimpleLog("ImportLogger");
+		SimpleLog logger = new SimpleLog("TallyEngineLogger");
 		logger.setLevel(SimpleLog.LOG_LEVEL_ERROR);
 
     	Digester digester = new Digester();

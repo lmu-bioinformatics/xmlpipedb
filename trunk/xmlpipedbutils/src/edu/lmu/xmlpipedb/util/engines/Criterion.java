@@ -1,11 +1,21 @@
 package edu.lmu.xmlpipedb.util.engines;
 
+import com.sun.msv.datatype.xsd.regex.RegularExpression;
+
 public class Criterion {
 
-	public Criterion( String name, String path, String table ) {
+	/**
+	 * Sets the fields named with the values passed in. Uses the setQuery method
+	 * to set the query, which then also sets the table name(s). 
+	 * 
+	 * @param name
+	 * @param path
+	 * @param query
+	 */
+	public Criterion( String name, String path, String query ) {
 		_name = name;
 		_digesterPath = path;
-		_table = table;
+		this.setQuery( query );
 	}
 
 	/**
@@ -44,6 +54,39 @@ public class Criterion {
 	public void setTable(String table) {
 		this._table = table;
 	}
+	
+	/**
+	 * @return the _query
+	 */
+	public String getQuery() {
+		return _query;
+	}
+
+	/**
+	 * Sets the query field to be the String passed in. Also, parses out the
+	 * table name(s) from the query and sets the table field.
+	 * 
+	 * 
+	 * @param _query the _query to set
+	 */
+	public void setQuery(String _query) {
+
+		int fromIndex = _query.toLowerCase().indexOf(" from ");
+
+		String fromPart = _query.substring(fromIndex + 5);
+		
+		int whereIndex = fromPart.toLowerCase().indexOf(" where ");
+		if( whereIndex != -1 )
+			fromPart = fromPart.substring(0, whereIndex);
+		
+		int semicolonIndex = fromPart.indexOf(";");
+		if(semicolonIndex != -1 )
+			fromPart = fromPart.substring(0, semicolonIndex);
+		
+		setTable(fromPart.trim());
+		this._query = _query;
+	}
+	
 	/**
 	 * @return Returns the Database record count for the table specified. If
 	 * no table has been specified or this count has not been obtained, the
@@ -84,11 +127,13 @@ public class Criterion {
 	
 
 	// CLASS MEMBERS
-	private String _name;
-	private String _digesterPath;
-	private String _table;
+	private String _name = null;
+	private String _digesterPath = null;
+	private String _table = null;
+	private String _query = null;
 	private int _dbCount = -1;
 	private int _xmlCount = -1;
+
 	
 	
 }

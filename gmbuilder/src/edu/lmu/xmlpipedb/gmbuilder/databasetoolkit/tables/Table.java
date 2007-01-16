@@ -17,7 +17,6 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables;
 
 import java.sql.Connection;
-import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;

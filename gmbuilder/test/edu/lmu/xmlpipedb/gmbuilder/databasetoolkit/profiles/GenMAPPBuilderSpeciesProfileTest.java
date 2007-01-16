@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.hibernate.cfg.Configuration;
 import org.junit.Test;
@@ -32,10 +31,10 @@ public class GenMAPPBuilderSpeciesProfileTest {
 
 	
 	/* **** class vars **** */
-    private String _jaxbContextPath;
+//    private String _jaxbContextPath;
     private Configuration _hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
-	private ConfigurationEngine _configEng;
-	private File _xmlFile;
+//	private ConfigurationEngine _configEng;
+//	private File _xmlFile;
 	
 	/**
 	 * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.EscherichiaColiUniProtSpeciesProfile#getRelationsTableManagerCustomizations(String, String, Map, TableManager)}.

@@ -36,7 +36,6 @@ import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
-import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import generated.impl.IdImpl;
 import generated.impl.IsAImpl;
 import generated.impl.NameImpl;

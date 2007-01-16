@@ -66,7 +66,7 @@ public class ExportGmDbTest extends TestCase {
 		PreparedStatement query = null;
 		ResultSet results = null;
 		// initialize expected test results
-		int blattnerCount= 0;
+//		int blattnerCount= 0;
 		int blattnerGeneOntologyCount= 0;
 		int blattnerInterProCount= 0;
 		int blattnerPDBCount= 0;
@@ -94,16 +94,16 @@ public class ExportGmDbTest extends TestCase {
 		int EMBLPfamCount= 0;
 		int geneOntologyCount= 0;
 		int geneOntologyCountCount= 0;
-		int geneOntologyStageCount= 0;
+//		int geneOntologyStageCount= 0;
 		int geneOntologyTreeCount= 0;
 		int infoCount= 0;
 		int interProCount= 0;
 		int originalRowCountsCount= 0;
 		int otherCount= 0;
 		int PDBCount= 0;
-		int PDBGeneOntologyCount= 0;
-		int PDBInterProCount= 0;
-		int PDBPfamCount= 0;
+//		int PDBGeneOntologyCount= 0;
+//		int PDBInterProCount= 0;
+//		int PDBPfamCount= 0;
 		int pfamCount= 0;
 		int relationsCount= 0;
 		int systemsCount= 0;

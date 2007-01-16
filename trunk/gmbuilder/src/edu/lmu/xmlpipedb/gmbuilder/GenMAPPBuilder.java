@@ -17,7 +17,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,12 +43,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
-import shag.App;
-import shag.dialog.ModalDialog;
-import shag.menu.WindowMenu;
-import shag.table.BeanColumn;
-import shag.table.BeanTableModel;
-import shag.table.UsefulTable;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
@@ -63,6 +56,13 @@ import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
+
+import shag.App;
+import shag.dialog.ModalDialog;
+import shag.menu.WindowMenu;
+import shag.table.BeanColumn;
+import shag.table.BeanTableModel;
+import shag.table.UsefulTable;
 
 /**
  * GenMAPPBuilder is a GUI application for loading, querying, and exporting data

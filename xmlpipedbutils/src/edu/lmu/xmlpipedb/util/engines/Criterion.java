@@ -1,6 +1,6 @@
 package edu.lmu.xmlpipedb.util.engines;
 
-import com.sun.msv.datatype.xsd.regex.RegularExpression;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 public class Criterion {
 
@@ -11,9 +11,12 @@ public class Criterion {
 	 * @param name
 	 * @param path
 	 * @param query
+	 * @throws InvalidParameterException 
 	 */
-	public Criterion( String name, String path, String query ) {
+	public Criterion( String name, String path, String query ) throws InvalidParameterException {
 		_name = name;
+		if( path == null && query == null )
+			throw new InvalidParameterException("Both path and query were null, one of them must be non-null.");
 		_digesterPath = path;
 		this.setQuery( query );
 	}

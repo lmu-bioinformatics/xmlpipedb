@@ -228,21 +228,24 @@ public class MainController implements ActionListener {
     	String table = null;
     	element = AppResources.optionString("ElementLevel1");
     	table = AppResources.optionString("TableLevel1");
-		if(!element.equals("") && element != null)
-			criteria.put(element, new Criterion("", element, table));
-    	element = AppResources.optionString("ElementLevel2");
-    	table = AppResources.optionString("TableLevel2");
-    	if(!element.equals("") && element != null)
-			criteria.put(element, new Criterion("", element, table));
-		element = AppResources.optionString("ElementLevel3");
-		table = AppResources.optionString("TableLevel3");
-		if(!element.equals("") && element != null)
-			criteria.put(element, new Criterion("", element, table));
-		element = AppResources.optionString("ElementLevel4");
-		table = AppResources.optionString("TableLevel4");
-		if(!element.equals("") && element != null)
-			criteria.put(element, new Criterion("", element, table));
-		
+    	try{
+			if(!element.equals("") && element != null)
+				criteria.put(element, new Criterion("", element, table));
+	    	element = AppResources.optionString("ElementLevel2");
+	    	table = AppResources.optionString("TableLevel2");
+	    	if(!element.equals("") && element != null)
+				criteria.put(element, new Criterion("", element, table));
+			element = AppResources.optionString("ElementLevel3");
+			table = AppResources.optionString("TableLevel3");
+			if(!element.equals("") && element != null)
+				criteria.put(element, new Criterion("", element, table));
+			element = AppResources.optionString("ElementLevel4");
+			table = AppResources.optionString("TableLevel4");
+			if(!element.equals("") && element != null)
+				criteria.put(element, new Criterion("", element, table));
+    	} catch(InvalidParameterException e){
+    		//TODO: Send exception to log file
+    	}
 //		Create a file chooser and setup the input stream
 		InputStream is = null;
 		final JFileChooser fc = new JFileChooser();

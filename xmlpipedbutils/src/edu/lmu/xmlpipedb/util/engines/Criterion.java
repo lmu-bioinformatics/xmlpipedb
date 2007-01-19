@@ -17,8 +17,11 @@ public class Criterion {
 		_name = name;
 		if( path == null && query == null )
 			throw new InvalidParameterException("Both path and query were null, one of them must be non-null.");
-		_digesterPath = path;
-		this.setQuery( query );
+		if(path != null )
+			_digesterPath = path;
+		
+		if( query != null )
+			this.setQuery( query );
 	}
 
 	/**
@@ -136,6 +139,7 @@ public class Criterion {
 	private String _query = null;
 	private int _dbCount = -1;
 	private int _xmlCount = -1;
+	public enum Type { DATABASE, XML }
 
 	
 	

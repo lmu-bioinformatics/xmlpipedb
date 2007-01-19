@@ -275,7 +275,7 @@ public class MainController implements ActionListener {
 			 * This could be checked before getting the config. Or could be used
 			 * to disable menus before the config is done.
 			 */
-			criteria.putAll( te.getDbCounts( new QueryEngine(getHibernateConfig() ) ) );
+			te.getDbCounts( new QueryEngine( getHibernateConfig() )) ;
 		} catch (InvalidParameterException e) {
 			JOptionPane.showMessageDialog(this._initialFrame, e.getMessage());
 		} catch (XpdException e) {

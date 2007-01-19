@@ -39,12 +39,12 @@ public class TallyEngine {
 		return _criteria;
 	}
 	
-	public Map<String,Criterion> getDbCounts( QueryEngine qe ) throws XpdException{
+	public void getDbCounts( QueryEngine qe ) throws XpdException{
 		// validate params
 		if( qe == null )
 			throw new InvalidParameterException("The QueryEngine passed must not be null.");
 		
-		HashMap<String, Criterion> retMap = new HashMap<String, Criterion>();
+//		HashMap<String, Criterion> retMap = new HashMap<String, Criterion>();
 		// setup query engine
 		Connection conn = qe.currentSession().connection();
         PreparedStatement query = null;
@@ -64,7 +64,7 @@ public class TallyEngine {
 
 				results.next();
 				crit.setDbCount(results.getInt("count"));
-				retMap.put(crit.getDigesterPath(), crit);
+//				retMap.put(crit.getDigesterPath(), crit);
 
 			} catch(SQLException sqle) {
 //				TODO: Log exception
@@ -87,7 +87,7 @@ public class TallyEngine {
 	        }
 		}
 		
-		return retMap;
+//		return retMap;
 	}
 
 	public void setCriteria( Map<String, Criterion> criteria ){

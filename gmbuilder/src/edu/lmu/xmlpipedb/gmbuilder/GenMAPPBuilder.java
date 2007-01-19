@@ -159,8 +159,6 @@ public class GenMAPPBuilder extends App {
         fileMenu.addSeparator();
         fileMenu.add(_processGOAction);
         fileMenu.addSeparator();
-        fileMenu.add(_runTalliesAction);
-        fileMenu.addSeparator();
         fileMenu.add(_exportToGenMAPPAction);
         mb.add(fileMenu);
 
@@ -169,6 +167,8 @@ public class GenMAPPBuilder extends App {
         tallyMenu.add(_oboTallyAction);
         tallyMenu.add(_importedDataTallyAction);
         tallyMenu.add(_gdbTallyAction);
+        tallyMenu.addSeparator();
+        tallyMenu.add(_runTalliesAction);
         mb.add(tallyMenu);
         
         mb.add(new WindowMenu(this));
@@ -207,7 +207,7 @@ public class GenMAPPBuilder extends App {
             }
         };
         
-        _runTalliesAction = new AbstractAction("Run Tallies for Uniprot and Go...") {
+        _runTalliesAction = new AbstractAction("Run Xml and Db Tallies for Uniprot and Go (The Full Monty)") {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
@@ -221,7 +221,8 @@ public class GenMAPPBuilder extends App {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-                doTallies();
+            	ModalDialog.showErrorDialog("Function not yet implemented.");
+            	//doTallies();
             }
         };
         
@@ -236,9 +237,9 @@ public class GenMAPPBuilder extends App {
                     return;
                 }
             	HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
-            	getXmlTallyElements(uniprotCriteria);
+            	getXmlTallyElementsDb(uniprotCriteria);
             	HashMap<String, Criterion> goCriteria = new HashMap<String, Criterion>();
-            	getOboTallyElements(goCriteria);
+            	getOboTallyElementsDb(goCriteria);
 
                 getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
                 getTallyResultsDatabase(goCriteria, hibernateConfiguration);
@@ -267,7 +268,33 @@ public class GenMAPPBuilder extends App {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-                doTallies();
+             	HashMap<String, Criterion> goCriteria = new HashMap<String, Criterion>();
+            	getOboTallyElements(goCriteria);
+
+                // Create a file chooser and setup the GO input stream
+                InputStream goInputStream = getXmlFile("Select GO XML file");
+                if( goInputStream == null ){
+                	ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
+                	return;
+                }
+
+                getTallyResultsXml(goCriteria, goInputStream);
+                
+                // Gather the criteria into a list so that we can display them
+                // in a UsefulTable.
+                /**
+                 * Columns used for displaying tally results.
+                 */
+                final BeanColumn[] TallyColumns = {
+                		BeanColumn.create("XML Path", "digesterPath", String.class),
+                	    BeanColumn.create("XML Count", "xmlCount", Integer.class),
+                };
+                BeanTableModel btm = new BeanTableModel(TallyColumns);
+                List<Criterion> criteria = new ArrayList<Criterion>(goCriteria.size() );
+                criteria.addAll(goCriteria.values());
+                btm.setData(criteria.toArray());
+                UsefulTable t = new UsefulTable(btm);
+                ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
             }
         };
         
@@ -276,7 +303,33 @@ public class GenMAPPBuilder extends App {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-                doTallies();
+            	HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
+            	getXmlTallyElements(uniprotCriteria);
+
+                // Create a file chooser and setup the UniProt input stream
+                InputStream uniprotInputStream = getXmlFile("Select UniProt XML file");
+                if( uniprotInputStream == null ){
+                	ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
+                	return;
+                }
+
+                getTallyResultsXml(uniprotCriteria, uniprotInputStream );
+                
+                // Gather the criteria into a list so that we can display them
+                // in a UsefulTable.
+                /**
+                 * Columns used for displaying tally results.
+                 */
+                final BeanColumn[] TallyColumns = {
+                		BeanColumn.create("XML Path", "digesterPath", String.class),
+                	    BeanColumn.create("XML Count", "xmlCount", Integer.class),
+                };
+                BeanTableModel btm = new BeanTableModel(TallyColumns);
+                List<Criterion> criteria = new ArrayList<Criterion>(uniprotCriteria.size() );
+                criteria.addAll(uniprotCriteria.values());
+                btm.setData(criteria.toArray());
+                UsefulTable t = new UsefulTable(btm);
+                ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
             }
         };
         
@@ -387,33 +440,21 @@ public class GenMAPPBuilder extends App {
      *
      */
     private void getXmlTallyElements(HashMap<String, Criterion> criteria){
-    	
-       	//HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
     	String element = null;
-    	String query = null;
 
-//    	 *** UniProt ***
     	try{
 	    	element = AppResources.optionString("UniprotElementLevel1").trim();
-	    	query = AppResources.optionString("UniprotQueryLevel1").trim();
-	    	if (!element.equals("") && element != null )
-	            criteria.put(element, new Criterion("", element, query));
+	    	setElementInCriterion(criteria, element);
 	        
 	    	element = AppResources.optionString("UniprotElementLevel2").trim();
-	    	query = AppResources.optionString("UniprotQueryLevel2").trim();
-	        if (!element.equals("") && element != null )
-	            criteria.put(element, new Criterion("", element, query));
-	
+	    	setElementInCriterion(criteria, element);
+	    	
 	        element = AppResources.optionString("UniprotElementLevel3").trim();
-	        query = AppResources.optionString("UniprotQueryLevel3").trim();
-	        if (!element.equals("") && element != null )
-	            criteria.put(element, new Criterion("", element, query));
+	    	setElementInCriterion(criteria, element);
 	
 	        element = AppResources.optionString("UniprotElementLevel4").trim();
-	        query = AppResources.optionString("UniprotQueryLevel4").trim();
-	        if (!element.equals("") && element != null )
-	            criteria.put(element, new Criterion("", element, query));
-	        
+	    	setElementInCriterion(criteria, element);
+	    	
     	} catch( InvalidParameterException e ){
     		//TODO: print to log file
     	}
@@ -424,33 +465,26 @@ public class GenMAPPBuilder extends App {
      * The HashMap passed in is populated.
      *
      */
-    private void getTallyElementsDb(HashMap<String, Criterion> criteria){
-    	
-       	//HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
+    private void getXmlTallyElementsDb(HashMap<String, Criterion> criteria){
     	String element = null;
     	String query = null;
 
-//    	 *** UniProt ***
     	try{
 	    	element = AppResources.optionString("UniprotElementLevel1").trim();
 	    	query = AppResources.optionString("UniprotQueryLevel1").trim();
-	    	if (!element.equals("") && element != null )
-	            criteria.put(element, new Criterion("", null, query));
+	    	setQueryInCriterion(criteria, element, query);
 	        
 	    	element = AppResources.optionString("UniprotElementLevel2").trim();
 	    	query = AppResources.optionString("UniprotQueryLevel2").trim();
-	        if (!element.equals("") && element != null )
-	            criteria.put(element, new Criterion("", null, query));
+	    	setQueryInCriterion(criteria, element, query);
 	
 	        element = AppResources.optionString("UniprotElementLevel3").trim();
 	        query = AppResources.optionString("UniprotQueryLevel3").trim();
-	        if (!element.equals("") && element != null )
-	            criteria.put(element, new Criterion("", null, query));
+	    	setQueryInCriterion(criteria, element, query);
 	
 	        element = AppResources.optionString("UniprotElementLevel4").trim();
 	        query = AppResources.optionString("UniprotQueryLevel4").trim();
-	        if (!element.equals("") && element != null )
-	            criteria.put(element, new Criterion("", null, query));
+	    	setQueryInCriterion(criteria, element, query);
 	        
     	} catch( InvalidParameterException e ){
     		//TODO: print to log file
@@ -464,38 +498,97 @@ public class GenMAPPBuilder extends App {
      *
      */
     private void getOboTallyElements(HashMap<String, Criterion> criteria){
-    	
-       	//HashMap<String, Criterion> criteria = new HashMap<String, Criterion>();
     	String element = null;
-    	String query = null;
 
-//    	 *** UniProt ***
     	try{
 			// *** GO ***
 			element = AppResources.optionString("GoElementLevel1").trim();
-			query = AppResources.optionString("GoQueryLevel1").trim();
-	        if (!element.equals("") && element != null)
-	            criteria.put(element, new Criterion("", element, query));
+			setElementInCriterion(criteria, element);
 
 	        element = AppResources.optionString("GoElementLevel2").trim();
-	        query = AppResources.optionString("GoQueryLevel2").trim();
-	        if (!element.equals("") && element != null)
-	            criteria.put(element, new Criterion("", element, query));
+	        setElementInCriterion(criteria, element);
 
 	        element = AppResources.optionString("GoElementLevel3").trim();
-	        query = AppResources.optionString("GoQueryLevel3").trim();
-	        if (!element.equals("") && element != null)
-	            criteria.put(element, new Criterion("", element, query));
+	        setElementInCriterion(criteria, element);
 
 	        element = AppResources.optionString("GoElementLevel4").trim();
-	        query = AppResources.optionString("GoQueryLevel4").trim();
-	        if (!element.equals("") && element != null)
-	            criteria.put(element, new Criterion("", element, query));
+	        setElementInCriterion(criteria, element);
 	        
     	} catch( InvalidParameterException e ){
     		//TODO: print to log file
     	}
 
+    }
+    
+    /**
+     * Gets the elements from the properties file for reading in
+     * XML data (import files)
+     *
+     */
+    private void getOboTallyElementsDb(HashMap<String, Criterion> criteria){
+    	String element = null;
+    	String query = null;
+
+    	try{
+			// *** GO ***
+			element = AppResources.optionString("GoElementLevel1").trim();
+			query = AppResources.optionString("GoQueryLevel1").trim();
+	        setQueryInCriterion(criteria, element, query);
+
+	        element = AppResources.optionString("GoElementLevel2").trim();
+	        query = AppResources.optionString("GoQueryLevel2").trim();
+	        setQueryInCriterion(criteria, element, query);
+
+	        element = AppResources.optionString("GoElementLevel3").trim();
+	        query = AppResources.optionString("GoQueryLevel3").trim();
+	        setQueryInCriterion(criteria, element, query);
+
+	        element = AppResources.optionString("GoElementLevel4").trim();
+	        query = AppResources.optionString("GoQueryLevel4").trim();
+	        setQueryInCriterion(criteria, element, query);
+	        
+    	} catch( InvalidParameterException e ){
+    		//TODO: print to log file
+    	}
+
+    }
+   
+    /**
+     * Determine if a Criteria object already exists in the HashMap and 
+     * update it (if exists) or add a new object (if not exists).
+     * 
+     * @param criteria HashMap of Criterion objects
+     * @param element String with the element (path that Digester will look for in the xml file)
+     * @throws InvalidParameterException 
+     */
+    private void setQueryInCriterion(HashMap<String, Criterion> criteria, String element, String query) throws InvalidParameterException{
+    	if (!element.equals("") && element != null ){
+    		if( criteria.containsKey(element) ){
+    			Criterion tmpCriteria = criteria.get(element);
+    			tmpCriteria.setQuery( query );
+    		}else{
+    			criteria.put(element, new Criterion("", null, query));
+    		}
+    	}
+    }
+    
+    /**
+     * Determine if a Criteria object already exists in the HashMap and 
+     * update it (if exists) or add a new object (if not exists).
+     * 
+     * @param criteria HashMap of Criterion objects
+     * @param element String with the element (path that Digester will look for in the xml file)
+     * @throws InvalidParameterException 
+     */
+    private void setElementInCriterion(HashMap<String, Criterion> criteria, String element) throws InvalidParameterException{
+    	if (!element.equals("") && element != null ){
+    		if( criteria.containsKey(element) ){
+    			Criterion tmpCriteria = criteria.get(element);
+    			tmpCriteria.setDigesterPath(element);
+    		}else{
+    			criteria.put(element, new Criterion("", element, null) );
+    		}
+    	}
     }
     
     /**
@@ -529,6 +622,8 @@ public class GenMAPPBuilder extends App {
         }
     }
     
+
+    
     private void getTallyResultsXml( HashMap<String, Criterion> criteria, InputStream iStream ){
     	
     	TallyEngine te = new TallyEngine(criteria);
@@ -558,7 +653,7 @@ public class GenMAPPBuilder extends App {
 			 * Here I am explicitly catching the HibernateException, which is a
 			 * pretty clear indication that the configuration was not done.
 			 */
-			criteria.putAll(te.getDbCounts(new QueryEngine(hibernateConfiguration)));
+			te.getDbCounts(new QueryEngine(hibernateConfiguration));
 		} catch (InvalidParameterException e) {
 			ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
             _Log.error(e);
@@ -592,8 +687,10 @@ public class GenMAPPBuilder extends App {
         }
     	HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
     	getXmlTallyElements(uniprotCriteria);
+    	getXmlTallyElementsDb(uniprotCriteria);
     	HashMap<String, Criterion> goCriteria = new HashMap<String, Criterion>();
     	getOboTallyElements(goCriteria);
+    	getOboTallyElementsDb(goCriteria);
 
     	
         // Create a file chooser and setup the UniProt and GO input streams
@@ -780,7 +877,7 @@ public class GenMAPPBuilder extends App {
     private HQLPanel _queryPanel;
     
     /**
-     * @deprecated 
+     * Runs tallies from xml and db for uniprot and go 
      */
     private Action _runTalliesAction;
     

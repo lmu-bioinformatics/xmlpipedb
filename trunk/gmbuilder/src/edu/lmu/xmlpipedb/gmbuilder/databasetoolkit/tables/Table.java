@@ -327,52 +327,62 @@ public class Table {
     	 * Rather it goes record by record. This is a possible area of 
     	 * performance enhancement later on.
     	 */
-        if (sqlBuffer.size() > 0) {
-            PreparedStatement ps = null;
-            for (SQLStatement sqlStatement : sqlBuffer.toArray(new SQLStatement[0])) {
-                try {
-                    ps = connection.prepareStatement(sqlStatement.getSQL());
-                    if (sqlStatement.getValues() != null) {
-                        for (int i = 0; i < sqlStatement.getValues().length; i++) {
-                            ps.setString(i + 1, GenMAPPBuilderUtilities.straightToCurly(sqlStatement.getValues()[i]));
-                        }
-                    }
-                   
-                    ps.executeUpdate();
-                } catch( SQLException e ){
-                	StringBuffer errText = new StringBuffer("An SQLException occurred while writing to the database. ");
-                	//errText.append(" sqlStatement getSQL: " + sqlStatement.getSQL());
-                	//errText.append(" sqlStatement getValues: " + sqlStatement.getValues());
-                	errText.append(" Error Code: " + e.getErrorCode());
-                	errText.append(" Message: " + e.getMessage());
-                	_Log.error(errText);
-                	
-                	// start - rebuild the query that failed
-                	String values = "";
-                	if (sqlStatement.getValues() != null) {
-                        for (int i = 0; i < sqlStatement.getValues().length; i++) {
-                            values += "\'" + GenMAPPBuilderUtilities.straightToCurly(sqlStatement.getValues()[i] + "\', ");
-                        }
-                    }
-                	// remove the last comma
-                	values = values.substring(values.lastIndexOf(","));
-                	
-                	String sql = sqlStatement.getSQL();
-                	sql = sql.substring(0, sql.indexOf("VALUES"));
-                	sql += "VALUES( " + values + " )";
-                	// end  - rebuild
-
-                	_Log.error(sql);
-                } finally {
-                    try {
-                        ps.close();
-                    } catch(Exception exc) {
-                        _Log.warn("Problem closing PreparedStatement");
+    	int errorCounter = 0; // used for counting SQLExceptions
+    	
+    	// If there are no records to process, just bail!
+        if (sqlBuffer.size() <= 0)
+        	return;
+        
+        PreparedStatement ps = null;
+        for (SQLStatement sqlStatement : sqlBuffer.toArray(new SQLStatement[0])) {
+            try {
+                ps = connection.prepareStatement(sqlStatement.getSQL());
+                if (sqlStatement.getValues() != null) {
+                    for (int i = 0; i < sqlStatement.getValues().length; i++) {
+                        ps.setString(i + 1, GenMAPPBuilderUtilities.straightToCurly(sqlStatement.getValues()[i]));
                     }
                 }
-            }
-        }
-    }
+               
+                ps.executeUpdate();
+            } catch( SQLException e ){
+            	StringBuffer errText = new StringBuffer("An SQLException occurred while writing to the database. ");
+            	//errText.append(" sqlStatement getSQL: " + sqlStatement.getSQL());
+            	//errText.append(" sqlStatement getValues: " + sqlStatement.getValues());
+            	errText.append(" Error Code: " + e.getErrorCode());
+            	errText.append(" Message: " + e.getMessage());
+            	_Log.error(errText);
+            	
+            	// start - rebuild the query that failed
+            	String values = "";
+            	if (sqlStatement.getValues() != null) {
+                    for (int i = 0; i < sqlStatement.getValues().length; i++) {
+                        values += "\'" + GenMAPPBuilderUtilities.straightToCurly(sqlStatement.getValues()[i] + "\', ");
+                    }
+                }
+            	// remove the last comma
+            	values = values.substring(values.lastIndexOf(","));
+            	
+            	String sql = sqlStatement.getSQL();
+            	sql = sql.substring(0, sql.indexOf("VALUES"));
+            	sql += "VALUES( " + values + " )";
+            	// end  - rebuild
+
+            	_Log.error(sql);
+            	errorCounter++;
+            } finally {
+                try {
+                    ps.close();
+                } catch(Exception exc) {
+                    _Log.warn("Problem closing PreparedStatement");
+                }
+            } // end finally
+        } // end for loop
+        
+        // print a log entry if any errors were encountered.
+        if( errorCounter > 0 )
+        	_Log.error(errorCounter + " number of eroneous records were captured." );
+        
+    } // end flush()
     
     /**
      * Log object for this class.

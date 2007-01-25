@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -196,7 +197,9 @@ public class ImportPanel extends JPanel {
                 // does the progress monitor popup
                 InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(this, "Reading " + _xmlFile, new FileInputStream(_xmlFile)));
                 ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration);
+                System.out.println("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
                 importEngine.loadToDB(in);
+                System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
                 // notify user when import is complete
                 JOptionPane.showMessageDialog(this, "Import Complete: " + _xmlFile, "Import Complete", JOptionPane.INFORMATION_MESSAGE);
             } catch( IOException e ){
@@ -205,6 +208,14 @@ public class ImportPanel extends JPanel {
             } catch(Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } catch(OutOfMemoryError e){
+            	System.out.println("Error occurred at : " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );            	
+            	e.printStackTrace();
+            	System.out.print("SystemOutOfMemoryError. Message = " + e.getMessage() +
+            			"LocalizedMessage = " +e.getLocalizedMessage());
+            }
+            finally{
+            	//System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );            	
             }
         } else {
             JOptionPane.showMessageDialog(this, "Please Open a Valid XML File", "Missing or Invalid File", JOptionPane.ERROR_MESSAGE);

@@ -12,6 +12,7 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -101,7 +102,8 @@ public class ExportToGenMAPP {
      * @throws Exception
      */
     public static void export() throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException, InvalidParameterException {
-        ExportWizard.updateExportProgress(1, "Starting GeneOntology export...");
+    	_Log.warn("Export Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
+    	ExportWizard.updateExportProgress(1, "Starting GeneOntology export...");
         (new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getAssociationsFile());
 
         ExportWizard.updateExportProgress(50, "Finished GeneOntology export...");
@@ -163,7 +165,7 @@ public class ExportToGenMAPP {
         TableManager rowCounts = selectedDatabaseProfile.getRowCountsTableManager();
         _Log.info("Exporting row counts tables");
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), rowCounts);
-
+        _Log.warn("Export Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
         _Log.info("Done with ExportToGenMAPP.export()");
     }
 

@@ -247,8 +247,14 @@ public class ExportPanel2 extends JPanel {
 	 * a GenMAPP database file.
 	 */
 	protected void chooseGenMAPPDatabase() {
-		chooser = new JFileChooser(".");
-        chooser.setSelectedFile(new File(GenMAPPBuilderUtilities.getDefaultGDBFilename(ExportToGenMAPP.getDatabaseProfile().getSelectedSpeciesProfile().getSpeciesName(), new Date())));
+		
+		String defaultFileName = GenMAPPBuilderUtilities.getDefaultGDBFilename(ExportToGenMAPP.getDatabaseProfile().getSelectedSpeciesProfile().getSpeciesName(), new Date());
+		File exportFolder = new File("./export/");
+		if( !exportFolder.exists() );
+			exportFolder.mkdir();
+		chooser = new JFileChooser("./export");
+		File defaultFile = new File(defaultFileName);
+        chooser.setSelectedFile(defaultFile);
         if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             genmappDatabaseFile = chooser.getSelectedFile();
             if (genmappDatabaseFile == null) {

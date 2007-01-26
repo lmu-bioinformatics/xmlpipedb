@@ -360,7 +360,8 @@ public class Table {
                     }
                 }
             	// remove the last comma
-            	values = values.substring(values.lastIndexOf(","));
+            	if(values.lastIndexOf(",") >= 0 )
+            		values = values.substring(0, values.lastIndexOf(","));
             	
             	String sql = sqlStatement.getSQL();
             	sql = sql.substring(0, sql.indexOf("VALUES"));

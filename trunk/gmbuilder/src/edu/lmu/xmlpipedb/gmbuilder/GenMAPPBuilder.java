@@ -11,12 +11,18 @@ package edu.lmu.xmlpipedb.gmbuilder;
 
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,14 +41,18 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
+import shag.App;
+import shag.dialog.ModalDialog;
+import shag.menu.WindowMenu;
+import shag.table.BeanColumn;
+import shag.table.BeanTableModel;
+import shag.table.UsefulTable;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
@@ -56,13 +66,6 @@ import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
-
-import shag.App;
-import shag.dialog.ModalDialog;
-import shag.menu.WindowMenu;
-import shag.table.BeanColumn;
-import shag.table.BeanTableModel;
-import shag.table.UsefulTable;
 
 /**
  * GenMAPPBuilder is a GUI application for loading, querying, and exporting data
@@ -93,18 +96,11 @@ public class GenMAPPBuilder extends App {
     public void run() {
         super.run();
         
-        // Set up logging. next line just uses basic logging
-        BasicConfigurator.configure();
         // We will use logging properties set in a file. This will give us
         // greater flexibility and control over our logging
-        //FIXME: This is a complete kludge cuz I can't find how to set it to get the log4j.properties from the classpath. After this is working, we should use this in place of BasicConfigurator
-//        PropertyConfigurator.configure("/eclipse projects/gmbuilder/log4j.properties");
-
-        if (System.getProperty("log.level") != null) {
-            LogManager.getRootLogger().setLevel(Level.toLevel(System.getProperty("log.level")));
-        } else {
-            LogManager.getRootLogger().setLevel(Level.WARN);
-        }
+        // Set up logging. next line just uses basic logging
+        BasicConfigurator.configure();
+        _Log.warn("\n\n\n***** GenMapp Builder Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
 
         Configuration hc = createHibernateConfiguration();
         if (hc == null) {
@@ -171,12 +167,17 @@ public class GenMAPPBuilder extends App {
         tallyMenu.add(_runTalliesAction);
         mb.add(tallyMenu);
         
+//        JMenu dbMenu = new JMenu("DB Actions");
+//        dbMenu.add(_doResetDbAction);
+//        mb.add(dbMenu);
+        
         mb.add(new WindowMenu(this));
         return mb;
     }
 
     /**
      * Creates the actions performed by the application.
+     * 
      */
     private void createActions() {
         _configureDBAction = new AbstractAction("Configure Database...") {
@@ -337,6 +338,19 @@ public class GenMAPPBuilder extends App {
         _processGOAction = new AbstractAction("Process GO Data...") {
             public void actionPerformed(ActionEvent aevt) {
                 doProcessGO();
+            }
+        };
+        
+        _doResetDbAction = new AbstractAction("Reset the database (WARNING: deletes all data)") {
+            public void actionPerformed(ActionEvent aevt) {
+            	Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
+                if (hibernateConfiguration == null) {
+                    showConfigurationError();
+                    return;
+                }
+                boolean reset = ModalDialog.showQuestionDialog("WARNING: This will delete all data loaded in database. This action cannot be undone. Are you sure you wish to do this?");
+            	if( reset )
+            		doResetUniprotAndGoDb(new QueryEngine(hibernateConfiguration));
             }
         };
         
@@ -727,6 +741,71 @@ public class GenMAPPBuilder extends App {
 
     }
 
+    private void doResetUniprotAndGoDb(QueryEngine qe){
+		Connection conn = qe.currentSession().connection();
+        PreparedStatement query = null;
+        ResultSet results = null;
+        String sql = "";
+
+		try {
+//        	// try to find the file in the jar file first
+//            InputStream iStream = getClass().getResourceAsStream(_defaultPropertiesUrl);
+//            if (iStream != null) { 
+//            	// iStream will be null if the file was not found
+//                _defaultProperties.load(iStream);
+//            } else {
+//            	// since iStream WAS null, we'll try to find the properties
+//            	// as a file in the file system
+//            	File f = new File(_defaultPropertiesUrl);
+//                if (!f.exists()) {
+//                    throw new FileNotFoundException(AppResources
+//							.messageString("exception.filenotfound.default")
+//							+ _defaultPropertiesUrl);
+//                }
+//                FileInputStream fis = new FileInputStream(_defaultPropertiesUrl);
+//                _defaultProperties.load(fis);
+			
+			//getClass().getResourceAsStream(_defaultPropertiesUrl);
+	        FileInputStream fis = new FileInputStream("./sql/reset db for gmbuilder.sql");
+
+	        // Here BufferedInputStream is added for fast reading.
+	        BufferedInputStream bis = new BufferedInputStream(fis);
+	        DataInputStream dis = new DataInputStream(bis);
+	        
+			// dis.available() returns 0 if the file does not have more lines.
+	        while (dis.available() != 0) {
+
+	        // this statement reads the line from the file and print it to
+	          // the console.
+	          sql += dis.readLine();
+	        }
+			
+            query = conn.prepareStatement( sql  );
+            query.executeQuery();
+
+		} catch(SQLException sqle) {
+			_Log.error("Caught exception in doResetUniprotAndGoDb() while trying to execute SQL statements.");
+			sqle.printStackTrace();
+			//came from HQLPanel -- probably not needed here qe.currentSession().reconnect();
+			//throw new HibernateQueryException(  sqle.getMessage() );
+			//Need to clean up connection after SQL exceptions
+        } catch(Exception e) {
+//        	TODO: Log exception
+            //throw new XpdException(e.getMessage());
+        } finally {
+            try {
+                results.close();
+                query.close();
+
+               //We need to be sure to NOT close the connection or the session here. Leave it open!
+            } catch(Exception e) {
+//            	TODO: Log exception
+                
+            } // Ignore the errors here, nothing we can do anyways.
+        }
+
+    }
+    
     /**
      * Columns used for displaying tally results.
      */
@@ -890,7 +969,13 @@ public class GenMAPPBuilder extends App {
     private Action _gdbTallyAction;
     
     /**
+     * Drops and recreates all database objects
+     */
+    private Action _doResetDbAction;
+    
+    /**
      * Stores the path last used in a file chooser
      */
-    String _lastFilePath = System.getProperty("user.home");
+    // This is really neat -- System.getProperty("user.home"); -- but I don't want to be there!
+    String _lastFilePath = ".";
 }

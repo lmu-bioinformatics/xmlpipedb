@@ -21,6 +21,7 @@ import java.util.Map;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
@@ -118,18 +119,25 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	 * Add 2 SPECIES_TABLE specific items to the tableManager, then call the
 	 * super class to add the items all species will need.
 	 * 
+	 * Above is probably wrong, correct is:
+	 * Add the TAIR entry that is needed for A. thaliana, along with the 
+	 * correct code "A"
+	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemsTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
 	 *      DatabaseProfile)
 	 */
 	@Override
 	public TableManager getSystemsTableManagerCustomizations(
 			TableManager tableManager, DatabaseProfile dbProfile) {
-				
+	
 		tableManager.submit("Systems", QueryType.update, new String[][] {
-				{ "SystemCode", "Ln" }, { "System", SPECIES_TABLE } });
+				{ "SystemCode", "A" }, { "System", SPECIES_TABLE },
+				{ "\"Date\"", GenMAPPBuilderUtilities
+							.getSystemsDateString(dbProfile.version) }
+				});
 		
-		tableManager.submit("Systems", QueryType.update, new String[][] {
-				{ "SystemCode", "Ln" }, { "SystemName", SPECIES_TABLE } });
+//		tableManager.submit("Systems", QueryType.update, new String[][] {
+//				{ "SystemCode", "Ln" }, { "SystemName", SPECIES_TABLE } });
 		
 		// JN - the only reason this is last is that it was like that from
 		// the start. Order may not matter, but I chose not to mess with it.

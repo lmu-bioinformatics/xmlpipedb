@@ -2,6 +2,7 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,10 +10,13 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.cfg.Configuration;
 import org.junit.Test;
 
@@ -31,11 +35,52 @@ public class GenMAPPBuilderSpeciesProfileTest {
 
 	
 	/* **** class vars **** */
+	private static final Log _Log = LogFactory.getLog(ExportToGenMAPP.class);
 //    private String _jaxbContextPath;
     private Configuration _hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
 //	private ConfigurationEngine _configEng;
 //	private File _xmlFile;
-	
+
+    
+//    static final String SPECIES = "Escherichia coli";
+//    static final String[] PROPER = {"UniProt", "EchoBASE", "Blattner", "EcoGene"};
+//    static final String[] IMPROPER =  {"GeneOntology", "EMBL", "PDB", "Pfam", "InterPro"};
+//    static final String DISPLAY_ORDER = "|S|T|Ln|Ec|Eg|Em|I|Pd|Pf|";
+    
+    // A. thaliana test
+    static final String SPECIES = "Arabidopsis thaliana";
+    static final String[] PROPER = {"UniProt", "UniGene", "TAIR"};
+    static final String[] IMPROPER =  {"GeneOntology", "EMBL", "Pfam", "InterPro"};
+    static final String DISPLAY_ORDER = "|S|T|Ln|Em|I|Pf|U|";
+    static final int systemsTableChangesCount = 7;
+    ArrayList<String> systemsEntries = new ArrayList<String>(7);
+    {
+	    systemsEntries.add("T");
+	    systemsEntries.add("I");
+	    systemsEntries.add("S");
+	    systemsEntries.add("A");
+	    systemsEntries.add("U");
+	    systemsEntries.add("Em");
+    	systemsEntries.add("Pf");
+    }
+    
+    Hashtable<String,String> relationsEntries = new Hashtable<String,String>(15);
+    {
+    	relationsEntries.put("S", "A");
+    	relationsEntries.put("S", "I");
+    	relationsEntries.put("S", "Pf");
+    	relationsEntries.put("S", "U");
+    	relationsEntries.put("S", "Em");
+    	relationsEntries.put("S", "T");
+    	relationsEntries.put("U", "Em");
+    	relationsEntries.put("U", "Pf");
+    	relationsEntries.put("U", "I");
+    	relationsEntries.put("U", "A");
+    	relationsEntries.put("A", "T");
+    	relationsEntries.put("A", "Em");
+    	relationsEntries.put("A", "Pf");
+    	relationsEntries.put("A", "I");
+    }
 	/**
 	 * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.EscherichiaColiUniProtSpeciesProfile#getRelationsTableManagerCustomizations(String, String, Map, TableManager)}.
 	 * Ensure that the number and type of records returned are correct.
@@ -44,8 +89,145 @@ public class GenMAPPBuilderSpeciesProfileTest {
 	 * Based on what input??? Not sure.
 	 * @throws InvalidParameterException 
 	 */
-	@Test
+
 	public void testGetRelationsTableManager() throws FileNotFoundException, InvalidParameterException {
+        Row[] rows = null;
+		
+		// setup environment
+		DatabaseProfile dp = doSetupOfExportEnvironment();
+		
+		// do tests
+//      This uses SpeciesProfile
+        TableManager tmB = dp.getRelationsTableManager();
+        rows = tmB.getRows();
+        assertEquals(26, rows.length);
+        int count=0;
+        for( Row r: rows){
+        	System.out.println("\nrow #: " + ++count);
+        	Map rowMap = r.getRowAsMap();
+        	
+        	Iterator i = rowMap.keySet().iterator();
+        	while(i.hasNext()){
+        		String s = (String)i.next();
+        		System.out.print(s + "     " + r.getValue(s) + "  |x|   ");
+        	}
+
+        }
+        
+        TableManager tmD = dp.getSystemsTableManager();
+        rows = tmD.getRows();
+        assertEquals(9, rows.length);
+        count=0;
+        for( Row r: rows){
+        	System.out.println("\nrow #: " + ++count);
+        	Map rowMap = r.getRowAsMap();
+        	
+        	Iterator i = rowMap.keySet().iterator();
+        	while(i.hasNext()){
+        		String s = (String)i.next();
+        		System.out.print(s + "     " + r.getValue(s) + "  |x|   ");
+        	}
+        }
+        
+        try {
+			TableManager tmF = dp.getSystemTableManager();
+			rows = tmF.getRows();
+			assertEquals(184, rows.length);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+        try {
+			List<TableManager> tmG = dp.getRelationshipTableManager();
+			assertEquals(22, tmG.size());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        String defaultDisplayOrder = dp.getDefaultDisplayOrder();
+        assertEquals( DISPLAY_ORDER, defaultDisplayOrder );
+        
+	}// end testGetReleations...
+
+	
+	
+	/**
+	 * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.EscherichiaColiUniProtSpeciesProfile#getRelationsTableManagerCustomizations(String, String, Map, TableManager)}.
+	 * Ensure that the number and type of records returned are correct.
+	 * 
+	 * Compared to what??? Not sure.
+	 * Based on what input??? Not sure.
+	 * 
+	 * This is setup to run for A. thaliana.
+	 * 
+	 * @throws InvalidParameterException 
+	 */
+	@Test
+	public void testSystemsTableOutput() throws FileNotFoundException, InvalidParameterException {
+        Row[] rows = null;
+        int count=0;		
+		// setup environment
+		DatabaseProfile dp = doSetupOfExportEnvironment();
+		
+		// do tests
+        
+        TableManager tmD = dp.getSystemsTableManager();
+        rows = tmD.getRows();
+        assertEquals(systemsTableChangesCount, rows.length);
+        count=0;
+        for( Row r: rows){
+        	boolean hasDate = false; // indicates if the row has a non-empty date field
+        	_Log.debug("\nrow #: " + ++count);
+        	Map rowMap = r.getRowAsMap();
+        	Iterator i = rowMap.keySet().iterator();
+
+        	/* Here's the general logic of the next bit: 
+        	 * 1. Find the "SystemCode" entry for each record
+        	 * 2. If it is in the list of "systemEntries" then:
+        	 * 	a. remove it (so it can't be used again if there is a repeat
+        	 *  b. break out of the while (so we move on to the next record
+        	 * 3. If NOT in the list, then assertTrue(false) -- basically throw an error
+        	 */
+        	while(i.hasNext()){
+        		String s = (String)i.next();
+        		_Log.debug(s + "     " + r.getValue(s) + "  |x|   ");
+        		if(s.equalsIgnoreCase("\"Date\"")){
+        			if(r.getValue(s)!= null && !r.getValue(s).equals(""))
+        				hasDate = true;
+        		}
+        		
+        		if(s.equals("SystemCode")){
+        			if( systemsEntries.contains(r.getValue(s)) && hasDate ){
+        				systemsEntries.remove(r.getValue(s));
+        				break;
+        			}
+        			else
+        				assertTrue(false);
+        		}
+        	}
+        }
+        // check that the list "systemsEntries" is NOT empty and fail the test, cuz we missed something
+        if( !systemsEntries.isEmpty() )
+        	assertTrue(false);
+        
+//TODO: Figure-out what this value is supposed to be / what are we measuring here        
+//        try {
+//			List<TableManager> tmG = dp.getRelationshipTableManager();
+//			assertEquals(22, tmG.size());
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+        
+        String defaultDisplayOrder = dp.getDefaultDisplayOrder();
+        assertEquals( DISPLAY_ORDER, defaultDisplayOrder );
+        
+	}// end testGetReleations...
+
+
+	public void testRelationsTableOutput() throws FileNotFoundException, InvalidParameterException {
         Row[] rows = null;
 		
 		// setup environment
@@ -105,10 +287,16 @@ public class GenMAPPBuilderSpeciesProfileTest {
         assertEquals( "|S|T|Ln|Ec|Eg|Em|I|Pd|Pf|", defaultDisplayOrder );
         
 	}// end testGetReleations...
-	
+
 	/**
 	 * The purpose of this method is to create and pre-populate a DbProfile
 	 * so that any subsequent tests can use this without duplicating the code.
+	 * 
+	 * Steps:
+	 * 1. Get DatabaseProfile
+	 * 2. Get SpeciesProfile
+	 * 3. Put SpeciesProfile into DatabaseProfile
+	 * 
 	 * 
 	 * @return DatabaseProfile
 	 */
@@ -135,7 +323,7 @@ public class GenMAPPBuilderSpeciesProfileTest {
 		 			
 		 			for (SpeciesProfile speciesProfile : profile.getSpeciesProfilesFound()) {
 		 				// find the species we want and put it in the result db profile
-		                if( speciesProfile.getName().equals("Escherichia coli")){
+		                if( speciesProfile.getName().equals(SPECIES)){
 		                	result.setSelectedSpeciesProfile(speciesProfile);
 		                	break;
 		                } // end if
@@ -168,9 +356,7 @@ public class GenMAPPBuilderSpeciesProfileTest {
 							null); // we are not doing GO, so no need for a GO file
 					
 					// from ExportPanel3
-					String[] proper = {"UniProt", "EchoBASE", "Blattner", "EcoGene"};
-					String[] improper = {"GeneOntology", "EMBL", "PDB", "Pfam", "InterPro"};
-					result.setTableProperties(proper, improper);
+					result.setTableProperties(PROPER, IMPROPER);
 					
 					// from ExportPanel4
 					List<String> relationshipTables = new ArrayList<String>();
@@ -211,7 +397,7 @@ public class GenMAPPBuilderSpeciesProfileTest {
      * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities#getDefaultGDBFilename(java.lang.String, java.util.Date)}.
      * Ensure that the GMBUtilities getDefaultGDBFilename method works
      * correctly. Specifically:
-     * - given a species and date, acorrect file name is returned
+     * - given a species and date, a correct file name is returned
      * - null is not accepted for the species name
      * - null is not accepted for the date
      */

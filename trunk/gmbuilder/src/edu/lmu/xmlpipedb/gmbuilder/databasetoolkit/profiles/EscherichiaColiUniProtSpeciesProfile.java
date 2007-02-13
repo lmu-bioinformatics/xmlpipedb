@@ -21,6 +21,7 @@ import java.util.Map;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
@@ -113,15 +114,45 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	public TableManager getSystemsTableManagerCustomizations(
 			TableManager tableManager, DatabaseProfile dbProfile) {
 				
-		tableManager.submit("Systems", QueryType.update, new String[][] {
+/*
+ * JN - 2/12/2007 -
+ * This was an attempt to simplify the code, but it was done before I properly
+ * understood what was going on. I may go back to it, but will use the code
+ * below for now.
+ * 
+ * 		tableManager.submit("Systems", QueryType.update, new String[][] {
 				{ "SystemCode", "Ln" }, { "System", SPECIES_TABLE } });
 		
 		tableManager.submit("Systems", QueryType.update, new String[][] {
 				{ "SystemCode", "Ln" }, { "SystemName", SPECIES_TABLE } });
+*/		
+		
+		/*
+		 * What this is doing is creating an update query that will change the
+		 * name of the "Species" column in the System table.
+		 */
+		
+		tableManager.submit("Systems", QueryType.update, new String[][] {
+				{ "SystemCode", "Ln" },
+				{ "Species", "|" + getSpeciesName() + "|" } });
+		
+		
+/*
+ * JN - 2/12/2007 - this is not needed here. The date update can be handled
+ * by the UniProtDatabaseProfile.getSystemsTableManager() method.
+ * 
+ * 		tableManager.submit("Systems", QueryType.update, new String[][] {
+				{ "SystemCode", "Ln" },
+				{
+						"\"Date\"",
+						GenMAPPBuilderUtilities.getSystemsDateString(dbProfile
+								.getVersion()) } });*/
 		
 		// JN - the only reason this is last is that it was like that from
 		// the start. Order may not matter, but I chose not to mess with it.
-		tableManager = super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
+//		 JN - 2/12/2007 - This method does nothing (all code is commented)
+		// Regardless, nothing it did do was pertinant to A. thalian. -- goodbye
+		//deleteme// tableManager = super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
 		
 		return tableManager;
 	}

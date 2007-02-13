@@ -33,6 +33,7 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProfile {
 	
 	private final String SPECIES_TABLE = "TAIR";
+	private final String SPECIES_SYSTEM_CODE = "A";
 	
 	/**
 	 * Creates the UniProt A.thaliana species profile. This profile defines the requirements for 
@@ -50,12 +51,16 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	 * requires a species specific SPECIES_TABLE. This method is called by the Export
 	 * Dialog when populating the list of Proper System Tables.
 	 * 
+	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificSystemTables()
 	 */
 	@Override
 	protected Map<String, SystemType> getSpeciesSpecificSystemTables() {
 		Map<String, SystemType> speciesSpecificAvailableSystemTables = new HashMap<String, SystemType>();
 
+		//JN - I think this is where I made  the fix for the value that was going into
+		// the systems table -- it looks like this method is being used by ExportWiz and 
+		// elsewhere with different desired results.
 		speciesSpecificAvailableSystemTables.put(SPECIES_TABLE, SystemType.Proper);
 		return speciesSpecificAvailableSystemTables;
 	}
@@ -130,18 +135,22 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	public TableManager getSystemsTableManagerCustomizations(
 			TableManager tableManager, DatabaseProfile dbProfile) {
 	
-		tableManager.submit("Systems", QueryType.update, new String[][] {
-				{ "SystemCode", "A" }, { "System", SPECIES_TABLE },
+/*		tableManager.submit("Systems", QueryType.update, new String[][] {
+				{ "SystemCode", SPECIES_SYSTEM_CODE }, { "System", SPECIES_TABLE },
 				{ "\"Date\"", GenMAPPBuilderUtilities
 							.getSystemsDateString(dbProfile.version) }
-				});
+				});*/
 		
-//		tableManager.submit("Systems", QueryType.update, new String[][] {
-//				{ "SystemCode", "Ln" }, { "SystemName", SPECIES_TABLE } });
+		tableManager.submit("Systems", QueryType.update, new String[][] {
+				{ "SystemCode", SPECIES_SYSTEM_CODE },
+				{ "Species", "|" + getSpeciesName() + "|" } });
+		
 		
 		// JN - the only reason this is last is that it was like that from
 		// the start. Order may not matter, but I chose not to mess with it.
-		tableManager = super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
+		// JN - 2/12/2007 - This method does nothing (all code is commented)
+		// Regardless, nothing it did do was pertinant to A. thalian. -- goodbye
+		//deleteme// tableManager = super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
 		
 		return tableManager;
 	}
@@ -149,6 +158,12 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	/**
 	 * This method calls a helper method in the super class, passing the species
 	 * specific table name to be used.
+	 * 
+	 * This method controls what data is put into the species specific table.
+	 * In this case, what goes in the TAIR table. For A. thaliana, we only
+	 * want 'ordered locus' records since the 'ORF' records are not complete.
+	 * So, we have only added 'ordered locus' to the "comparisionList" below. 
+	 * 
 	 * @throws InvalidParameterException 
 	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
@@ -161,7 +176,8 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 			Date version) throws SQLException, InvalidParameterException {
 		
     	ArrayList<String> comparisonList = new ArrayList<String>(2);
-    	comparisonList.add("ORF");
+    	//comparisonList.add("ORF");
+    	comparisonList.add("ordered locus");
 		
 		tableManager = super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, SPECIES_TABLE, comparisonList);
 		

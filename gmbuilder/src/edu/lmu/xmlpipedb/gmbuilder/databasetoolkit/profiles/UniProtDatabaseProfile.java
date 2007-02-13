@@ -183,12 +183,30 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
         tableManager = new TableManager(null, new String[] { "SystemCode" });
 
+        /*
+         * What this is doing is creating a number of update queries that will 
+         * update the Systems table for each entry in the systemTables Map.
+         * It will update the entry with a date/time. GenMAPP uses the 
+         * fact that the record has a date/time to know that their is a table
+         * for that system in the database (yes this is stupid, but we're not
+         * here to change GenMAPP).
+         * 
+         * Note: in the original, this actually only does this for systems
+         * that are *not* species specific. (hence the "!").
+         * 
+         * With the if-block commented out the date update will be applied to 
+         * all entries. Additional processing is done below.
+         */
         for (Entry<String, SystemType> systemTable : systemTables.entrySet()) {
-            if (!speciesProfile.getSpeciesSpecificSystemTables().containsKey(systemTable.getKey())) {
+           // if (!speciesProfile.getSpeciesSpecificSystemTables().containsKey(systemTable.getKey())) {
                 tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get(systemTable.getKey()) }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) } });
-            }
+          //  }
         }
 
+        /*
+         * Next we want to ensure that these two records get their "Columns" 
+         * column updated with the values here.
+         */
         tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get("UniProt") }, { "Columns", "ID|EntryName\\sBF|GeneName\\sBF|ProteinName\\BF|Function\\BF|" } });
         tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get("InterPro") }, { "Columns", "ID|" } });
 

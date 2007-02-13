@@ -540,7 +540,7 @@ public abstract class DatabaseProfile extends Profile {
         TableManager tableManager = new TableManager(null, new String[] { "SystemCode", "RelatedCode" });
         for (String relationTable : relationshipTables) {
             SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationTable);
-            //FIXME: Why is this NOT using the short-circuit OR (||)???
+            // The reason why it is not short-circuit, is that we must process both systemTable1 and systemTable2
             if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
                 tableManager = speciesProfile.getRelationsTableManagerCustomizations(stp.systemTable1, stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
             } else {

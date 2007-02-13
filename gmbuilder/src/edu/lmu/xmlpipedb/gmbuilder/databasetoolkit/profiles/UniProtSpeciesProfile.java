@@ -319,19 +319,9 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 	 */
 	@Override
 	public TableManager getSystemsTableManagerCustomizations(TableManager tableManager, DatabaseProfile dbProfile) {
-		//FIXME: This may be needed for E. coli, but s/n/b needed for A. thaliana
-		// Don't know why this is done in 2 steps, but I think that it is changing the same entry
-//		tableManager.submit("Systems", QueryType.update, new String[][] {
-//				{ "SystemCode", "Ln" },
-//				{ "Species", "|" + getSpeciesName() + "|" } });
-		
-//		tableManager.submit("Systems", QueryType.update, new String[][] {
-//				{ "SystemCode", "Ln" },
-//				{
-//						"\"Date\"",
-//						GenMAPPBuilderUtilities.getSystemsDateString(dbProfile
-//								.getVersion()) } });
-		
+
+		// there was some code here that was E. coli specific. It has been moved
+		// to the same method in the E. coli SpeciceProfile
 		return tableManager;
 	}
 }

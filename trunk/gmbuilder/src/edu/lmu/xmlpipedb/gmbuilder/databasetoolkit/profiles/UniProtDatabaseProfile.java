@@ -204,10 +204,9 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         }
 
         /*
-         * Next we want to ensure that these two records get their "Columns" 
-         * column updated with the values here.
+         * Next we want to ensure that this record get it's "Columns" 
+         * column updated with the value here.
          */
-        tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get("UniProt") }, { "Columns", "ID|EntryName\\sBF|GeneName\\sBF|ProteinName\\BF|Function\\BF|" } });
         tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get("InterPro") }, { "Columns", "ID|" } });
 
         tableManager = speciesProfile.getSystemsTableManagerCustomizations(tableManager, this);

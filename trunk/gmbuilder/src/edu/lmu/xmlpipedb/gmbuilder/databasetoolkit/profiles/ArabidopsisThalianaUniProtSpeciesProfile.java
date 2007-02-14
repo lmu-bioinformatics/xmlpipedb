@@ -140,6 +140,14 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 				{ "\"Date\"", GenMAPPBuilderUtilities
 							.getSystemsDateString(dbProfile.version) }
 				});*/
+		/*
+		 * This entry is different from E. coli, in that |GeneName\\sBF| was 
+		 * changed to |GeneName\\BF|, removing the "s". This makes GeneName a 
+		 * non-searchable field. This is necessary because A. thaliana data doesn't
+		 * have GeneNames for all entries (it has nulls). If (when) this is ever
+		 * corrected (i.e. all GeneNames have a value) the "s" can be added back in. 
+		 */
+		tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", dbProfile.templateDefinedSystemToSystemCode.get("UniProt") }, { "Columns", "ID|EntryName\\sBF|GeneName\\BF|ProteinName\\BF|Function\\BF|" } });
 		
 		tableManager.submit("Systems", QueryType.update, new String[][] {
 				{ "SystemCode", SPECIES_SYSTEM_CODE },

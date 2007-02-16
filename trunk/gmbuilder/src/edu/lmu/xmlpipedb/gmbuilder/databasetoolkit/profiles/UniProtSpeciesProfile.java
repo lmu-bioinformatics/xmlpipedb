@@ -67,6 +67,11 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
         // TODO This is virtually identical to the e. coli version; find a way to unify.
         // TODO (for that matter, find a way to unify the whole thing)
     	
+    	/*
+    	 * This method is only called (and therefore this bit 'o logic is only
+    	 * invoked) when the species specific class has not overridden this
+    	 * method. These values may (or may not) be a good default.
+    	 */
     	ArrayList<String> comparisonList = new ArrayList<String>(2);
     	comparisonList.add("ordered locus");
     	comparisonList.add("ORF");

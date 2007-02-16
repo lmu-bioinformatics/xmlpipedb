@@ -172,6 +172,11 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	 * want 'ordered locus' records since the 'ORF' records are not complete.
 	 * So, we have only added 'ordered locus' to the "comparisionList" below. 
 	 * 
+	 * JN 2/15/2007
+	 * In our case, in fact, we don't want this method to do anything, since
+	 * id's in the TAIR table cannot come from Gene. This method just
+	 * returns null.
+	 * 
 	 * @throws InvalidParameterException 
 	 * 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
@@ -181,13 +186,13 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	@Override
 	public TableManager getSystemTableManagerCustomizations(
 			TableManager tableManager, TableManager primarySystemTableManager,
-			Date version) throws SQLException, InvalidParameterException {
+			Date version) {
 		
-    	ArrayList<String> comparisonList = new ArrayList<String>(2);
+    	//ArrayList<String> comparisonList = new ArrayList<String>(0);
     	//comparisonList.add("ORF");
-    	comparisonList.add("ordered locus");
+    	//comparisonList.add("ordered locus");
 		
-		tableManager = super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, SPECIES_TABLE, comparisonList);
+		//tableManager = super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, SPECIES_TABLE, comparisonList);
 		
 
 		return tableManager;

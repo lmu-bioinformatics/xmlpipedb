@@ -234,8 +234,14 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
         TableManager tableManager;
 
-        tableManager = new TableManager(new String[][] { { "ID", "VARCHAR(50) NOT NULL" }, { "EntryName", "VARCHAR(50) NOT NULL" }, { "GeneName", "VARCHAR(50) NOT NULL" }, { "ProteinName", "MEMO" }, { "Function", "MEMO" }, { "Species", "MEMO" }, { "\"Date\"", "DATE" }, { "Remarks", "MEMO" } }, new String[] { "UID" });
-
+        /* JN 2/16/2007 -- 
+         * For A. thaliana to work, I've removed the "NOT NULL" constraint 
+         * on the GeneName field. This may not be appropriate for other
+         * Species and therefore may need to change later. -- let's keep an eye on it.
+         * 
+         */
+//        tableManager = new TableManager(new String[][] { { "ID", "VARCHAR(50) NOT NULL" }, { "EntryName", "VARCHAR(50) NOT NULL" }, { "GeneName", "VARCHAR(50) NOT NULL" }, { "ProteinName", "MEMO" }, { "Function", "MEMO" }, { "Species", "MEMO" }, { "\"Date\"", "DATE" }, { "Remarks", "MEMO" } }, new String[] { "UID" });
+        tableManager = new TableManager(new String[][] { { "ID", "VARCHAR(50) NOT NULL" }, { "EntryName", "VARCHAR(50) NOT NULL" }, { "GeneName", "VARCHAR(50)" }, { "ProteinName", "MEMO" }, { "Function", "MEMO" }, { "Species", "MEMO" }, { "\"Date\"", "DATE" }, { "Remarks", "MEMO" } }, new String[] { "UID" });
         PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT entrytype_accession_hjid, hjvalue " + "FROM entrytype_accession " + "WHERE entrytype_accession_hjindex = 0");
         ResultSet result = ps.executeQuery();
         while (result.next()) {

@@ -162,6 +162,8 @@ public class ExportToGenMAPP {
         _Log.info("Getting second-pass table managers");
         // No species specific processing
         _Log.info("Start ()");
+//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+        ExportWizard.updateExportProgress(67, "Preparing tables - Second pass Relationship tables...");
         TableManager[] secondPass = selectedDatabaseProfile.getSecondPassTableManagers();
         _Log.info("Exporting second-pass tables");
         _Log.info("Start exportTables(selectedDatabaseProfile.getExportConnection(), secondPass)");
@@ -169,7 +171,7 @@ public class ExportToGenMAPP {
 
         //JN - Like "SecondPass", above, this method is only creating 1 TableManager
         //		and therefore does not require "in-lining".
-        ExportWizard.updateExportProgress(66, "Preparing table - OriginalRowCounts table...");
+        ExportWizard.updateExportProgress(68, "Preparing table - OriginalRowCounts table...");
         _Log.info("Getting row counts table manager");
         _Log.info("Start selectedDatabaseProfile.getRowCountsTableManager()");
         //No species specific processing

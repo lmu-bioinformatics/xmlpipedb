@@ -171,7 +171,16 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         Map<String, SystemType> uniprotSpecificSystemTables = new HashMap<String, SystemType>();
         uniprotSpecificSystemTables.put("UniProt", SystemType.Primary);
         uniprotSpecificSystemTables.put("GeneOntology", SystemType.Improper);
-        uniprotSpecificSystemTables.putAll(speciesProfile.getSpeciesSpecificSystemTables());
+        try {
+			if(speciesProfile.getSystemTableManagerCustomizations(null, null, null) != null)
+				uniprotSpecificSystemTables.putAll(speciesProfile.getSpeciesSpecificSystemTables());
+		} catch (InvalidParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return uniprotSpecificSystemTables;
     }
 
@@ -293,13 +302,24 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
         // loop through the list of System tables and for each one, ... do some evaluation??? need to look at this more closely.
         for (Entry<String, SystemType> systemTable : systemTables.entrySet()) {
-            if ((!getDatabaseSpecificSystemTables().containsKey(systemTable.getKey())) && (!speciesProfile.getSpeciesSpecificSystemTables().containsKey(systemTable.getKey()))) {
-
+        	
+        	/*
+        	 * JN 2/15/2007
+        	 * I think the second part of this if is redundant, since the species 
+        	 * specific tables are already included in the Map returned by
+        	 * getDatabaseSpecificSystemTables()
+        	 */
+        	_Log.info("getSystemTableManager(): for loop: systemTable.getKey() = " + systemTable.getKey() );
+            if ((!getDatabaseSpecificSystemTables().containsKey(systemTable.getKey())) 
+            	/*	&& (!speciesProfile.getSpeciesSpecificSystemTables().containsKey(systemTable.getKey()))*/
+            	) {
+            	_Log.info("getSystemTableManager(): for loop: " + systemTable.getKey() + " is not in the list of DatabaseSpecificSystemTables or SpeciesSpecificSystemTables.");
                 ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT DISTINCT(id) " + "FROM dbreferencetype " + "WHERE type = ?");
                 ps.setString(1, systemTable.getKey());
                 result = ps.executeQuery();
 
                 while (result.next()) {
+                	_Log.info("getSystemTableManager(): while loop: ID:: " + result.getString("id") + "  Species:: " + speciesProfile.getSpeciesName() );
                     tableManager.submit(systemTable.getKey(), QueryType.insert, new String[][] { { "ID", result.getString("id") }, { "Species", "|" + speciesProfile.getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) } });
                 }
             }
@@ -391,8 +411,6 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     @Override
     public TableManager[] getSecondPassTableManagers() throws SQLException {
         List<TableManager> tableManagers = new ArrayList<TableManager>();
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(66, "Preparing tables - Second pass Relationship tables...");
         tableManagers.add(getSecondPassRelationshipTables());
         return tableManagers.toArray(new TableManager[0]);
     }

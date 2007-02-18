@@ -43,16 +43,16 @@ public class GenMAPPBuilderEscherichiaColiSpeciesProfileTest {
 //	private File _xmlFile;
 
     
-//    static final String SPECIES = "Escherichia coli";
-//    static final String[] PROPER = {"UniProt", "EchoBASE", "Blattner", "EcoGene"};
-//    static final String[] IMPROPER =  {"GeneOntology", "EMBL", "PDB", "Pfam", "InterPro"};
-//    static final String DISPLAY_ORDER = "|S|T|Ln|Ec|Eg|Em|I|Pd|Pf|";
+    static final String SPECIES = "Escherichia coli";
+    static final String[] PROPER = {"UniProt", "EchoBASE", "Blattner", "EcoGene"};
+    static final String[] IMPROPER =  {"GeneOntology", "EMBL", "PDB", "Pfam", "InterPro"};
+    static final String DISPLAY_ORDER = "|S|T|Ln|Ec|Eg|Em|I|Pd|Pf|";
     
     // A. thaliana test
-    static final String SPECIES = "Arabidopsis thaliana";
-    static final String[] PROPER = {"UniProt", "UniGene", "TAIR"};
-    static final String[] IMPROPER =  {"GeneOntology", "EMBL", "Pfam", "InterPro"};
-    static final String DISPLAY_ORDER = "|S|T|Ln|Em|I|Pf|U|";
+//    static final String SPECIES = "Arabidopsis thaliana";
+//    static final String[] PROPER = {"UniProt", "UniGene", "TAIR"};
+//    static final String[] IMPROPER =  {"GeneOntology", "EMBL", "Pfam", "InterPro"};
+//    static final String DISPLAY_ORDER = "|S|T|Ln|Em|I|Pf|U|";
     static final int systemsTableChangesCount = 7;
     ArrayList<String> systemsEntries = new ArrayList<String>(7);
     {

@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +83,21 @@ public class ATSpeciesProfileTest {
     	relationsEntries.add("A,Em");
     	relationsEntries.add("A,Pf");
     	relationsEntries.add("A,I");
+    }
+    
+    Map<String, Integer> relationships = new HashMap<String, Integer>(12);{
+    	relationships.put("UniProt-TAIR", new Integer(45)); 
+    	relationships.put("UniProt-InterPro", new Integer(97));
+    	relationships.put("UniProt-Pfam", new Integer(45)); 
+    	relationships.put("UniProt-UniGene", new Integer(44));
+    	relationships.put("UniProt-EMBL", new Integer(240)); 
+    	relationships.put("UniGene-EMBL", new Integer(123)); 
+    	relationships.put("UniGene-Pfam", new Integer(24)); 
+    	relationships.put("UniGene-InterPro", new Integer(53));
+    	relationships.put("UniGene-TAIR", new Integer(24)); 
+    	relationships.put("TAIR-EMBL", new Integer(128));    
+    	relationships.put("TAIR-Pfam", new Integer(26));    
+    	relationships.put("TAIR-InterPro", new Integer(53));
     }
 	/**
 	 * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.EscherichiaColiUniProtSpeciesProfile#getRelationsTableManagerCustomizations(String, String, Map, TableManager)}.
@@ -254,61 +269,65 @@ public class ATSpeciesProfileTest {
 	//      This uses SpeciesProfile
 	        TableManager tmB = dp.getRelationsTableManager();
 	        rows = tmB.getRows();
+	        
+	        // TEST 1 - Did we get the correct # of rows?
 	        assertEquals(relationsEntries.size(), rows.length);
 
+	        // TEST 2 - Do we have the right stuff in each row?
 	        int count=0;
 	        for( Row r: rows){
-	        	System.out.println("\nrow #: " + ++count);
-	        	Map rowMap = r.getRowAsMap();
-	        	
-	        	Iterator i = rowMap.keySet().iterator();
+	        	_Log.warn("\nrow #: " + ++count);
 	        	_Log.warn("TEST: getRelationsTableManger");
-	        	while(i.hasNext()){
-	        		String s = (String)i.next();
-	        		_Log.warn(s + "     " + r.getValue(s) + "  |x|   ");
-	//        		if(s.equalsIgnoreCase("\"Date\"")){
-	//        			//if(r.getValue(s)!= null && !r.getValue(s).equals(""))
-	//        				//hasDate = true;
-	//        		}
-	//        		
-	//        		if(s.equals("SystemCode")){
-	//        			if( systemsEntries.contains(r.getValue(s))  ){
-	//        				systemsEntries.remove(r.getValue(s));
-	//        				break;
-	//        			}
-	//        			else
-	//        				assertTrue(false);
-	//        		}
+	        	
+	        	/*
+	        	 * It looks like this might do the trick::
+	        	 * 1. Make a string with the same formatting as our relationsEntries
+	        	 * 		known-good values
+	        	 * 2. Compare to the known-good values
+	        	 * 	a. if it is there, remove it (well done!)
+	        	 *  b. if what we have is not in the Map - throw an error! --assertTrue(false)
+	        	 * 3. After the loop, check that relationsEntries is empty (if not throw an error) 
+	        	 */
+	        	String comparitor = r.getValue("SystemCode") + "," + r.getValue("RelatedCode");
+	        	_Log.warn("Formated Relationship Codes: [" + comparitor + "]");
+	        	if( relationsEntries.contains(comparitor) )
+	        		relationsEntries.remove(comparitor);
+	        	else{
+	        		_Log.error("Error in values returned by getRelationsTableManger.");
+	        		_Log.error("The value returned: [" + comparitor + "], is not in the list of known-good values.");
+	        		assertTrue(false);
 	        	}
+	        	
+	        	/*
+	        	 * This is only here, in case you want to see all the values of
+	        	 * the row that is returned. In that case, just uncomment this,
+	        	 * run the test and check the log file! :) -- you're welcome JN
+	        	 */
+//	        	while(i.hasNext()){
+//	        		String s = (String)i.next();
+//	        		_Log.warn(s + "     " + r.getValue(s) + "  |x|   ");
+//	        	}
 	
-	        }
-	        
-	   
+	        } // end for loop
+
+	        // TEST 3 - check that the list "relationsEntries" is NOT empty and 
+	        //          fail the test, cuz we missed something
+	        if( !relationsEntries.isEmpty() )
+	        	assertTrue(false);        
+       
+	        // Clean-up after yourself! (or myself in this case)
 	        try {
-				TableManager tmF = dp.getSystemTableManager();
-				rows = tmF.getRows();
-				assertEquals(184, rows.length);
+				ConnectionManager.closeRelationalDB();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-	        try {
-				List<TableManager> tmG = dp.getRelationshipTableManager();
-				assertEquals(22, tmG.size());
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        
-	        String defaultDisplayOrder = dp.getDefaultDisplayOrder();
-	        assertEquals( "|S|T|Ln|Ec|Eg|Em|I|Pd|Pf|", defaultDisplayOrder );
 	        
 		}// end testGetReleations...
 
+	
 
-
-	@Test
+	//@Test
 	public void testSystemTableOutput() throws FileNotFoundException, InvalidParameterException {
 	    Row[] rows = null;
 		
@@ -344,6 +363,14 @@ public class ATSpeciesProfileTest {
         String defaultDisplayOrder = dp.getDefaultDisplayOrder();
         assertEquals( DISPLAY_ORDER, defaultDisplayOrder );
 
+        // Clean-up after yourself! (or myself in this case)
+        try {
+			ConnectionManager.closeRelationalDB();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
 	}// end testGetReleations...
 
 
@@ -359,8 +386,86 @@ public class ATSpeciesProfileTest {
 		
 		// do tests
         try {
+        	int firstCount = 0;
 			List<TableManager> tmG = dp.getRelationshipTableManager();
-			assertEquals(22, tmG.size());
+			
+			
+			_Log.warn("\n" + tmG.size() + " TableManagers in List");
+			
+			Iterator iter = tmG.iterator();
+			while( iter.hasNext() ){
+				_Log.warn("\nTableManager #: " + ++firstCount);
+				TableManager tm = (TableManager)iter.next();
+				rows = tm.getRows();
+				int tmRecordCount = rows.length;
+		        for( Row r: rows){
+		        	String relation = r.getValue("TABLE_NAME_COLUMN");
+		        	_Log.warn("Relations in TableManager List: [" + relation + "]");
+		        	if( relationships.containsKey(relation)){
+		        		if( relationships.get(relation).intValue() == tmRecordCount){
+		        			relationships.remove(relation);
+		        			break;
+		        		} else {
+		        			_Log.error("Relation: [" + relation + "]: number of records did not match expected.");
+		        			_Log.error("Expected: [" + relationships.get(relation).toString() + "] but found: [" + tmRecordCount + "]");
+		        			assertTrue(false);
+		        		}
+		        	} else {
+		        		_Log.error("Relation: [" + relation + "] not in list of expected relationships.");
+		        		assertTrue(false);
+		        	}
+		        	break;
+		        }
+			}
+			
+
+//			iter = tmG.iterator();
+//			while( iter.hasNext() ){
+//				_Log.warn("\nTableManager #: " + ++firstCount);
+//				TableManager tm = (TableManager)iter.next();
+//				rows = tm.getRows();
+//				
+//				int count=0;
+//		        for( Row r: rows){
+//		        	_Log.warn("\nrow #: " + ++count);
+//		        	_Log.warn("TEST: testRelationshipTableOutput");
+//		        	Map rowMap = r.getRowAsMap();
+//		        	Iterator i = rowMap.keySet().iterator();
+		        	/*
+		        	 * It looks like this might do the trick::
+		        	 * 1. Test that the correct # of TableManagers are in the list (above)
+		        	 *   a. Test that all the right relations are there.
+		        	 * 2. Test that the correct # of rows are in each TableManager
+		        	 * 3. Test that the correct data is in each Row of each TableManager
+		        	 */
+//		        	String comparitor = r.getValue("SystemCode") + "," + r.getValue("RelatedCode");
+//		        	_Log.warn("Formated Relationship Codes: [" + comparitor + "]");
+//		        	if( relationsEntries.contains(comparitor) )
+//		        		relationsEntries.remove(comparitor);
+//		        	else{
+//		        		_Log.error("Error in values returned by getRelationsTableManger.");
+//		        		_Log.error("The value returned: [" + comparitor + "], is not in the list of known-good values.");
+//		        		assertTrue(false);
+//		        	}
+		        	
+		        	/*
+		        	 * This is only here, in case you want to see all the values of
+		        	 * the row that is returned. In that case, just uncomment this,
+		        	 * run the test and check the log file! :) -- you're welcome JN
+		        	 */
+//		        	while(i.hasNext()){
+//		        		String s = (String)i.next();
+//		        		_Log.warn(s + "     " + r.getValue(s) + "  |x|   ");
+//		        	}
+//
+//		        } // end for loop
+//			} // end while loop
+			
+			// Old test -- let's see if we can do better, eh?
+			//assertEquals(22, tmG.size());
+			
+//			 Clean-up after yourself! (or myself in this case)	
+			ConnectionManager.closeRelationalDB();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

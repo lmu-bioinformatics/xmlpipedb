@@ -156,8 +156,8 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 		
 		tableManager.submit("Relations", QueryType.insert, 				
 				new String[][] {
-					{ "SystemCode", systemTable1 },
-					{"RelatedCode", systemTable2 },
+					{ "SystemCode", templateDefinedSystemToSystemCode.get(systemTable1) },
+					{"RelatedCode", templateDefinedSystemToSystemCode.get(systemTable2) },
 					{ "Relation", relation },
 					{ "Type", type }, 
 					{ "Source", "" }
@@ -248,6 +248,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 		//     if      stp.systemTable1 == Blatter, then do some stuff
 		//     elseif  stp.systemTable2 == Blatter AND systemTable1 is NOT UniProt, then do some other stuff
 		//     else    do some different stuff
+        //   NOTE: In the non-E.coli case, e.g. A.thaliana, substitute the term TAIR for Blattner, above.
 		
 
         if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable1)) {

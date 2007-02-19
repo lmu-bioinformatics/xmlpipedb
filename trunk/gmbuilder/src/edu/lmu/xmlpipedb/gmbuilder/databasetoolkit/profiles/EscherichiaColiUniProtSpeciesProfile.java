@@ -82,16 +82,16 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 
 //		 if SystemTable1 is NOT SPECIES_TABLE, then use it :: if SystemTable1 IS the SPECIES_TABLE, call it OrderedLocusNames
 		if( !systemTable1.equals(SPECIES_TABLE) ){
-			systemCode = systemTable1;
+			systemCode = templateDefinedSystemToSystemCode.get(systemTable1);
 		} else {
-			systemCode = "OrderedLocusNames";
+			systemCode = templateDefinedSystemToSystemCode.get("OrderedLocusNames");
 		}
 		
 //		 If SystemTable2 is NOT SPECIES_TABLE, then use it :: if SystemTable2 IS the SPECIES_TABLE, call it OrderedLocusNames
 		if( !systemTable2.equals(SPECIES_TABLE) ){
-			relatedCode = systemTable2;
+			relatedCode = templateDefinedSystemToSystemCode.get(systemTable2);
 		} else {
-			relatedCode = "OrderedLocusNames";
+			relatedCode = templateDefinedSystemToSystemCode.get("OrderedLocusNames");
 		}
 // ### local vars finished
 		

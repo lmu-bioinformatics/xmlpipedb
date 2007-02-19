@@ -365,7 +365,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             tableManager.getTableNames().add(relationshipTable);
 
             if (stp.systemTable1.equals("UniProt") && !getDatabaseSpecificSystemTables().containsKey(stp.systemTable2)) {
-                PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT hjvalue, id " + "FROM dbreferencetype INNER JOIN entrytype_accession " + "ON (entrytype_dbreference_hjid = entrytype_accession_hjid) " + "WHERE type = ?");
+                // UniProt-X
+            	PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT hjvalue, id " + "FROM dbreferencetype INNER JOIN entrytype_accession " + "ON (entrytype_dbreference_hjid = entrytype_accession_hjid) " + "WHERE type = ?");
                 ps.setString(1, stp.systemTable2);
                 ResultSet result = ps.executeQuery();
 
@@ -391,7 +392,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                     String related = result.getString("id2");
 
                     tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", primary != null ? primary : "" }, { "Related", related != null ? related : "" },
-                    // TODO This is hard-coded. Fix it.
+                    //FIXME This is hard-coded. Fix it.
                     { "Bridge", "S" } });
                 }
                 ps.close();
@@ -401,7 +402,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             } else {
                 // No way currently of producing these
                 tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", "" }, { "Related", "" },
-                // TODO This is hard-coded. Fix it.
+                //FIXME: This is hard-coded. Fix it.
                 { "Bridge", "" } });
             }
 
@@ -409,7 +410,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         }
 
         return tableManagers;
-    }
+    } // END getRelationshipTableManager()
 
     /**
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getSecondPassTableManagers()

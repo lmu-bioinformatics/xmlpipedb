@@ -327,7 +327,7 @@ public class ATSpeciesProfileTest {
 
 	
 
-	//@Test
+	@Test
 	public void testSystemTableOutput() throws FileNotFoundException, InvalidParameterException {
 	    Row[] rows = null;
 		

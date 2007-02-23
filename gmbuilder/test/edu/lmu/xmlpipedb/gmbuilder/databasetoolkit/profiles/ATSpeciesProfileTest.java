@@ -53,7 +53,7 @@ public class ATSpeciesProfileTest {
     static final String SPECIES = "Arabidopsis thaliana";
     static final String[] PROPER = {"UniProt", "UniGene", "TAIR"};
     static final String[] IMPROPER =  {"GeneOntology", "EMBL", "Pfam", "InterPro"};
-    static final String DISPLAY_ORDER = "|S|T|Ln|Em|I|Pf|U|";
+    static final String DISPLAY_ORDER = "|S|T|A|Em|I|Pf|U|";
     static final int systemsTableChangesCount = 7;
     ArrayList<String> systemsEntries = new ArrayList<String>(7);
     {
@@ -100,6 +100,79 @@ public class ATSpeciesProfileTest {
     	relationships.put("TAIR-InterPro", new Integer(53));
     }
 	/**
+		 * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.EscherichiaColiUniProtSpeciesProfile#getRelationsTableManagerCustomizations(String, String, Map, TableManager)}.
+		 * Ensure that the number and type of records returned are correct.
+		 * 
+		 * Compared to what??? Not sure.
+		 * Based on what input??? Not sure.
+		 * @throws InvalidParameterException 
+		 */
+	
+		public void testGetRelationsTableManager() throws FileNotFoundException, InvalidParameterException {
+	        Row[] rows = null;
+			
+			// setup environment
+	        if( dp == null )
+	        	dp = doSetupOfExportEnvironment();
+			
+			// do tests
+	//      This uses SpeciesProfile
+	        TableManager tmB = dp.getRelationsTableManager();
+	        rows = tmB.getRows();
+	        assertEquals(26, rows.length);
+	        int count=0;
+	        for( Row r: rows){
+	        	System.out.println("\nrow #: " + ++count);
+	        	Map rowMap = r.getRowAsMap();
+	        	
+	        	Iterator i = rowMap.keySet().iterator();
+	        	while(i.hasNext()){
+	        		String s = (String)i.next();
+	        		System.out.print(s + "     " + r.getValue(s) + "  |x|   ");
+	        	}
+	
+	        }
+	        
+	        TableManager tmD = dp.getSystemsTableManager();
+	        rows = tmD.getRows();
+	        assertEquals(9, rows.length);
+	        count=0;
+	        for( Row r: rows){
+	        	System.out.println("\nrow #: " + ++count);
+	        	Map rowMap = r.getRowAsMap();
+	        	
+	        	Iterator i = rowMap.keySet().iterator();
+	        	while(i.hasNext()){
+	        		String s = (String)i.next();
+	        		System.out.print(s + "     " + r.getValue(s) + "  |x|   ");
+	        	}
+	        }
+	        
+	        try {
+				TableManager tmF = dp.getSystemTableManager();
+				rows = tmF.getRows();
+				assertEquals(184, rows.length);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+	        try {
+				List<TableManager> tmG = dp.getRelationshipTableManager();
+				assertEquals(22, tmG.size());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+	        String defaultDisplayOrder = dp.getDefaultDisplayOrder();
+	        assertEquals( DISPLAY_ORDER, defaultDisplayOrder );
+	        
+		}// end testGetReleations...
+
+
+
+	/**
 	 * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.EscherichiaColiUniProtSpeciesProfile#getRelationsTableManagerCustomizations(String, String, Map, TableManager)}.
 	 * Ensure that the number and type of records returned are correct.
 	 * 
@@ -107,68 +180,24 @@ public class ATSpeciesProfileTest {
 	 * Based on what input??? Not sure.
 	 * @throws InvalidParameterException 
 	 */
-
-	public void testGetRelationsTableManager() throws FileNotFoundException, InvalidParameterException {
-        Row[] rows = null;
-		
+	@Test
+	public void testGetDefaultDisplayOrder() throws FileNotFoundException, InvalidParameterException {
+	
 		// setup environment
         if( dp == null )
         	dp = doSetupOfExportEnvironment();
-		
-		// do tests
-//      This uses SpeciesProfile
-        TableManager tmB = dp.getRelationsTableManager();
-        rows = tmB.getRows();
-        assertEquals(26, rows.length);
-        int count=0;
-        for( Row r: rows){
-        	System.out.println("\nrow #: " + ++count);
-        	Map rowMap = r.getRowAsMap();
-        	
-        	Iterator i = rowMap.keySet().iterator();
-        	while(i.hasNext()){
-        		String s = (String)i.next();
-        		System.out.print(s + "     " + r.getValue(s) + "  |x|   ");
-        	}
-
-        }
-        
-        TableManager tmD = dp.getSystemsTableManager();
-        rows = tmD.getRows();
-        assertEquals(9, rows.length);
-        count=0;
-        for( Row r: rows){
-        	System.out.println("\nrow #: " + ++count);
-        	Map rowMap = r.getRowAsMap();
-        	
-        	Iterator i = rowMap.keySet().iterator();
-        	while(i.hasNext()){
-        		String s = (String)i.next();
-        		System.out.print(s + "     " + r.getValue(s) + "  |x|   ");
-        	}
-        }
-        
-        try {
-			TableManager tmF = dp.getSystemTableManager();
-			rows = tmF.getRows();
-			assertEquals(184, rows.length);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-        try {
-			List<TableManager> tmG = dp.getRelationshipTableManager();
-			assertEquals(22, tmG.size());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
         
         String defaultDisplayOrder = dp.getDefaultDisplayOrder();
         assertEquals( DISPLAY_ORDER, defaultDisplayOrder );
-        
-	}// end testGetReleations...
+
+        // Clean-up after yourself! (or myself in this case)
+        try {
+			ConnectionManager.closeRelationalDB();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}// end testGetDefaultDisplayOrder...
 
 	
 	
@@ -341,10 +370,14 @@ public class ATSpeciesProfileTest {
 			TableManager tmF = dp.getSystemTableManager();
 			rows = tmF.getRows();
 			assertEquals(184, rows.length);
+
+			// Clean-up after yourself! (or myself in this case)			
+			ConnectionManager.closeRelationalDB();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		
 	}// end testGetReleations...
 

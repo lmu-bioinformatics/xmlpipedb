@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
@@ -152,6 +153,12 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 		tableManager.submit("Systems", QueryType.update, new String[][] {
 				{ "SystemCode", SPECIES_SYSTEM_CODE },
 				{ "Species", "|" + getSpeciesName() + "|" } });
+
+		//The columns field of the TAIR entry need to just be ID| instead of 
+		// ID|Name\BF| (because we don't have a Name field in our TAIR table).
+		tableManager.submit("Systems", QueryType.update, new String[][] {
+				{ "SystemCode", SPECIES_SYSTEM_CODE },
+				{ "Columns", "ID|" } });
 		
 		
 		// JN - the only reason this is last is that it was like that from
@@ -196,6 +203,15 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 		
 
 		return tableManager;
+	}
+	
+	/**
+	 * Need to get the TAIR System code 
+	 */
+	@Override
+	public List<String> getSpeciesSpecificSystemCode(List<String> systemCodes, Map<String, String> templateDefinedSystemToSystemCode) {
+		systemCodes.add(2, SPECIES_SYSTEM_CODE);
+		return systemCodes;
 	}
 
 	/**

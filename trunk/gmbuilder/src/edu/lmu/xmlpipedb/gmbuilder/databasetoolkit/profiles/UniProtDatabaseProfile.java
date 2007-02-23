@@ -133,31 +133,40 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     @Override
     public String getDefaultDisplayOrder() {
         List<String> systemCodes = new ArrayList<String>();
+        _Log.debug("System Codes: [" + systemCodes + "]");
         Map<String, SystemType> uniprotSpecificSystemTables = getDatabaseSpecificSystemTables();
         Map<String, SystemType> speciesSpecificSystemTables = speciesProfile.getSpeciesSpecificSystemTables();
         for (Entry<String, SystemType> systemTable : systemTables.entrySet()) {
             if (!uniprotSpecificSystemTables.containsKey(systemTable.getKey()) && !speciesSpecificSystemTables.containsKey(systemTable.getKey())) {
-                systemCodes.add(templateDefinedSystemToSystemCode.get(systemTable.getKey()));
+                _Log.info("System Table: [" + systemTable.getKey() + "] System Code: [" + templateDefinedSystemToSystemCode.get(systemTable.getKey()) + "]");
+                _Log.debug("System Codes: [" + systemCodes + "]");
+            	systemCodes.add(templateDefinedSystemToSystemCode.get(systemTable.getKey()));
+            	_Log.debug("System Codes: [" + systemCodes + "]");
             }
         }
 
         switch (displayOrderPreset) {
             case alphabetical:
                 Collections.sort(systemCodes, new CaseInsensitiveStringComparator());
+                _Log.debug("System Codes: [" + systemCodes + "]");
                 break;
         }
 
         systemCodes.add(0, templateDefinedSystemToSystemCode.get("UniProt"));
+        _Log.debug("System Codes: [" + systemCodes + "]");
         systemCodes.add(1, templateDefinedSystemToSystemCode.get("GeneOntology"));
+        _Log.debug("System Codes: [" + systemCodes + "]");
 
         systemCodes = speciesProfile.getSpeciesSpecificSystemCode(systemCodes, templateDefinedSystemToSystemCode);
+        _Log.info("System Codes: [" + systemCodes + "]");
 
         StringBuffer defaultDisplayOrder = new StringBuffer();
         for (String systemCode : systemCodes) {
             defaultDisplayOrder.append("|").append(systemCode);
+            _Log.debug("Default Display Order: [" + defaultDisplayOrder + "]");
         }
         defaultDisplayOrder.append("|");
-
+        _Log.info("Default Display Order: [" + defaultDisplayOrder + "]");
         return defaultDisplayOrder.toString();
     }
 
@@ -325,7 +334,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 result = ps.executeQuery();
 
                 while (result.next()) {
-                	_Log.info("getSystemTableManager(): while loop: ID:: " + result.getString("id") + "  Species:: " + speciesProfile.getSpeciesName() );
+                	_Log.debug("getSystemTableManager(): while loop: ID:: " + result.getString("id") + "  Species:: " + speciesProfile.getSpeciesName() );
                     tableManager.submit(systemTable.getKey(), QueryType.insert, new String[][] { { "ID", result.getString("id") }, { "Species", "|" + speciesProfile.getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) } });
                 }
             }

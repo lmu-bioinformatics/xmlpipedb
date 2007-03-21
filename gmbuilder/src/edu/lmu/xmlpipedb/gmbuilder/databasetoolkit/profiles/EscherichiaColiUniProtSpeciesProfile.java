@@ -12,15 +12,22 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
@@ -29,7 +36,131 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
  * @author Jeffrey Nicholas
  */
 public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile {
+	private static final Log _Log = LogFactory.getLog(EscherichiaColiUniProtSpeciesProfile.class);
 	
+	/* (non-Javadoc)
+	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getPrimarySystemTableManagerCustomizations()
+	 */
+	@Override
+	public TableManager getPrimarySystemTableManagerCustomizations(Date version) throws SQLException {
+		TableManager tableManager = null;
+		PreparedStatement ps;
+		int recordCounter = 0;
+
+		String primarySQL = 
+		" create temporary table temp_genename_primary AS " +
+		" select b.entrytype_gene_hjid as hjid, a.value " +
+		" from genenametype a LEFT OUTER JOIN entrytype_genetype b " + 
+		" ON (entrytype_genetype_name_hjid =  b.hjid) " +
+		" where a.type = 'primary'; ";
+
+		String orderedLocusSQL = 
+		" create temporary table temp_genename_orderedlocus AS " +
+		" select b.entrytype_gene_hjid as hjid, a.value " +
+		" from genenametype a LEFT OUTER JOIN entrytype_genetype b " + 
+		" ON (entrytype_genetype_name_hjid =  b.hjid) " +
+		" where a.type = 'ordered locus'; ";
+
+		String proteinSQL = 
+		" create temporary table temp_protein AS " +
+		" SELECT a.hjid, b.value " +
+		" FROM entrytype a INNER JOIN proteinnametype b ON (a.protein = b.proteintype_name_hjid) " + 
+		" WHERE b.proteintype_name_hjindex = 0; ";
+
+		String commentSQL = 
+		" create temporary table temp_comment AS " +
+		" SELECT entrytype_comment_hjid as hjid, text " + 
+		" FROM commenttype INNER JOIN entrytype_comment ON (entrytype_comment_hjchildid = hjid) " + 
+		" WHERE type = 'function'; ";
+
+		String querySQL = 
+		" select a.entrytype_accession_hjid as hjid, a.hjvalue as accession, b.hjvalue as entryname, c.value as primary, d.value as orderedlocus, e.value as protein, f.text as function " +
+		" from " + 
+		" entrytype_accession a LEFT OUTER JOIN entrytype_name b ON (a.entrytype_accession_hjid = b.entrytype_name_hjid) " +
+		" LEFT OUTER JOIN temp_genename_primary c ON (a.entrytype_accession_hjid = c.hjid) " +
+		" LEFT OUTER JOIN temp_genename_orderedlocus d ON (a.entrytype_accession_hjid = d.hjid) " +
+		" LEFT OUTER JOIN temp_protein e ON (a.entrytype_accession_hjid = e.hjid) " +
+		" LEFT OUTER JOIN temp_comment f ON (a.entrytype_accession_hjid = f.hjid) " + 
+		" WHERE entrytype_accession_hjindex = 0; ";
+		
+		tableManager = new TableManager(new String[][] {
+				{ "ID", "VARCHAR(50) NOT NULL" },
+				{ "EntryName", "VARCHAR(50) NOT NULL" },
+				{ "GeneName", "VARCHAR(50) NOT NULL" }, 
+				{ "ProteinName", "MEMO" },
+				{ "Function", "MEMO" }, { "Species", "MEMO" },
+				{ "\"Date\"", "DATE" }, { "Remarks", "MEMO" } },
+				new String[] { "UID" });
+
+		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(primarySQL);
+		ps.executeUpdate();
+
+		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(orderedLocusSQL);
+		ps.executeUpdate();
+		
+		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(proteinSQL);
+		ps.executeUpdate();
+		
+		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(commentSQL);
+		ps.executeUpdate();
+		
+		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(querySQL);
+		ResultSet result = ps.executeQuery();
+		
+		while (result.next()) {
+			_Log.debug("\nRecord: [" + ++recordCounter + "]");
+			_Log.debug("hjid, accession, entryname, primary, ordered locus, protein, function\n" +
+					result.getString("hjid") + "\n" +
+					result.getString("accession") + "\n" +
+					result.getString("entryname") + "\n" +
+					result.getString("primary") + "\n" +
+					result.getString("orderedlocus") + "\n" +
+					result.getString("protein") + "\n" +
+					result.getString("function")
+			);
+			
+			String geneName = null;
+			if( result.getString("primary") != null ){
+				geneName = result.getString("primary");
+			} else if ( result.getString("orderedlocus") != null ){
+				geneName = result.getString("orderedlocus");
+			} else {
+				// nulls are not allowed in E. Coli
+				// write an error record and continue to the next record
+				_Log.error("The following record had neither a 'primary' nor an Ordered Locus gene name. The record will be skipped:" +
+						"hjid, accession, entryname, primary, ordered locus, protein, function\n" +
+						result.getString("hjid") + "\n" +
+						result.getString("accession") + "\n" +
+						result.getString("entryname") + "\n" +
+						result.getString("primary") + "\n" +
+						result.getString("orderedlocus") + "\n" +
+						result.getString("protein") + "\n" +
+						result.getString("function"));
+				continue;
+			}
+			
+			tableManager.submit("UniProt", QueryType.insert, new String[][] {
+					{ "UID", result.getString("hjid") },
+					{ "ID", result.getString("accession") },
+					{ "EntryName", result.getString("entryname") },	
+					{ "GeneName", geneName } ,
+					{ "ProteinName", result.getString("protein") },
+					{ "Function", result.getString("function") },
+					{ "Species", "|" + getSpeciesName() + "|" },
+					{ "\"Date\"", GenMAPPBuilderUtilities
+									.getSystemsDateString(version) }
+			});
+		}
+		ps.close();
+
+		Row[] tmrows = tableManager.getRows();
+		_Log.info("End of Method - Number of rows in TM: [" + tmrows.length
+				+ "]");
+
+		return tableManager;
+
+	}
+
 	private final String SPECIES_TABLE = "Blattner";
 
 	

@@ -170,6 +170,11 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         return defaultDisplayOrder.toString();
     }
 
+    /**
+     * This method adds Uniprot and GeneOntology to the list of "Uniprot" tables.
+     * It also adds whatever has been defined as a species specific table in the
+     * SpeciesProfile (e.g. TAIR)
+     */
     /*
      * (non-Javadoc)
      * 
@@ -180,16 +185,9 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         Map<String, SystemType> uniprotSpecificSystemTables = new HashMap<String, SystemType>();
         uniprotSpecificSystemTables.put("UniProt", SystemType.Primary);
         uniprotSpecificSystemTables.put("GeneOntology", SystemType.Improper);
-        try {
-			if(speciesProfile.getSystemTableManagerCustomizations(null, null, null) != null)
-				uniprotSpecificSystemTables.putAll(speciesProfile.getSpeciesSpecificSystemTables());
-		} catch (InvalidParameterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        // This puts any species System tables (e.g. TAIR for A. thaliana) into the list
+        uniprotSpecificSystemTables.putAll(speciesProfile.getSpeciesSpecificSystemTables());
+
         return uniprotSpecificSystemTables;
     }
 
@@ -240,9 +238,21 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         if (primarySystemTableManager != null) {
             return primarySystemTableManager;
         }
+        TableManager tableManager = null;
+        // First try calling the species profile's version (this accomodates A.thaliana for now, perhaps others later).
+        // If it returns a TableManger, we're done. Otherwise, keep chugging along.
+        tableManager = speciesProfile.getPrimarySystemTableManagerCustomizations(version); 
+        if(tableManager != null ){
+            primarySystemTableManager = tableManager;
+        	return tableManager;
+        }
 
-        TableManager tableManager;
-
+        
+        int recordCounter = 0;
+        String accessionSQL = "SELECT entrytype_accession_hjid, hjvalue FROM entrytype_accession WHERE entrytype_accession_hjindex = 0";
+        String nameSQL = "SELECT hjvalue FROM entrytype_name WHERE entrytype_name_hjid = ?";
+        String geneSQL = "SELECT value, type FROM genenametype INNER JOIN entrytype_genetype ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) WHERE entrytype_gene_hjid = ?";
+        
         /* JN 2/16/2007 -- 
          * For A. thaliana to work, I've removed the "NOT NULL" constraint 
          * on the GeneName field. This may not be appropriate for other
@@ -251,29 +261,62 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
          */
 //        tableManager = new TableManager(new String[][] { { "ID", "VARCHAR(50) NOT NULL" }, { "EntryName", "VARCHAR(50) NOT NULL" }, { "GeneName", "VARCHAR(50) NOT NULL" }, { "ProteinName", "MEMO" }, { "Function", "MEMO" }, { "Species", "MEMO" }, { "\"Date\"", "DATE" }, { "Remarks", "MEMO" } }, new String[] { "UID" });
         tableManager = new TableManager(new String[][] { { "ID", "VARCHAR(50) NOT NULL" }, { "EntryName", "VARCHAR(50) NOT NULL" }, { "GeneName", "VARCHAR(50)" }, { "ProteinName", "MEMO" }, { "Function", "MEMO" }, { "Species", "MEMO" }, { "\"Date\"", "DATE" }, { "Remarks", "MEMO" } }, new String[] { "UID" });
-        PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT entrytype_accession_hjid, hjvalue " + "FROM entrytype_accession " + "WHERE entrytype_accession_hjindex = 0");
+        PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement(accessionSQL);
         ResultSet result = ps.executeQuery();
+        
+        // Step 1 - populate the TableManager with records from the entrytype_accession table
+        _Log.info("\nSQL Query: [" + accessionSQL + "]");
         while (result.next()) {
+        	_Log.debug("Record: [" + ++recordCounter + "]");
+        	_Log.debug("entrytype_accession_hjid: [" + result.getString("entrytype_accession_hjid") + "], hjvalue: [" + result.getString("hjvalue") + "]");
             tableManager.submit("UniProt", QueryType.insert, new String[][] { { "UID", result.getString("entrytype_accession_hjid") }, { "ID", result.getString("hjvalue") } });
         }
+        _Log.info("Total Records: [" + recordCounter + "]");
+        Row[] rows = tableManager.getRows();
+        _Log.info("Step 1 - Number of rows in TM: [" + rows.length + "]");
 
+        // Step 2 - if the record exists in the entrytype_name table, 
+        //    get the entrytype_name value.
+        _Log.info("\nSQL Query: [" + nameSQL + "]");
+        recordCounter = 0;
         for (Row row : tableManager.getRows()) {
-            ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT hjvalue " + "FROM entrytype_name " + "WHERE entrytype_name_hjid = ?");
+        	_Log.debug("UID (entrytype_accession_hjid): [" + row.getValue("UID") + "]");
+        	ps = ConnectionManager.getRelationalDBConnection().prepareStatement(nameSQL);
             ps.setString(1, row.getValue("UID"));
             result = ps.executeQuery();
             while (result.next()) {
+            	_Log.debug("Record: [" + ++recordCounter + "]");
+            	_Log.debug("hjvalue: [" + result.getString("hjvalue") + "]");
                 tableManager.submit("UniProt", QueryType.insert, new String[][] { { "UID", row.getValue("UID") }, { "EntryName", result.getString("hjvalue") } });
             }
 
-            ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " + "FROM genenametype INNER JOIN entrytype_genetype " + "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " + "WHERE entrytype_gene_hjid = ?");
+            // Step 3 - GeneName
+            _Log.debug("\nGeneName\nSQL Query: [" + geneSQL + "]");
+            ps = ConnectionManager.getRelationalDBConnection().prepareStatement(geneSQL);
             ps.setString(1, row.getValue("UID"));
             result = ps.executeQuery();
             Map<String, String> typeToValue = new HashMap<String, String>();
             while (result.next()) {
+            	_Log.debug("type: [" + result.getString("type") + "] value: [" + result.getString("value") + "]");
                 typeToValue.put(result.getString("type"), result.getString("value"));
             }
-            tableManager.submit("UniProt", QueryType.insert, new String[][] { { "UID", row.getValue("UID") }, { "GeneName", typeToValue.get("primary") != null ? typeToValue.get("primary") : typeToValue.get("ordered locus") != null ? typeToValue.get("ordered locus") : typeToValue.get("synonym") } });
-
+            String geneName;
+            String geneNameType;
+            if(typeToValue.get("primary") != null){
+            	geneName = typeToValue.get("primary");
+            	geneNameType = "primary";
+            }else if(typeToValue.get("ordered locus") != null ){
+            	geneName = typeToValue.get("ordered locus");
+            	geneNameType = "ordered locus";
+            }else{
+            	geneName = typeToValue.get("synonym");
+            	geneNameType = "synonym";
+            }
+//            typeToValue.get("primary") != null ? typeToValue.get("primary") : typeToValue.get("ordered locus") != null ? typeToValue.get("ordered locus") : typeToValue.get("synonym");
+            _Log.debug("Type: [" + geneNameType + "] GeneName: [" + geneName + "]");
+            tableManager.submit("UniProt", QueryType.insert, new String[][] { { "UID", row.getValue("UID") }, { "GeneName", geneName } });
+            
+            // Step 4 -- Add the ProteinName
             ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value " + "FROM entrytype INNER JOIN proteinnametype " + "ON (protein = proteintype_name_hjid) " + "WHERE entrytype.hjid = ? " + "AND proteintype_name_hjindex = 0;");
             ps.setString(1, row.getValue("UID"));
             result = ps.executeQuery();
@@ -281,6 +324,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 tableManager.submit("UniProt", QueryType.insert, new String[][] { { "UID", row.getValue("UID") }, { "ProteinName", result.getString("value") } });
             }
 
+            // Step 5 -- add the function from entrytype_comment
             ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT text " + "FROM commenttype INNER JOIN entrytype_comment " + "ON (entrytype_comment_hjchildid = hjid) " + "WHERE type = 'function' " + "AND entrytype_comment_hjid = ?");
             ps.setString(1, row.getValue("UID"));
             result = ps.executeQuery();
@@ -288,9 +332,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 tableManager.submit("UniProt", QueryType.insert, new String[][] { { "UID", row.getValue("UID") }, { "Function", result.getString("text") } });
             }
 
+            // Step 6 -- Finally, add the species name and the date
             tableManager.submit("UniProt", QueryType.insert, new String[][] { { "UID", row.getValue("UID") }, { "Species", "|" + speciesProfile.getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) } });
         }
         ps.close();
+
+        Row[] tmrows = tableManager.getRows();
+        _Log.info("End of Method - Number of rows in TM: [" + tmrows.length + "]");
 
         primarySystemTableManager = tableManager;
         return tableManager;
@@ -317,7 +365,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
         // loop through the list of System tables and for each one, ... do some evaluation??? need to look at this more closely.
         for (Entry<String, SystemType> systemTable : systemTables.entrySet()) {
-        	
+        	_Log.info("systemTable.getKey(): " + systemTable.getKey());        	
         	/*
         	 * JN 2/15/2007
         	 * I think the second part of this if is redundant, since the species 

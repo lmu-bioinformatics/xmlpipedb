@@ -12,16 +12,23 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
@@ -35,12 +42,12 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	
 	private final String SPECIES_TABLE = "TAIR";
 	private final String SPECIES_SYSTEM_CODE = "A";
+	private static final Log _Log = LogFactory.getLog(ArabidopsisThalianaUniProtSpeciesProfile.class);
 	
 	/**
 	 * Creates the UniProt A.thaliana species profile. This profile defines the requirements for 
 	 * an Arabidopsis thaliana species within a UniProt database.
 	 */
-	//FIXME: THIS CLASS IS A COPY AND MUST BE UPDATED TO BE VALID
 	public ArabidopsisThalianaUniProtSpeciesProfile() {
 		super("Arabidopsis thaliana", "This profile defines the requirements for "
 				+ "an Arabidopsis thaliana species within a UniProt database.");
@@ -194,13 +201,120 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	public TableManager getSystemTableManagerCustomizations(
 			TableManager tableManager, TableManager primarySystemTableManager,
 			Date version) {
+    	PreparedStatement ps;
+        ResultSet result;
+        String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);
+        int splits = -1;
+        String sqlQuery;
+        
+		//step 1 - put the dbreference values for TAIR into a temp table
+		sqlQuery = 
+		" create temporary table temp_tair as " +
+		/*" create table temp_tair as " +*/
+		" select a.id from dbreferencetype a where " + 
+		" a.type = 'TAIR' and a.id SIMILAR TO 'At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]' " +
+		" group by a.id";
+        try {
+	    	ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
+		} catch (SQLException e) {
+			_Log.error("Exception trying to execute query: " + sqlQuery );
+			while( e != null ){
+				_Log.error("Error code: [" + e.getErrorCode() + "]" );
+				_Log.error("Error message: [" + e.getMessage()+ "]" );
+				_Log.error("Error SQL State: [" + e.getSQLState() + "]" );
+				e = e.getNextException();
+			}
+		}
+		//step 2 - put the genename values that match the TAIR pattern exactly* into the temp table
+		//* some genename records have more than one TAIR ID per cell and they 
+		//   must have their values split out in step 3 below.
+		sqlQuery =
+        " insert into temp_tair " + 
+		" select c.value " +
+		" from genenametype c " + 
+		" where c.value SIMILAR TO 'At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]' " +
+		" group by c.value ";
+        try {
+	    	ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
+	        ps.executeUpdate();
+		} catch (SQLException e) {
+			_Log.error("Exception trying to execute query: " + sqlQuery );
+			while( e != null ){
+				_Log.error("Error code: [" + e.getErrorCode() + "]" );
+				_Log.error("Error message: [" + e.getMessage()+ "]" );
+				_Log.error("Error SQL State: [" + e.getSQLState() + "]" );
+				e = e.getNextException();
+			}
+		}
+			
+		//step 3 - get the genename values for the records with multiple TAIR IDs
+		// 3a. - determine the largest number of values in one cell
+		sqlQuery =
+    	" select max(char_length(c.value)) as maxLength " +
+		" from genenametype c " + 
+		" where c.value SIMILAR TO '%/At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]/*A%' ";
+        try {
+        	ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
+	        result = ps.executeQuery();
+			// get result MOD 9 (number of characters in ID) = number of "/" characters in longest value
+	        result.next();
+	        int maxLength = result.getInt("maxLength");
+	        splits = maxLength / 9; // 9 is the length of the TAIR ID (At1g12345)
+		} catch (SQLException e) {
+			_Log.error("Exception trying to execute query: " + sqlQuery );
+			while( e != null ){
+				_Log.error("Error code: [" + e.getErrorCode() + "]" );
+				_Log.error("Error message: [" + e.getMessage()+ "]" );
+				_Log.error("Error SQL State: [" + e.getSQLState() + "]" );
+				e = e.getNextException();
+			}
+		}
 		
-    	//ArrayList<String> comparisonList = new ArrayList<String>(0);
-    	//comparisonList.add("ORF");
-    	//comparisonList.add("ordered locus");
-		
-		//tableManager = super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, SPECIES_TABLE, comparisonList);
-		
+			//step 4 - generate the query that will put values from each column of splits into the temp table
+	        for( int i = 1; i <= splits; i++){
+	            try {
+	            	sqlQuery = 
+	            	" insert into temp_tair " +
+	            	" select split_part(c.value, '/', " + i + ") as value " + 
+	            	" from genenametype c " +
+	            	" where c.value SIMILAR TO '%At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]/%' ";
+	                ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
+	                ps.executeUpdate();
+				} catch (SQLException e) {
+					_Log.error("Exception trying to execute query: " + sqlQuery );
+					while( e != null ){
+						_Log.error("Error code: [" + e.getErrorCode() + "]" );
+						_Log.error("Error message: [" + e.getMessage()+ "]" );
+						_Log.error("Error SQL State: [" + e.getSQLState() + "]" );
+						e = e.getNextException();
+					}
+				}
+	        }
+	
+			//step 5 - extract the complete list of TAIR IDs into a resultset
+	        sqlQuery = 
+	        " select id from temp_tair where id SIMILAR TO 'At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]' group by id"; 
+	        try {
+			    ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
+		        result = ps.executeQuery();
+		        int i = 0;
+				//step 5 - put the tair ids into the tablemanager
+		        for(; result.next(); i++) {
+		            //tableManager.submit(substituteTable, QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", row.getValue("UID") } });
+		        	_Log.debug("getSystemTableManagerCustomizations(): TAIR ID" + result.getString("id") );
+		            _Log.debug("Row #: [" + i + "]");
+		            tableManager.submit("TAIR", QueryType.insert, new String[][] { { "ID", result.getString("id") }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday } });
+		        }
+		        _Log.info("TAIR Records Written to TableManger: [" + i + "]");
+			} catch (SQLException e) {
+				_Log.error("Exception trying to execute query: " + sqlQuery );
+				while( e != null ){
+					_Log.error("Error code: [" + e.getErrorCode() + "]" );
+					_Log.error("Error message: [" + e.getMessage()+ "]" );
+					_Log.error("Error SQL State: [" + e.getSQLState() + "]" );
+					e = e.getNextException();
+				}
+			}
 
 		return tableManager;
 	}
@@ -232,6 +346,123 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 		tableManager = super.speciesSpecificRelationshipTableHelper(relationshipTable, primarySystemTableManager, systemTableManager, tableManager, SPECIES_TABLE, "Bridge", "S");
 		
 		return tableManager;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getPrimarySystemTableManagerCustomizations()
+	 */
+	@Override
+	public TableManager getPrimarySystemTableManagerCustomizations(Date version)
+			throws SQLException {
+		TableManager tableManager = null;
+		PreparedStatement ps;
+		int recordCounter = 0;
+
+		String primarySQL = 
+		" create temporary table temp_genename_primary AS " +
+		" select b.entrytype_gene_hjid as hjid, a.value " +
+		" from genenametype a LEFT OUTER JOIN entrytype_genetype b " + 
+		" ON (entrytype_genetype_name_hjid =  b.hjid) " +
+		" where a.type = 'primary'; ";
+
+		String orderedLocusSQL = 
+		" create temporary table temp_genename_orderedlocus AS " +
+		" select b.entrytype_gene_hjid as hjid, a.value " +
+		" from genenametype a LEFT OUTER JOIN entrytype_genetype b " + 
+		" ON (entrytype_genetype_name_hjid =  b.hjid) " +
+		" where a.type = 'ordered locus'; ";
+
+		String proteinSQL = 
+		" create temporary table temp_protein AS " +
+		" SELECT a.hjid, b.value " +
+		" FROM entrytype a INNER JOIN proteinnametype b ON (a.protein = b.proteintype_name_hjid) " + 
+		" WHERE b.proteintype_name_hjindex = 0; ";
+
+		String commentSQL = 
+		" create temporary table temp_comment AS " +
+		" SELECT entrytype_comment_hjid as hjid, text " + 
+		" FROM commenttype INNER JOIN entrytype_comment ON (entrytype_comment_hjchildid = hjid) " + 
+		" WHERE type = 'function'; ";
+
+		String querySQL = 
+		" select a.entrytype_accession_hjid as hjid, a.hjvalue as accession, b.hjvalue as entryname, c.value as primary, d.value as orderedlocus, e.value as protein, f.text as function " +
+		" from " + 
+		" entrytype_accession a LEFT OUTER JOIN entrytype_name b ON (a.entrytype_accession_hjid = b.entrytype_name_hjid) " +
+		" LEFT OUTER JOIN temp_genename_primary c ON (a.entrytype_accession_hjid = c.hjid) " +
+		" LEFT OUTER JOIN temp_genename_orderedlocus d ON (a.entrytype_accession_hjid = d.hjid) " +
+		" LEFT OUTER JOIN temp_protein e ON (a.entrytype_accession_hjid = e.hjid) " +
+		" LEFT OUTER JOIN temp_comment f ON (a.entrytype_accession_hjid = f.hjid) " + 
+		" WHERE entrytype_accession_hjindex = 0; ";
+		
+		/* JN 2/16/2007 -- 
+		 * For A. thaliana to work, I've removed the "NOT NULL" constraint 
+		 * on the GeneName field. This may not be appropriate for other
+		 * Species and therefore may need to change later. -- let's keep an eye on it.
+		 * 
+		 */
+		tableManager = new TableManager(new String[][] {
+				{ "ID", "VARCHAR(50) NOT NULL" },
+				{ "EntryName", "VARCHAR(50) NOT NULL" },
+				{ "GeneName", "VARCHAR(50)" }, { "ProteinName", "MEMO" },
+				{ "Function", "MEMO" }, { "Species", "MEMO" },
+				{ "\"Date\"", "DATE" }, { "Remarks", "MEMO" } },
+				new String[] { "UID" });
+
+		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(primarySQL);
+		ps.executeUpdate();
+
+		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(orderedLocusSQL);
+		ps.executeUpdate();
+		
+		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(proteinSQL);
+		ps.executeUpdate();
+		
+		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(commentSQL);
+		ps.executeUpdate();
+		
+		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(querySQL);
+		ResultSet result = ps.executeQuery();
+		
+		while (result.next()) {
+			_Log.debug("\nRecord: [" + ++recordCounter + "]");
+			_Log.debug("hjid, accession, entryname, primary, ordered locus, protein, function\n" +
+					result.getString("hjid") + "\n" +
+					result.getString("accession") + "\n" +
+					result.getString("entryname") + "\n" +
+					result.getString("primary") + "\n" +
+					result.getString("orderedlocus") + "\n" +
+					result.getString("protein") + "\n" +
+					result.getString("function")
+			);
+			
+			String geneName = null;
+			if( result.getString("primary") != null ){
+				geneName = result.getString("primary");
+			} else if ( result.getString("orderedlocus") != null ){
+				geneName = result.getString("orderedlocus");
+			}
+			
+			tableManager.submit("UniProt", QueryType.insert, new String[][] {
+					{ "UID", result.getString("hjid") },
+					{ "ID", result.getString("accession") },
+					{ "EntryName", result.getString("entryname") },	
+					{ "GeneName", geneName } ,
+					{ "ProteinName", result.getString("protein") },
+					{ "Function", result.getString("function") },
+					{ "Species", "|" + getSpeciesName() + "|" },
+					{ "\"Date\"", GenMAPPBuilderUtilities
+									.getSystemsDateString(version) }
+			});
+		}
+		ps.close();
+
+		Row[] tmrows = tableManager.getRows();
+		_Log.info("End of Method - Number of rows in TM: [" + tmrows.length
+				+ "]");
+
+		return tableManager;
+
 	}
 
 } // end class

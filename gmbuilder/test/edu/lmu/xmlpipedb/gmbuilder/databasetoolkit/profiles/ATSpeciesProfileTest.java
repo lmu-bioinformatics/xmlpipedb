@@ -23,6 +23,7 @@ import org.junit.Test;
 import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.TableCoordinator;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
@@ -36,12 +37,13 @@ public class ATSpeciesProfileTest {
 
 	
 	/* **** class vars **** */
-	private static final Log _Log = LogFactory.getLog(ExportToGenMAPP.class);
+	private static final Log _Log = LogFactory.getLog(ATSpeciesProfileTest.class);
 //    private String _jaxbContextPath;
     private Configuration _hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
 //	private ConfigurationEngine _configEng;
 //	private File _xmlFile;
     private DatabaseProfile dp = null;
+    private final int TAIR_ID_COUNT = 17739;
 
     
 //    static final String SPECIES = "Escherichia coli";
@@ -180,7 +182,7 @@ public class ATSpeciesProfileTest {
 	 * Based on what input??? Not sure.
 	 * @throws InvalidParameterException 
 	 */
-	@Test
+	////@Test
 	public void testGetDefaultDisplayOrder() throws FileNotFoundException, InvalidParameterException {
 	
 		// setup environment
@@ -212,7 +214,7 @@ public class ATSpeciesProfileTest {
 	 * 
 	 * @throws InvalidParameterException 
 	 */
-	@Test
+	////@Test
 	public void testSystemsTableOutput() throws FileNotFoundException, InvalidParameterException {
         Row[] rows = null;
         int count=0;		
@@ -285,7 +287,7 @@ public class ATSpeciesProfileTest {
         
 	}// end testSystemsTableOutput...
 
-	@Test
+	////@Test
 		public void testRelationsTableOutput() throws FileNotFoundException, InvalidParameterException {
 	        Row[] rows = null;
 			
@@ -354,9 +356,34 @@ public class ATSpeciesProfileTest {
 	        
 		}// end testGetReleations...
 
-	
-
 	@Test
+	public void testGetPrimarySystemTableManager() throws FileNotFoundException, InvalidParameterException {
+	    Row[] rows = null;
+		
+		// setup environment
+	    if( dp == null)
+	    	dp = doSetupOfExportEnvironment();
+	    
+		
+		// do tests
+	    try {
+			TableManager uniprotTM = dp.getPrimarySystemTableManager();
+			rows = uniprotTM.getRows();
+			TableCoordinator.exportTable(dp.getExportConnection(), uniprotTM);
+			assertEquals(184, rows.length);
+
+			// Clean-up after yourself! (or myself in this case)			
+			ConnectionManager.closeRelationalDB();
+		} catch (SQLException e) {
+			_Log.error("An SQL Exception occured during processing. See stack trace for details.");
+			e.printStackTrace();
+		}
+		
+		
+	}// end testGetReleations...
+
+
+	//@Test
 	public void testSystemTableOutput() throws FileNotFoundException, InvalidParameterException {
 	    Row[] rows = null;
 		
@@ -383,10 +410,8 @@ public class ATSpeciesProfileTest {
 
 
 
-	@Test
+	////@Test
 	public void testDefaultDisplayOrderOutput() throws FileNotFoundException, InvalidParameterException {
-	    Row[] rows = null;
-		
 		// setup environment
 	    if( dp == null)
 	    	dp = doSetupOfExportEnvironment();
@@ -408,7 +433,7 @@ public class ATSpeciesProfileTest {
 
 
 
-	@Test
+	////@Test
 	public void testRelationshipTableOutput() throws FileNotFoundException, InvalidParameterException {
         Row[] rows = null;
 		
@@ -610,6 +635,40 @@ public class ATSpeciesProfileTest {
 	            // for the first time), so we don't do anything in this case.
 	        }
 	}
+
+
+
+	//@Test
+	public void testGetSystemTableManagerCustomizations() throws FileNotFoundException, InvalidParameterException {
+	    Row[] rows = null;
+		
+		// setup environment
+	    if( dp == null)
+	    	dp = doSetupOfExportEnvironment();
+	    
+		
+		// do tests
+	    try {
+	    	SpeciesProfile sp = dp.getSelectedSpeciesProfile();
+	    	TableManager tairTM = new TableManager(new String[][] {
+					{ "ID", "VARCHAR(50) NOT NULL" }, { "Species", "MEMO" },
+					{ "\"Date\"", "DATE" }, { "Remarks", "MEMO" } },
+					new String[] { "ID" });
+			sp.getSystemTableManagerCustomizations(tairTM, null, dp.getVersion());
+			rows = tairTM.getRows();
+			//TableCoordinator.exportTable(dp.getExportConnection(), uniprotTM);
+			_Log.info("Number of unique TAIR IDs: " + rows.length + " Expected rows: " + TAIR_ID_COUNT);
+			assertEquals(TAIR_ID_COUNT, rows.length);
+	
+			// Clean-up after yourself! (or myself in this case)			
+			ConnectionManager.closeRelationalDB();
+		} catch (SQLException e) {
+			_Log.error("An SQL Exception occured during processing. See stack trace for details.");
+			e.printStackTrace();
+		}
+		
+		
+	}// end testGetReleations...
 	
     /**
      * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities#getDefaultGDBFilename(java.lang.String, java.util.Date)}.

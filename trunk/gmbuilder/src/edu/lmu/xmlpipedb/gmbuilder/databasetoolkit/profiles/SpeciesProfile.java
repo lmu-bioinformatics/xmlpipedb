@@ -116,6 +116,20 @@ public abstract class SpeciesProfile extends Profile {
 			Date version) throws SQLException, InvalidParameterException;
 
 	/**
+	 * Returns a TableManager with the species specific primary table(s).
+	 * This is needed, since data for some species is not normalized. This
+	 * method allows for overriding the behavior of the data source 
+	 * DatabaseProfile's (i.e. UniProtDatabaseProfile)
+	 * getPrimarySystemTableManger method.
+	 * @param version 
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public abstract TableManager getPrimarySystemTableManagerCustomizations(Date version)
+			throws SQLException;
+	
+	/**
 	 * Returns a TableManager with a species specific relationship table added.
 	 * 
 	 * @param relationshipTable

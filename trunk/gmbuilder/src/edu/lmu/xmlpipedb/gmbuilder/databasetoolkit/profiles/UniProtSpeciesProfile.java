@@ -64,9 +64,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
      */
     @Override
     public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws SQLException, InvalidParameterException {
-        // TODO This is virtually identical to the e. coli version; find a way to unify.
-        // TODO (for that matter, find a way to unify the whole thing)
-    	
+            	
     	/*
     	 * This method is only called (and therefore this bit 'o logic is only
     	 * invoked) when the species specific class has not overridden this
@@ -78,30 +76,17 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
     	
     	tableManager = systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "OrderedLocusNames", comparisonList );
     	
-/*        PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " + "FROM genenametype INNER JOIN entrytype_genetype " + "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " + "WHERE entrytype_gene_hjid = ?");
-        ResultSet result;
-
-        for (Row row : primarySystemTableManager.getRows()) {
-            ps.setString(1, row.getValue("UID"));
-            result = ps.executeQuery();
-
-            // We actually want to keep the case where multiple ordered locus names appear.
-            while (result.next()) {
-                String type = result.getString("type");
-                if ("ordered locus".equals(type) || "ORF".equals(type)) {
-                    // We want this name to appear in the OrderedLocusNames system table.
-                    for (String id : result.getString("value").split("/")) {
-                        tableManager.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
-                    }
-                }
-            }
-        }*/
 
         return tableManager;
     }
 
 	/**
-     * @param comparisonList TODO
+	 * Updates the tableManger passed in with values from the dbreferencestype 
+	 * table (which holds the <dbreferences type='XXX'> information. The exact
+	 * system table that is being generated is specified by the substituteTable
+	 * parameter. 
+	 * 
+     * @param comparisonList
 	 * @throws InvalidParameterException 
 	 * @throws SQLException 
 	 * @throws Exception 
@@ -289,7 +274,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
             ps.close();
         } else {
     			// Go through each row (AKA row1) in the systemTableManager that was passed in, checking for "Blattner"
-    			//  If we find "Blattner", go through every row (AKA row2) in the primarySystemTableManger
+    			//  If we find "Blattner", go through every row (AKA row2) in the primarySystemTableManger (AKA UniProt table)
     			//    check if row1's UID value is the same as row2's UID value,
     			//		if yes, loop some more!! (yippee), this time we are getting the value of the ID field,
     			//			then we'll write out a record.
@@ -329,5 +314,11 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 		// there was some code here that was E. coli specific. It has been moved
 		// to the same method in the E. coli SpeciceProfile
 		return tableManager;
+	}
+
+	@Override
+	public TableManager getPrimarySystemTableManagerCustomizations(Date version) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

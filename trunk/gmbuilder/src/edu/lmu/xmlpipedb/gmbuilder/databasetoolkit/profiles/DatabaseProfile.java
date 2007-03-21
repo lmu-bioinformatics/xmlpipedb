@@ -479,32 +479,37 @@ public abstract class DatabaseProfile extends Profile {
      * @throws InvalidParameterException 
      * @throws Exception
      */
-    public TableManager[] getFirstPassTableManagers() throws SQLException, InvalidParameterException {
-        List<TableManager> tableManagers = new ArrayList<TableManager>();
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(53, "Preparing tables - Info table...");
-        tableManagers.add(getInfoTableManager());
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(55, "Preparing tables - Relations table...");
-        tableManagers.add(getRelationsTableManager());
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(57, "Preparing tables - Other table...");
-        tableManagers.add(getOtherTableManager());
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(59, "Preparing tables - Systems table...");
-        tableManagers.add(getSystemsTableManager());
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(61, "Preparing tables - Primary System table...");
-        tableManagers.add(getPrimarySystemTableManager());
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(63, "Preparing tables - System tables...");
-        tableManagers.add(getSystemTableManager());
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(65, "Preparing tables - Relationship table...");
-        tableManagers.addAll(getRelationshipTableManager());
-
-        return tableManagers.toArray(new TableManager[0]);
-    }
+    //JN - 2007-02-24 -- This stuff was in-lined in the ExportToGenMAPP.export()
+    //  method a few months ago. It should no longer be needed and I've now
+    //  commented it out. If this causes any issues, they should be addressed
+    //  by changing the call and/or functionality, but *not* by adding this 
+    //  back in.
+//    public TableManager[] getFirstPassTableManagers() throws SQLException, InvalidParameterException {
+//        List<TableManager> tableManagers = new ArrayList<TableManager>();
+////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+////        ExportWizard.updateExportProgress(53, "Preparing tables - Info table...");
+//        tableManagers.add(getInfoTableManager());
+////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+////        ExportWizard.updateExportProgress(55, "Preparing tables - Relations table...");
+//        tableManagers.add(getRelationsTableManager());
+////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+////        ExportWizard.updateExportProgress(57, "Preparing tables - Other table...");
+//        tableManagers.add(getOtherTableManager());
+////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+////        ExportWizard.updateExportProgress(59, "Preparing tables - Systems table...");
+//        tableManagers.add(getSystemsTableManager());
+////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+////        ExportWizard.updateExportProgress(61, "Preparing tables - Primary System table...");
+//        tableManagers.add(getPrimarySystemTableManager());
+////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+////        ExportWizard.updateExportProgress(63, "Preparing tables - System tables...");
+//        tableManagers.add(getSystemTableManager());
+////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+////        ExportWizard.updateExportProgress(65, "Preparing tables - Relationship table...");
+//        tableManagers.addAll(getRelationshipTableManager());
+//
+//        return tableManagers.toArray(new TableManager[0]);
+//    }
 
     /**
      * Returns table managers associated with the second pass through the tables

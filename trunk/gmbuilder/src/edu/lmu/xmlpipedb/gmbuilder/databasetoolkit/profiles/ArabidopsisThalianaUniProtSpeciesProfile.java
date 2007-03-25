@@ -30,6 +30,7 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
@@ -211,11 +212,13 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 		sqlQuery = 
 		" create temporary table temp_tair as " +
 		/*" create table temp_tair as " +*/
-		" select a.id from dbreferencetype a where " + 
-		" a.type = 'TAIR' and a.id SIMILAR TO 'At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]' " +
-		" group by a.id";
+		"select a.entrytype_dbreference_hjid as hjid , a.id from dbreferencetype a " +
+		"where a.type = 'TAIR' and " +
+		"a.id SIMILAR TO 'At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]'" +
+		"group by a.id, a.entrytype_dbreference_hjid;";
         try {
 	    	ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
+	    	ps.executeUpdate();
 		} catch (SQLException e) {
 			_Log.error("Exception trying to execute query: " + sqlQuery );
 			while( e != null ){
@@ -229,11 +232,11 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 		//* some genename records have more than one TAIR ID per cell and they 
 		//   must have their values split out in step 3 below.
 		sqlQuery =
-        " insert into temp_tair " + 
-		" select c.value " +
-		" from genenametype c " + 
-		" where c.value SIMILAR TO 'At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]' " +
-		" group by c.value ";
+        " insert into temp_tair" +
+        "select d.entrytype_gene_hjid as hjid, c.value" +
+        "from genenametype c INNER JOIN entrytype_genetype d ON (c.entrytype_genetype_name_hjid = d.hjid)" +
+        "where c.value SIMILAR TO 'At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]'" +
+        "group by d.entrytype_gene_hjid, c.value;";
         try {
 	    	ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
 	        ps.executeUpdate();
@@ -275,9 +278,11 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	            try {
 	            	sqlQuery = 
 	            	" insert into temp_tair " +
-	            	" select split_part(c.value, '/', " + i + ") as value " + 
-	            	" from genenametype c " +
-	            	" where c.value SIMILAR TO '%At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]/%' ";
+	            	"select hjid, value from ( " +
+	            	"select d.entrytype_gene_hjid as hjid, split_part(c.value, '/', " + i + ") as value" +
+	            	"from genenametype c INNER JOIN entrytype_genetype d ON (c.entrytype_genetype_name_hjid = d.hjid)" +
+	            	"where c.value SIMILAR TO '%At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]/%') as split_gene" +
+	            	"where value SIMILAR TO 'At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]' ";
 	                ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
 	                ps.executeUpdate();
 				} catch (SQLException e) {
@@ -343,7 +348,80 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 			TableManager systemTableManager, TableManager tableManager)
 			throws SQLException {
 		
-		tableManager = super.speciesSpecificRelationshipTableHelper(relationshipTable, primarySystemTableManager, systemTableManager, tableManager, SPECIES_TABLE, "Bridge", "S");
+		//tableManager = super.speciesSpecificRelationshipTableHelper(relationshipTable, primarySystemTableManager, systemTableManager, tableManager, SPECIES_TABLE, "Bridge", "S");
+		String sqlQuery;
+		String finalColumnName = "Bridge";
+		String finalColumnValue = "S";
+		
+		//Separate the String relationshipTable into two parts based on the dash ("-") in the String
+		// Store the two parts as systemTable1 and systemTable2 in the SystemTablePair object
+        SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
+
+		// Get a Map, which in the case of A. Thaliana only contains one entry (for TAIR) as a "proper" system table
+        
+		//   The gist of the following if / elseif / else block is:
+		//     if      stp.systemTable1 == TAIR, then do some stuff (this will cover TAIR-EMBL, TAIR-PDB, TAIR-Pfam, and TAIR-InterPro)
+		//     elseif  stp.systemTable2 == TAIR AND systemTable1 is NOT UniProt, then do some other stuff (this will cover UniGene-Tair)
+		//     else    do some different stuff (this will cover UniProt-TAIR)
+        //   NOTE: In the non-E.coli case, e.g. A.thaliana, substitute the term TAIR for Blattner, above.
+		
+
+        if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable1)) {
+        	sqlQuery = 
+        		"SELECT b.id as primary, a.id as related " +
+        		"FROM dbreferencetype a " +
+        		"INNER JOIN (select hjid, id from temp_tair group by hjid, id) as b " +
+        		"on (a.entrytype_dbreference_hjid = b.hjid) " +
+        		"WHERE a.type = ? group by b.id, a.id;";  
+            PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
+            ps.setString(1, stp.systemTable2);
+            ResultSet result = ps.executeQuery();
+            
+            while (result.next()) {
+                tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", result.getString("primary") }, { "Related", result.getString("related") },
+                // TODO This is hard-coded. Fix it.
+                { finalColumnName, finalColumnValue } });
+            }
+            ps.close();
+        } else if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable2) && !stp.systemTable1.equals("UniProt")) {
+        	// the only difference between this an the above case is that the primary here is the UniGene id and TAIR is related.
+        	sqlQuery = 
+        		"SELECT b.id as related, a.id as primary " +
+        		"FROM dbreferencetype a " +
+        		"INNER JOIN (select hjid, id from temp_tair group by hjid, id) as b " +
+        		"on (a.entrytype_dbreference_hjid = b.hjid) " +
+        		"WHERE a.type = ? group by b.id, a.id;";  
+            PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
+            ps.setString(1, stp.systemTable1);
+            ResultSet result = ps.executeQuery();
+            
+            while (result.next()) {
+                tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", result.getString("primary") }, { "Related", result.getString("related") },
+                // TODO This is hard-coded. Fix it.
+                { finalColumnName, finalColumnValue } });
+            }
+            ps.close();
+        } else {
+    			// Go through each row (AKA row1...) in the systemTableManager that was passed in, checking for "Blattner"
+    			//  If we find "Blattner", go through every row (AKA row2) in the primarySystemTableManger (AKA UniProt table)
+    			//    check if row1's UID value is the same as row2's UID value,
+    			//		if yes, loop some more!! (yippee), this time we are getting the value of the ID field,
+    			//			then we'll write out a record.
+
+        		sqlQuery = "SELECT a.accession as primary, b.id as related " +
+        				"FROM temp_uniprot a " +
+        				"INNER JOIN (select hjid, id from temp_tair group by hjid, id) as b " +
+        				"on (b.hjid = a.hjid) " +
+        				"group by accession, id;";
+                PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
+                ResultSet result = ps.executeQuery();
+
+                while (result.next()) {
+                	tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", result.getString("primary") }, { "Related", result.getString("related") },
+                    //TODO This is hard-coded.  Fix it. 
+                    { finalColumnName, finalColumnValue } });
+                }
+        }
 		
 		return tableManager;
 	}
@@ -385,8 +463,9 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 		" FROM commenttype INNER JOIN entrytype_comment ON (entrytype_comment_hjchildid = hjid) " + 
 		" WHERE type = 'function'; ";
 
-		String querySQL = 
-		" select a.entrytype_accession_hjid as hjid, a.hjvalue as accession, b.hjvalue as entryname, c.value as primary, d.value as orderedlocus, e.value as protein, f.text as function " +
+		String createTableSQL = 
+		" create temporary table temp_uniprot AS" +
+		" select a.entrytype_accession_hjid as hjid, a.hjvalue as accession, b.hjvalue as entryname, c.value as prime, d.value as orderedlocus, e.value as protein, f.text as function " +
 		" from " + 
 		" entrytype_accession a LEFT OUTER JOIN entrytype_name b ON (a.entrytype_accession_hjid = b.entrytype_name_hjid) " +
 		" LEFT OUTER JOIN temp_genename_primary c ON (a.entrytype_accession_hjid = c.hjid) " +
@@ -394,6 +473,11 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 		" LEFT OUTER JOIN temp_protein e ON (a.entrytype_accession_hjid = e.hjid) " +
 		" LEFT OUTER JOIN temp_comment f ON (a.entrytype_accession_hjid = f.hjid) " + 
 		" WHERE entrytype_accession_hjindex = 0; ";
+		
+		String querySQL = 
+				"select hjid, accession, entryname, prime as primary, " +
+				"orderedlocus, protein, function " +
+				"from temp_uniprot;";
 		
 		/* JN 2/16/2007 -- 
 		 * For A. thaliana to work, I've removed the "NOT NULL" constraint 
@@ -419,6 +503,9 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 		ps.executeUpdate();
 		
 		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(commentSQL);
+		ps.executeUpdate();
+		
+		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(createTableSQL);
 		ps.executeUpdate();
 		
 		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(querySQL);

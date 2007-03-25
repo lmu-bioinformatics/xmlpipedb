@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
@@ -34,6 +37,7 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
  * Class: UniProtSpeciesProfile
  */
 public class UniProtSpeciesProfile extends SpeciesProfile {
+	private static final Log _Log = LogFactory.getLog(UniProtSpeciesProfile.class);
 
 	/**
 	 * Creates a custom species profile for a UniProt centric database.
@@ -262,7 +266,13 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                 String related = result.getString("entrytype_dbreference_hjid");
 
                 for (Row row : systemTableManager.getRows()) {
-                    if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(criteria) && row.getValue("UID").equals(related)) {
+                	_Log.debug("\nCriteria: [" + criteria + "]" + 
+                			  "\nRelated: [" + related + "]" +
+                			  "\nRow Table Name Colum value: [" + row.getValue(TableManager.TABLE_NAME_COLUMN) + "]" +
+                			  "\nRow UID value: [" + row.getValue("UID") + "]");
+                    if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(criteria) 
+                    		&& row.getValue("UID") != null
+                    		&& row.getValue("UID").equals(related)) {
                         for (String id : row.getValue("ID").split("/")) {
                             tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", primary }, { "Related", id },
                             // TODO This is hard-coded. Fix it.
@@ -273,7 +283,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
             }
             ps.close();
         } else {
-    			// Go through each row (AKA row1) in the systemTableManager that was passed in, checking for "Blattner"
+    			// Go through each row (AKA row1...) in the systemTableManager that was passed in, checking for "Blattner"
     			//  If we find "Blattner", go through every row (AKA row2) in the primarySystemTableManger (AKA UniProt table)
     			//    check if row1's UID value is the same as row2's UID value,
     			//		if yes, loop some more!! (yippee), this time we are getting the value of the ID field,
@@ -283,6 +293,8 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                 if (row1.getValue(TableManager.TABLE_NAME_COLUMN).equals(criteria)) {
                     for (Row row2 : uniprotTableManager.getRows()) {
                         if (row2.getValue("UID").equals(row1.getValue("UID"))) {
+                        	_Log.debug("Row 2 value: [" + row2.getValue("UID") + "] equaled Row 1 value: [" + row1.getValue("UID") + "]");
+                    
                             tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", row2.getValue("ID") }, { "Related", row1.getValue("ID") },
                             //TODO This is hard-coded.  Fix it. 
                             { finalColumnName, finalColumnValue } });

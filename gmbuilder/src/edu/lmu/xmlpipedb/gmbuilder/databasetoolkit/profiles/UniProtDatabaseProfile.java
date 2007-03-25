@@ -363,7 +363,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         PreparedStatement ps;
         ResultSet result;
 
-        // loop through the list of System tables and for each one, ... do some evaluation??? need to look at this more closely.
+        // loop through the list of System tables and for each one, ... do some evaluation??? 
+        // need to look at this more closely.
         for (Entry<String, SystemType> systemTable : systemTables.entrySet()) {
         	_Log.info("systemTable.getKey(): " + systemTable.getKey());        	
         	/*
@@ -388,6 +389,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             }
         }
 
+        // This goes off and gets the species specific system table(s) e.g. TAIR, etc.
         tableManager = speciesProfile.getSystemTableManagerCustomizations(tableManager, getPrimarySystemTableManager(), version);
 
         systemTableManager = tableManager;

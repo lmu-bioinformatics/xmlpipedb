@@ -31,11 +31,10 @@ import org.apache.commons.logging.LogFactory;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
-import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 
 /**
- * @author Joey J. Barrett
+ * @author Joey J. Barrett, Jeffrey Nicholas
  * Class: Table
  */
 public class Table {
@@ -135,10 +134,6 @@ public class Table {
 		}
 	}
 	
-	private TableManager tableManager;
-	private Attributes tableAttributes;
-	private List<SQLStatement> sqlBuffer = new ArrayList<SQLStatement>();
-	
 	/**
 	 * Constructor.
 	 * @param tableManager
@@ -159,7 +154,8 @@ public class Table {
      * @throws Exception
      */
     public void export(Connection exportConnection) throws SQLException {
-        if (tableAttributes != null) {
+        // First Create any objects requiring creation
+    	if (tableAttributes != null) {
 //            Set<String> tableNames = new HashSet<String>();
 //            for (Row row : tableManager.getRows()) {
 //                if (row.getValue(TableManager.QUERY_TYPE_COLUMN).equals(QueryType.insert.name())) {
@@ -167,20 +163,19 @@ public class Table {
 //                }
 //            }
             // Create the submitted tables.
+        	
             for (String tableName : tableManager.getTableNames()) {
-                // TODO Would be better to decouple business logic from UI calls.
-//            	FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//                ExportWizard.updateExportProgress(66, "Creating tables - " + tableName + " table...");
+            	_Log.info("Create Table in GDB. Table Name: [" + tableName + "]" );
                 create(tableName);
             }
         }
 
+    	// Then create all insert and update statements
         String previousTableName = "";
         Row[] rowsToProcess = tableManager.getRows();
         _Log.info("Processing " + rowsToProcess.length + " rows");
         for (Row row : rowsToProcess) {
             if (!row.getValue(TableManager.TABLE_NAME_COLUMN).equals(previousTableName)) {
-                ExportWizard.updateExportProgress(66, "Populating tables - " + row.getValue(TableManager.TABLE_NAME_COLUMN) + " table...");
                 previousTableName = row.getValue(TableManager.TABLE_NAME_COLUMN);
             }
 
@@ -191,7 +186,9 @@ public class Table {
             }
         }
 
-        ExportWizard.updateExportProgress(66, "Flushing tables...");
+        _Log.info("Insert Count: [" + insertCount + "]");
+        _Log.info("Update Count: [" + updateCount + "]");
+        _Log.info("Flushing tables...");
         flush(exportConnection);
     }
 	
@@ -257,6 +254,7 @@ public class Table {
 		sqlStatement.append(")");
 		
 		sqlBuffer.add(new SQLStatement(sqlStatement.toString(), valueBag.toArray(new String[0])));
+		insertCount++;
 	}
 	
 
@@ -314,7 +312,8 @@ public class Table {
 		sqlStatement = new StringBuffer(sqlStatement.substring(0, sqlStatement.length()-1));
 		
 		sqlBuffer.add(new SQLStatement(sqlStatement.toString(), valueBag.toArray(new String[0])));
-	}
+		updateCount++;
+	} // end update
 
 	/**
      * Flush the sqlBuffer to the database given by the connection.
@@ -328,12 +327,15 @@ public class Table {
     	 * performance enhancement later on.
     	 */
     	int errorCounter = 0; // used for counting SQLExceptions
+    	int forLoopPasses = 0; // used for counting # of passes through for loop that executed without exception
     	
     	// If there are no records to process, just bail!
         if (sqlBuffer.size() <= 0)
         	return;
         
         PreparedStatement ps = null;
+        _Log.info("Number of records to process: sqlBuffer.size():: " + sqlBuffer.size());
+        _Log.info("Number of records to process: sqlBuffer.toArray().length:: " + sqlBuffer.toArray().length);
         for (SQLStatement sqlStatement : sqlBuffer.toArray(new SQLStatement[0])) {
             try {
                 ps = connection.prepareStatement(sqlStatement.getSQL());
@@ -344,6 +346,7 @@ public class Table {
                 }
                
                 ps.executeUpdate();
+                forLoopPasses++;
             } catch( SQLException e ){
             	StringBuffer errText = new StringBuffer("An SQLException occurred while writing to the database. ");
             	//errText.append(" sqlStatement getSQL: " + sqlStatement.getSQL());
@@ -380,14 +383,28 @@ public class Table {
         } // end for loop
         
         // print a log entry if any errors were encountered.
-        if( errorCounter > 0 )
+        if( errorCounter > 0 ){
         	_Log.error(errorCounter + " number of eroneous records were captured." );
+        }
         
+        // Always print out the number of successful passes through the for loop
+        _Log.info("Number of successful passes through for loop: [" + forLoopPasses + "]");
     } // end flush()
     
     /**
      * Log object for this class.
      */
     private static final Log _Log = LogFactory.getLog(Table.class);
+
+    /*
+     * Class variables
+     */
+    private TableManager tableManager;
+	private Attributes tableAttributes;
+	private List<SQLStatement> sqlBuffer = new ArrayList<SQLStatement>();
+	private int insertCount = 0;
+	private int updateCount = 0;
+
+    
 } 
 	

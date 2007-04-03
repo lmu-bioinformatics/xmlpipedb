@@ -404,7 +404,15 @@ public class GenMAPPBuilder extends App {
     private void doImport(String jaxbContextPath, String title) {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         if (hibernateConfiguration != null) {
-            ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration);
+        	HashMap<String,String> rootElement = new HashMap<String,String>(5);
+            rootElement.put("rootname", "uniprot");
+            rootElement.put("xmlns","http://uniprot.org/uniprot" );
+            rootElement.put("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance" );
+            rootElement.put("xsi:schemaLocation","http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd" );
+            String head = "<uniprot xmlns=\"http://uniprot.org/uniprot\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd\">";
+            rootElement.put("head",head );
+            rootElement.put("tail","</uniprot>" );
+            ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration, "uniprot/entry", rootElement);
             importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             ModalDialog.showPlainDialog(title, importPanel);
         } else {

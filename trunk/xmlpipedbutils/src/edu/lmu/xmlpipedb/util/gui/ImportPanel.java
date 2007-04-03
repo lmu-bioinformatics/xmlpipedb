@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
+import java.util.HashMap;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -51,21 +52,21 @@ public class ImportPanel extends JPanel {
      * @param jaxbContextPath The context path for the jaxb
      */
     public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration) {
-        this(jaxbContextPath, hibernateConfiguration, "");
+        this(jaxbContextPath, hibernateConfiguration, "", null);
     }
 	
 	/**
-	 * @deprecated
-	 * 
      * Creates a new instance of ImportPanel
-     * @param hibernateConfiguration The hibernate configuration to save to
-     * @param jaxbContextPath The context path for the jaxb
-     * @param topLevelElement Used only if the advanced import with Digester is working.
+	 * @param jaxbContextPath The context path for the jaxb
+	 * @param hibernateConfiguration The hibernate configuration to save to
+	 * @param topLevelElement Used only if the advanced import with Digester is working.
+	 * @param rootElementName Name of the root element, for example "bookstore" or "uniprot"
      */
-    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration, String topLevelElement) {
+    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration, String topLevelElement, HashMap<String,String> rootElementName) {
         _jaxbContextPath = jaxbContextPath;
         _hibernateConfiguration = hibernateConfiguration;
-        _topLevelElement = topLevelElement;
+        _entryElement = topLevelElement;
+        _rootElementName = rootElementName;
         createComponents();
         createActions();
         layoutComponents();
@@ -196,7 +197,7 @@ public class ImportPanel extends JPanel {
             try {
                 // does the progress monitor popup
                 InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(this, "Reading " + _xmlFile, new FileInputStream(_xmlFile)));
-                ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration);
+                ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration, _entryElement, _rootElementName);
                 System.out.println("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
                 importEngine.loadToDB(in);
                 System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
@@ -303,7 +304,8 @@ public class ImportPanel extends JPanel {
     }
     private String _jaxbContextPath;
     private Configuration _hibernateConfiguration;
-    private String _topLevelElement;
+    private String _entryElement;
+    private HashMap<String,String> _rootElementName;
     private JButton _previewButton;
     private JTextField _textFieldPath;
     private JScrollPane _xmlScrollArea;

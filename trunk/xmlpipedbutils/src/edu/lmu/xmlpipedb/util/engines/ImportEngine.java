@@ -12,26 +12,29 @@ package edu.lmu.xmlpipedb.util.engines;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringBufferInputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 
+import nu.xom.converters.DOMConverter;
+
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.NodeCreateRule;
 import org.apache.commons.digester.Rule;
-import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
-import com.sun.org.apache.xerces.internal.dom.DocumentTypeImpl;
 
 /**
  * This class imports an xml file into a database.
@@ -53,11 +56,9 @@ public class ImportEngine {
         jaxbContext = JAXBContext.newInstance(jaxbContextPath);
         unmarshaller = jaxbContext.createUnmarshaller();
         sessionFactory = hibernateConfiguration.buildSessionFactory();
-        _topLevelElement = "";
     }
     
     /**
-     * @deprecated
      * Creates a new instance of ImportEngine
      * @param jaxbContextPath The jaxbContext path
      * @param hibernateConfiguration A hibernate configuration as the configuration to import
@@ -69,11 +70,12 @@ public class ImportEngine {
      * @throws java.io.IOException for IO exceptions
      * @throws org.hibernate.HibernateException all hibernate exceptions
      */
-    public ImportEngine(String jaxbContextPath, Configuration hibernateConfiguration, String topLevelElement) throws JAXBException, SAXException, IOException, HibernateException {
+    public ImportEngine(String jaxbContextPath, Configuration hibernateConfiguration, String entryElement, HashMap<String, String> rootElementName) throws JAXBException, SAXException, IOException, HibernateException {
         jaxbContext = JAXBContext.newInstance(jaxbContextPath);
         unmarshaller = jaxbContext.createUnmarshaller();
         sessionFactory = hibernateConfiguration.buildSessionFactory();
-        _topLevelElement = topLevelElement;
+        _rootElementName = rootElementName;  // e.g. Name = "bookstore";
+        _entryElement = entryElement;	// e.g.  "bookstore/book"
     }
 
     /**
@@ -104,29 +106,11 @@ public class ImportEngine {
          */
     	
 //    	#1 Original
-        saveEntry(xml);
+//        saveEntry(xml);
     	
 //		#2 Extra Crispy
-//        digestXmlFile(xml);
+        digestXmlFile(xml);
         
-        
-        /*
-         * The following code was moved down to the method saveEntry.
-         */
-//    	Object object = unmarshaller.unmarshal(xml);
-//        Session saveSession = sessionFactory.openSession();
-//        Transaction transaction = null;
-//        try {
-//            transaction = saveSession.beginTransaction();
-//            saveSession.saveOrUpdate(object);
-//            transaction.commit();
-//        } catch(Exception ex) {
-//            if (transaction != null)
-//                transaction.rollback();
-//            throw ex;
-//        } finally {
-//            saveSession.close();
-//        }
     }
     
     /**
@@ -166,41 +150,22 @@ public class ImportEngine {
     	 * 
     	*/			
     	
-    	//Look Ma, I'm actually logging stuff (albeit not pretty)
-		SimpleLog logger = new SimpleLog("ImportLogger");
-		logger.setLevel(SimpleLog.LOG_LEVEL_DEBUG);
-
+    	Digester dig2 = new Digester();
+    	NodeCreateRule ncRule;
     	
-    	Digester digester = new Digester();
-//    	Digester dig2 = new Digester();
-//    	NodeCreateRule topNcRule; 
-//    	NodeCreateRule ncRule;
 		try {
-//			topNcRule = new NodeCreateRule();
-//			ncRule = new NodeCreateRule();
-			
-			
-			//FIXME: IF this works, use a variable here
-			//digester.addRule("bookstore", topNcRule);
-//			digester.addRule(_topLevelElement, ncRule);
-			// NOTE-- this did not work out for me.
-			//digester.addRule(_topLevelElement, new ObjectCreateRule("java.lang.StringBuffer"));
-//			digester.addRule("bookstore", new TopEndOfRecordRule());
-			digester.addRule(_topLevelElement, new EndOfRecordRule());
-			digester.setValidating(false);
-			digester.setLogger(logger);
-			digester.parse(xml);
-			
-//			dig2.addRule(_topLevelElement, ncRule);
-//			dig2.addRule(_topLevelElement, new EndOfRecordRule());
-//			dig2.setValidating(false);
-//			dig2.setLogger(logger);
-//			dig2.parse(xml);
+			ncRule = new NodeCreateRule();
+
+			dig2.addRule(_entryElement, ncRule);
+			dig2.addRule(_entryElement, new EndOfRecordRule());
+			dig2.setValidating(false);
+			dig2.setLogger(_Log);
+			dig2.parse(xml);
 
 			
-//		} catch (ParserConfigurationException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -209,25 +174,7 @@ public class ImportEngine {
 			e.printStackTrace();
 		}	
     	
-    }
-    
-    /**
-     * When end of the an element is reached, a custom, EndOfRecordRule
-     * will be fired, which pops this Node from the stack as an Element
-     * and passes it to the saveEntry method, which uses JAXB and Hibernate
-     * to save the contents to the database.
-     * 
-     * @author Jeffrey Nicholas
-     *
-     */
-    protected class TopEndOfRecordRule extends Rule{
-    	public void end(String namespace, String name){
-    		System.out.println("\nTopEndOfRecordRule.end()");
-    		Digester mydigester = this.getDigester();
-			_top = (Element) mydigester.pop();
-			//saveEntry(_top);
-    	}
-    }
+    }// end digestXmlFile
     
     /**
      * When end of the an element is reached, a custom, EndOfRecordRule
@@ -239,29 +186,7 @@ public class ImportEngine {
      *
      */
     protected class EndOfRecordRule extends Rule{
-    /*
-     * The following 2 methods (begin and body) were part of my aborted
-     * attempt to create my own Object, rather than what the CreateNodeRule
-     * gave me.
-     */
-    	
-/*    	public void begin(String namespace,String name, Attributes attributes){
-    		Digester myDigester = this.getDigester();
-    		StringBuffer sb = new StringBuffer("");
-    		sb.append(name);
-    		sb.append(attributes.toString());
-    		myDigester.push(sb);
-    	}
-    	
-    	public void body(String namespace, String name, String text){
-    		Digester myDigester = this.getDigester();
-    		StringBuffer sb = (StringBuffer)myDigester.pop();
-    		sb.append(name);
-    		sb.append(text);
-    		myDigester.push(sb);
-    	}*/
-    	
-    	/*
+     	/*
     	 * This is where all the trouble lies.
     	 * 
     	 * The top of the method has the clean version of the code. Comment
@@ -276,95 +201,47 @@ public class ImportEngine {
     	 */
     	public void end(String namespace, String name){
     		_recordCount++;
-    		Digester tempDig = getDigester();
-    		System.out.println("\n" + tempDig.getMatch() + " Record #: " + _recordCount);
-//    		Digester mydigester = this.getDigester();
-    		// this is not really needed, but you can only pop once, so
-    		// this way, the results will be available below, if imanutjob
-//    		Object o = mydigester.pop();
-//    		org.w3c.dom.Element elem = (org.w3c.dom.Element) o;
-//    		saveEntry(elem);
+    		System.out.println("\n Record #: " + _recordCount);
     		
-    		/*
-    		 * my little way of controlling whether I go into this code or not
-    		 * :)
-    		 */
-//    		boolean imanutjob = false;
-//    		
-//    		if(imanutjob == true){
-//    			Object o = null;
-//    			//if(!mydigester.isEmpty(""))
-//    			o = mydigester.pop();
-//        		org.w3c.dom.Element elem = (org.w3c.dom.Element) o;
-//        		 
-//        		_top.appendChild(elem);
-//    			saveEntry(elem);
-//    			
-//    			
-//    			
-//    			if(true) return;
-//    			
-//    			
-//    			DocumentTypeImpl dti = new DocumentTypeImpl(null, "bookstore");
-//	    		DocumentImpl doc;
-	//    		DocumentBuilderFactory factory =
-	//                DocumentBuilderFactory.newInstance();
-	            //factory.setValidating(true);   
-	            //factory.setNamespaceAware(true);
-	            //try {
-	              // DocumentBuilder builder = factory.newDocumentBuilder();
-	             //  doc = builder.newDocument();
-	             //  doc.appendChild((Element)mydigester.pop());
-//	              doc = new DocumentImpl( dti );
-	//              DefaultDocumentType ddt = new DefaultDocumentType();
-	//              ddt.setElementName("bookstore");
-	//              doc.setsetDocType(ddt);
-	            //  Node n = (Node)mydigester.pop();
-	             // doc.appendChild(n);
-	
-//	              org.w3c.dom.Element elem2 = doc.createElement(null);
-//	              elem2 = (org.w3c.dom.Element)o;
-//	              
-	              //doc.addEventListener((Element)o);
-	             
-	               // should this be a documentroot object???
-	               //   or some other special DOM element
-	               // root = (Element) doc.createElement("bookstore"); 
-	               //doc.appendChild(root);
-	               //Element elem = (Element)mydigester.pop();
-	               
-	               //root.appendChild( elem );
-	          // root.appendChild( document.createTextNode(" ")    );
-	           //root.appendChild( document.createTextNode("text") );
-	               
-	              // doc.createElement("bookstore");
-	              // Element topElem = doc.getElement("bookstore");
-	          
-	               //topElem.appendChild((Element)mydigester.pop());
-	               //doc = builder.parse( "" );
-	     
-	              /* } catch (SAXException sxe) {
-	               // Error generated during parsing)
-	               Exception  x = sxe;
-	               if (sxe.getException() != null)
-	                   x = sxe.getException();
-	               x.printStackTrace();
-	
-	            } catch (ParserConfigurationException pce) {
-	                // Parser with specified options can't be built
-	                pce.printStackTrace();
-	
-	            }*/ /*catch (IOException ioe) {
-	               // I/O error
-	               ioe.printStackTrace();
-	            }*/
-	    		
-	    		//DOMDocument doc = new DOMDocument("bookstore");
-	    		//doc.add((Element)mydigester.pop());
-	    		//Element elem = (Element)mydigester.pop();
-	    		
-	    		//saveEntry(doc);
-//    		}
+    		Digester mydigester = this.getDigester();
+    			
+    		Object o = mydigester.pop();
+
+    		
+    		/*_root = new nu.xom.Element(_rootElementName.get("rootname"), _rootElementName.get("xmlns"));
+    		Iterator iter = _rootElementName.keySet().iterator();
+    		while(iter.hasNext()){
+    			String attrName = (String) iter.next();
+    			// rootname is not an attribute, so skip it
+    			if( attrName.equalsIgnoreCase("rootname") )
+    				continue;
+    			
+    			_root.addAttribute(new nu.xom.Attribute(attrName, _rootElementName.get(attrName)));
+    		}*/
+
+    		org.w3c.dom.Element elem = (org.w3c.dom.Element) o;
+    		nu.xom.Element e = DOMConverter.convert(elem);
+    		_Log.info(e.toXML());
+    		elements += e.toXML();
+    		
+    		
+
+    		/*_root.appendChild(e);
+    		nu.xom.Document doc = new nu.xom.Document(_root);
+    		_Log.info(doc.toXML());*/
+    		
+    		if( _recordCount%25 == 0 ){
+	    		String doc = _rootElementName.get("head") + elements + _rootElementName.get("tail");
+	    		//saveEntry(new StringBufferInputStream(doc.toXML()));
+	    		elements = "";
+	    		saveEntry(new StringBufferInputStream(doc));
+    		
+    		}
+    		
+    		// This worked really well, until the unmarshaller threw a series of
+    		//"parse may not be called while parsing" errors -- oh well.
+    		//new SimpleThread(new StringBufferInputStream(doc)).start();
+ 
     	}
     }
     
@@ -435,6 +312,37 @@ public class ImportEngine {
         }
     } // end saveEntry
     
+    
+    class SimpleThread extends Thread {
+        public SimpleThread(InputStream xml) {
+            _xml = xml;
+        }
+        public void run() {
+        	Transaction transaction = null;
+        	Session saveSession = null;
+        	
+        	try {
+        		Object object = unmarshaller.unmarshal(_xml);
+        		saveSession = sessionFactory.openSession();
+                transaction = saveSession.beginTransaction();
+                saveSession.saveOrUpdate(object);
+                transaction.commit();
+            } catch(Exception ex) {
+                if (transaction != null)
+                    transaction.rollback();
+                try {
+    				throw ex;
+    			} catch (Exception e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+            } finally {
+                saveSession.close();
+            }
+        }
+        InputStream _xml;
+    }
+    
     /**
      * Within the demo app this method was made public.
      * @return The session factory in case someone needs it.
@@ -446,7 +354,10 @@ public class ImportEngine {
     private Unmarshaller unmarshaller;
     private JAXBContext jaxbContext;
     private SessionFactory sessionFactory;
-    private String _topLevelElement; // this is used to capture each top level record in the xml file
-	private int _recordCount = 0;
-	private Element _top = null;
+    private Map<String, String> _rootElementName; // this is used to capture each top level record in the xml file
+    private String _entryElement; // this holds the "uniprot/uniprot/entry" tag -- for bookstore example, it holds "bookstore/book"
+    private int _recordCount = 0;
+    nu.xom.Element _root;
+    private String elements = "";
+	private static Log _Log = LogFactory.getLog(TallyEngine.class);
 }

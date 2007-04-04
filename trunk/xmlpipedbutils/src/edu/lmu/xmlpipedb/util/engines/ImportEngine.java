@@ -59,16 +59,25 @@ public class ImportEngine {
     }
     
     /**
-     * Creates a new instance of ImportEngine
+     * Creates a new instance of ImportEngine for use with high-performance JAXB
+     * processing. High-performance processing is stongly recommended files 
+     * over 1MB and required for large files (somewhere over 35MB). But processing
+     * anything over 1MB with the normal constructor is simply foolish!
+     * 
      * @param jaxbContextPath The jaxbContext path
      * @param hibernateConfiguration A hibernate configuration as the configuration to import
-     * the xml to the database
-     * @param topLevelElement Used to parse each top level record from the XML input file. 
-     * For a uniprot XML file, this would normally be "uniprot/entry"
-     * @throws javax.xml.bind.JAXBException For JaxB Exceptions
-     * @throws org.xml.sax.SAXException for SAX Exceptions
-     * @throws java.io.IOException for IO exceptions
-     * @throws org.hibernate.HibernateException all hibernate exceptions
+     * 									the xml to the database
+     * @param entryElement Used to parse each record from the XML input file. 
+     * 						For a uniprot XML file, this would normally be "uniprot/entry"
+     * @param rootElementName Map<String, String> containing a "head" and a "tail".
+     * 						  This is used to surround the extracted record for processing
+     * 						  The "head" must have the complete beginning tag (inclusive all 
+     * 						  namespace delcarations, attributes, etc.), e.g.: <bookstore xlsns:http://mybookstore.org/bookstore> The "tail" need only have
+     * 						  the correct closing tag, e.g.: </bookstore>
+     * @throws JAXBException
+     * @throws SAXException
+     * @throws IOException
+     * @throws HibernateException
      */
     public ImportEngine(String jaxbContextPath, Configuration hibernateConfiguration, String entryElement, HashMap<String, String> rootElementName) throws JAXBException, SAXException, IOException, HibernateException {
         jaxbContext = JAXBContext.newInstance(jaxbContextPath);
@@ -84,32 +93,13 @@ public class ImportEngine {
      * @throws java.lang.Exception 
      */
     public void loadToDB(InputStream xml) throws Exception {
-        /*
-         * This method used to hold the block of code that is commented below.
-         * As noted, this has been moved to a method called saveEntry.
-         * I've created two version of saveEntry. 
-         * 
-         * (1) takes an InputStream
-         * and works just like the code below did. This allows backward 
-         * compatibility and allows this code to be checked in while still
-         * in development. To use this path, leave "//#1 Original" uncommented,
-         * below.
-         * 
-         * (2) takes an Element object. This actually also works the same way
-         * as the previous code, but simply uses a different unmarshall method
-         * (one that takes a DOM Element rather than an InputStream. To use
-         * this path, leave "//#2 Extra Crispy" uncommented, below.
-         * 
-         * OBVIOUSLY, the path not being used must be commented.
-         * 
-         * 
-         */
     	
 //    	#1 Original
-//        saveEntry(xml);
-    	
+    	if(_rootElementName == null)
+    		saveEntry(xml);
+    	else
 //		#2 Extra Crispy
-        digestXmlFile(xml);
+    		digestXmlFile(xml);
         
     }
     
@@ -134,29 +124,20 @@ public class ImportEngine {
      * and passes it to the saveEntry method, which uses JAXB and Hibernate
      * to save the contents to the database.
      */
-    private void digestXmlFile(InputStream xml){
-    	/*	NOTES: General Game Plan		 
-    	 * The code in this method is pretty much done, unless we come up
-    	 * with a novel way of using the rules to do what we want. All the
-    	 * trouble is in the processing Required by the EndOfRecordRule, below.
-    	 * 
-    	 * SEE ADDITIONAL NOTES IN EndOfRecordRule
-    	 * 
-    	 * add a node create rule to get the top element "bookstore"
-    	 * add a start of record rule to pop this and create a doc from it
-    	 * Then keep this in the class and add each record to it, as needed
-    	 * OR think of a better way to do this
-    	 * 
-    	 * 
-    	*/			
-    	
+    private void digestXmlFile(InputStream xml){    	
     	Digester dig2 = new Digester();
     	NodeCreateRule ncRule;
     	
 		try {
+			// create a standard rule
 			ncRule = new NodeCreateRule();
-
+			// pass the rule from above and the entryElement, e.g. bookstore/book or uniprot/entry
 			dig2.addRule(_entryElement, ncRule);
+			// pass the _entryElement again and an EndOfRecordRule, which is my own
+			// custom rule that fires before the node created by the first rule is
+			// popped off the stack. The rules must be added in this order, since they 
+			// are processed in the order added and this step must come after the 
+			// preceeding step.
 			dig2.addRule(_entryElement, new EndOfRecordRule());
 			dig2.setValidating(false);
 			dig2.setLogger(_Log);
@@ -186,19 +167,6 @@ public class ImportEngine {
      *
      */
     protected class EndOfRecordRule extends Rule{
-     	/*
-    	 * This is where all the trouble lies.
-    	 * 
-    	 * The top of the method has the clean version of the code. Comment
-    	 * bits and pieces for experimentation. The bottom is all the various
-    	 * experiments I've tried. The ultimate problem is that DOM is a 
-    	 * terrible mess.
-    	 * 
-    	 * My next step is to look into an XML API recommended to me by a
-    	 * source, whom I shall only name Mr. Y. (Mr. X has been over used).
-    	 * Mr. Y. recommended checking into XOM (http://www.xom.nu/). I am
-    	 * doing that presently, but wanted to check this in first.
-    	 */
     	public void end(String namespace, String name){
     		_recordCount++;
     		System.out.println("\n Record #: " + _recordCount);
@@ -244,44 +212,7 @@ public class ImportEngine {
  
     	}
     }
-    
-    /**
-     * Saves the element passed in to the database using JAXB and Hibernate.
-     * 
-     * @param elem
-     */
-    private void saveEntry(org.w3c.dom.Node node){
-    	Transaction transaction = null;
-    	Session saveSession = null;
-    	
-    	try {
-    		/*
-    		 * The Element passed in must be complete. I.e. it must be:
-    		 * bookstore/book OR uniprot/entry
-    		 * 
-    		 * BTW: I have done the experiment if I create my rule to
-    		 * look for only "bookstore" then the Element created will
-    		 * unmarshal correctly! :D -- always good to know, right
-    		 */
-    		Object object = unmarshaller.unmarshal(node);
-    		saveSession = sessionFactory.openSession();
-            transaction = saveSession.beginTransaction();
-            saveSession.saveOrUpdate(object);
-            transaction.commit();
-        } catch(Exception ex) {
-            if (transaction != null)
-                transaction.rollback();
-            try {
-				throw ex;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        } finally {
-            saveSession.close();
-        }
-    } // end saveEntry
-    
+        
     /**
      * Saves the input stream passed in to the database using JAXB and Hibernate.
      * 
@@ -354,8 +285,8 @@ public class ImportEngine {
     private Unmarshaller unmarshaller;
     private JAXBContext jaxbContext;
     private SessionFactory sessionFactory;
-    private Map<String, String> _rootElementName; // this is used to capture each top level record in the xml file
-    private String _entryElement; // this holds the "uniprot/uniprot/entry" tag -- for bookstore example, it holds "bookstore/book"
+    private Map<String, String> _rootElementName = null; // this is used to capture each top level record in the xml file
+    private String _entryElement = null; // this holds the "uniprot/uniprot/entry" tag -- for bookstore example, it holds "bookstore/book"
     private int _recordCount = 0;
     nu.xom.Element _root;
     private String elements = "";

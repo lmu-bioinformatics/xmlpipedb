@@ -59,13 +59,18 @@ public class ImportPanel extends JPanel {
      * Creates a new instance of ImportPanel
 	 * @param jaxbContextPath The context path for the jaxb
 	 * @param hibernateConfiguration The hibernate configuration to save to
-	 * @param topLevelElement Used only if the advanced import with Digester is working.
-	 * @param rootElementName Name of the root element, for example "bookstore" or "uniprot"
+     * @param entryElement Used to parse each record from the XML input file. 
+     * 						For a uniprot XML file, this would normally be "uniprot/entry"
+     * @param rootElementName Map<String, String> containing a "head" and a "tail".
+     * 						  This is used to surround the extracted record for processing
+     * 						  The "head" must have the complete beginning tag (inclusive all 
+     * 						  namespace delcarations, attributes, etc.), e.g.: <bookstore xlsns:http://mybookstore.org/bookstore> The "tail" need only have
+     * 						  the correct closing tag, e.g.: </bookstore>
      */
-    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration, String topLevelElement, HashMap<String,String> rootElementName) {
+    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration, String entryElement, HashMap<String,String> rootElementName) {
         _jaxbContextPath = jaxbContextPath;
         _hibernateConfiguration = hibernateConfiguration;
-        _entryElement = topLevelElement;
+        _entryElement = entryElement;
         _rootElementName = rootElementName;
         createComponents();
         createActions();

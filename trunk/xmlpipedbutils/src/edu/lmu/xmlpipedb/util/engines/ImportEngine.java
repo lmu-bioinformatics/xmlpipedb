@@ -144,9 +144,9 @@ public class ImportEngine {
 			dig2.parse(xml);
 			
 			// now that digesting is finished, we just need to be sure that 
-			// all records have been saved. So, we'll check elements and 
+			// all records have been saved. So, we'll check _elements and 
 			// call the save function if need be.
-			if( elements.length() != 0){
+			if( _elements.length() != 0){
 				saveEntry(new StringBufferInputStream(prepForSaving()));
 				_Log.warn("\n Final Record #: " + _recordCount);
 			}
@@ -199,7 +199,7 @@ public class ImportEngine {
     		org.w3c.dom.Element elem = (org.w3c.dom.Element) o;
     		nu.xom.Element e = DOMConverter.convert(elem);
     		_Log.info(e.toXML());
-    		elements += e.toXML();
+    		_elements += e.toXML();
     		
     		
 
@@ -253,13 +253,13 @@ public class ImportEngine {
     
     /**
      * Gets the head and tail from the root element
-     * and wraps the elements with it.
-     * Then clears the elements for later use.
+     * and wraps the _elements with it.
+     * Then clears the _elements for later use.
      */
     private String prepForSaving() {
-    	String doc = _rootElementName.get("head") + elements + _rootElementName.get("tail");
+    	String doc = _rootElementName.get("head") + _elements + _rootElementName.get("tail");
 		//saveEntry(new StringBufferInputStream(doc.toXML()));
-		elements = "";
+		_elements = "";
 		return doc;
 	}
 
@@ -308,6 +308,6 @@ public class ImportEngine {
     private String _entryElement = null; // this holds the "uniprot/uniprot/entry" tag -- for bookstore example, it holds "bookstore/book"
     private int _recordCount = 0;
     nu.xom.Element _root;
-    private String elements = "";
+    private String _elements = "";
 	private static Log _Log = LogFactory.getLog(TallyEngine.class);
 }

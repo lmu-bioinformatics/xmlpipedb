@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="gmbuilder" default="dist">
+    <property name="src.dir" location="src" />
+    <property name="bin.dir" location="bin" />
+    <property name="lib.dir" location="lib" />
+    <property name="conf.dir" location="conf" />
+	<property name="xml.dir" location="xml" />
+    <property name="dist.dir" location="dist" />
+	<property name="scripts.dir" value="scripts" />
+    <property name="sql.dir" value="sql" />
+
+    <!-- For easiest launching, we allow a JAR double-click.  Customization
+	     such as a different heap like 1024M requires a .bat or .sh file. -->
+    <property name="jarfile" location="${dist.dir}/${ant.project.name}.jar" />
+    <property name="compile.debug" value="true" />
+
+    <fileset id="lib.dir.jars" dir="${lib.dir}">
+        <include name="**/*.jar" />
+    </fileset>
+
+    <path id="lib.path">
+        <fileset refid="lib.dir.jars" />
+    </path>
+
+    <path id="run.path">
+        <fileset dir="${dist.dir}">
+            <include name="gmbuilder.jar"/>
+        </fileset>
+        <fileset dir="${dist.dir}/lib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- XXXXXXXXXXXXXX start targets here XXXXXXXXXXXXXXXXXX -->
+    <target name="clean" description="Remove build and dist directories">
+        <delete dir="${bin.dir}" />
+        <delete dir="${dist.dir}" />
+    	<delete file="hibernate.properties"/>
+    </target>
+	
+    <target name="init">
+    	<mkdir dir="${dist.dir}" />
+        <mkdir dir="${bin.dir}" />
+        <copy todir="${dist.dir}">
+    		<fileset dir="${scripts.dir}" includes="*.bat,*.sh" />
+            <fileset dir="${basedir}">
+            	<include name="readme.txt"/>
+            </fileset>
+        	<fileset dir="${xml.dir}">
+            	<include name="18.E_coli_K12.goa"/>
+        		<include name="3.A_thaliana.goa"/>
+            </fileset>
+        	 <fileset dir="${conf.dir}" includes="**/hibernate.properties" />
+    	</copy>
+    	
+        <tstamp />
+    </target>
+	
+    <target name="compile" depends="init" description="Compile code">
+        <javac srcdir="${src.dir}" destdir="${bin.dir}" includeAntRuntime="no" classpathref="lib.path" debug="${compile.debug}">
+        </javac>
+    </target>
+
+    <target name="dist" depends="clean, compile" description="Build distribution">
+        <!-- Copy libraries to the lib folder -->
+        <copy todir="${dist.dir}/lib">
+            <fileset dir="${lib.dir}" includes="**/*.jar" />
+        </copy>
+
+        <!-- Copy resource files to the bin directory for jar-ing -->
+    	<copy todir="${bin.dir}">
+    		<fileset dir="${src.dir}" includes="**/resource/**" />
+            <fileset dir="${conf.dir}" includes="**/log4j.properties" />
+    	</copy>
+		<jar destfile="${jarfile}" basedir="${bin.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder" />
+				<attribute name="Class-Path" value="lib/antlr-2.7.6rc1.jar lib/asm.jar lib/cglib-2.1.3.jar lib/commons-beanutils-core-1.7.0.jar lib/commons-collections-2.1.1.jar lib/commons-logging-1.1.jar lib/commons-digester-1.7.jar lib/dom4j-1.6.1.jar lib/ehcache-1.1.jar lib/godb.jar lib/hibernate3.jar lib/hyperjaxb2.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/jaxb-libs.jar lib/jta.jar lib/junit-4.1.jar lib/log4j-1.2.11.jar lib/log4j.properties lib/postgresql-8.1-405.jdbc3.jar lib/relaxngDatatype.jar lib/shag-1.2.2.jar lib/uniprotdb.jar lib/xpdutils.jar lib/wizard.jar lib/xsdlib.jar" />
+			</manifest>
+		</jar>
+        
+        <!-- Copy other supporting files into the distribution folder -->
+        <copy todir="${dist.dir}/${sql.dir}">
+            <fileset dir="${sql.dir}"/>
+        </copy>
+    </target>
+
+    <target name="run" depends="dist" description="Run jar file">
+        <java classname="edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder" fork="true" failonerror="true" classpathref="run.path" />
+    </target>
+	
+	<target name="all" description="Runs clean, then compile, then dist" depends="clean,dist">
+	</target>
+</project>

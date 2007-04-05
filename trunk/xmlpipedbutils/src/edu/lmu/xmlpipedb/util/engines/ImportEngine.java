@@ -142,6 +142,15 @@ public class ImportEngine {
 			dig2.setValidating(false);
 			dig2.setLogger(_Log);
 			dig2.parse(xml);
+			
+			// now that digesting is finished, we just need to be sure that 
+			// all records have been saved. So, we'll check elements and 
+			// call the save function if need be.
+			if( elements.length() != 0){
+				saveEntry(new StringBufferInputStream(prepForSaving()));
+				_Log.warn("\n Final Record #: " + _recordCount);
+			}
+				
 
 			
 		} catch (ParserConfigurationException e) {
@@ -169,7 +178,7 @@ public class ImportEngine {
     protected class EndOfRecordRule extends Rule{
     	public void end(String namespace, String name){
     		_recordCount++;
-    		System.out.println("\n Record #: " + _recordCount);
+    		_Log.info("\n Record #: " + _recordCount);
     		
     		Digester mydigester = this.getDigester();
     			
@@ -198,12 +207,10 @@ public class ImportEngine {
     		nu.xom.Document doc = new nu.xom.Document(_root);
     		_Log.info(doc.toXML());*/
     		
+    		// Saves every 25 records
     		if( _recordCount%25 == 0 ){
-	    		String doc = _rootElementName.get("head") + elements + _rootElementName.get("tail");
-	    		//saveEntry(new StringBufferInputStream(doc.toXML()));
-	    		elements = "";
-	    		saveEntry(new StringBufferInputStream(doc));
-    		
+	    		saveEntry(new StringBufferInputStream(prepForSaving()));
+	    		_Log.warn("\n Record #: " + _recordCount);
     		}
     		
     		// This worked really well, until the unmarshaller threw a series of
@@ -244,7 +251,19 @@ public class ImportEngine {
     } // end saveEntry
     
     
-    class SimpleThread extends Thread {
+    /**
+     * Gets the head and tail from the root element
+     * and wraps the elements with it.
+     * Then clears the elements for later use.
+     */
+    private String prepForSaving() {
+    	String doc = _rootElementName.get("head") + elements + _rootElementName.get("tail");
+		//saveEntry(new StringBufferInputStream(doc.toXML()));
+		elements = "";
+		return doc;
+	}
+
+	class SimpleThread extends Thread {
         public SimpleThread(InputStream xml) {
             _xml = xml;
         }

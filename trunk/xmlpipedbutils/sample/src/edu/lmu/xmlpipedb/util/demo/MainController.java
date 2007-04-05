@@ -192,7 +192,8 @@ public class MainController implements ActionListener {
             _configPanel = null;
             Configuration hibernateConfiguration = getHibernateConfig();
             HashMap<String,String> rootElement = new HashMap<String,String>(1);
-            rootElement.put("rootname", "bookstore");
+            rootElement.put("head", "<bookstore>");
+            rootElement.put("tail", "</bookstore>");
             if (hibernateConfiguration != null) {
                 _importPanel = new ImportPanel(AppResources
 						.optionString("jaxbContextPath"),

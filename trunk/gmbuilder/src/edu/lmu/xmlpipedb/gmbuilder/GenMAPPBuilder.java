@@ -194,7 +194,7 @@ public class GenMAPPBuilder extends App {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-            	doImport("org.uniprot.uniprot", "Import UniProtDB XML File");
+            	doUniprotImport("org.uniprot.uniprot", "Import UniProtDB XML File");
             }
         };
         
@@ -203,7 +203,7 @@ public class GenMAPPBuilder extends App {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-                doImport("generated", "Import GO XML File");
+            	doGoImport("generated", "Import GO XML File");
                 doProcessGO();
             }
         };
@@ -401,7 +401,7 @@ public class GenMAPPBuilder extends App {
      *            The title of the dialog (helps prompt the user on what file to
      *            import)
      */
-    private void doImport(String jaxbContextPath, String title) {
+    private void doUniprotImport(String jaxbContextPath, String title) {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         if (hibernateConfiguration != null) {
         	HashMap<String,String> rootElement = new HashMap<String,String>(5);
@@ -416,6 +416,26 @@ public class GenMAPPBuilder extends App {
         }
     }
 
+    /**
+     * Imports an XML file into the database.
+     * 
+     * @param jaxbContextPath
+     *            The context path under which to store the object
+     * @param title
+     *            The title of the dialog (helps prompt the user on what file to
+     *            import)
+     */
+    private void doGoImport(String jaxbContextPath, String title) {
+        Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
+        if (hibernateConfiguration != null) {
+            ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration);
+            importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            ModalDialog.showPlainDialog(title, importPanel);
+        } else {
+            showConfigurationError();
+        }
+    }
+    
     /**
      * Gets the elements from the properties file for reading in
      * XML data (import files)

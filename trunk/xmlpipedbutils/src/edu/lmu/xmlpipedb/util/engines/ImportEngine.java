@@ -183,8 +183,8 @@ public class ImportEngine {
     		Digester mydigester = this.getDigester();
     			
     		Object o = mydigester.pop();
+    		mydigester.push(o);
 
-    		
     		/*_root = new nu.xom.Element(_rootElementName.get("rootname"), _rootElementName.get("xmlns"));
     		Iterator iter = _rootElementName.keySet().iterator();
     		while(iter.hasNext()){
@@ -309,5 +309,5 @@ public class ImportEngine {
     private int _recordCount = 0;
     nu.xom.Element _root;
     private String _elements = "";
-	private static Log _Log = LogFactory.getLog(TallyEngine.class);
+	private static Log _Log = LogFactory.getLog(ImportEngine.class);
 }

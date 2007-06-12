@@ -108,7 +108,7 @@
 % Custom, paper-specific definitions by the authors.
 %
 \def\hyperjaxb2{Hyperjaxb2}                     %uniform definition for Hyperjaxb2
-\def\genmapp~{GenMAPP}                  %uniform definition for GenMAPP
+\def\genmapp{GenMAPP}                  %uniform definition for GenMAPP
 \def\hibernate{Hibernate}                               %uniform definition for Hibernate
 \def\xmlpipedb{XMLPipeDB}                       %uniform definition for XMLPipeDB
 \def\xsd2db{\texttt{xsd2db}}
@@ -240,11 +240,25 @@
 %%
 \section*{Background}
 
-The collection and publication of information about genetic building blocks began in the early 1960s with a printed volume of protein sequences titled \emph{Atlas of Protein Sequence and Structure} by Margaret Dayhoff and her colleagues at the Protein Information Resource (PIR).  Nucleotide sequences were added as they became available.  By 1972, the volume of information made electronic distribution necessary and the \emph{Atlas} was made available on magnetic tape.  In 1982, the European Molecular Biology Laboratory (EMBL), and soon after, the National Center for Biotechnology Information (NCBI), created the EMBL and GenBank DNA sequence databases, respectively \cite{baxevanis:ch1}.\pb
+%The collection and publication of information about genetic building blocks began in the early 1960s with a printed volume of protein sequences titled \emph{Atlas of Protein Sequence and Structure} by Margaret Dayhoff and her colleagues at the Protein Information Resource (PIR).  Nucleotide sequences were added as they became available.  By 1972, the volume of information made electronic distribution necessary and the \emph{Atlas} was made available on magnetic tape.  In 1982, the European Molecular Biology Laboratory (EMBL), and soon after, the National Center for Biotechnology Information (NCBI), created the EMBL and GenBank DNA sequence databases, respectively \cite{baxevanis:ch1}.\pb
 
-Due to genome sequencing projects and other high-throughput technologies, a vast amount of gene data is now stored in biological databases and available to biologists.  These data consist of both the actual sequences themselves and annotations about the sequences, and have traditionally been stored in flat file systems.  Recently, some databases have begun offering the data in Extensible Markup Language (XML) format.  This has resulted in some degree of standardization, plus the ability to represent some structures and relationships in a manner that is easier to parse than their flat-file equivalents.  However, the ability of researchers to leverage the data has posed additional challenges: first, while XML data sets from a particular source can be specified precisely, via Document Type Definition (DTD) or XML Schema Definition (XSD) files, the \emph{interoperability} of data sets from multiple sources may still require a great degree of analysis and hand manipulation.  Second, XML's strength lies primarily in data interchange and not data manipulation.  Effective data access and processing remains the realm of relational database technology.\pb
+Due to genome sequencing projects and other high-throughput technologies, a vast amount of gene data is now stored in biological databases and available to biologists.  These data consist of both the actual sequences themselves and annotations about the sequences, and have traditionally been stored in flat file formats, each of which typically differs according to the provider of the data.\pb
 
-More to come\ldots\pb
+The conventional approach for using biological data in end-user applications involves a \emph{parser} component for reading whatever data sources are needed by the application.  The parser then translates the source format into some internal representation that can then be used directly by the application in question.  This internal representation may be specific to the application, or it may itself be another standard, such as a relational database.\pb
+
+The primary issue with this approach is that, more often than not, every component in the overall code base is maintained by hand.  Changes in one component frequently require updates to other components, where those updates must be performed by human programmers and are thus prone to errors and delays.  If the main application code requires a change in the way it represents the biological data, then the parser that brings that data into the application must be updated accordingly.  If the provider of the biological data changes the format of its source files, then the application's parser must adapt to this change, and the internal representation of this information might also be affected.\pb
+
+The \genmapp\ application, for instance, imports gene and protein information from sources such as EMBL and the Gene Ontology (GO) project and allows this information to be used with biological pathways and microarray data \cite{genmapp:ng,genmapp:bax}.  To accomplish this, one of \genmapp's components is a Master Update program that reads the original files from these data sources and translates them into a Microsoft Access database file according to a predetermined schema.  This database file serves as \genmapp's internal representation for the information.\pb
+
+Like most current applications in its category, \genmapp's code is maintained by hand, and must be updated and debugged periodically.  If data for a new organism is required, then parsing code for source files pertaining to that organism may need to be written, debugged, and maintained.  Throughout the process, human programmers are key resources --- so much so that the \genmapp\ group is unable to support certain types of organisms because writing parsers for the data sources behind those organisms would require a significant amount of effort.\pb
+
+This situation is mirrored in many other biological applications that require data from external sources, and is generally accepted as unavoidable.  Recently, some databases have begun offering their data in Extensible Markup Language (XML) format.  This has resulted in a degree of standardization, plus the ability to represent some structures and relationships in a manner that is easier to parse than their flat-file equivalents.\pb
+
+More significantly, the XML standard comes with \emph{metadata} specifications that rigorously describe how a particular XML file is structured.  These metadata specifications --- Document Type Definition (DTD), XML Schema Definition (XSD), and others --- are \emph{machine readable}\/; that is, programs can be written to load these specifications and subsequently use the information therein to interpret XML files that conform to those standards.\pb
+
+\xmlpipedb\ is a software suite that seeks to leverage the existence of this metadata to ease the process of importing XML data sources into a custom application.  The suite's components include a utility that reads a DTD or XSD file and automatically generates a Java library that can import XML files based on this schema into a relational database, as well as a set of user interface elements that standardize frequently-performed configuration, importing, tallying, and querying tasks.  These components have been used to generate Java libraries for data sources including UniProt and GO, and these libraries were subsequently used to build end-user applications using XML data from these sources.  Outside of some minor adjustments due to namespace clashes between the original schema files and the target database code, none of the Java code in these libraries was manually written.  Finally, an end-user application built upon these libraries, \gmb, has successfully converted UniProt and GO XML files into functioning \genmapp\ Gene Database files for \ecolifull\ and \athalianafull.\pb
+
+%However, \emph{having} the data is different from \emph{using} the data effectively.  However, the ability of researchers to leverage the data has posed additional challenges: first, while XML data sets from a particular source can be specified precisely, via Document Type Definition (DTD) or XML Schema Definition (XSD) files, the \emph{interoperability} of data sets from multiple sources may still require a great degree of analysis and hand manipulation.  Second, XML's strength lies primarily in data interchange and not data manipulation.  Effective data access and processing remains the realm of relational database technology, and ironically, this technology resembles the flat file format more than it does XML.\pb
 
 %Each database has its own identifiers for the sequences and annotations it stores, meaning that the same protein or DNA sequence from two different data sources can have two different identifiers.  There is no single universal identifier system for gene data, although major databases such as UniProt and Ensembl do provide relationships between some identifier systems.\pb
 
@@ -554,22 +568,25 @@ KDD did \ldots  JN did \ldots  JDD did \ldots  All authors read and approved the
 %% Use of \listoftables is discouraged.
 %%
 \section*{Tables}
-  \subsection*{Table 1 - Sample table title}
-    Here is an example of a \emph{small} table in \LaTeX\ using  
-    \verb|\tabular{...}|. This is where the description of the table 
-    should go. \par \mbox{}
+
+\subsection*{Table 1 - Biological information available in XML format}
+
+This table lists a small sample of biological information that is currently available in XML format.\par \mbox{}
     \par
     \mbox{
-      \begin{tabular}{|c|c|c|}
-        \hline \multicolumn{3}{|c|}{My Table}\\ \hline
-        A1 & B2  & C3 \\ \hline
-        A2 & ... & .. \\ \hline
-        A3 & ..  & .  \\ \hline
+      \begin{tabular}{|l|l|l|}\hline
+        \multicolumn{1}{|c|}{Database}&
+        \multicolumn{1}{|c|}{Content}&
+        \multicolumn{1}{|c|}{Schema Format}\\ \hline
+        UniProt & proteins & XSD \\ \hline
+        GeneOntology & terms & DTD  \\ \hline
+        MAGE & ? & XSD  \\ \hline
       \end{tabular}
       }
-  \subsection*{Table 2 - Sample table title}
-    Large tables are attached as separate files but should
-    still be described here.
+
+%  \subsection*{Table 2 - Sample table title}
+%    Large tables are attached as separate files but should
+%    still be described here.
 
 
 

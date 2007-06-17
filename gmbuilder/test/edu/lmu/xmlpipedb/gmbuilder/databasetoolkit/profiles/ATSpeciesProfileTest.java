@@ -312,12 +312,12 @@ public class ATSpeciesProfileTest {
 	        	
 	        	/*
 	        	 * It looks like this might do the trick::
-	        	 * 1. Make a string with the same formatting as our relationsEntries
+	        	 * 1. Make a string with the same formatting as our relationCodes
 	        	 * 		known-good values
 	        	 * 2. Compare to the known-good values
 	        	 * 	a. if it is there, remove it (well done!)
 	        	 *  b. if what we have is not in the Map - throw an error! --assertTrue(false)
-	        	 * 3. After the loop, check that relationsEntries is empty (if not throw an error) 
+	        	 * 3. After the loop, check that relationCodes is empty (if not throw an error) 
 	        	 */
 	        	String comparitor = r.getValue("SystemCode") + "," + r.getValue("RelatedCode");
 	        	_Log.warn("Formated Relationship Codes: [" + comparitor + "]");
@@ -341,7 +341,7 @@ public class ATSpeciesProfileTest {
 	
 	        } // end for loop
 
-	        // TEST 3 - check that the list "relationsEntries" is NOT empty and 
+	        // TEST 3 - check that the list "relationCodes" is NOT empty and 
 	        //          fail the test, cuz we missed something
 	        if( !relationsEntries.isEmpty() )
 	        	assertTrue(false);        
@@ -498,8 +498,8 @@ public class ATSpeciesProfileTest {
 		        	 */
 //		        	String comparitor = r.getValue("SystemCode") + "," + r.getValue("RelatedCode");
 //		        	_Log.warn("Formated Relationship Codes: [" + comparitor + "]");
-//		        	if( relationsEntries.contains(comparitor) )
-//		        		relationsEntries.remove(comparitor);
+//		        	if( relationCodes.contains(comparitor) )
+//		        		relationCodes.remove(comparitor);
 //		        	else{
 //		        		_Log.error("Error in values returned by getRelationsTableManger.");
 //		        		_Log.error("The value returned: [" + comparitor + "], is not in the list of known-good values.");

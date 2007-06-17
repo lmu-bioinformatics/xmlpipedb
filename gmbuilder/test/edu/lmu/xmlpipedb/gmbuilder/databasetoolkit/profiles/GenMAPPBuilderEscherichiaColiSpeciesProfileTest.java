@@ -6,6 +6,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,6 +27,7 @@ import org.junit.Test;
 import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
@@ -65,23 +70,9 @@ public class GenMAPPBuilderEscherichiaColiSpeciesProfileTest {
     	systemsEntries.add("Pf");
     }
     
-    Hashtable<String,String> relationsEntries = new Hashtable<String,String>(15);
-    {
-    	relationsEntries.put("S", "A");
-    	relationsEntries.put("S", "I");
-    	relationsEntries.put("S", "Pf");
-    	relationsEntries.put("S", "U");
-    	relationsEntries.put("S", "Em");
-    	relationsEntries.put("S", "T");
-    	relationsEntries.put("U", "Em");
-    	relationsEntries.put("U", "Pf");
-    	relationsEntries.put("U", "I");
-    	relationsEntries.put("U", "A");
-    	relationsEntries.put("A", "T");
-    	relationsEntries.put("A", "Em");
-    	relationsEntries.put("A", "Pf");
-    	relationsEntries.put("A", "I");
-    }
+    Hashtable<String,String> relationCodes;
+    Hashtable<String,String> relationTables;
+
 	/**
 	 * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.EscherichiaColiUniProtSpeciesProfile#getRelationsTableManagerCustomizations(String, String, Map, TableManager)}.
 	 * Ensure that the number and type of records returned are correct.
@@ -90,8 +81,9 @@ public class GenMAPPBuilderEscherichiaColiSpeciesProfileTest {
 	 * Based on what input??? Not sure.
 	 * @throws InvalidParameterException 
 	 */
-
+    @Test
 	public void testGetRelationsTableManager() throws FileNotFoundException, InvalidParameterException {
+    	//getComparisonData();
         Row[] rows = null;
 		
 		// setup environment
@@ -101,7 +93,10 @@ public class GenMAPPBuilderEscherichiaColiSpeciesProfileTest {
 //      This uses SpeciesProfile
         TableManager tmB = dp.getRelationsTableManager();
         rows = tmB.getRows();
-        assertEquals(26, rows.length);
+        
+        // first check: did we get the right number of records
+        assertEquals(relationCodes.size(), rows.length);
+        
         int count=0;
         for( Row r: rows){
         	System.out.println("\nrow #: " + ++count);
@@ -165,7 +160,7 @@ public class GenMAPPBuilderEscherichiaColiSpeciesProfileTest {
 	 * 
 	 * @throws InvalidParameterException 
 	 */
-	@Test
+	//Test
 	public void testSystemsTableOutput() throws FileNotFoundException, InvalidParameterException {
         Row[] rows = null;
         int count=0;		
@@ -234,7 +229,7 @@ public class GenMAPPBuilderEscherichiaColiSpeciesProfileTest {
         
 	}// end testSystemsTableOutput...
 
-	@Test
+	//Test
 	public void testRelationsTableOutput() throws FileNotFoundException, InvalidParameterException {
         Row[] rows = null;
 		
@@ -246,7 +241,7 @@ public class GenMAPPBuilderEscherichiaColiSpeciesProfileTest {
         TableManager tmB = dp.getRelationsTableManager();
         rows = tmB.getRows();
         //FIXME: correct size of assertion
-        assertEquals(relationsEntries.size(), rows.length);
+        assertEquals(relationCodes.size(), rows.length);
         int count=0;
         for( Row r: rows){
         	System.out.println("\nrow #: " + ++count);
@@ -413,6 +408,45 @@ public class GenMAPPBuilderEscherichiaColiSpeciesProfileTest {
 	            // This may be a normal occurrence (particularly when starting up
 	            // for the first time), so we don't do anything in this case.
 	        }
+	}
+	
+	private void getComparisonData(){
+		// initialize the hashes that hold the data
+		relationCodes  = new Hashtable<String,String>();
+		relationTables = new Hashtable<String,String>();
+				
+		try {
+			Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+
+			// connect to the access database with our known-good data
+		    StringBuffer databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
+		    databaseConnectionString.append("test/edu/lmu/xmlpipedb/gmbuilder/resource/dbfiles/GeneDBTmpl.mdb");
+		    databaseConnectionString.append(";DriverID=22;READONLY=false}"); 
+		    Connection compDataConn = DriverManager.getConnection(databaseConnectionString.toString(), "", "");
+		    
+		    // execute the query
+            PreparedStatement ps = compDataConn.prepareStatement("select SystemCode, RelatedCode, Relation, Type from Relations");
+            ResultSet result = ps.executeQuery();
+
+            // put the results into the hashes
+            while (result.next()) {
+                String systemCode = result.getString("SystemCode").trim();
+                String relatedCode = result.getString("RelatedCode").trim();
+                String relation = result.getString("Relation");
+                String type =  result.getString("Type");
+                relationCodes.put(systemCode, relatedCode);
+                relationTables.put(relation, type );
+            }
+            
+            // cleanup after ourselves
+            result.close();
+            ps.close();
+            compDataConn.close();
+        } catch(SQLException unhandled) {
+            unhandled.printStackTrace();
+        } catch(Exception unhandled) {
+            unhandled.printStackTrace();
+        }
 	}
 	
     /**

@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
@@ -156,7 +155,7 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 		 * have GeneNames for all entries (it has nulls). If (when) this is ever
 		 * corrected (i.e. all GeneNames have a value) the "s" can be added back in. 
 		 */
-		tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", dbProfile.templateDefinedSystemToSystemCode.get("UniProt") }, { "Columns", "ID|EntryName\\sBF|GeneName\\BF|ProteinName\\BF|Function\\BF|" } });
+		tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", DatabaseProfile.templateDefinedSystemToSystemCode.get("UniProt") }, { "Columns", "ID|EntryName\\sBF|GeneName\\BF|ProteinName\\BF|Function\\BF|" } });
 		
 		tableManager.submit("Systems", QueryType.update, new String[][] {
 				{ "SystemCode", SPECIES_SYSTEM_CODE },
@@ -232,10 +231,10 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 		//* some genename records have more than one TAIR ID per cell and they 
 		//   must have their values split out in step 3 below.
 		sqlQuery =
-        " insert into temp_tair" +
-        "select d.entrytype_gene_hjid as hjid, c.value" +
-        "from genenametype c INNER JOIN entrytype_genetype d ON (c.entrytype_genetype_name_hjid = d.hjid)" +
-        "where c.value SIMILAR TO 'At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]'" +
+        "insert into temp_tair " +
+        "select d.entrytype_gene_hjid as hjid, c.value " +
+        "from genenametype c INNER JOIN entrytype_genetype d ON (c.entrytype_genetype_name_hjid = d.hjid) " +
+        "where c.value SIMILAR TO 'At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]' " +
         "group by d.entrytype_gene_hjid, c.value;";
         try {
 	    	ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
@@ -277,11 +276,11 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	        for( int i = 1; i <= splits; i++){
 	            try {
 	            	sqlQuery = 
-	            	" insert into temp_tair " +
+	            	"insert into temp_tair " +
 	            	"select hjid, value from ( " +
-	            	"select d.entrytype_gene_hjid as hjid, split_part(c.value, '/', " + i + ") as value" +
-	            	"from genenametype c INNER JOIN entrytype_genetype d ON (c.entrytype_genetype_name_hjid = d.hjid)" +
-	            	"where c.value SIMILAR TO '%At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]/%') as split_gene" +
+	            	"select d.entrytype_gene_hjid as hjid, split_part(c.value, '/', " + i + ") as value " +
+	            	"from genenametype c INNER JOIN entrytype_genetype d ON (c.entrytype_genetype_name_hjid = d.hjid) " +
+	            	"where c.value SIMILAR TO '%At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]/%') as split_gene " +
 	            	"where value SIMILAR TO 'At(1|2|3|4|5|C|M)g[0-9][0-9][0-9][0-9][0-9]' ";
 	                ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sqlQuery);
 	                ps.executeUpdate();

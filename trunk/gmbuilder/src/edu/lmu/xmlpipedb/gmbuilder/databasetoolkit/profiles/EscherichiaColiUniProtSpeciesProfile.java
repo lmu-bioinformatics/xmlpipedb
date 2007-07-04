@@ -258,7 +258,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 				{ "SystemCode", "Ln" }, { "SystemName", SPECIES_TABLE } });
 */		
 		
-		tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", dbProfile.templateDefinedSystemToSystemCode.get("UniProt") }, { "Columns", "ID|EntryName\\sBF|GeneName\\sBF|ProteinName\\BF|Function\\BF|" } });
+		tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", DatabaseProfile.templateDefinedSystemToSystemCode.get("UniProt") }, { "Columns", "ID|EntryName\\sBF|GeneName\\sBF|ProteinName\\BF|Function\\BF|" } });
 		
 		/*
 		 * What this is doing is creating an update query that will change the

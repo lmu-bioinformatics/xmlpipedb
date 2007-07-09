@@ -205,33 +205,32 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 			String systemTable1, String systemTable2,
 			Map<String, String> templateDefinedSystemToSystemCode,
 			TableManager tableManager) {
-		
-		
-// ### create some local vars and set them
-		String systemCode = null;
-		String relatedCode = null;
+        // ### create some local vars and set them
+        String systemCode = null;
+        String relatedCode = null;
 
-//		 if SystemTable1 is NOT SPECIES_TABLE, then use it :: if SystemTable1 IS the SPECIES_TABLE, call it OrderedLocusNames
-		if( !systemTable1.equals(SPECIES_TABLE) ){
-			systemCode = templateDefinedSystemToSystemCode.get(systemTable1);
-		} else {
-			systemCode = templateDefinedSystemToSystemCode.get("OrderedLocusNames");
-		}
-		
-//		 If SystemTable2 is NOT SPECIES_TABLE, then use it :: if SystemTable2 IS the SPECIES_TABLE, call it OrderedLocusNames
-		if( !systemTable2.equals(SPECIES_TABLE) ){
-			relatedCode = templateDefinedSystemToSystemCode.get(systemTable2);
-		} else {
-			relatedCode = templateDefinedSystemToSystemCode.get("OrderedLocusNames");
-		}
-// ### local vars finished
-		
-		// Call the super class's method, now that SPECIES_TABLE specific normalization
-		// has been done
-		tableManager = super.getRelationsTableManagerCustomizations(systemCode, relatedCode, templateDefinedSystemToSystemCode, tableManager);
+        // if SystemTable1 is NOT SPECIES_TABLE, then use it :: if SystemTable1
+        // IS the SPECIES_TABLE, call it OrderedLocusNames
+        if (!systemTable1.equals(SPECIES_TABLE)) {
+            systemCode = systemTable1;
+        } else {
+            systemCode = "OrderedLocusNames";
+        }
 
-		
-		return tableManager;
+        // If SystemTable2 is NOT SPECIES_TABLE, then use it :: if SystemTable2
+        // IS the SPECIES_TABLE, call it OrderedLocusNames
+        if (!systemTable2.equals(SPECIES_TABLE)) {
+            relatedCode = systemTable2;
+        } else {
+            relatedCode = "OrderedLocusNames";
+        }
+        // ### local vars finished
+
+        // Call the super class's method, now that SPECIES_TABLE specific
+        // normalization has been done
+        tableManager = super.getRelationsTableManagerCustomizations(systemCode, relatedCode, templateDefinedSystemToSystemCode, tableManager);
+
+        return tableManager;
 	}
 
 	/**

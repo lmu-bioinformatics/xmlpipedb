@@ -307,7 +307,7 @@ public class TableManager {
 	
 	/**
 	 * Returns whether two rows are equal based
-	 * on thier primary keys.
+	 * on their primary keys.
 	 * @param row1
 	 * @param row2
 	 * @return

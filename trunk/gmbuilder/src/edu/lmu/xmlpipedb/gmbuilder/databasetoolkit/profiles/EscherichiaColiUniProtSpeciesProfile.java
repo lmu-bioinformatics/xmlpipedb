@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -161,9 +162,9 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 
 	}
 
-	private final String SPECIES_TABLE = "Blattner";
+    private final String SPECIES_TABLE = "Blattner";
+    private final String SPECIES_SYSTEM_CODE = "Ln";
 
-	
 	/**
 	 * Creates the UniProt E.coli species profile. This profile defines the requirements for 
 	 * an Escherichia Coli species within a UniProt database.
@@ -251,10 +252,10 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
  * below for now.
  * 
  * 		tableManager.submit("Systems", QueryType.update, new String[][] {
-				{ "SystemCode", "Ln" }, { "System", SPECIES_TABLE } });
+				{ "SystemCode", SPECIES_SYSTEM_CODE }, { "System", SPECIES_TABLE } });
 		
 		tableManager.submit("Systems", QueryType.update, new String[][] {
-				{ "SystemCode", "Ln" }, { "SystemName", SPECIES_TABLE } });
+				{ "SystemCode", SPECIES_SYSTEM_CODE }, { "SystemName", SPECIES_TABLE } });
 */		
 		
 		tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", DatabaseProfile.templateDefinedSystemToSystemCode.get("UniProt") }, { "Columns", "ID|EntryName\\sBF|GeneName\\sBF|ProteinName\\BF|Function\\BF|" } });
@@ -265,7 +266,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 		 */
 		
 		tableManager.submit("Systems", QueryType.update, new String[][] {
-				{ "SystemCode", "Ln" },
+				{ "SystemCode", SPECIES_SYSTEM_CODE },
 				{ "Species", "|" + getSpeciesName() + "|" } });
 		
 		
@@ -274,7 +275,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
  * by the UniProtDatabaseProfile.getSystemsTableManager() method.
  * 
  * 		tableManager.submit("Systems", QueryType.update, new String[][] {
-				{ "SystemCode", "Ln" },
+				{ "SystemCode", SPECIES_SYSTEM_CODE },
 				{
 						"\"Date\"",
 						GenMAPPBuilderUtilities.getSystemsDateString(dbProfile
@@ -283,7 +284,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 		// JN - the only reason this is last is that it was like that from
 		// the start. Order may not matter, but I chose not to mess with it.
 //		 JN - 2/12/2007 - This method does nothing (all code is commented)
-		// Regardless, nothing it did do was pertinant to A. thalian. -- goodbye
+		// Regardless, nothing it did do was pertinent to A. thaliana. -- goodbye
 		//deleteme// tableManager = super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
 		
 		return tableManager;
@@ -351,6 +352,16 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 
 		return tableManager;
 	}
+
+    /**
+     * Need to get the Blattner System code
+     */
+    @Override
+    public List<String> getSpeciesSpecificSystemCode(List<String> systemCodes, Map<String, String> templateDefinedSystemToSystemCode) {
+        // JD: FIXME Why is this specifically adding the system code at index #2?
+        systemCodes.add(2, SPECIES_SYSTEM_CODE);
+        return systemCodes;
+    }
 
 	/**
 	 * This method contains SPECIES_TABLE specific processing.

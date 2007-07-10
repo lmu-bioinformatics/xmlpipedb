@@ -215,7 +215,11 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
          */
         for (Entry<String, SystemType> systemTable : systemTables.entrySet()) {
            // if (!speciesProfile.getSpeciesSpecificSystemTables().containsKey(systemTable.getKey())) {
-                tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get(systemTable.getKey()) }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) } });
+            _Log.debug("Adding system table for " + systemTable.getKey());
+            if (templateDefinedSystemToSystemCode.get(systemTable.getKey()) == null) {
+                _Log.warn("No system code found for " + systemTable.getKey());
+            }
+            tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get(systemTable.getKey()) }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) } });
           //  }
         }
 

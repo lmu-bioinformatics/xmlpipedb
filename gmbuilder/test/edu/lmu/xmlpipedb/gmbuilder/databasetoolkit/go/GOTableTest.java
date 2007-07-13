@@ -1,4 +1,4 @@
-package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.test;
+package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go;
 
 import static org.junit.Assert.assertEquals;
 

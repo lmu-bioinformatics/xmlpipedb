@@ -313,16 +313,19 @@ public class TableManager {
 	 * @return
 	 */
 	private boolean rowsEqualOnPK(Row row1, Row row2) {
-		for(String primaryKey : primaryKeys) {
-			_Log.debug("Processing " + primaryKey + " for rows " + row1 + " and " + row2);
-			_Log.debug("Row 1 value for primary key: " + row1.getValue(primaryKey));
-			_Log.debug("Row 2 value for primary key: " + row2.getValue(primaryKey));
-			if(!row1.getValue(primaryKey).equals(row2.getValue(primaryKey))) {
-				return false;
-			}
-		}
-		return true;
-	}
+        for (String primaryKey : primaryKeys) {
+            if (_Log.isDebugEnabled()) {
+                _Log.debug("Processing " + primaryKey + " for rows " + row1 + " and " + row2);
+                _Log.debug("Row 1 value for primary key: " + row1.getValue(primaryKey));
+                _Log.debug("Row 2 value for primary key: " + row2.getValue(primaryKey));
+            }
+
+            if (!row1.getValue(primaryKey).equals(row2.getValue(primaryKey))) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     private static final Log _Log = LogFactory.getLog(TableManager.class);
     

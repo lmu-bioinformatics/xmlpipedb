@@ -58,9 +58,8 @@ public class ArabidopsisTAIRIDCollector {
         // the same time "cleaning out" any prefixes and suffixes (via the
         // substring function)
         _Log.info("Collecting TAIR IDs from dbreference...");
-        sqlQuery = "create table " +
-            (temporary ? "temporary" : "") +
-            " temp_tair as " +
+        sqlQuery = "create " + (temporary ? "temporary" : "") + " table " +
+            "temp_tair as " +
             "select a.entrytype_dbreference_hjid as hjid, " +
             "substring(a.id from ?) as id " +
             "from dbreferencetype a where a.id similar to ? " +

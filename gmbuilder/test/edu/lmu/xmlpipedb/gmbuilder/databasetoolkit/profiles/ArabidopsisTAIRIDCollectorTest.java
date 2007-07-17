@@ -2,6 +2,7 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,6 +33,9 @@ public class ArabidopsisTAIRIDCollectorTest {
      */
     @After
     public void tearDown() throws Exception {
+        PreparedStatement ps = _c.prepareStatement("drop table temp_tair");
+        ps.executeUpdate();
+        ps.close();
         _c.close();
         _collector = null;
     }
@@ -42,6 +46,14 @@ public class ArabidopsisTAIRIDCollectorTest {
     @Test
     public void testCollectTAIRIDs() {
         _collector.collectTAIRIDs(_c, false);
+    }
+
+    /**
+     * Test method for {@link edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.ArabidopsisTAIRIDCollector#collectTAIRIDs(java.sql.Connection)}.
+     */
+    @Test
+    public void testCollectTAIRIDsTemporary() {
+        _collector.collectTAIRIDs(_c, true);
     }
 
 }

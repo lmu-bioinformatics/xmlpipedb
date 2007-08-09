@@ -51,7 +51,6 @@ public class ArabidopsisTAIRIDCollector {
         }
 
         PreparedStatement ps;
-        ResultSet result;
         String sqlQuery;
 
         // Step 1: Put the dbreference values for TAIR into a temp table, at
@@ -95,18 +94,76 @@ public class ArabidopsisTAIRIDCollector {
         // IDs, with at least one TAIR ID among them. For each of these
         // potential lists, extract the TAIR IDs, then insert a new individual
         // record for each of them.
-        //
-        // FIXME Yes, this can be nasty slow on some computers, but it is
-        // accurate and general. In any case, the computer used to develop this
-        // code had satisfactory performance.
         sqlQuery = "select d.entrytype_gene_hjid as hjid, c.value " +
             "from genenametype c inner join entrytype_genetype d " +
             "on (c.entrytype_genetype_name_hjid = d.hjid) " +
             "where c.value similar to ? " +
             "group by d.entrytype_gene_hjid, c.value";
+        parseMatches(sqlQuery, tairID, c);
 
-        // Step 3a: We gather the extracted IDs into memory.
+        // Step 4: Grab TAIR IDs from the proteinnametype table.
+        sqlQuery = "select e.hjid as hjid, p.value " +
+            "from entrytype e inner join proteinnametype p on " +
+            "(e.protein = p.proteintype_name_hjid) " +
+            "where p.value similar to ? " +
+            "group by e.hjid, value";
+        parseMatches(sqlQuery, tairID, c);
+        
+        // Step 5: Grab TAIR IDs from the text field of the comment table.
+        sqlQuery = "select ec.entrytype_comment_hjid as hjid, c.text as value " +
+            "from entrytype_comment ec inner join commenttype c on " +
+            "(ec.entrytype_comment_hjchildid = c.hjid) " +
+            "where c.text similar to ? " +
+            "group by ec.entrytype_comment_hjid, c.text";
+        parseMatches(sqlQuery, tairID, c);
+
+        // Penultimate step: Convert all IDs to upper case.
+        _Log.debug("Setting all TAIR IDs to uppercase...");
+        sqlQuery = "update temp_tair set id = upper(id)";
+        try {
+            ps = c.prepareStatement(sqlQuery);
+            ps.executeUpdate();
+        } catch(SQLException e) {
+            logSQLException(e, sqlQuery);
+        }
+
+        // At this point, temp_tair should be ready for further processing.
+        // Commit and continue.
+        try {
+            c.commit();
+            c.setAutoCommit(priorAutoCommit);
+            _Log.debug("Committed temp TAIR table; all done.");
+        } catch(SQLException e) {
+            logSQLException(e, "Commit and restore prior autocommit");
+        }
+    }
+
+    /**
+     * Helper method for logging an SQL exception.
+     */
+    private void logSQLException(SQLException sqlexc, String sqlQuery) {
+        _Log.error("Exception trying to execute query: " + sqlQuery);
+        while (sqlexc != null) {
+            _Log.error("Error code: [" + sqlexc.getErrorCode() + "]");
+            _Log.error("Error message: [" + sqlexc.getMessage() + "]");
+            _Log.error("Error SQL State: [" + sqlexc.getSQLState() + "]");
+            sqlexc = sqlexc.getNextException();
+        }
+    }
+
+    /**
+     * Helper method for extracting matches from a larger string.
+     * 
+     * FIXME Yes, this can be nasty slow on some computers, but it is
+     * accurate and general. In any case, the computer used to develop this
+     * code had satisfactory performance.
+     */
+    private void parseMatches(String sqlQuery, String tairID, Connection c) {
+        // First, gather the extracted IDs into memory.
         List<TAIRPair> ids = new ArrayList<TAIRPair>();
+        
+        PreparedStatement ps;
+        ResultSet result;
         try {
             ps = c.prepareStatement(sqlQuery);
             // Wildcards on both ends let us select everything that contains
@@ -134,7 +191,7 @@ public class ArabidopsisTAIRIDCollector {
             logSQLException(e, sqlQuery);
         }
 
-        // Step 3b: Place the IDs into temp_tair.
+        // Place the IDs into temp_tair.
         sqlQuery = "insert into temp_tair(hjid, id) values(?, ?)";
         try {
             ps = c.prepareStatement(sqlQuery);
@@ -147,40 +204,6 @@ public class ArabidopsisTAIRIDCollector {
             }
         } catch(SQLException e) {
             logSQLException(e, sqlQuery);
-        }
-
-        // Step 5: Convert all IDs to upper case.
-        _Log.debug("Setting all TAIR IDs to uppercase...");
-        sqlQuery = "update temp_tair set id = upper(id)";
-        try {
-            ps = c.prepareStatement(sqlQuery);
-            ps.executeUpdate();
-        } catch(SQLException e) {
-            logSQLException(e, sqlQuery);
-        }
-        // There is no step 4  :-P
-
-        // At this point, temp_tair should be ready for further processing.
-        // Commit and continue.
-        try {
-            c.commit();
-            c.setAutoCommit(priorAutoCommit);
-            _Log.debug("Committed temp TAIR table; all done.");
-        } catch(SQLException e) {
-            logSQLException(e, "Commit and restore prior autocommit");
-        }
-    }
-
-    /**
-     * Helper method for logging an SQL exception.
-     */
-    private void logSQLException(SQLException sqlexc, String sqlQuery) {
-        _Log.error("Exception trying to execute query: " + sqlQuery);
-        while (sqlexc != null) {
-            _Log.error("Error code: [" + sqlexc.getErrorCode() + "]");
-            _Log.error("Error message: [" + sqlexc.getMessage() + "]");
-            _Log.error("Error SQL State: [" + sqlexc.getSQLState() + "]");
-            sqlexc = sqlexc.getNextException();
         }
     }
 

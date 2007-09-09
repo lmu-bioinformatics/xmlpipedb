@@ -45,13 +45,22 @@ li {
 }
 
 /* Heading defaults. */
-#content h2,h3 {
-    padding-bottom: 0.25em;
+#content h2,h3,.header {
+    font-family: Georgia, Serif;
 }
 
-#content h2,h3,.header {
+#content h2 {
+    padding-top: 0.5em;
+    padding-bottom: 0;
+    text-align: center;
+}
+
+#content h3,.header {
     border-bottom: solid 1px #ccc;
-    font-family: Georgia, Serif;
+}
+
+#content h3 {
+    padding-bottom: 0.25em;
 }
 
 #content h4 {

@@ -22,7 +22,7 @@
     
     <property name="output" value="${basedir}" />
 
-    <patternset id="not-on-web" excludes=".project,build.xml,build.number,*.bz2,downloads/**">
+    <patternset id="not-on-web" excludes=".project,build.xml,build.number,*.bz2,downloads/**,docs/**">
     </patternset>
 
     <!-- ================================= 
@@ -73,7 +73,7 @@
     </target>
 
     <target name=".download-disclaimer">
-        <echo>IMPORTANT: We don't include downloads in the build due to their size.</echo>
+        <echo>IMPORTANT: We don't include downloads and docs due to their size.</echo>
         <echo>Please upload/copy those manually.  Or better yet, use SourceForge</echo>
         <echo>and link to our release pages there.</echo>
     </target>

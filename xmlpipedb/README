@@ -1,8 +1,0 @@
-This module held prototype and experimental code for the XMLPipeDB project.
-
-It has since been superceded by the xsd2db and xmlpipedbutils modules.
-
-The uniprotdb and godb modules represent databases that were bootstrapped
-by xsd2db.
-
-The gmbuilder module is an application built on these databases and tools.

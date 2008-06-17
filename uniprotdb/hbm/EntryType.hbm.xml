@@ -13,6 +13,15 @@
 <column name="Modified"/>
 <type name="org.jvnet.hyperjaxb2.runtime.hibernate.type.CalendarType"/>
 </property>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="OrganismHost" table="EntryType_OrganismHost">
+<key>
+<column name="EntryType_OrganismHost_Hjid"/>
+</key>
+<list-index>
+<column name="EntryType_OrganismHost_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.OrganismType"/>
+</list>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Comment" table="EntryType_Comment">
 <key>
 <column name="EntryType_Comment_Hjid"/>
@@ -88,6 +97,9 @@
 <column name="Version"/>
 <type name="org.hibernate.type.BigIntegerType"/>
 </property>
+<many-to-one class="org.uniprot.uniprot.ProteinExistenceType" name="ProteinExistence">
+<column name="ProteinExistence"/>
+</many-to-one>
 <property name="Dataset">
 <column name="Dataset"/>
 <type name="org.hibernate.type.StringType"/>

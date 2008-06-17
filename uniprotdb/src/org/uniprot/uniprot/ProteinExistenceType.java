@@ -10,36 +10,51 @@ package org.uniprot.uniprot;
 
 
 /**
- * Java content class for copyright element declaration.
- * <p>The following schema fragment specifies the expected content contained within this java content object. (defined at file:/Users/dondi/Documents/Main/Eclipse/research/xmlpipedb-uniprotdb/xsd//uniprot.xsd line 896)
+ * Protein Existence (flat file: PE line).
+ * Java content class for proteinExistenceType complex type.
+ * <p>The following schema fragment specifies the expected content contained within this java content object. (defined at file:/Users/dondi/Documents/Main/Eclipse/research/xmlpipedb-uniprotdb/xsd//uniprot.xsd line 835)
  * <p>
  * <pre>
- * &lt;element name="copyright" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ * &lt;complexType name="proteinExistenceType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;attribute name="type" use="required">
+ *         &lt;simpleType>
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *             &lt;enumeration value="Evidence at protein level"/>
+ *             &lt;enumeration value="Evidence at transcript level"/>
+ *             &lt;enumeration value="Inferred from homology"/>
+ *             &lt;enumeration value="Predicted"/>
+ *             &lt;enumeration value="Uncertain"/>
+ *           &lt;/restriction>
+ *         &lt;/simpleType>
+ *       &lt;/attribute>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  */
-public interface Copyright
-    extends javax.xml.bind.Element
-{
+public interface ProteinExistenceType {
 
 
     /**
-     * Gets the value of the value property.
+     * Gets the value of the type property.
      * 
      * @return
      *     possible object is
      *     {@link java.lang.String}
      */
-    java.lang.String getValue();
+    java.lang.String getType();
 
     /**
-     * Sets the value of the value property.
+     * Sets the value of the type property.
      * 
      * @param value
      *     allowed object is
      *     {@link java.lang.String}
      */
-    void setValue(java.lang.String value);
+    void setType(java.lang.String value);
 
     /**
      * Gets the value of the hjid property.

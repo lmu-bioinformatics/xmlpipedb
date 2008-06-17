@@ -30,6 +30,9 @@
 <column name="Experiments"/>
 <type name="org.hibernate.type.BigIntegerType"/>
 </property>
+<many-to-one class="org.uniprot.uniprot.CommentType$ConflictType" name="Conflict">
+<column name="Conflict"/>
+</many-to-one>
 <property name="Method">
 <column name="Method"/>
 <type name="org.hibernate.type.StringType"/>
@@ -45,10 +48,6 @@
 <many-to-one class="org.uniprot.uniprot.BpcCommentGroupKineticsType" name="Kinetics">
 <column name="Kinetics"/>
 </many-to-one>
-<property name="LocationType">
-<column name="LocationType"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Isoform" table="CommentType_Isoform">
 <key>
 <column name="CommentType_Isoform_Hjid"/>

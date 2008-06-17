@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- *****************************************************************************
 	UniProt Knowledgebase
-	Version: 	$Revision$
-	Date:		$Date$
+	Version: 	$Revision: 1.16 $
+	Date:		$Date: 2008/02/27 15:57:26 $
 
-	Copyright (c) 2003 UniProt consortium 
+	Copyright (c) 2003 UniProt consortium
 	All rights reserved.
 *******************************************************************************-->
-<xs:schema targetNamespace="http://uniprot.org/uniprot" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://uniprot.org/uniprot" elementFormDefault="qualified">
+<xs:schema targetNamespace="http://uniprot.org/uniprot" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://uniprot.org/uniprot" elementFormDefault="qualified">
     <!-- XML Schema definition for the UniProt XML format
          Tested with:
          -XSV (XML Schema Validator), http://www.ltg.ed.ac.uk/~ht/xsv-status.html
@@ -18,17 +19,20 @@
     <!--  Name definition begins  -->
     <xs:complexType name="proteinNameType">
         <xs:annotation>
-            <xs:documentation>The name type is used for protein names occuring in an entry, which are represented in a flat file as DE lines.</xs:documentation>
+            <xs:documentation>The name type is used for protein names occuring in an entry, which are represented in a
+                flat file as DE lines.
+            </xs:documentation>
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute name="evidence" type="xs:string" use="optional"/>
                 <xs:attribute name="ref" type="xs:string" use="optional">
                     <xs:annotation>
-                      <xs:documentation>This is referring to a possible EC number
-                      (ENZYME database cross reference).</xs:documentation>
+                        <xs:documentation>This is referring to a possible EC number
+                            (ENZYME database cross reference).
+                        </xs:documentation>
                     </xs:annotation>
-                  </xs:attribute>
+                </xs:attribute>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -93,29 +97,35 @@
     <!--  Definition of the protein begins  -->
     <xs:complexType name="proteinType">
         <xs:annotation>
-            <xs:documentation>The protein element stores all the information found in the DE line of a flatfile entry.</xs:documentation>
+            <xs:documentation>The protein element stores all the information found in the DE line of a flatfile
+                entry.
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="name" type="proteinNameType" maxOccurs="unbounded"/>
             <xs:element name="domain" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
-                    <xs:documentation>The domain list is equivalent to the INCLUDES section of the DE line.</xs:documentation>
+                    <xs:documentation>The domain list is equivalent to the INCLUDES section of the DE
+                        line.
+                    </xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="name" type="proteinNameType" maxOccurs="unbounded"/>
                     </xs:sequence>
-               </xs:complexType>
+                </xs:complexType>
             </xs:element>
             <xs:element name="component" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
-                    <xs:documentation>The component list is equivalent to the CONTAINS section of the DE line.</xs:documentation>
+                    <xs:documentation>The component list is equivalent to the CONTAINS section of the DE
+                        line.
+                    </xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="name" type="proteinNameType" maxOccurs="unbounded"/>
                     </xs:sequence>
-               </xs:complexType>
+                </xs:complexType>
             </xs:element>
         </xs:sequence>
         <xs:attribute name="type">
@@ -130,10 +140,12 @@
         </xs:attribute>
         <xs:attribute name="evidence" type="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation>This contains all evidences that are connected to the complete DE line.</xs:documentation>
+                <xs:documentation>This contains all evidences that are connected to the complete DE
+                    line.
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-   </xs:complexType>
+    </xs:complexType>
     <!--  Definition of the protein ends  -->
     <!--  Definition of the geneLocation begins  -->
     <xs:complexType name="geneLocationType">
@@ -164,41 +176,49 @@
     <!--  Citation type section begins  -->
     <xs:complexType name="citationType">
         <xs:annotation>
-            <xs:documentation>The citation type stores all information about a citation. The equivalent information in the flatfile can be found in the RA (authors), RT (title), RX (PubMed/MEDLINE/DOI IDs) and RL (citation location information such journal name, volume numbers, pages, etc.) lines.</xs:documentation>
+            <xs:documentation>The citation type stores all information about a citation. The equivalent information in
+                the flatfile can be found in the RA (authors), RT (title), RX (PubMed/MEDLINE/DOI IDs) and RL (citation
+                location information such journal name, volume numbers, pages, etc.) lines.
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="title" type="xs:string" minOccurs="0">
                 <xs:annotation>
-                    <xs:documentation>The title of the citation. Stored in the RT line in the flatfile format.</xs:documentation>
+                    <xs:documentation>The title of the citation. Stored in the RT line in the flatfile
+                        format.
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="editorList" type="nameListType" minOccurs="0">
                 <xs:annotation>
-                    <xs:documentation>The editors of a book. Stored in the RL line in the flatfile format. Only valid for books. Example:
-                        RL   (In) Magnusson S., Ottesen M., Foltmann B., Dano K.,
-                        RL   Neurath H. (eds.);
-                        RL   Regulatory proteolytic enzymes and their inhibitors, pp.163-172,
-                        RL   Pergamon Press, New York (1978).
+                    <xs:documentation>The editors of a book. Stored in the RL line in the flatfile format. Only valid
+                        for books. Example:
+                        RL (In) Magnusson S., Ottesen M., Foltmann B., Dano K.,
+                        RL Neurath H. (eds.);
+                        RL Regulatory proteolytic enzymes and their inhibitors, pp.163-172,
+                        RL Pergamon Press, New York (1978).
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="authorList" type="nameListType" minOccurs="0">
                 <xs:annotation>
-                    <xs:documentation>The authors of the citation. Stored in the RA line in the flatfile format, except for citing citation where it is stored in the RL line. Example (standard citation):
-                        RA   Galinier A., Bleicher F., Negre D., Perriere G., Duclos B.,
-                        RA   Cozzone A.J., Cortay J.-C.;
+                    <xs:documentation>The authors of the citation. Stored in the RA line in the flatfile format, except
+                        for citing citation where it is stored in the RL line. Example (standard citation):
+                        RA Galinier A., Bleicher F., Negre D., Perriere G., Duclos B.,
+                        RA Cozzone A.J., Cortay J.-C.;
                         Example (citing citation):
-                        RL   Unpublished results, cited by:
-                        RL   Shelnutt J.A., Rousseau D.L., Dethmers J.K., Margoliash E.;
-                        RL   Biochemistry 20:6485-6497(1981).
+                        RL Unpublished results, cited by:
+                        RL Shelnutt J.A., Rousseau D.L., Dethmers J.K., Margoliash E.;
+                        RL Biochemistry 20:6485-6497(1981).
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="locator" type="xs:string" minOccurs="0">
                 <xs:annotation>
-                    <xs:documentation>The location information of an electronic (or online) article. It is in most cases the unprocessed RL line of an electronic article. Examples:
-                        RL   (In) Plant Gene Register PGR98-023.
-                        RL   (In) Worm Breeder's Gazette 15(3):34(1998).
+                    <xs:documentation>The location information of an electronic (or online) article. It is in most cases
+                        the unprocessed RL line of an electronic article. Examples:
+                        RL (In) Plant Gene Register PGR98-023.
+                        RL (In) Worm Breeder's Gazette 15(3):34(1998).
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -266,10 +286,11 @@
     <!--  Definitions for SPTr's additional citation information begins  -->
     <xs:complexType name="sourceDataType">
         <xs:annotation>
-            <xs:documentation>Contains all information about the source this citation is referring to (RC line). The used child-element names are equivalent to the tokens used in the RC line. Examples:
-                RC   STRAIN=Sprague-Dawley; TISSUE=Liver;
-                RC   STRAIN=Holstein; TISSUE=Lymph node, and Mammary gland;
-                RC   PLASMID=IncFII R100;
+            <xs:documentation>Contains all information about the source this citation is referring to (RC line). The
+                used child-element names are equivalent to the tokens used in the RC line. Examples:
+                RC STRAIN=Sprague-Dawley; TISSUE=Liver;
+                RC STRAIN=Holstein; TISSUE=Lymph node, and Mammary gland;
+                RC PLASMID=IncFII R100;
             </xs:documentation>
         </xs:annotation>
         <xs:choice maxOccurs="unbounded">
@@ -285,10 +306,10 @@
             <xs:element name="strain">
                 <xs:complexType>
                     <xs:simpleContent>
-                         <xs:extension base="xs:string">
-                      <xs:attribute name="evidence" type="xs:string" use="optional"/>
-                         </xs:extension>
-                     </xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="evidence" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
                 </xs:complexType>
             </xs:element>
             <xs:element name="plasmid">
@@ -327,12 +348,16 @@
         <xs:sequence>
             <xs:element name="scope" type="xs:string" maxOccurs="unbounded">
                 <xs:annotation>
-                    <xs:documentation>Contains a scope regarding a citation. There is no classification yet. (RP lines).</xs:documentation>
+                    <xs:documentation>Contains a scope regarding a citation. There is no classification yet. (RP
+                        lines).
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="source" type="sourceDataType" minOccurs="0">
                 <xs:annotation>
-                    <xs:documentation>Contains all information about the source this citation is referring to (RC line).</xs:documentation>
+                    <xs:documentation>Contains all information about the source this citation is referring to (RC
+                        line).
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
@@ -340,7 +365,9 @@
     <!--  Definitions for SPTr's additional citation information ends  -->
     <xs:complexType name="referenceType">
         <xs:annotation>
-            <xs:documentation>Stores all information of the reference block in SPTr (RN, RP, RC, RX, RA, RT and RL line).</xs:documentation>
+            <xs:documentation>Stores all information of the reference block in SPTr (RN, RP, RC, RX, RA, RT and RL
+                line).
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="citation" type="citationType"/>
@@ -378,20 +405,73 @@
 
     <xs:complexType name="commentType">
         <xs:annotation>
-            <xs:documentation>The comment element stores all information found in the CC lines of the flatfile format. If there is a defined structure to the CC comment, the extracted is displayed in the various defined attributes and child-elements. See the documentation of these attributes/elements for more details.</xs:documentation>
+            <xs:documentation>The comment element stores all information found in the CC lines of the flatfile format.
+                If there is a defined structure to the CC comment, the extracted is displayed in the various defined
+                attributes and child-elements. See the documentation of these attributes/elements for more
+                details.
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
-                    <xs:documentation>If a CC line type does not have a defined structure, the text of this comment is stored in the element.</xs:documentation>
+                    <xs:documentation>If a CC line type does not have a defined structure, the text of this comment is
+                        stored in the element.
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:group ref="bpcCommentGroup"/>
             <xs:choice minOccurs="0" maxOccurs="1">
+
+                <xs:element name="conflict">
+                    <xs:annotation>
+                        <xs:documentation>Used in the 'sequence caution' comment (flat file format: CC SEQUENCE
+                            CAUTION).
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="sequence" minOccurs="0" maxOccurs="1">
+                                <xs:complexType>
+                                    <xs:attribute name="resource" use="required">
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:string">
+                                                <xs:enumeration value="EMBL-CDS"/>
+                                                <xs:enumeration value="EMBL"/>
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:attribute>
+                                    <xs:attribute name="id" type="xs:string" use="required"/>
+                                    <xs:attribute name="version" type="xs:integer" use="optional"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="type" use="required">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="frameshift"/>
+                                    <xs:enumeration value="erroneous initiation"/>
+                                    <xs:enumeration value="erroneous termination"/>
+                                    <xs:enumeration value="erroneous gene model prediction"/>
+                                    <xs:enumeration value="erroneous translation"/>
+                                    <xs:enumeration value="miscellaneous discrepancy"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="ref" type="xs:string" use="optional">
+                            <xs:annotation>
+                                <xs:documentation>Refers to the 'key' attribute of a 'reference' element.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+
                 <xs:sequence>
                     <xs:element name="link" minOccurs="0" maxOccurs="unbounded">
                         <xs:annotation>
-                            <xs:documentation>This stored the URIs defined in the WWW and FTP tokens of the database (online information in the XML format) CC comment type.</xs:documentation>
+                            <xs:documentation>This stored the URIs defined in the WWW and FTP tokens of the database
+                                (online information in the XML format) CC comment type.
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
                             <xs:attribute name="uri" type="xs:anyURI" use="required"/>
@@ -399,18 +479,7 @@
                     </xs:element>
                 </xs:sequence>
                 <xs:sequence>
-                    <xs:element name="location" type="locationType" minOccurs="0" maxOccurs="unbounded">
-                        <xs:annotation>
-                            <xs:documentation>The information of the mass spectrometry comment is stored in the attributes:
-                            -molWeight (molecular weight)
-                            -mwError (error of the molecular weight)
-                            -msMethod (the method used for the mass spectrometry)
-                            -range (which amino acids were messured. It's not mentioned if the complete sequence as shown in the entry was measured)</xs:documentation>
-                        </xs:annotation>
-                    </xs:element>
-                </xs:sequence>
-                <xs:sequence>
-                    <xs:element name="event" type="eventType" minOccurs="1" maxOccurs="3"/>
+                    <xs:element name="event" type="eventType" minOccurs="1" maxOccurs="4"/>
                     <xs:element name="isoform" type="isoformType" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
                 <xs:sequence>
@@ -419,22 +488,34 @@
                     <xs:element name="experiments" type="xs:integer" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:choice>
-            <xs:element name="note" type="xs:string" minOccurs="0" maxOccurs="1">
+
+            <xs:element name="location" type="locationType" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
-                    <xs:documentation>If a CC line type contains a "NOTE=", the text of that note is stored in this element.</xs:documentation>
+                    <xs:documentation>Used in 'mass spectrometry' and 'sequence caution' comments.</xs:documentation>
                 </xs:annotation>
             </xs:element>
+
+            <xs:element name="note" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>If a CC line type contains a "NOTE=", the text of that note is stored in this
+                        element.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>States the name of the online information if there is one.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-       <xs:attribute name="mass" type="xs:float" use="optional">
+
+        <xs:attribute name="mass" type="xs:float" use="optional">
             <xs:annotation>
                 <xs:documentation>First the molecular weight which has been determined.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
+
         <xs:attribute name="error" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>The accuracy with which the molecular weight has been measured.</xs:documentation>
@@ -442,22 +523,26 @@
         </xs:attribute>
         <xs:attribute name="method" type="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation>The method which has been used. Common values are ELECTROSPRAY, MALDI, FAB and PLASMA DESORPTION.</xs:documentation>
+                <xs:documentation>The method which has been used. Common values are ELECTROSPRAY, MALDI, FAB and PLASMA
+                    DESORPTION.
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="status" type="xs:string" use="optional">
             <xs:annotation>
-                <xs:documentation>Some comments have a status reflecting their reliability. Common values are BY SIMILARITY, POTENTIAL and PROBABLE.</xs:documentation>
+                <xs:documentation>Some comments have a status reflecting their reliability. Common values are BY
+                    SIMILARITY, POTENTIAL and PROBABLE.
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="locationType" type="xs:string" use="optional">
-            <xs:annotation>
-                <xs:documentation>Defines the type of the location where RNA editing takes place. Common values are "Displayed", "Not_applicable" and "Undetermined".</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+
         <xs:attribute name="type" use="required">
             <xs:annotation>
-                <xs:documentation>Stores the type of a comment. These are simply lower case conversions of the flatfile CC comment topics, with two exceptions. &quot;PTM&quot; is an abbreviation and stands for &quot;posttranslational modification&quot; and the CC topic &quot;DATABASE&quot; is translated to &quot;online information&quot;, which is a more accurate description of the content of this comment.</xs:documentation>
+                <xs:documentation>Stores the type of a comment. These are simply lower case conversions of the flatfile
+                    CC comment topics, with two exceptions. &quot;PTM&quot; is an abbreviation and stands for &quot;posttranslational
+                    modification&quot; and the CC topic &quot;DATABASE&quot; is translated to &quot;online information&quot;,
+                    which is a more accurate description of the content of this comment.
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
@@ -482,6 +567,7 @@
                     <xs:enumeration value="RNA editing"/>
                     <xs:enumeration value="similarity"/>
                     <xs:enumeration value="subcellular location"/>
+                    <xs:enumeration value="sequence caution"/>
                     <xs:enumeration value="subunit"/>
                     <xs:enumeration value="tissue specificity"/>
                     <xs:enumeration value="toxic dose"/>
@@ -495,27 +581,27 @@
     </xs:complexType>
     <xs:complexType name="eventType">
         <xs:annotation>
-            <xs:documentation>This element stores information about events that cause an alternative product.</xs:documentation>
+            <xs:documentation>This element stores information about events that cause an alternative
+                product.
+            </xs:documentation>
         </xs:annotation>
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="type" use="required">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                            <xs:enumeration value="alternative splicing"/>
-                            <xs:enumeration value="alternative initiation"/>
-                            <xs:enumeration value="alternative promoter"/>
-                        </xs:restriction>
-                    </xs:simpleType>
-                </xs:attribute>
-                <xs:attribute name="namedIsoforms" type="xs:int" use="optional"/>
-                <xs:attribute name="evidence" type="xs:string" use="optional"/>
-            </xs:extension>
-        </xs:simpleContent>
+        <xs:attribute name="type" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="alternative splicing"/>
+                    <xs:enumeration value="alternative initiation"/>
+                    <xs:enumeration value="alternative promoter"/>
+                    <xs:enumeration value="ribosomal frameshifting"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="evidence" type="xs:string" use="optional"/>
     </xs:complexType>
     <xs:complexType name="isoformType">
         <xs:annotation>
-            <xs:documentation>Contains all information on a certain isoform including references to possible features defining the sequence.</xs:documentation>
+            <xs:documentation>Contains all information on a certain isoform including references to possible features
+                defining the sequence.
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="id" type="xs:string" maxOccurs="unbounded"/>
@@ -600,7 +686,8 @@
     <xs:complexType name="locationType">
         <xs:annotation>
             <xs:documentation>A location can be either a position or have
-    both a begin and end.</xs:documentation>
+                both a begin and end.
+            </xs:documentation>
         </xs:annotation>
         <xs:choice>
             <xs:sequence>
@@ -625,7 +712,9 @@
 
     <xs:complexType name="featureType">
         <xs:annotation>
-            <xs:documentation>Currently there is only one basic feature type, but this will change in future with enhancement of the FT line parsers.</xs:documentation>
+            <xs:documentation>Currently there is only one basic feature type, but this will change in future with
+                enhancement of the FT line parsers.
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
             <xs:element name="original" type="xs:string" minOccurs="0"/>
@@ -659,7 +748,7 @@
                     <xs:enumeration value="propeptide"/>
                     <xs:enumeration value="region of interest"/>
                     <xs:enumeration value="repeat"/>
-                    <xs:enumeration value="selenocysteine"/>
+                    <xs:enumeration value="non-standard amino acid"/>
                     <xs:enumeration value="sequence conflict"/>
                     <xs:enumeration value="sequence variant"/>
                     <xs:enumeration value="short sequence motif"/>
@@ -742,46 +831,68 @@
         <xs:attribute name="key" type="xs:string" use="required"/>
     </xs:complexType>
     <!--  Evidence definition ends  -->
-    <!--  Entry type definition ends  -->
+    <!--  Protein Existence definition starts -->
+    <xs:complexType name="proteinExistenceType">
+          <xs:annotation>
+             <xs:documentation>Protein Existence (flat file: PE line).</xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="type" use="required">
+             <xs:simpleType>
+                <xs:restriction base="xs:string">
+                   <xs:enumeration value="Evidence at protein level"/>
+                   <xs:enumeration value="Evidence at transcript level"/>
+                   <xs:enumeration value="Inferred from homology"/>
+                   <xs:enumeration value="Predicted"/>
+                   <xs:enumeration value="Uncertain"/>
+                </xs:restriction>
+             </xs:simpleType>
+          </xs:attribute>
+       </xs:complexType>
+    <!--  Protein Existence definition ends  -->
+    <!--  Entry type definition starts  -->
     <xs:element name="entry">
         <xs:annotation>
             <xs:documentation>A (public) SPTr entry</xs:documentation>
         </xs:annotation>
         <xs:complexType>
-        <xs:sequence>
-            <xs:element name="accession" type="xs:string" maxOccurs="unbounded"/>
-            <xs:element name="name" type="xs:string" maxOccurs="unbounded"/>
-            <xs:element name="protein" type="proteinType"/>
-            <xs:element name="gene" minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="name" type="geneNameType" maxOccurs="unbounded"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="organism" type="organismType" maxOccurs="unbounded"/>
-            <xs:element name="geneLocation" type="geneLocationType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="reference" type="referenceType" maxOccurs="unbounded"/>
-            <xs:element name="comment" type="commentType" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="dbReference" type="dbReferenceType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="keyword" type="keywordType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="feature" type="featureType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="evidence" type="evidenceType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="sequence" type="sequenceType"/>
-        </xs:sequence>
-        <xs:attribute name="dataset" use="required">
-  				<xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="Swiss-Prot"/>
-                    <xs:enumeration value="TrEMBL"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="created" type="xs:date" use="required"/>
-        <xs:attribute name="modified" type="xs:date" use="required"/>
-        <xs:attribute name="version" type="xs:integer" use="required"/>
-    </xs:complexType>
+            <xs:sequence>
+                <xs:element name="accession" type="xs:string" maxOccurs="unbounded"/>
+                <xs:element name="name" type="xs:string" maxOccurs="unbounded"/>
+                <xs:element name="protein" type="proteinType"/>
+                <xs:element name="gene" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="name" type="geneNameType" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="organism" type="organismType" maxOccurs="unbounded"/>
+                <xs:element name="organismHost" type="organismType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="geneLocation" type="geneLocationType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="reference" type="referenceType" maxOccurs="unbounded"/>
+                <xs:element name="comment" type="commentType" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="dbReference" type="dbReferenceType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="proteinExistence" type="proteinExistenceType"/>
+                <xs:element name="keyword" type="keywordType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="feature" type="featureType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="evidence" type="evidenceType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="sequence" type="sequenceType"/>
+            </xs:sequence>
+            <xs:attribute name="dataset" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="Swiss-Prot"/>
+                        <xs:enumeration value="TrEMBL"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="created" type="xs:date" use="required"/>
+            <xs:attribute name="modified" type="xs:date" use="required"/>
+            <xs:attribute name="version" type="xs:integer" use="required"/>
+        </xs:complexType>
     </xs:element>
+
+
     <xs:element name="copyright" type="xs:string"/>
     <!--  Definition of the content of the root element "uniprot"  -->
     <xs:element name="uniprot">

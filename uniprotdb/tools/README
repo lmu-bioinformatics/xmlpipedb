@@ -1,8 +1,0 @@
-uniprotdb
-usage: Run the main class in UniprotXSDPostProcessor
-
-Options:
-	- No options available
-
-Note: There is no longer a command line version of this
-program.  It has been replaced by the GUI version.  

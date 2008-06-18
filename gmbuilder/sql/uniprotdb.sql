@@ -5,10 +5,13 @@ alter table CitationType drop constraint FK7C9796E1F57415A4;
 alter table CitationType drop constraint FK7C9796E1F22C5486;
 alter table CommentType drop constraint FKE0CB521925E10D55;
 alter table CommentType drop constraint FKE0CB5219D8CF5AEB;
+alter table CommentType drop constraint FKE0CB5219CFA3BF01;
+alter table CommentType_ConflictType drop constraint FK6F5452B2BCD5B9D1;
 alter table CommentType_LinkType drop constraint FK856AB5DA6ECF92FD;
 alter table DbReferenceType drop constraint FKE43B3D27E13D04B6;
 alter table DbReferenceType drop constraint FKE43B3D279338FF06;
 alter table DbReferenceType drop constraint FKE43B3D2762738266;
+alter table EntryType drop constraint FK5ADFA2AC25CD0850;
 alter table EntryType drop constraint FK5ADFA2AC4B853B11;
 alter table EntryType drop constraint FK5ADFA2AC4029D2B4;
 alter table EntryType drop constraint FK5ADFA2AC3FCD2588;
@@ -32,11 +35,12 @@ alter table IsoformType_Id drop constraint FK93D161776BE415D0;
 alter table IsoformType_NameType drop constraint FKAEF4DFC12DDC4D60;
 alter table KeywordType drop constraint FK1603ACA37C00D25A;
 alter table LocationType drop constraint FK65214AFEE2F2184;
-alter table LocationType drop constraint FK65214AF8EB39F5F;
 alter table LocationType drop constraint FK65214AFC7310104;
 alter table LocationType drop constraint FK65214AF9D640322;
+alter table LocationType drop constraint FK65214AFC19E1136;
 alter table NameListType_PersonOrConsortium drop constraint FK452761F5969E4EA2;
 alter table OrganismNameType drop constraint FK8F6D77774EBD64E2;
+alter table OrganismType drop constraint FK44B91F4C46DCD7E3;
 alter table OrganismType drop constraint FK44B91F4C3E7D0A0B;
 alter table OrganismType drop constraint FK44B91F4C167DA5B0;
 alter table OrganismType_LineageType_Taxon drop constraint FK261F89FDF8D2E7E4;
@@ -57,6 +61,8 @@ drop table BpcCommentGroupKineticsType_KM;
 drop table BpcCommentGroupKineticsType_Vmax;
 drop table CitationType;
 drop table CommentType;
+drop table CommentType_ConflictType;
+drop table CommentType_ConflictType_SequenceType;
 drop table CommentType_LinkType;
 drop table ConsortiumType;
 drop table Copyright;
@@ -89,6 +95,7 @@ drop table OrganismType_LineageType_Taxon;
 drop table PersonType;
 drop table PositionType;
 drop table PropertyType;
+drop table ProteinExistenceType;
 drop table ProteinNameType;
 drop table ProteinType;
 drop table ProteinType_ComponentType;
@@ -144,6 +151,7 @@ create table CitationType (
     Publisher varchar,
     Locator varchar,
     Date_Hjclass varchar,
+    Date_Hjid int8,
     City varchar,
     Last varchar,
     AuthorList int8,
@@ -163,11 +171,11 @@ create table CommentType (
     Status varchar,
     Type varchar,
     Experiments numeric,
+    Conflict int8,
     Method varchar,
     Text varchar,
     PhDependence varchar,
     Kinetics int8,
-    LocationType varchar,
     Mass float4,
     Error varchar,
     Note varchar,
@@ -177,6 +185,24 @@ create table CommentType (
     Name varchar,
     RedoxPotential varchar,
     Absorption int8,
+    primary key (Hjid)
+);
+create table CommentType_ConflictType (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Type varchar,
+    Ref varchar,
+    Sequence int8,
+    primary key (Hjid)
+);
+create table CommentType_ConflictType_SequenceType (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Resource varchar,
+    Version numeric,
+    Id varchar,
     primary key (Hjid)
 );
 create table CommentType_LinkType (
@@ -225,6 +251,7 @@ create table EntryType (
     Modified timestamp,
     Sequence int8,
     Version numeric,
+    ProteinExistence int8,
     Dataset varchar,
     Created timestamp,
     Protein int8,
@@ -264,8 +291,6 @@ create table EventType (
     Hjtype varchar not null,
     Hjversion int8 not null,
     Type varchar,
-    Value varchar,
-    NamedIsoforms int4,
     Evidence varchar,
     CommentType_Event_Hjid int8,
     CommentType_Event_Hjindex int4,
@@ -433,6 +458,8 @@ create table OrganismType (
     Hjversion int8 not null,
     Key varchar,
     Lineage int8,
+    EntryType_OrganismHost_Hjid int8,
+    EntryType_OrganismHost_Hjindex int4,
     EntryType_Organism_Hjid int8,
     EntryType_Organism_Hjindex int4,
     primary key (Hjid)
@@ -472,6 +499,13 @@ create table PropertyType (
     Value varchar,
     DbReferenceType_Property_Hjid int8,
     DbReferenceType_Property_Hjindex int4,
+    primary key (Hjid)
+);
+create table ProteinExistenceType (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Type varchar,
     primary key (Hjid)
 );
 create table ProteinNameType (
@@ -639,6 +673,14 @@ alter table CommentType
     add constraint FKE0CB5219D8CF5AEB 
     foreign key (Kinetics) 
     references BpcCommentGroupKineticsType;
+alter table CommentType 
+    add constraint FKE0CB5219CFA3BF01 
+    foreign key (Conflict) 
+    references CommentType_ConflictType;
+alter table CommentType_ConflictType 
+    add constraint FK6F5452B2BCD5B9D1 
+    foreign key (Sequence) 
+    references CommentType_ConflictType_SequenceType;
 alter table CommentType_LinkType 
     add constraint FK856AB5DA6ECF92FD 
     foreign key (CommentType_Link_Hjid) 
@@ -655,6 +697,10 @@ alter table DbReferenceType
     add constraint FKE43B3D2762738266 
     foreign key (OrganismType_DbReference_Hjid) 
     references OrganismType;
+alter table EntryType 
+    add constraint FK5ADFA2AC25CD0850 
+    foreign key (ProteinExistence) 
+    references ProteinExistenceType;
 alter table EntryType 
     add constraint FK5ADFA2AC4B853B11 
     foreign key (UniprotType_Entry_Hjid) 
@@ -748,10 +794,6 @@ alter table LocationType
     foreign key (Position) 
     references PositionType;
 alter table LocationType 
-    add constraint FK65214AF8EB39F5F 
-    foreign key (EndPosition) 
-    references PositionType;
-alter table LocationType 
     add constraint FK65214AFC7310104 
     foreign key (Begin) 
     references PositionType;
@@ -759,6 +801,10 @@ alter table LocationType
     add constraint FK65214AF9D640322 
     foreign key (CommentType_Location_Hjid) 
     references CommentType;
+alter table LocationType 
+    add constraint FK65214AFC19E1136 
+    foreign key (EndPosition) 
+    references PositionType;
 alter table NameListType_PersonOrConsortium 
     add constraint FK452761F5969E4EA2 
     foreign key (NameListType_PersonOrConsortium_Hjid) 
@@ -767,6 +813,10 @@ alter table OrganismNameType
     add constraint FK8F6D77774EBD64E2 
     foreign key (OrganismType_Name_Hjid) 
     references OrganismType;
+alter table OrganismType 
+    add constraint FK44B91F4C46DCD7E3 
+    foreign key (EntryType_OrganismHost_Hjid) 
+    references EntryType;
 alter table OrganismType 
     add constraint FK44B91F4C3E7D0A0B 
     foreign key (EntryType_Organism_Hjid) 

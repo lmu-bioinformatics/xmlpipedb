@@ -328,16 +328,20 @@ public class ExportGoData {
         BufferedReader in = new BufferedReader(new FileReader(GOA_File.getCanonicalPath()));
         String line = null;
         HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
+        
+        Pattern idPattern1 = Pattern.compile("UniProtKB/[\\w-]+:(\\w+)");
+        Pattern idPattern2 = Pattern.compile("UniProt(KB)?\\s+(\\w{6})");
+        Pattern goIDPattern = Pattern.compile("GO:(\\w+)");
         while ((line = in.readLine()) != null) {
             // Grab the Uniprot ID
-            Matcher m1 = Pattern.compile("UniProtKB/[\\w-]+:(\\w+)").matcher(line);
-            Matcher m2 = Pattern.compile("UniProt\\s+(\\w{6})").matcher(line);
+            Matcher m1 = idPattern1.matcher(line);
+            Matcher m2 = idPattern2.matcher(line);
             boolean regexp1 = m1.find();
             boolean regexp2 = m2.find();
             if (regexp1 || regexp2) {
                 String Up_ID = regexp1 ? m1.group(1) : m2.group(1);
                 // Grab the GO ID(s)
-                Matcher match = Pattern.compile("GO:(\\w+)").matcher(line);
+                Matcher match = goIDPattern.matcher(line);
                 while (match.find()) {
                     String GO_ID = match.group(1);
                     String key = Up_ID + "," + GO_ID;
@@ -504,12 +508,12 @@ public class ExportGoData {
      * @throws SQLException
      */
     private void populateGeneOntologyCount() throws SQLException {
-        Iterator iter = goCount.keySet().iterator();
+        Iterator<String> iter = goCount.keySet().iterator();
         String id;
         int count;
         _Log.info("creating: " + GOTable.GeneOntologyCount);
         while (iter.hasNext()) {
-            id = (String)iter.next();
+            id = iter.next();
             count = goCount.get(id);
             godb.insert(connection, GOTable.GeneOntologyCount, new String[] { id, count + "" });
         }

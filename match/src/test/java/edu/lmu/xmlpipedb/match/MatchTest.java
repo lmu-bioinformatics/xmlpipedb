@@ -29,7 +29,7 @@ public class MatchTest {
         
         Integer count = result.get("hello");
         assertNotNull(count);
-        assertEquals(3, count);
+        assertEquals(new Integer(3), count);
     }
     
     @Test
@@ -39,7 +39,7 @@ public class MatchTest {
         
         Integer count = result.get("hello");
         assertNotNull(count);
-        assertEquals(3, count);
+        assertEquals(new Integer(3), count);
     }
     
     @Test
@@ -50,11 +50,11 @@ public class MatchTest {
         
         Integer count = result.get("date: 12/20/2005");
         assertNotNull(count);
-        assertEquals(1, count);
+        assertEquals(new Integer(1), count);
         
         count = result.get("date: 01/19/1980");
         assertNotNull(count);
-        assertEquals(1, count);
+        assertEquals(new Integer(1), count);
     }
     
     @Test
@@ -65,14 +65,27 @@ public class MatchTest {
         
         Integer count = result.get("abcd02");
         assertNotNull(count);
-        assertEquals(2, count);
+        assertEquals(new Integer(2), count);
         
         count = result.get("abcd03");
         assertNotNull(count);
-        assertEquals(3, count);
+        assertEquals(new Integer(3), count);
         
         count = result.get("abcd04");
         assertNotNull(count);
-        assertEquals(1, count);
+        assertEquals(new Integer(1), count);
     }
+    
+    @Test
+    public void testGroupMatch() throws IOException {
+        // "UniProt(KB)? (###)"
+        Map<String, Integer> result = Match.matchUnique("UniProt(KB)? (\\d{3})", new StringReader("blah blah UniProt 123 blah blah UniProtKB 999 blah blah"), 1);
+        assertEquals(1, result.size());
+        assertEquals(new Integer(1), result.get("kb"));
+
+        result = Match.matchUnique("UniProt(KB)? (\\d{3})", new StringReader("blah blah UniProt 123 blah blah UniProtKB 999 blah blah UniProtKB 123"), 2);
+        assertEquals(2, result.size());
+        assertEquals(new Integer(2), result.get("123"));
+        assertEquals(new Integer(1), result.get("999"));
+     }
 }

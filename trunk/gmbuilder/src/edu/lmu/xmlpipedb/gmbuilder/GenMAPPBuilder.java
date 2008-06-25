@@ -552,6 +552,12 @@ public class GenMAPPBuilder extends App {
 	        element = AppResources.optionString("GoElementLevel4").trim();
 	        setElementInCriterion(criteria, element);
 	        
+            element = AppResources.optionString("GoElementLevel5").trim();
+            setElementInCriterion(criteria, element);
+            
+            element = AppResources.optionString("GoElementLevel6").trim();
+            setElementInCriterion(criteria, element);
+            
     	} catch( InvalidParameterException e ){
     		//TODO: print to log file
     	}
@@ -585,6 +591,14 @@ public class GenMAPPBuilder extends App {
 	        query = AppResources.optionString("GoQueryLevel4").trim();
 	        setQueryInCriterion(criteria, element, query);
 	        
+            element = AppResources.optionString("GoElementLevel5").trim();
+            query = AppResources.optionString("GoQueryLevel4").trim();
+            setQueryInCriterion(criteria, element, query);
+            
+            element = AppResources.optionString("GoElementLevel6").trim();
+            query = AppResources.optionString("GoQueryLevel4").trim();
+            setQueryInCriterion(criteria, element, query);
+            
     	} catch( InvalidParameterException e ){
     		//TODO: print to log file
     	}

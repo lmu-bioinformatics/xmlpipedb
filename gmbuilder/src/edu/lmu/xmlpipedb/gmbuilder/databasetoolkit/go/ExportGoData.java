@@ -339,7 +339,7 @@ public class ExportGoData {
             boolean regexp1 = m1.find();
             boolean regexp2 = m2.find();
             if (regexp1 || regexp2) {
-                String Up_ID = regexp1 ? m1.group(1) : m2.group(1);
+                String Up_ID = regexp1 ? m1.group(1) : m2.group(2);
                 // Grab the GO ID(s)
                 Matcher match = goIDPattern.matcher(line);
                 while (match.find()) {

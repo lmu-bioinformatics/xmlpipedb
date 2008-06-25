@@ -29,10 +29,18 @@ public class Match {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
+        if (args.length == 0) {
+            System.out.println("usage: Match <regex> [ <groupNumber> ]");
+            System.out.println("  (Match uses standard in, so redirect if matching against a file)");
+            return;
+        }
+
         String regexStr = args[0];
         InputStream is = System.in;
         
-        Map<String, Integer> result = matchUnique(regexStr, new InputStreamReader(is));
+        Map<String, Integer> result = (args.length > 1) ?
+            matchUnique(regexStr, new InputStreamReader(is), Integer.parseInt(args[1])) :
+            matchUnique(regexStr, new InputStreamReader(is));
         for (String oneMatch: result.keySet()) {
             System.out.println(oneMatch + ": " + result.get(oneMatch));
         }
@@ -52,6 +60,22 @@ public class Match {
      * @throws IOException
      */
     public static Map<String, Integer> matchUnique(String regexStr, Reader reader) throws IOException {
+        return matchUnique(regexStr, reader, 0);
+    }
+
+    /**
+     * The actual function that does the work. Not much with options right now,
+     * particularly whether or not the uniqueness comparison is case sensitive
+     * (as a quick fix, we currently are case INsensitive by virtue of
+     * converting strings to lowercase first).
+     * 
+     * @param regexStr
+     * @param reader
+     * @param groupNumber
+     * @return
+     * @throws IOException
+     */
+    public static Map<String, Integer> matchUnique(String regexStr, Reader reader, int groupNumber) throws IOException {
         Pattern regex = Pattern.compile(regexStr);
         Map<String, Integer> result = new HashMap<String, Integer>();
 
@@ -61,12 +85,15 @@ public class Match {
             Matcher matcher = regex.matcher(line);
             line = br.readLine();
             while (matcher.find()) {
-                String group = matcher.group().toLowerCase();
-                if (result.containsKey(group)) {
-                    int count = result.get(group);
-                    result.put(group, count + 1);
-                } else {
-                    result.put(group, 1);
+                String group = matcher.group(groupNumber);
+                if (group != null) {
+                    group = group.toLowerCase();
+                    if (result.containsKey(group)) {
+                        int count = result.get(group);
+                        result.put(group, count + 1);
+                    } else {
+                        result.put(group, 1);
+                    }
                 }
             }
         }

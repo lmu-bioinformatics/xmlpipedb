@@ -65,6 +65,7 @@ public class ArabidopsisTAIRIDCollector {
             "group by a.id, a.entrytype_dbreference_hjid";
         try {
             ps = c.prepareStatement(sqlQuery);
+            // We want just the substring (no version numbers).
             ps.setString(1, tairID);
             // TAIR IDs in dbreference may have prefixes and postfixes.
             ps.setString(2, "%" + tairID + "%");
@@ -76,15 +77,17 @@ public class ArabidopsisTAIRIDCollector {
         // Step 2: TAIR IDs can also be found in propertytype
         _Log.info("Collecting TAIR IDs from propertytype...");
         sqlQuery = "insert into temp_tair " +
-            "select d.entrytype_dbreference_hjid as hjid, p.value " +
+            "select d.entrytype_dbreference_hjid as hjid, substring(p.value from ?) " +
             "from propertytype p inner join dbreferencetype d " +
             "on (p.dbreferencetype_property_hjid = d.hjid) " +
             "where p.value similar to ? " +
             "group by d.entrytype_dbreference_hjid, p.value";
         try {
             ps = c.prepareStatement(sqlQuery);
-            // We don't accommodate prefixes nor suffixes in propertytype.
+            // We want just the substring (no version numbers).
             ps.setString(1, tairID);
+            // We don't accommodate prefixes nor suffixes in propertytype.
+            ps.setString(2, tairID);
             ps.executeUpdate();
         } catch(SQLException e) {
             logSQLException(e, sqlQuery);
@@ -154,9 +157,10 @@ public class ArabidopsisTAIRIDCollector {
     /**
      * Helper method for extracting matches from a larger string.
      * 
-     * FIXME Yes, this can be nasty slow on some computers, but it is
-     * accurate and general. In any case, the computer used to develop this
-     * code had satisfactory performance.
+     * Yes, this can be nasty slow on some computers, but it is accurate and
+     * general; in particular, it will capture multiple occurrences of an ID in
+     * the string. In any case, the computer used to develop this code had
+     * satisfactory performance.
      */
     private void parseMatches(String sqlQuery, String tairID, Connection c) {
         // First, gather the extracted IDs into memory.
@@ -173,7 +177,7 @@ public class ArabidopsisTAIRIDCollector {
 
             // genenametype includes "dot-number" TAIR IDs; take these into
             // account.
-            Pattern p = Pattern.compile(tairID + "(\\.[0-9])?");
+            Pattern p = Pattern.compile("(" + tairID + ")(\\.[0-9])?");
             while (result.next()) {
                 Long hjid = result.getLong("hjid");
                 String idList = result.getString("value");
@@ -182,7 +186,7 @@ public class ArabidopsisTAIRIDCollector {
                 // Extract matching IDs, including "dot-number" versions.
                 Matcher m = p.matcher(idList);
                 while (m.find()) {
-                    String extractedID = m.group();
+                    String extractedID = m.group(1);
                     _Log.debug("--- Got TAIR ID " + extractedID);
                     ids.add(new TAIRPair(hjid, extractedID));
                 }

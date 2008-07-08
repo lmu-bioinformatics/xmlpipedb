@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -128,7 +129,12 @@ public class GenMAPPBuilderUtilities {
      * Removes any trailing ".n" suffixes from the given string.
      */
     public static String getNonVersionedID(String s) {
-        return VERSION_PATTERN.matcher(s).group(1);
+        Matcher m = VERSION_PATTERN.matcher(s.trim());
+        if (m.find()) {
+            return s.substring(0, m.start());
+        } else {
+            return s;
+        }
     }
 
     /**
@@ -144,5 +150,5 @@ public class GenMAPPBuilderUtilities {
     /**
      * Pattern used for extracting generic ".n" suffixes.
      */
-    private static final Pattern VERSION_PATTERN = Pattern.compile("^([\\w/\\.]+)(\\.[0-9]+)?$");
+    private static final Pattern VERSION_PATTERN = Pattern.compile("\\.[0-9]+$");
 }

@@ -427,7 +427,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             tableManager = new TableManager(new String[][] { { "\"Primary\"", "VARCHAR(50) NOT NULL" }, { "Related", "VARCHAR(50) NOT NULL" }, { "Bridge", "VARCHAR(3)" } }, new String[] { "\"Primary\"", "Related" });
             tableManager.getTableNames().add(relationshipTable);
 
-            if (stp.systemTable1.equals("UniProt") && !getDatabaseSpecificSystemTables().containsKey(stp.systemTable2)) {
+            if ("UniProt".equals(stp.systemTable1) && !getDatabaseSpecificSystemTables().containsKey(stp.systemTable2)) {
                 // UniProt-X
             	PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT hjvalue, id " + "FROM dbreferencetype INNER JOIN entrytype_accession " + "ON (entrytype_dbreference_hjid = entrytype_accession_hjid) " + "WHERE type = ?");
                 ps.setString(1, stp.systemTable2);
@@ -437,7 +437,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 String related = "";
                 while (result.next()) {
                     primary = result.getString("hjvalue");
-                    related = result.getString("id");
+                    related = checkAndPruneVersionSuffix(stp.systemTable2, result.getString("id"));
 
                     tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", primary != null ? primary : "" }, { "Related", related != null ? related : "" },
                     // TODO This is hard-coded. Fix it.
@@ -451,8 +451,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 ps.setString(2, stp.systemTable2);
                 ResultSet result = ps.executeQuery();
                 while (result.next()) {
-                    String primary = result.getString("id1");
-                    String related = result.getString("id2");
+                    String primary = checkAndPruneVersionSuffix(stp.systemTable1, result.getString("id1"));
+                    String related = checkAndPruneVersionSuffix(stp.systemTable2, result.getString("id2"));
 
                     tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", primary != null ? primary : "" }, { "Related", related != null ? related : "" },
                     //FIXME This is hard-coded. Fix it.
@@ -483,6 +483,19 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         List<TableManager> tableManagers = new ArrayList<TableManager>();
         tableManagers.add(getSecondPassRelationshipTables());
         return tableManagers.toArray(new TableManager[0]);
+    }
+
+    /**
+     * A helper function for eliminated a ".n" suffix, if applicable.
+     */
+    private String checkAndPruneVersionSuffix(String systemName, String id) {
+        // The "exception clause" for RefSeq (and maybe others one day).
+        if ("RefSeq".equals(systemName)) {
+            _Log.info("Pruning .n version from " + id);
+             return GenMAPPBuilderUtilities.getNonVersionedID(id);
+        } else {
+            return id;
+        }
     }
 
     /**

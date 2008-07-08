@@ -317,14 +317,11 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 		return systemCodes;
 	}
 
-	/* (non-Javadoc)
-	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemsTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
+	/**
+	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSystemsTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile)
 	 */
 	@Override
 	public TableManager getSystemsTableManagerCustomizations(TableManager tableManager, DatabaseProfile dbProfile) {
-
-		// there was some code here that was E. coli specific. It has been moved
-		// to the same method in the E. coli SpeciceProfile
 		return tableManager;
 	}
 

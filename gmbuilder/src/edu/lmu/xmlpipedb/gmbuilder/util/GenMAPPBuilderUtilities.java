@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 /**
  * GenMAPPBuilderUtilities is a general placeholder for standalone utility
@@ -124,6 +125,13 @@ public class GenMAPPBuilderUtilities {
     }
 
     /**
+     * Removes any trailing ".n" suffixes from the given string.
+     */
+    public static String getNonVersionedID(String s) {
+        return VERSION_PATTERN.matcher(s).group(1);
+    }
+
+    /**
      * Date format used for default GDB filenames.
      */
     private static final DateFormat GDB_DF = new SimpleDateFormat("yyyyMMdd");
@@ -132,4 +140,9 @@ public class GenMAPPBuilderUtilities {
      * Date format used for the Date field in the Systems table.
      */
     private static final DateFormat SYSTEMS_DF = new SimpleDateFormat("MM/dd/yyyy");
+    
+    /**
+     * Pattern used for extracting generic ".n" suffixes.
+     */
+    private static final Pattern VERSION_PATTERN = Pattern.compile("^([\\w/\\.]+)(\\.[0-9]+)?$");
 }

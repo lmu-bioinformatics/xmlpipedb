@@ -491,8 +491,14 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     private String checkAndPruneVersionSuffix(String systemName, String id) {
         // The "exception clause" for RefSeq (and maybe others one day).
         if ("RefSeq".equals(systemName)) {
-            _Log.info("Pruning .n version from " + id);
-             return GenMAPPBuilderUtilities.getNonVersionedID(id);
+            _Log.info("Pruning .n version from [" + id + "]");
+            // Prevent possible exceptions from halting the export.
+            try {
+                return GenMAPPBuilderUtilities.getNonVersionedID(id);
+            } catch(RuntimeException rtexc) {
+                _Log.error("Runtime exception: returning ID [" + id + "] unmodified", rtexc);
+                return id;
+            }
         } else {
             return id;
         }

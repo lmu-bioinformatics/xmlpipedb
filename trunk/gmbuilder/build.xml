@@ -46,10 +46,6 @@
             <fileset dir="${basedir}">
             	<include name="readme.txt"/>
             </fileset>
-        	<fileset dir="${xml.dir}">
-            	<include name="18.E_coli_K12.goa"/>
-        		<include name="3.A_thaliana.goa"/>
-            </fileset>
         	 <fileset dir="${conf.dir}" includes="**/hibernate.properties" />
     	</copy>
     	

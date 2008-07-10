@@ -286,9 +286,14 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
             ResultSet result = ps.executeQuery();
             
             while (result.next()) {
-                tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", result.getString("primary") }, { "Related", result.getString("related") },
-                // TODO This is hard-coded. Fix it.
-                { finalColumnName, finalColumnValue } });
+                tableManager.submit(relationshipTable,
+                    QueryType.insert, new String[][] {
+                        { "\"Primary\"", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, result.getString("primary")) },
+                        { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, result.getString("related")) },
+                        // TODO This is hard-coded. Fix it.
+                        { finalColumnName, finalColumnValue }
+                    }
+                );
             }
             ps.close();
         } else if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable2) && !stp.systemTable1.equals("UniProt")) {
@@ -304,9 +309,14 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
             ResultSet result = ps.executeQuery();
             
             while (result.next()) {
-                tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", result.getString("primary") }, { "Related", result.getString("related") },
-                // TODO This is hard-coded. Fix it.
-                { finalColumnName, finalColumnValue } });
+                tableManager.submit(relationshipTable,
+                    QueryType.insert, new String[][] {
+                        { "\"Primary\"", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, result.getString("primary")) },
+                        { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, result.getString("related")) },
+                        // TODO This is hard-coded. Fix it.
+                        { finalColumnName, finalColumnValue }
+                    }
+                );
             }
             ps.close();
         } else {

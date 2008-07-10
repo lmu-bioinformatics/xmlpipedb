@@ -8,6 +8,9 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * GenMAPPBuilderUtilities is a general placeholder for standalone utility
  * methods needed by GenMAPP Builder.
@@ -136,6 +139,30 @@ public class GenMAPPBuilderUtilities {
             return s;
         }
     }
+
+    /**
+     * A helper function for eliminated a ".n" suffix, if applicable.
+     */
+    public static String checkAndPruneVersionSuffix(String systemName, String id) {
+        // The "exception clause" for RefSeq (and maybe others one day).
+        if ("RefSeq".equals(systemName)) {
+            _Log.info("Pruning .n version from [" + id + "]");
+            // Prevent possible exceptions from halting the export.
+            try {
+                return getNonVersionedID(id);
+            } catch(RuntimeException rtexc) {
+                _Log.error("Runtime exception: returning ID [" + id + "] unmodified", rtexc);
+                return id;
+            }
+        } else {
+            return id;
+        }
+    }
+    
+    /**
+     * The log object for GenMAPPBuilderUtilities.
+     */
+    private static final Log _Log = LogFactory.getLog(GenMAPPBuilderUtilities.class);
 
     /**
      * Date format used for default GDB filenames.

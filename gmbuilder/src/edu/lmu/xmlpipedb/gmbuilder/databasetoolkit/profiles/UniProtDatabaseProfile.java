@@ -388,7 +388,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
                 while (result.next()) {
                 	_Log.debug("getSystemTableManager(): while loop: ID:: " + result.getString("id") + "  Species:: " + speciesProfile.getSpeciesName() );
-                    tableManager.submit(systemTable.getKey(), QueryType.insert, new String[][] { { "ID", result.getString("id") }, { "Species", "|" + speciesProfile.getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) } });
+                    tableManager.submit(systemTable.getKey(),
+                        QueryType.insert, new String[][] {
+                            { "ID", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(systemTable.getKey(), result.getString("id")) },
+                            { "Species", "|" + speciesProfile.getSpeciesName() + "|" },
+                            { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }
+                        }
+                    );
                 }
             }
         }
@@ -437,11 +443,16 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 String related = "";
                 while (result.next()) {
                     primary = result.getString("hjvalue");
-                    related = checkAndPruneVersionSuffix(stp.systemTable2, result.getString("id"));
+                    related = GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, result.getString("id"));
 
-                    tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", primary != null ? primary : "" }, { "Related", related != null ? related : "" },
-                    // TODO This is hard-coded. Fix it.
-                    { "Bridge", "S" } });
+                    tableManager.submit(relationshipTable,
+                        QueryType.insert, new String[][] {
+                            { "\"Primary\"", primary != null ? primary : "" },
+                            { "Related", related != null ? related : "" },
+                            // TODO This is hard-coded. Fix it.
+                            { "Bridge", "S" }
+                        }
+                    );
                 }
                 ps.close();
             } else if (!getDatabaseSpecificSystemTables().containsKey(stp.systemTable1) && !getDatabaseSpecificSystemTables().containsKey(stp.systemTable2)) {
@@ -451,12 +462,17 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 ps.setString(2, stp.systemTable2);
                 ResultSet result = ps.executeQuery();
                 while (result.next()) {
-                    String primary = checkAndPruneVersionSuffix(stp.systemTable1, result.getString("id1"));
-                    String related = checkAndPruneVersionSuffix(stp.systemTable2, result.getString("id2"));
+                    String primary = GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, result.getString("id1"));
+                    String related = GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, result.getString("id2"));
 
-                    tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", primary != null ? primary : "" }, { "Related", related != null ? related : "" },
-                    //FIXME This is hard-coded. Fix it.
-                    { "Bridge", "S" } });
+                    tableManager.submit(relationshipTable,
+                        QueryType.insert, new String[][] {
+                            { "\"Primary\"", primary != null ? primary : "" },
+                            { "Related", related != null ? related : "" },
+                            //FIXME This is hard-coded. Fix it.
+                            { "Bridge", "S" }
+                        }
+                    );
                 }
                 ps.close();
             } else if ((speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) || speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) && !stp.systemTable2.equals("GeneOntology")) {
@@ -464,9 +480,14 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 tableManager = speciesProfile.getSpeciesSpecificRelationshipTable(relationshipTable, getPrimarySystemTableManager(), getSystemTableManager(), tableManager);
             } else {
                 // No way currently of producing these
-                tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", "" }, { "Related", "" },
-                //FIXME: This is hard-coded. Fix it.
-                { "Bridge", "" } });
+                tableManager.submit(relationshipTable,
+                    QueryType.insert, new String[][] {
+                        { "\"Primary\"", "" },
+                        { "Related", "" },
+                        //FIXME: This is hard-coded. Fix it.
+                        { "Bridge", "" }
+                    }
+                );
             }
 
             tableManagers.add(tableManager);
@@ -483,25 +504,6 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         List<TableManager> tableManagers = new ArrayList<TableManager>();
         tableManagers.add(getSecondPassRelationshipTables());
         return tableManagers.toArray(new TableManager[0]);
-    }
-
-    /**
-     * A helper function for eliminated a ".n" suffix, if applicable.
-     */
-    private String checkAndPruneVersionSuffix(String systemName, String id) {
-        // The "exception clause" for RefSeq (and maybe others one day).
-        if ("RefSeq".equals(systemName)) {
-            _Log.info("Pruning .n version from [" + id + "]");
-            // Prevent possible exceptions from halting the export.
-            try {
-                return GenMAPPBuilderUtilities.getNonVersionedID(id);
-            } catch(RuntimeException rtexc) {
-                _Log.error("Runtime exception: returning ID [" + id + "] unmodified", rtexc);
-                return id;
-            }
-        } else {
-            return id;
-        }
     }
 
     /**

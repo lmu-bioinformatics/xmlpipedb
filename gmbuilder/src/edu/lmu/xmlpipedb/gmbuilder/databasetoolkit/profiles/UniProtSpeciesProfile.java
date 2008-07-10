@@ -249,9 +249,14 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                     ps.setString(2, row.getValue("UID"));
                     result = ps.executeQuery();
                     while (result.next()) {
-                        tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", row.getValue("ID") }, { "Related", result.getString("id") },
-                        // TODO This is hard-coded. Fix it.
-                        { finalColumnName, finalColumnValue } });
+                        tableManager.submit(relationshipTable,
+                            QueryType.insert, new String[][] {
+                                { "\"Primary\"", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, row.getValue("ID")) },
+                                { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, result.getString("id")) },
+                                // TODO This is hard-coded. Fix it.
+                                { finalColumnName, finalColumnValue }
+                            }
+                        );
                     }
                 }
             }
@@ -274,30 +279,39 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                     		&& row.getValue("UID") != null
                     		&& row.getValue("UID").equals(related)) {
                         for (String id : row.getValue("ID").split("/")) {
-                            tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", primary }, { "Related", id },
-                            // TODO This is hard-coded. Fix it.
-                            { finalColumnName, finalColumnValue } });
+                            tableManager.submit(relationshipTable,
+                                QueryType.insert, new String[][] {
+                                    { "\"Primary\"", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, primary) },
+                                    { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, id) },
+                                    // TODO This is hard-coded. Fix it.
+                                    { finalColumnName, finalColumnValue }
+                                }
+                            );
                         }
                     }
                 }
             }
             ps.close();
         } else {
-    			// Go through each row (AKA row1...) in the systemTableManager that was passed in, checking for "Blattner"
-    			//  If we find "Blattner", go through every row (AKA row2) in the primarySystemTableManger (AKA UniProt table)
-    			//    check if row1's UID value is the same as row2's UID value,
-    			//		if yes, loop some more!! (yippee), this time we are getting the value of the ID field,
-    			//			then we'll write out a record.
-
+			// Go through each row (AKA row1...) in the systemTableManager that was passed in, checking for "Blattner"
+			//  If we find "Blattner", go through every row (AKA row2) in the primarySystemTableManger (AKA UniProt table)
+			//    check if row1's UID value is the same as row2's UID value,
+			//		if yes, loop some more!! (yippee), this time we are getting the value of the ID field,
+			//			then we'll write out a record.
             for (Row row1 : systemTableManager.getRows()) {
                 if (row1.getValue(TableManager.TABLE_NAME_COLUMN).equals(criteria)) {
                     for (Row row2 : uniprotTableManager.getRows()) {
                         if (row2.getValue("UID").equals(row1.getValue("UID"))) {
                         	_Log.debug("Row 2 value: [" + row2.getValue("UID") + "] equaled Row 1 value: [" + row1.getValue("UID") + "]");
                     
-                            tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", row2.getValue("ID") }, { "Related", row1.getValue("ID") },
-                            //TODO This is hard-coded.  Fix it. 
-                            { finalColumnName, finalColumnValue } });
+                            tableManager.submit(relationshipTable,
+                                QueryType.insert, new String[][] {
+                                    { "\"Primary\"", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, row2.getValue("ID")) },
+                                    { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, row1.getValue("ID")) },
+                                    // TODO This is hard-coded.  Fix it. 
+                                    { finalColumnName, finalColumnValue }
+                                }
+                            );
                         }
                     }
                 }

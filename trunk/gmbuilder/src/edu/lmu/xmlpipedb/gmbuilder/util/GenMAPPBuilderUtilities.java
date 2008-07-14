@@ -132,7 +132,7 @@ public class GenMAPPBuilderUtilities {
      * Removes any trailing ".n" suffixes from the given string.
      */
     public static String getNonVersionedID(String s) {
-        Matcher m = VERSION_PATTERN.matcher(s.trim());
+        Matcher m = VERSION_PATTERN.matcher(s);
         if (m.find()) {
             return s.substring(0, m.start());
         } else {
@@ -144,18 +144,27 @@ public class GenMAPPBuilderUtilities {
      * A helper function for eliminated a ".n" suffix, if applicable.
      */
     public static String checkAndPruneVersionSuffix(String systemName, String id) {
+        // Catch nulls here, because we'll call trim() later.
+        if (id == null) {
+            _Log.warn("A null ID was passed for " + systemName);
+            return id;
+        }
+
+        // Ditch leading and trailing spaces.
+        String trimmedID = id.trim();
+        
         // The "exception clause" for RefSeq (and maybe others one day).
         if ("RefSeq".equals(systemName)) {
-            _Log.info("Pruning .n version from [" + id + "]");
+            _Log.info("Pruning .n version from [" + trimmedID + "]");
             // Prevent possible exceptions from halting the export.
             try {
-                return getNonVersionedID(id);
+                return getNonVersionedID(trimmedID);
             } catch(RuntimeException rtexc) {
-                _Log.error("Runtime exception: returning ID [" + id + "] unmodified", rtexc);
-                return id;
+                _Log.error("Runtime exception: returning ID [" + trimmedID + "] unmodified", rtexc);
+                return trimmedID;
             }
         } else {
-            return id;
+            return trimmedID;
         }
     }
     

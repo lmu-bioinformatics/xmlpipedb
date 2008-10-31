@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- *****************************************************************************
 	UniProt Knowledgebase
-	Version: 	$Revision: 1.16 $
-	Date:		$Date: 2008/02/27 15:57:26 $
+	Version: 	$Revision: 1.21 $
+	Date:		$Date: 2008/09/25 15:37:31 $
 
 	Copyright (c) 2003 UniProt consortium
 	All rights reserved.
@@ -17,25 +17,6 @@
          -XMLSpy, http://www.xmlspy.com/
          -->
     <!--  Name definition begins  -->
-    <xs:complexType name="proteinNameType">
-        <xs:annotation>
-            <xs:documentation>The name type is used for protein names occuring in an entry, which are represented in a
-                flat file as DE lines.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="evidence" type="xs:string" use="optional"/>
-                <xs:attribute name="ref" type="xs:string" use="optional">
-                    <xs:annotation>
-                        <xs:documentation>This is referring to a possible EC number
-                            (ENZYME database cross reference).
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
     <xs:complexType name="geneNameType">
         <xs:annotation>
             <xs:documentation>The gene name type is used for gene information.</xs:documentation>
@@ -95,6 +76,7 @@
     </xs:complexType>
     <!--  Name definition ends  -->
     <!--  Definition of the protein begins  -->
+
     <xs:complexType name="proteinType">
         <xs:annotation>
             <xs:documentation>The protein element stores all the information found in the DE line of a flatfile
@@ -102,7 +84,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="name" type="proteinNameType" maxOccurs="unbounded"/>
+            <xs:group ref="proteinNameGroup"/>
             <xs:element name="domain" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation>The domain list is equivalent to the INCLUDES section of the DE
@@ -110,9 +92,7 @@
                     </xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="name" type="proteinNameType" maxOccurs="unbounded"/>
-                    </xs:sequence>
+                    <xs:group ref="proteinNameGroup"/>
                 </xs:complexType>
             </xs:element>
             <xs:element name="component" minOccurs="0" maxOccurs="unbounded">
@@ -122,29 +102,10 @@
                     </xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="name" type="proteinNameType" maxOccurs="unbounded"/>
-                    </xs:sequence>
+                    <xs:group ref="proteinNameGroup"/>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
-        <xs:attribute name="type">
-            <xs:simpleType>
-                <xs:restriction base="xs:NMTOKEN">
-                    <xs:enumeration value="fragment"/>
-                    <xs:enumeration value="fragments"/>
-                    <xs:enumeration value="version1"/>
-                    <xs:enumeration value="version2"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="evidence" type="xs:string" use="optional">
-            <xs:annotation>
-                <xs:documentation>This contains all evidences that are connected to the complete DE
-                    line.
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
     </xs:complexType>
     <!--  Definition of the protein ends  -->
     <!--  Definition of the geneLocation begins  -->
@@ -412,15 +373,16 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>If a CC line type does not have a defined structure, the text of this comment is
-                        stored in the element.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:group ref="bpcCommentGroup"/>
             <xs:choice minOccurs="0" maxOccurs="1">
+                <xs:group ref="bpcCommentGroup"/>
+                <xs:sequence>
+                    <xs:annotation>
+                        <xs:documentation>Used in 'subcellular location' comments.</xs:documentation>
+                    </xs:annotation>
+                    <xs:element name="molecule" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="subcellularLocation" type="subcellularLocationType" minOccurs="1"
+                                maxOccurs="unbounded"/>
+                </xs:sequence>
 
                 <xs:element name="conflict">
                     <xs:annotation>
@@ -487,6 +449,7 @@
                     <xs:element name="organismsDiffer" type="xs:boolean" minOccurs="1" default="false"/>
                     <xs:element name="experiments" type="xs:integer" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
+
             </xs:choice>
 
             <xs:element name="location" type="locationType" minOccurs="0" maxOccurs="unbounded">
@@ -495,10 +458,10 @@
                 </xs:annotation>
             </xs:element>
 
-            <xs:element name="note" type="xs:string" minOccurs="0" maxOccurs="1">
+            <xs:element name="text" type="evidencedStringType" minOccurs="0">
                 <xs:annotation>
-                    <xs:documentation>If a CC line type contains a "NOTE=", the text of that note is stored in this
-                        element.
+                    <xs:documentation>Used to store the contents of non-structured comment types,
+                        as well the contents of the flat file 'Note=' field of structured comment types.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -528,19 +491,12 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="status" type="xs:string" use="optional">
-            <xs:annotation>
-                <xs:documentation>Some comments have a status reflecting their reliability. Common values are BY
-                    SIMILARITY, POTENTIAL and PROBABLE.
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
 
         <xs:attribute name="type" use="required">
             <xs:annotation>
                 <xs:documentation>Stores the type of a comment. These are simply lower case conversions of the flatfile
-                    CC comment topics, with two exceptions. &quot;PTM&quot; is an abbreviation and stands for &quot;posttranslational
-                    modification&quot; and the CC topic &quot;DATABASE&quot; is translated to &quot;online information&quot;,
+                    CC comment topics, with two exceptions. "PTM" is an abbreviation and stands for "posttranslational
+                    modification" and the CC topic "DATABASE" is translated to "online information",
                     which is a more accurate description of the content of this comment.
                 </xs:documentation>
             </xs:annotation>
@@ -595,7 +551,6 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="evidence" type="xs:string" use="optional"/>
     </xs:complexType>
     <xs:complexType name="isoformType">
         <xs:annotation>
@@ -699,6 +654,41 @@
         <xs:attribute name="sequence" type="xs:string" use="optional"/>
     </xs:complexType>
 
+    <xs:group name="proteinNameGroup">
+        <xs:sequence>
+            <xs:element name="recommendedName" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="fullName" type="evidencedStringType"/>
+                        <xs:element name="shortName" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                    <xs:attribute name="ref" type="xs:string" use="optional"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="alternativeName" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="fullName" type="evidencedStringType" minOccurs="0"/>
+                        <xs:element name="shortName" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                    <xs:attribute name="ref" type="xs:string" use="optional"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="submittedName" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="fullName" type="evidencedStringType"/>
+                    </xs:sequence>
+                    <xs:attribute name="ref" type="xs:string" use="optional"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="allergenName" type="evidencedStringType" minOccurs="0"/>
+            <xs:element name="biotechName" type="evidencedStringType" minOccurs="0"/>
+            <xs:element name="CdAntigenName" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="innName" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:group>
+
     <xs:group name="interactantGroup">
         <xs:sequence>
             <xs:element name="id" type="xs:string" minOccurs="1"/>
@@ -788,6 +778,33 @@
         <xs:attribute name="key" type="xs:string" use="required"/>
     </xs:complexType>
     <!--  Organism definition ends  -->
+
+    <xs:complexType name="evidencedStringType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="evidence" type="xs:string" use="optional"/>
+                <xs:attribute name="status" use="optional">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="By similarity"/>
+                            <xs:enumeration value="Probable"/>
+                            <xs:enumeration value="Potential"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="subcellularLocationType">
+        <xs:sequence>
+            <xs:element name="location" type="evidencedStringType" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="topology" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="orientation" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <!--  Keyword definition begins  -->
     <xs:complexType name="keywordType">
         <xs:simpleContent>
@@ -807,6 +824,15 @@
                 <xs:attribute name="checksum" type="xs:string" use="required"/>
                 <xs:attribute name="modified" type="xs:date" use="required"/>
                 <xs:attribute name="version" type="xs:integer" use="required"/>
+                <xs:attribute name="precursor" type="xs:boolean" use="optional"/>
+                <xs:attribute name="fragment" use="optional">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="single"/>
+                            <xs:enumeration value="multiple"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -833,21 +859,21 @@
     <!--  Evidence definition ends  -->
     <!--  Protein Existence definition starts -->
     <xs:complexType name="proteinExistenceType">
-          <xs:annotation>
-             <xs:documentation>Protein Existence (flat file: PE line).</xs:documentation>
-          </xs:annotation>
-          <xs:attribute name="type" use="required">
-             <xs:simpleType>
+        <xs:annotation>
+            <xs:documentation>Protein Existence (flat file: PE line).</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="type" use="required">
+            <xs:simpleType>
                 <xs:restriction base="xs:string">
-                   <xs:enumeration value="Evidence at protein level"/>
-                   <xs:enumeration value="Evidence at transcript level"/>
-                   <xs:enumeration value="Inferred from homology"/>
-                   <xs:enumeration value="Predicted"/>
-                   <xs:enumeration value="Uncertain"/>
+                    <xs:enumeration value="Evidence at protein level"/>
+                    <xs:enumeration value="Evidence at transcript level"/>
+                    <xs:enumeration value="Inferred from homology"/>
+                    <xs:enumeration value="Predicted"/>
+                    <xs:enumeration value="Uncertain"/>
                 </xs:restriction>
-             </xs:simpleType>
-          </xs:attribute>
-       </xs:complexType>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
     <!--  Protein Existence definition ends  -->
     <!--  Entry type definition starts  -->
     <xs:element name="entry">

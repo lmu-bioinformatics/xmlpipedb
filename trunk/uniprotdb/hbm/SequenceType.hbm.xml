@@ -21,9 +21,17 @@
 <column name="Version"/>
 <type name="org.hibernate.type.BigIntegerType"/>
 </property>
+<property name="Precursor">
+<column name="Precursor"/>
+<type name="org.hibernate.type.BooleanType"/>
+</property>
 <property name="Mass">
 <column name="Mass"/>
 <type name="org.hibernate.type.BigIntegerType"/>
+</property>
+<property name="Fragment">
+<column name="Fragment"/>
+<type name="org.hibernate.type.StringType"/>
 </property>
 <property name="Length">
 <column name="Length"/>

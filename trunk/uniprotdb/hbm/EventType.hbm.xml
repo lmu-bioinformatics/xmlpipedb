@@ -13,10 +13,6 @@
 <column name="Type"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<property name="Evidence">
-<column name="Evidence"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
 <subclass discriminator-value="org.uniprot.uniprot.EventType" name="org.uniprot.uniprot.impl.EventTypeImpl"/>
 </class>
 </hibernate-mapping>

@@ -18,10 +18,6 @@
 </list-index>
 <one-to-many class="org.uniprot.uniprot.CommentType$LinkType"/>
 </list>
-<property name="Status">
-<column name="Status"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
 <property name="Type">
 <column name="Type"/>
 <type name="org.hibernate.type.StringType"/>
@@ -37,14 +33,22 @@
 <column name="Method"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<property name="Text">
+<many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="Text">
 <column name="Text"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
+</many-to-one>
 <property name="PhDependence">
 <column name="PhDependence"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="SubcellularLocation" table="CommentType_SubcellularLocation">
+<key>
+<column name="CommentType_SubcellularLocation_Hjid"/>
+</key>
+<list-index>
+<column name="CommentType_SubcellularLocation_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.SubcellularLocationType"/>
+</list>
 <many-to-one class="org.uniprot.uniprot.BpcCommentGroupKineticsType" name="Kinetics">
 <column name="Kinetics"/>
 </many-to-one>
@@ -65,10 +69,6 @@
 <column name="Error"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<property name="Note">
-<column name="Note"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Event" table="CommentType_Event">
 <key>
 <column name="CommentType_Event_Hjid"/>
@@ -85,6 +85,10 @@
 <property name="OrganismsDiffer">
 <column name="OrganismsDiffer"/>
 <type name="org.hibernate.type.BooleanType"/>
+</property>
+<property name="Molecule">
+<column name="Molecule"/>
+<type name="org.hibernate.type.StringType"/>
 </property>
 <property name="Evidence">
 <column name="Evidence"/>

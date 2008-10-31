@@ -9,10 +9,6 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<property name="Type">
-<column name="Type"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Domain" table="ProteinType_Domain">
 <key>
 <column name="ProteinType_Domain_Hjid"/>
@@ -21,6 +17,27 @@
 <column name="ProteinType_Domain_Hjindex"/>
 </list-index>
 <one-to-many class="org.uniprot.uniprot.ProteinType$DomainType"/>
+</list>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="SubmittedName" table="ProteinType_SubmittedName">
+<key>
+<column name="ProteinType_SubmittedName_Hjid"/>
+</key>
+<list-index>
+<column name="ProteinType_SubmittedName_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.ProteinNameGroupSubmittedNameType"/>
+</list>
+<many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="AllergenName">
+<column name="AllergenName"/>
+</many-to-one>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="AlternativeName" table="ProteinType_AlternativeName">
+<key>
+<column name="ProteinType_AlternativeName_Hjid"/>
+</key>
+<list-index>
+<column name="ProteinType_AlternativeName_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.ProteinNameGroupAlternativeNameType"/>
 </list>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Component" table="ProteinType_Component">
 <key>
@@ -31,18 +48,29 @@
 </list-index>
 <one-to-many class="org.uniprot.uniprot.ProteinType$ComponentType"/>
 </list>
-<property name="Evidence">
-<column name="Evidence"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Name" table="ProteinType_Name">
+<many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="BiotechName">
+<column name="BiotechName"/>
+</many-to-one>
+<many-to-one class="org.uniprot.uniprot.ProteinNameGroupRecommendedNameType" name="RecommendedName">
+<column name="RecommendedName"/>
+</many-to-one>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="CdAntigenName" table="ProteinType_CdAntigenName">
 <key>
-<column name="ProteinType_Name_Hjid"/>
+<column name="ProteinType_CdAntigenName_Hjid"/>
 </key>
 <list-index>
-<column name="ProteinType_Name_Hjindex"/>
+<column name="ProteinType_CdAntigenName_Hjindex"/>
 </list-index>
-<one-to-many class="org.uniprot.uniprot.ProteinNameType"/>
+<one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
+</list>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="InnName" table="ProteinType_InnName">
+<key>
+<column name="ProteinType_InnName_Hjid"/>
+</key>
+<list-index>
+<column name="ProteinType_InnName_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
 </list>
 <subclass discriminator-value="org.uniprot.uniprot.ProteinType" name="org.uniprot.uniprot.impl.ProteinTypeImpl"/>
 </class>

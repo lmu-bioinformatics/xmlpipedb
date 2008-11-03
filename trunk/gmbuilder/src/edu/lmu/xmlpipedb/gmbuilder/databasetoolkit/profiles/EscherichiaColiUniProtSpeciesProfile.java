@@ -64,9 +64,10 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 
 		String proteinSQL = 
 		" create temporary table temp_protein AS " +
-		" SELECT a.hjid, b.value " +
-		" FROM entrytype a INNER JOIN proteinnametype b ON (a.protein = b.proteintype_name_hjid) " + 
-		" WHERE b.proteintype_name_hjindex = 0; ";
+//		" SELECT a.hjid, b.value " +
+//		" FROM entrytype a INNER JOIN proteinnametype b ON (a.protein = b.proteintype_name_hjid) " + 
+//		" WHERE b.proteintype_name_hjindex = 0; ";
+		"select entrytype.hjid, evidencedstringtype.value from entrytype inner join proteintype on(entrytype.protein = proteintype.hjid) inner join proteinnamegrouprecommendednametype on (proteintype.recommendedname = proteinnamegrouprecommendednametype.hjid) inner join evidencedstringtype on (proteinnamegrouprecommendednametype.fullname = evidencedstringtype.hjid) order by evidencedstringtype.value;";
 
 		String commentSQL = 
 		" create temporary table temp_comment AS " +

@@ -25,6 +25,8 @@ import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.ImportEngine;
 import edu.lmu.xmlpipedb.util.engines.QueryEngine;
 
+// FIXME This test needs to be updated to the latest UniProt XSD.  For example,
+// the latest UniProt XSD no longer produces a proteinnametype table.
 public class ImportUniprotTest extends TestCase {
 
 	/* **** class vars **** */

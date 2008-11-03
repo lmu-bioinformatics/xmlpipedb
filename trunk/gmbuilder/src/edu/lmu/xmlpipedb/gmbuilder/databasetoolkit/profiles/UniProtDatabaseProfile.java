@@ -321,7 +321,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             tableManager.submit("UniProt", QueryType.insert, new String[][] { { "UID", row.getValue("UID") }, { "GeneName", geneName } });
             
             // Step 4 -- Add the ProteinName
-            ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value " + "FROM entrytype INNER JOIN proteinnametype " + "ON (protein = proteintype_name_hjid) " + "WHERE entrytype.hjid = ? " + "AND proteintype_name_hjindex = 0;");
+//            ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value " + "FROM entrytype INNER JOIN proteinnametype " + "ON (protein = proteintype_name_hjid) " + "WHERE entrytype.hjid = ? " + "AND proteintype_name_hjindex = 0;");
+            ps = ConnectionManager.getRelationalDBConnection().prepareStatement("select evidencedstringtype.value from entrytype inner join proteintype on(entrytype.protein = proteintype.hjid) inner join proteinnamegrouprecommendednametype on (proteintype.recommendedname = proteinnamegrouprecommendednametype.hjid) inner join evidencedstringtype on (proteinnamegrouprecommendednametype.fullname = evidencedstringtype.hjid) where entrytype.hjid = ? order by evidencedstringtype.value;");
             ps.setString(1, row.getValue("UID"));
             result = ps.executeQuery();
             while (result.next()) {

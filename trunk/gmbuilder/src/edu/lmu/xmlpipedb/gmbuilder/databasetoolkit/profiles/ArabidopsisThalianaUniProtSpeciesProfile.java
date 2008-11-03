@@ -351,6 +351,9 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	@Override
 	public TableManager getPrimarySystemTableManagerCustomizations(Date version)
 			throws SQLException {
+	    // FIXME Too many similarities here between this version and the one for E. coli.
+	    // Some of this needs to go to the superclass, with the subclasses doing only
+	    // what is specific to that UniProt species.
 		TableManager tableManager = null;
 		PreparedStatement ps;
 		int recordCounter = 0;
@@ -378,9 +381,10 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 
 		String commentSQL = 
 		" create temporary table temp_comment AS " +
-		" SELECT entrytype_comment_hjid as hjid, text " + 
-		" FROM commenttype INNER JOIN entrytype_comment ON (entrytype_comment_hjchildid = hjid) " + 
-		" WHERE type = 'function'; ";
+//		" SELECT entrytype_comment_hjid as hjid, text " + 
+//		" FROM commenttype INNER JOIN entrytype_comment ON (entrytype_comment_hjchildid = hjid) " + 
+//		" WHERE type = 'function'; ";
+		"select entrytype_comment_hjid as hjid, value as text from commenttype inner join entrytype_comment on (entrytype_comment_hjchildid = commenttype.hjid) inner join evidencedstringtype on (text = evidencedstringtype.hjid) where type = 'function'";
 
 		String createTableSQL = 
 		" create temporary table temp_uniprot AS" +

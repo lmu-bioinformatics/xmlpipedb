@@ -105,12 +105,13 @@ public class ArabidopsisTAIRIDCollector {
         parseMatches(sqlQuery, tairID, c);
 
         // Step 4: Grab TAIR IDs from the proteinnametype table.
-        sqlQuery = "select e.hjid as hjid, p.value " +
-            "from entrytype e inner join proteinnametype p on " +
-            "(e.protein = p.proteintype_name_hjid) " +
-            "where p.value similar to ? " +
-            "group by e.hjid, value";
-        parseMatches(sqlQuery, tairID, c);
+        // 20081031: There is no more proteinnametype table.
+//        sqlQuery = "select e.hjid as hjid, p.value " +
+//            "from entrytype e inner join proteinnametype p on " +
+//            "(e.protein = p.proteintype_name_hjid) " +
+//            "where p.value similar to ? " +
+//            "group by e.hjid, value";
+//        parseMatches(sqlQuery, tairID, c);
         
         // Step 5: Grab TAIR IDs from the text field of the comment table.
         sqlQuery = "select ec.entrytype_comment_hjid as hjid, c.text as value " +

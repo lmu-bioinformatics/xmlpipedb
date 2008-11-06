@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -222,6 +223,9 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get(systemTable.getKey()) }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) } });
           //  }
         }
+
+        // The "Other" table also needs a date: the date of export.
+        tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", "Other" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(new Date()) } });
 
         /*
          * Next we want to ensure that this record get it's "Columns" 

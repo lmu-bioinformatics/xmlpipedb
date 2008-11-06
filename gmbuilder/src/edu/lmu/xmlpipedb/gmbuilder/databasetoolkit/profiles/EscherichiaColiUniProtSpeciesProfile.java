@@ -30,6 +30,7 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
@@ -313,46 +314,34 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
     	comparisonList.add("ORF");
 		
 		tableManager = super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, SPECIES_TABLE, comparisonList);
-		
-/*		PreparedStatement ps = ConnectionManager
-				.getRelationalDBConnection()
-				.prepareStatement(
-						"SELECT value, type "
-								+ "FROM genenametype INNER JOIN entrytype_genetype "
-								+ "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) "
-								+ "WHERE entrytype_gene_hjid = ?");
-		ResultSet result;
 
-		for (Row row : primarySystemTableManager.getRows()) {
-			ps.setString(1, row.getValue("UID"));
-			result = ps.executeQuery();
+        PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " +
+		    "FROM genenametype INNER JOIN entrytype_genetype " +
+            "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
+            "WHERE entrytype_gene_hjid = ?");
+        ResultSet result;
 
-			// We actually want to keep the case where multiple ordered locus
-			// names appear.
-			while (result.next()) {
-				String type = result.getString("type");
-				if ("ordered locus".equals(type) || "ORF".equals(type)) {
-					// We want this name to appear in the Blattner system table.
-					for (String id : result.getString("value").split("/")) {
-						tableManager
-								.submit(
-										"Blattner",
-										QueryType.insert,
-										new String[][] {
-												{ "ID", id },
-												{
-														"Species",
-														"|" + getSpeciesName()
-																+ "|" },
-												{
-														"\"Date\"",
-														GenMAPPBuilderUtilities
-																.getSystemsDateString(version) },
-												{ "UID", row.getValue("UID") } });
-					}
-				}
-			}
-		}*/
+        for (Row row : primarySystemTableManager.getRows()) {
+            ps.setString(1, row.getValue("UID"));
+            result = ps.executeQuery();
+
+            // We actually want to keep the case where multiple ordered locus
+            // names appear.
+            while (result.next()) {
+                String type = result.getString("type");
+                if ("ordered locus".equals(type) || "ORF".equals(type)) {
+                    // We want this name to appear in the Blattner system table.
+                    for (String id : result.getString("value").split("/")) {
+                        tableManager.submit("Blattner", QueryType.insert, new String[][] {
+                            { "ID", id },
+                            { "Species", "|" + getSpeciesName() + "|" },
+                            { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) },
+                            { "UID", row.getValue("UID") }
+                        });
+                    }
+                }
+            }
+        }
 
 		return tableManager;
 	}
@@ -384,37 +373,35 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 		
 		tableManager = super.speciesSpecificRelationshipTableHelper(relationshipTable, primarySystemTableManager, systemTableManager, tableManager, SPECIES_TABLE, "Bridge", "S");
 		
-		/*SystemTablePair stp = GenMAPPBuilderUtilities
-				.parseRelationshipTableName(relationshipTable);
+        SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
 		if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable1)) {
 			// Blattner-X
-			PreparedStatement ps = ConnectionManager
-					.getRelationalDBConnection().prepareStatement("SELECT id " + "FROM dbreferencetype " + "WHERE type = ? and " + "entrytype_dbreference_hjid = ?");
+			PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT id " +
+			    "FROM dbreferencetype " + "WHERE type = ? and " + "entrytype_dbreference_hjid = ?");
 			ps.setString(1, stp.systemTable2);
 			for (Row row : systemTableManager.getRows()) {
-				if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(
-						"Blattner")) {
+				if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals("Blattner")) {
 					ps.setString(2, row.getValue("UID"));
 					ResultSet result = ps.executeQuery();
 					while (result.next()) {
 						// Fix blattner IDs of the form xxxx/yyyy
 						for (String Blattner_ID : row.getValue("ID").split("/")) {
-							tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", Blattner_ID }, { "Related", result.getString("id") },
-							 TODO This is hard-coded. Fix it.{ "Bridge", "S" } });
+							tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
+							    { "\"Primary\"", Blattner_ID },
+							    { "Related", result.getString("id") },
+                                // TODO This is hard-coded. Fix it.
+							    { "Bridge", "S" }
+							});
 						}
 					}
 					result.close();
 				}
 			}
 			ps.close();
-		} else if (getSpeciesSpecificSystemTables().containsKey(
-				stp.systemTable2)
-				&& !stp.systemTable1.equals("UniProt")) {
+		} else if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable2) && !"UniProt".equals(stp.systemTable1)) {
 			// X-Blattner, excluding UniProt-Blattner
-			PreparedStatement ps = ConnectionManager
-					.getRelationalDBConnection().prepareStatement(
-							"SELECT entrytype_dbreference_hjid, id "
-									+ "FROM dbreferencetype where type = ?");
+			PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT entrytype_dbreference_hjid, id "	+
+			    "FROM dbreferencetype where type = ?");
 			ps.setString(1, stp.systemTable1);
 			ResultSet result = ps.executeQuery();
 
@@ -422,16 +409,14 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 				String primary = result.getString("id");
 				String related = result.getString("entrytype_dbreference_hjid");
 				for (Row row : systemTableManager.getRows()) {
-					if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(
-							"Blattner")
-							&& row.getValue("UID").equals(related)) {
-						for (String Blattner_ID : row.getValue("ID").split("/")) {
-							tableManager.submit(relationshipTable,
-									QueryType.insert, new String[][] {
-											{ "\"Primary\"", primary },
-											{ "Related", Blattner_ID },
-											// TODO This is hard-coded. Fix it.
-											{ "Bridge", "S" } });
+					if ("Blattner".equals(row.getValue(TableManager.TABLE_NAME_COLUMN))  && row.getValue("UID").equals(related)) {
+						for (String blattnerID : row.getValue("ID").split("/")) {
+							tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
+							    { "\"Primary\"", primary },
+							    { "Related", blattnerID },
+							    // TODO This is hard-coded. Fix it.
+							    { "Bridge", "S" }
+							});
 						}
 					}
 				}
@@ -441,20 +426,16 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 			ps.close();
 		} else {
 			for (Row row1 : systemTableManager.getRows()) {
-				if (row1.getValue(TableManager.TABLE_NAME_COLUMN).equals(
-						"Blattner")) {
+				if ("Blattner".equals(row1.getValue(TableManager.TABLE_NAME_COLUMN))) {
 					for (Row row2 : primarySystemTableManager.getRows()) {
 						if (row1.getValue("UID").equals(row2.getValue("UID"))) {
-							for (String Blattner_ID : row1.getValue("ID")
-									.split("/")) {
-								tableManager.submit(relationshipTable,
-										QueryType.insert, new String[][] {
-												{ "\"Primary\"",
-														row2.getValue("ID") },
-												{ "Related", Blattner_ID },
-												// TODO This is hard-coded. Fix
-												// it.
-												{ "Bridge", "S" } });
+							for (String blattnerID : row1.getValue("ID").split("/")) {
+								tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
+								    { "\"Primary\"", row2.getValue("ID") },
+									{ "Related", blattnerID },
+								    // TODO This is hard-coded. Fix it.
+								    { "Bridge", "S" }
+								});
 							}
 							break;
 						}
@@ -462,7 +443,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 				}
 			}
 		}
-*/
+
 		return tableManager;
 	}
 

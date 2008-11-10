@@ -98,21 +98,29 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
      *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
      *      java.util.Date)
      */
-    protected TableManager systemTableManagerCustomizationsHelper(TableManager tableManager, TableManager primarySystemTableManager, Date version, String substituteTable, ArrayList<String> comparisonList ) throws InvalidParameterException, SQLException  {
-    	if( comparisonList == null ) throw new InvalidParameterException("comparisonList may not be null. Ensure you are passing a valid ArrayList<String>, even if it is empty.");
-    	PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " + "FROM genenametype INNER JOIN entrytype_genetype " + "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " + "WHERE entrytype_gene_hjid = ?");
+    protected TableManager systemTableManagerCustomizationsHelper(TableManager tableManager, TableManager primarySystemTableManager, Date version, String substituteTable, List<String> comparisonList) throws InvalidParameterException, SQLException {
+    	if (comparisonList == null) {
+            throw new InvalidParameterException("comparisonList may not be null. Ensure you are passing a valid ArrayList<String>, even if it is empty.");
+    	}
+    	
+        PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " +
+            "FROM genenametype INNER JOIN entrytype_genetype " +
+            "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
+            "WHERE entrytype_gene_hjid = ?");
         ResultSet result;
 
         for (Row row : primarySystemTableManager.getRows()) {
             ps.setString(1, row.getValue("UID"));
             result = ps.executeQuery();
 
-            // We actually want to keep the case where multiple ordered locus names appear.
+            // We actually want to keep the case where multiple ordered locus
+            // names appear.
             while (result.next()) {
                 String type = result.getString("type");
-                //if ("ordered locus".equals(type) || "ORF".equals(type)) {
+                // if ("ordered locus".equals(type) || "ORF".equals(type)) {
                 if (comparisonList.contains(type)) {
-                    // We want this name to appear in the OrderedLocusNames system table.
+                    // We want this name to appear in the OrderedLocusNames
+                    // system table.
                     for (String id : result.getString("value").split("/")) {
                         tableManager.submit(substituteTable, QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
                     }
@@ -123,7 +131,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
         return tableManager;
     }
     
-	/* (non-Javadoc)
+	/**
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getRelationsTableManagerCustomizations(java.lang.String, java.lang.String, java.util.Map, edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
 	 */
 	@Override
@@ -131,29 +139,24 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 			String systemTable1, String systemTable2, 
 			Map<String, String> templateDefinedSystemToSystemCode, 
 			TableManager tableManager) {
-		
-		//'UniProt-GeneOntology
-		
-		String relation = systemTable1 + "-" + systemTable2;
-		String type = null;
+	    String relation = systemTable1 + "-" + systemTable2;
+        String type = null;
 
-		if( systemTable1.equals("UniProt") || systemTable2.equals("UniProt") ){
-			type = "Direct";
-		} else {
-			type = "Inferred"; 
-		}
-		
-		tableManager.submit("Relations", QueryType.insert, 				
-				new String[][] {
-					{ "SystemCode", templateDefinedSystemToSystemCode.get(systemTable1) },
-					{"RelatedCode", templateDefinedSystemToSystemCode.get(systemTable2) },
-					{ "Relation", relation },
-					{ "Type", type }, 
-					{ "Source", "" }
-				}
-			);
-		
-		return tableManager;
+        if ("UniProt".equals(systemTable1) || "UniProt".equals(systemTable2)) {
+            type = "Direct";
+        } else {
+            type = "Inferred";
+        }
+
+        tableManager.submit("Relations", QueryType.insert, new String[][] {
+            { "SystemCode", templateDefinedSystemToSystemCode.get(systemTable1) },
+            { "RelatedCode", templateDefinedSystemToSystemCode.get(systemTable2) },
+            { "Relation", relation },
+            { "Type", type },
+            { "Source", "" }
+        });
+
+        return tableManager;
 	}
 	
 	/**

@@ -225,7 +225,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         }
 
         // The "Other" table also needs a date: the date of export.
-        tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", "Other" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(new Date()) } });
+        tableManager.submit("Systems", QueryType.update, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get("Other") }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(new Date()) } });
 
         /*
          * Next we want to ensure that this record get it's "Columns" 

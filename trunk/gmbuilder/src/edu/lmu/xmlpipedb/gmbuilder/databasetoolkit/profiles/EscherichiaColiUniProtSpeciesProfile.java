@@ -248,6 +248,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	@Override
 	public TableManager getSystemsTableManagerCustomizations(
 			TableManager tableManager, DatabaseProfile dbProfile) {
+        super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
         tableManager.submit("Systems", QueryType.update, new String[][] {
             { "SystemCode", SPECIES_SYSTEM_CODE },
             { "System", SPECIES_TABLE }

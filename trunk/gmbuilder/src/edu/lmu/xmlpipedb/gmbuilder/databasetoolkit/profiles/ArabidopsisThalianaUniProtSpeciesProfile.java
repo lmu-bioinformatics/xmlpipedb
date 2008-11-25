@@ -209,7 +209,7 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
                 // row.getValue("UID") } });
                 _Log.debug("getSystemTableManagerCustomizations(): TAIR ID" + result.getString("id"));
                 _Log.debug("Row #: [" + i + "]");
-                tableManager.submit("TAIR", QueryType.insert, new String[][] { { "ID", result.getString("id") }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday } });
+                tableManager.submit(SPECIES_TABLE, QueryType.insert, new String[][] { { "ID", result.getString("id") }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday } });
             }
             _Log.info("TAIR Records Written to TableManger: [" + i + "]");
         } catch(SQLException e) {

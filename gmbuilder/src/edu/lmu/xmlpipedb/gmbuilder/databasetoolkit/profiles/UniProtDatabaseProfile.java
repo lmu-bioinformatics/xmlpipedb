@@ -49,11 +49,14 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      */
     public UniProtDatabaseProfile() {
         super("org.uniprot.uniprot.Uniprot",
-				"This profile defines the requirements "
-						+ "for any UniProt centric gene database.",
-				new SpeciesProfile[] {
-						new EscherichiaColiUniProtSpeciesProfile(),
-						new ArabidopsisThalianaUniProtSpeciesProfile() });
+            "This profile defines the requirements "
+                + "for any UniProt centric gene database.",
+            new SpeciesProfile[] {
+                new EscherichiaColiUniProtSpeciesProfile(),
+                new ArabidopsisThalianaUniProtSpeciesProfile(),
+                new PlasmodiumFalciparumUniProtSpeciesProfile()
+            }
+        );
     }
 
     /*

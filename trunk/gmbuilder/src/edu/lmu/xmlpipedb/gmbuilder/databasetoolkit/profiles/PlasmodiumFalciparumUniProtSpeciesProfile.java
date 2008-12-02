@@ -45,10 +45,14 @@ public class PlasmodiumFalciparumUniProtSpeciesProfile extends UniProtSpeciesPro
         // Next, we add IDs from the other gene/name tags, but ONLY if they match
         // the pattern PF[A-Z][0-9]{4}[a-z].
         final String pfID = "PF[A-Z][0-9][0-9][0-9][0-9][a-z]";
+        final String pfID2 = "PF[0-9][0-9]_[0-9][0-9][0-9][0-9]";
+        final String pfID3 = "MAL[0-9]*P1.[0-9]*";
         String sqlQuery = "select d.entrytype_gene_hjid as hjid, c.value " +
             "from genenametype c inner join entrytype_genetype d " +
             "on (c.entrytype_genetype_name_hjid = d.hjid) " +
-            "where c.value similar to ? " +
+            "where (c.value similar to ? " +
+            "or c.value similar to ? " +
+            "or c.value similar to ?) " +
             "and type <> 'ordered locus names' " +
             "and type <> 'ORF' " +
             "group by d.entrytype_gene_hjid, c.value";
@@ -61,6 +65,8 @@ public class PlasmodiumFalciparumUniProtSpeciesProfile extends UniProtSpeciesPro
             // Query, iterate, add to table manager.
             ps = c.prepareStatement(sqlQuery);
             ps.setString(1, pfID);
+            ps.setString(2, pfID2);
+            ps.setString(3, pfID3);
             rs = ps.executeQuery();
             while (rs.next()) {
                 String hjid = Long.valueOf(rs.getLong("hjid")).toString();

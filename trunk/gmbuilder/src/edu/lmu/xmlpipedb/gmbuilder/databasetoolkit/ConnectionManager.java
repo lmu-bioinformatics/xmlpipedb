@@ -320,10 +320,20 @@ public class ConnectionManager {
 	private static Connection openAccessDatabaseConnection(String databaseFile) throws ClassNotFoundException, SQLException {
 		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
 
-	    StringBuffer databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
-	    databaseConnectionString.append(databaseFile);
-	    databaseConnectionString.append(";DriverID=22;READONLY=false}"); 
-	        
+		StringBuffer databaseConnectionString;
+		
+		// Life is a little different when playing on a Vista machine
+		String osName = System.getProperty("os.name");
+		
+		if(osName.equals("Windows Vista")) {
+	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=");
+		} else {
+	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
+	      databaseConnectionString.append(";DriverID=22;READONLY=false}");
+		}
+		
+		databaseConnectionString.append(databaseFile);
+	    
 	    return DriverManager.getConnection(databaseConnectionString.toString(), "", "");
 	}
 	

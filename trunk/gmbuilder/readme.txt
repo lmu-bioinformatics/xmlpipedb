@@ -15,7 +15,7 @@ So, that doesn't tell you how it works, but it does say specifically what it doe
 Requirements:
 - Relational Database of your choice (We've only tested with PostgreSQL 8.1 -- a damn fine DB)
     * This is where all that data that you're importing goes.
-- Windows 2000 or XP (We've only tested on Windows XP, AFAIK)
+- Windows 2000, XP, or Vista (We've only tested on Windows XP, AFAIK)
     * note: this is needed since the GDB file is really a Microsoft Access MDB file in disguise. No, we don't like it either, but that's how GenMAPP works, so (for now) we are stuck with it.
     * If you don't need to export, you can run under MAC or Unix. It is only the export that is tied to the availability of ODBC.    
 

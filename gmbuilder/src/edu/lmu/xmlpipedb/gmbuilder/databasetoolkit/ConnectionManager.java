@@ -327,13 +327,13 @@ public class ConnectionManager {
 		
 		if(osName.equals("Windows Vista")) {
 	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=");
+	      databaseConnectionString.append(databaseFile);
 		} else {
 	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
+	      databaseConnectionString.append(databaseFile);
 	      databaseConnectionString.append(";DriverID=22;READONLY=false}");
 		}
-		
-		databaseConnectionString.append(databaseFile);
-	    
+			    
 	    return DriverManager.getConnection(databaseConnectionString.toString(), "", "");
 	}
 	

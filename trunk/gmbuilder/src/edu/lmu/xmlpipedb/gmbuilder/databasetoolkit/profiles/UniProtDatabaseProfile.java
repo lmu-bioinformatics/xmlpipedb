@@ -328,8 +328,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             tableManager.submit("UniProt", QueryType.insert, new String[][] { { "UID", row.getValue("UID") }, { "GeneName", geneName } });
             
             // Step 4 -- Add the ProteinName
-//            ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value " + "FROM entrytype INNER JOIN proteinnametype " + "ON (protein = proteintype_name_hjid) " + "WHERE entrytype.hjid = ? " + "AND proteintype_name_hjindex = 0;");
-            ps = ConnectionManager.getRelationalDBConnection().prepareStatement("select evidencedstringtype.value from entrytype inner join proteintype on(entrytype.protein = proteintype.hjid) inner join proteinnamegrouprecommendednametype on (proteintype.recommendedname = proteinnamegrouprecommendednametype.hjid) inner join evidencedstringtype on (proteinnamegrouprecommendednametype.fullname = evidencedstringtype.hjid) where entrytype.hjid = ? order by evidencedstringtype.value;");
+            ps = ConnectionManager.getRelationalDBConnection().prepareStatement("select evidencedstringtype.value " +
+            		"from entrytype inner join proteintype " +
+            		"on(entrytype.protein = proteintype.hjid) " +
+            		"inner join proteinnamegrouprecommendednametype " +
+            		"on (proteintype.recommendedname = proteinnamegrouprecommendednametype.hjid) " +
+            		"inner join evidencedstringtype on (proteinnamegrouprecommendednametype.fullname = evidencedstringtype.hjid) " +
+            		"where entrytype.hjid = ? order by evidencedstringtype.value;");
             ps.setString(1, row.getValue("UID"));
             result = ps.executeQuery();
             while (result.next()) {
@@ -337,11 +342,17 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             }
 
             // Step 5 -- add the function from entrytype_comment
-            ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT text " + "FROM commenttype INNER JOIN entrytype_comment " + "ON (entrytype_comment_hjchildid = hjid) " + "WHERE type = 'function' " + "AND entrytype_comment_hjid = ?");
+            ps = ConnectionManager.getRelationalDBConnection().prepareStatement("select evidencedstringtype.value " +
+            		"from commenttype inner join entrytype_comment " +
+            		"on (entrytype_comment_hjchildid = commenttype.hjid) " +
+            		"inner join evidencedstringtype " +
+            		"on (text = evidencedstringtype.hjid) " +
+            		"where type = 'function' " +
+            		"and entrytype_comment_hjid = ?");
             ps.setString(1, row.getValue("UID"));
             result = ps.executeQuery();
             while (result.next()) {
-                tableManager.submit("UniProt", QueryType.insert, new String[][] { { "UID", row.getValue("UID") }, { "Function", result.getString("text") } });
+                tableManager.submit("UniProt", QueryType.insert, new String[][] { { "UID", row.getValue("UID") }, { "Function", result.getString("value") } });
             }
 
             // Step 6 -- Finally, add the species name and the date

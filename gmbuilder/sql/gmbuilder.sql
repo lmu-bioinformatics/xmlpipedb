@@ -33,6 +33,20 @@ create table Consider (
     Content varchar,
     primary key (Hjid)
 );
+create table CreatedBy (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
+create table CreationDate (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
 create table Date (
     Hjid int8 not null,
     Hjtype varchar not null,

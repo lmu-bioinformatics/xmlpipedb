@@ -54,7 +54,7 @@
 
 <!-- TERM : this element represents terms/classes in an ontology  -->
 
-<!ELEMENT term (id|name|namespace|def?|is_a*|alt_id*|subset*|comment?|is_anonymous?|is_obsolete?|consider*|replaced_by*|is_root?|xref_analog*|xref_unknown*|synonym*|relationship*|intersection_of*|union_of*|disjoint_from*|lexical_category?)+>
+<!ELEMENT term (id|name|namespace|def?|is_a*|alt_id*|subset*|comment?|is_anonymous?|is_obsolete?|consider*|replaced_by*|is_root?|xref_analog*|xref_unknown*|synonym*|relationship*|intersection_of*|union_of*|disjoint_from*|lexical_category?|created_by?|creation_date?)+>
 
 <!-- TERM ELEMENTS -->
 
@@ -63,6 +63,8 @@
   <!ELEMENT namespace (#PCDATA)>
   <!ELEMENT def (defstr|dbxref*)+>
   <!ELEMENT defstr (#PCDATA)>
+  <!ELEMENT created_by (#PCDATA)>
+  <!ELEMENT creation_date (#PCDATA)>
 
   <!-- DBXREF ELEMENTS -->
   <!ELEMENT xref_analog (acc|dbname|name)+>

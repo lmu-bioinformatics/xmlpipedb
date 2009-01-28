@@ -61,7 +61,7 @@ public class QueryEngine {
     }
 
     /**
-     * Executes an HQL (Hibernate Wuery Language) query.
+     * Executes an HQL (Hibernate Query Language) query.
      * 
      * @param hql
      *            The query to execute.

@@ -437,61 +437,20 @@ public class GenMAPPBuilder extends App {
     }
     
     /**
-     * Gets the elements from the properties file for reading in
-     * XML data (import files)
-     *
-     */
-    private HashMap<String, Criterion> getXmlTallyElements(){
-    	
-       	HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
-    	String element = null;
-    	String query = null;
-
-//    	 *** UniProt ***
-    	try{
-	    	element = AppResources.optionString("UniprotElementLevel1").trim();
-	    	if (!element.equals("") && element != null )
-	            uniprotCriteria.put(element, new Criterion("", element, query));
-	        
-	    	element = AppResources.optionString("UniprotElementLevel2").trim();
-	        if (!element.equals("") && element != null )
-	            uniprotCriteria.put(element, new Criterion("", element, query));
-	
-	        element = AppResources.optionString("UniprotElementLevel3").trim();
-	        if (!element.equals("") && element != null )
-	            uniprotCriteria.put(element, new Criterion("", element, query));
-	
-	        element = AppResources.optionString("UniprotElementLevel4").trim();
-	        if (!element.equals("") && element != null )
-	            uniprotCriteria.put(element, new Criterion("", element, query));
-	        
-    	} catch( InvalidParameterException e ){
-    		//TODO: print to log file
-    	}
-    	
-    	return uniprotCriteria;
-    }
-    
-    /**
      * Gets the queries used to get import data counts from the properties file. 
      * The HashMap passed in is populated.
      *
      */
     private void getXmlTallyElements(HashMap<String, Criterion> criteria){
     	String element = null;
+    	String query = "";
 
     	try{
-	    	element = AppResources.optionString("UniprotElementLevel1").trim();
-	    	setElementInCriterion(criteria, element);
-	        
-	    	element = AppResources.optionString("UniprotElementLevel2").trim();
-	    	setElementInCriterion(criteria, element);
-	    	
-	        element = AppResources.optionString("UniprotElementLevel3").trim();
-	    	setElementInCriterion(criteria, element);
-	
-	        element = AppResources.optionString("UniprotElementLevel4").trim();
-	    	setElementInCriterion(criteria, element);
+    		
+      		for(int i = 0; i < _uniprotLevelAmount; i++) {
+    			element = AppResources.optionString("UniprotElementLevel" + (i+1)).trim();
+    	    	setCriterion(criteria, element, query);	
+    		}
 	    	
     	} catch( InvalidParameterException e ){
     		//TODO: print to log file
@@ -508,22 +467,13 @@ public class GenMAPPBuilder extends App {
     	String query = null;
 
     	try{
-	    	element = AppResources.optionString("UniprotElementLevel1").trim();
-	    	query = AppResources.optionString("UniprotQueryLevel1").trim();
-	    	setQueryInCriterion(criteria, element, query);
-	        
-	    	element = AppResources.optionString("UniprotElementLevel2").trim();
-	    	query = AppResources.optionString("UniprotQueryLevel2").trim();
-	    	setQueryInCriterion(criteria, element, query);
-	
-	        element = AppResources.optionString("UniprotElementLevel3").trim();
-	        query = AppResources.optionString("UniprotQueryLevel3").trim();
-	    	setQueryInCriterion(criteria, element, query);
-	
-	        element = AppResources.optionString("UniprotElementLevel4").trim();
-	        query = AppResources.optionString("UniprotQueryLevel4").trim();
-	    	setQueryInCriterion(criteria, element, query);
-	        
+    		
+    		for(int i = 0; i < _uniprotLevelAmount; i++) {
+    			element = AppResources.optionString("UniprotElementLevel" + (i+1)).trim();
+    	    	query = AppResources.optionString("UniprotQueryLevel" + (i+1)).trim();
+    	    	setCriterion(criteria, element, query);	
+    		}
+    		        
     	} catch( InvalidParameterException e ){
     		//TODO: print to log file
     	}
@@ -537,26 +487,14 @@ public class GenMAPPBuilder extends App {
      */
     private void getOboTallyElements(HashMap<String, Criterion> criteria){
     	String element = null;
+    	String query = "";
 
     	try{
-			// *** GO ***
-			element = AppResources.optionString("GoElementLevel1").trim();
-			setElementInCriterion(criteria, element);
 
-	        element = AppResources.optionString("GoElementLevel2").trim();
-	        setElementInCriterion(criteria, element);
-
-	        element = AppResources.optionString("GoElementLevel3").trim();
-	        setElementInCriterion(criteria, element);
-
-	        element = AppResources.optionString("GoElementLevel4").trim();
-	        setElementInCriterion(criteria, element);
-	        
-            element = AppResources.optionString("GoElementLevel5").trim();
-            setElementInCriterion(criteria, element);
-            
-            element = AppResources.optionString("GoElementLevel6").trim();
-            setElementInCriterion(criteria, element);
+    		for(int i = 0; i < _goLevelAmount; i++) {
+    			element = AppResources.optionString("GoElementLevel" + (i+1)).trim();
+    			setCriterion(criteria, element, query);
+    		}
             
     	} catch( InvalidParameterException e ){
     		//TODO: print to log file
@@ -574,63 +512,32 @@ public class GenMAPPBuilder extends App {
     	String query = null;
 
     	try{
-			// *** GO ***
-			element = AppResources.optionString("GoElementLevel1").trim();
-			query = AppResources.optionString("GoQueryLevel1").trim();
-	        setQueryInCriterion(criteria, element, query);
-
-	        element = AppResources.optionString("GoElementLevel2").trim();
-	        query = AppResources.optionString("GoQueryLevel2").trim();
-	        setQueryInCriterion(criteria, element, query);
-
-	        element = AppResources.optionString("GoElementLevel3").trim();
-	        query = AppResources.optionString("GoQueryLevel3").trim();
-	        setQueryInCriterion(criteria, element, query);
+    		
+    		for(int i = 0; i < _goLevelAmount; i++) {
+    			element = AppResources.optionString("GoElementLevel" + (i+1)).trim();
+    			query = AppResources.optionString("GoQueryLevel" + (i+1)).trim();
+    	        setCriterion(criteria, element, query);
+    		}
 
     	} catch( InvalidParameterException e ){
     		//TODO: print to log file
     	}
 
     }
+    
+    /**
+     * Determine if a Criteria object already exists in the HashMap and 
+     * update it (if exists) or add a new object (if not exists).
+     * 
+     * @param criteria HashMap of Criterion objects
+     * @param element String with the element (path that Digester will look for in the xml file)
+     * @param query String that provides the database query
+     * @throws InvalidParameterException 
+     */
+    private void setCriterion(HashMap<String, Criterion> criteria, String element, String query) throws InvalidParameterException{
+    	criteria.put(element, new Criterion("", element, query));
+    }
    
-    /**
-     * Determine if a Criteria object already exists in the HashMap and 
-     * update it (if exists) or add a new object (if not exists).
-     * 
-     * @param criteria HashMap of Criterion objects
-     * @param element String with the element (path that Digester will look for in the xml file)
-     * @throws InvalidParameterException 
-     */
-    private void setQueryInCriterion(HashMap<String, Criterion> criteria, String element, String query) throws InvalidParameterException{
-    	if (!element.equals("") && element != null ){
-    		if( criteria.containsKey(element) ){
-    			Criterion tmpCriteria = criteria.get(element);
-    			tmpCriteria.setQuery( query );
-    		}else{
-    			criteria.put(element, new Criterion("", null, query));
-    		}
-    	}
-    }
-    
-    /**
-     * Determine if a Criteria object already exists in the HashMap and 
-     * update it (if exists) or add a new object (if not exists).
-     * 
-     * @param criteria HashMap of Criterion objects
-     * @param element String with the element (path that Digester will look for in the xml file)
-     * @throws InvalidParameterException 
-     */
-    private void setElementInCriterion(HashMap<String, Criterion> criteria, String element) throws InvalidParameterException{
-    	if (!element.equals("") && element != null ){
-    		if( criteria.containsKey(element) ){
-    			Criterion tmpCriteria = criteria.get(element);
-    			tmpCriteria.setDigesterPath(element);
-    		}else{
-    			criteria.put(element, new Criterion("", element, null) );
-    		}
-    	}
-    }
-    
     /**
      * Takes a String, which is used to set the text in the File Chooser.
      * Returns an InputStream with the file choosen or null if no file was
@@ -950,7 +857,17 @@ public class GenMAPPBuilder extends App {
      * The GenMAPPBuilder log.
      */
     private static final Log _Log = LogFactory.getLog(GenMAPPBuilder.class);
-
+    
+    /**
+     * Integer describing the amount of levels to search for when counting Uniprot properties in the properties file.
+     */
+    private static final int _uniprotLevelAmount = Integer.parseInt(AppResources.optionString("UniprotLevelAmount"));
+    
+    /**
+     * Integer describing the amount of levels to search for when counting Go properties in the properties file.
+     */
+    private static final int _goLevelAmount = Integer.parseInt(AppResources.optionString("GoLevelAmount"));
+  
     /**
      * Action object for configuring the database.
      */

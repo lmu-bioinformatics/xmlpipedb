@@ -238,9 +238,9 @@ public class GenMAPPBuilder extends App {
                     return;
                 }
             	HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
-            	getXmlTallyElementsDb(uniprotCriteria);
+            	setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
             	HashMap<String, Criterion> goCriteria = new HashMap<String, Criterion>();
-            	getOboTallyElementsDb(goCriteria);
+            	setTallyCriterion(goCriteria, TallyType.GO);
 
                 getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
                 getTallyResultsDatabase(goCriteria, hibernateConfiguration);
@@ -270,7 +270,7 @@ public class GenMAPPBuilder extends App {
              */
             public void actionPerformed(ActionEvent aevt) {
              	HashMap<String, Criterion> goCriteria = new HashMap<String, Criterion>();
-            	getOboTallyElements(goCriteria);
+            	setTallyCriterion(goCriteria, TallyType.GO);
 
                 // Create a file chooser and setup the GO input stream
                 InputStream goInputStream = getXmlFile("Select GO XML file");
@@ -305,7 +305,7 @@ public class GenMAPPBuilder extends App {
              */
             public void actionPerformed(ActionEvent aevt) {
             	HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
-            	getXmlTallyElements(uniprotCriteria);
+            	setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
 
                 // Create a file chooser and setup the UniProt input stream
                 InputStream uniprotInputStream = getXmlFile("Select UniProt XML file");
@@ -435,113 +435,57 @@ public class GenMAPPBuilder extends App {
             showConfigurationError();
         }
     }
-    
     /**
-     * Gets the queries used to get import data counts from the properties file. 
-     * The HashMap passed in is populated.
-     *
-     */
-    private void getXmlTallyElements(HashMap<String, Criterion> criteria){
-    	String element = null;
-    	String query = "";
-
-    	try{
-    		
-      		for(int i = 0; i < _uniprotLevelAmount; i++) {
-    			element = AppResources.optionString("UniprotElementLevel" + (i+1)).trim();
-    	    	setCriterion(criteria, element, query);	
-    		}
-	    	
-    	} catch( InvalidParameterException e ){
-    		//TODO: print to log file
-    	}
-    }
-    
-    /**
-     * Gets the queries used to get import data counts from the properties file. 
-     * The HashMap passed in is populated.
-     *
-     */
-    private void getXmlTallyElementsDb(HashMap<String, Criterion> criteria){
-    	String element = null;
-    	String query = null;
-
-    	try{
-    		
-    		for(int i = 0; i < _uniprotLevelAmount; i++) {
-    			element = AppResources.optionString("UniprotElementLevel" + (i+1)).trim();
-    	    	query = AppResources.optionString("UniprotQueryLevel" + (i+1)).trim();
-    	    	setCriterion(criteria, element, query);	
-    		}
-    		        
-    	} catch( InvalidParameterException e ){
-    		//TODO: print to log file
-    	}
-    }
-    
-    
-    /**
-     * Gets the elements from the properties file for reading in
-     * XML data (import files)
-     *
-     */
-    private void getOboTallyElements(HashMap<String, Criterion> criteria){
-    	String element = null;
-    	String query = "";
-
-    	try{
-
-    		for(int i = 0; i < _goLevelAmount; i++) {
-    			element = AppResources.optionString("GoElementLevel" + (i+1)).trim();
-    			setCriterion(criteria, element, query);
-    		}
-            
-    	} catch( InvalidParameterException e ){
-    		//TODO: print to log file
-    	}
-
-    }
-    
-    /**
-     * Gets the elements from the properties file for reading in
-     * XML data (import files)
-     *
-     */
-    private void getOboTallyElementsDb(HashMap<String, Criterion> criteria){
-    	String element = null;
-    	String query = null;
-
-    	try{
-    		
-    		for(int i = 0; i < _goLevelAmount; i++) {
-    			element = AppResources.optionString("GoElementLevel" + (i+1)).trim();
-    			query = AppResources.optionString("GoQueryLevel" + (i+1)).trim();
-    	        setCriterion(criteria, element, query);
-    		}
-
-    	} catch( InvalidParameterException e ){
-    		//TODO: print to log file
-    	}
-
-    }
-    
-    /**
-     * Determine if a Criteria object already exists in the HashMap and 
-     * update it (if exists) or add a new object (if not exists).
+     * Builds the criteria HashMap with the proper data to all the TallyEngine to 
+     * run properly.
      * 
-     * @param criteria HashMap of Criterion objects
-     * @param element String with the element (path that Digester will look for in the xml file)
-     * @param query String that provides the database query
-     * @throws InvalidParameterException 
+     * @param criteria The HashMap to load.
+     * @param type The type of tallys to grab from the properties file.
      */
-    private void setCriterion(HashMap<String, Criterion> criteria, String element, String query) throws InvalidParameterException{
-    	criteria.put(element, new Criterion("", element, query));
+    private void setTallyCriterion(HashMap<String, Criterion> criteria, TallyType type) {
+    	
+    	// We first need to grab the correct strings to access
+    	// the resource file
+    	String mainPropertyString = null;
+    	
+    	switch(type) {
+    	
+    	case GO:
+    		mainPropertyString = "Go";
+    		break;
+    		
+    	case UNIPROT:
+    		mainPropertyString = "Uniprot";
+    		break;
+    	}
+    	
+    	String element = null;
+    	String query = null;
+    	String name = null;
+    	
+    	int levelAmount = Integer.parseInt(AppResources.optionString("" + mainPropertyString + "LevelAmount"));
+    	int level = 0;
+    	
+    	for(int i = 0; i < levelAmount; i++) {
+    		
+    	    level = i + 1;
+    	    
+    		query = AppResources.optionString(mainPropertyString + "QueryLevel" + level).trim();
+			element = AppResources.optionString(mainPropertyString + "ElementLevel" + level).trim();
+			name = AppResources.optionString(mainPropertyString + "TableNameLevel" + level).trim();
+			
+			criteria.put(name, new Criterion(name, element, query));
+		}
+    	
+    
     }
+   
+    
    
     /**
      * Takes a String, which is used to set the text in the File Chooser.
-     * Returns an InputStream with the file choosen or null if no file was
-     * choosen.
+     * Returns an InputStream with the file chosen or null if no file was
+     * chosen.
      */
     private InputStream getXmlFile( String customText ){
         // Create a file chooser and setup the UniProt and GO input streams
@@ -633,13 +577,10 @@ public class GenMAPPBuilder extends App {
             return;
         }
     	HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
-    	getXmlTallyElements(uniprotCriteria);
-    	getXmlTallyElementsDb(uniprotCriteria);
-    	
+    	setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
+      	
     	HashMap<String, Criterion> goCriteria = new HashMap<String, Criterion>();
-    	getOboTallyElements(goCriteria);
-    	getOboTallyElementsDb(goCriteria);
-
+    	setTallyCriterion(goCriteria, TallyType.GO);
     	
         // Create a file chooser and setup the UniProt and GO input streams
         InputStream uniprotInputStream = getXmlFile("Select UniProt XML file");
@@ -661,8 +602,7 @@ public class GenMAPPBuilder extends App {
         getTallyResultsXml(goCriteria, goInputStream);
         getTallyResultsDatabase(goCriteria, hibernateConfiguration);
         
-
-
+        
         // Gather the criteria into a list so that we can display them
         // in a UsefulTable.
         BeanTableModel btm = new BeanTableModel(TALLY_COLUMNS);
@@ -852,22 +792,17 @@ public class GenMAPPBuilder extends App {
         
         return hibernateConfiguration;
     }
+    
+    /**
+     * The types that the TallyEngine can deal with.
+     */
+    private enum TallyType { UNIPROT, GO };
 
     /**
      * The GenMAPPBuilder log.
      */
     private static final Log _Log = LogFactory.getLog(GenMAPPBuilder.class);
     
-    /**
-     * Integer describing the amount of levels to search for when counting Uniprot properties in the properties file.
-     */
-    private static final int _uniprotLevelAmount = Integer.parseInt(AppResources.optionString("UniprotLevelAmount"));
-    
-    /**
-     * Integer describing the amount of levels to search for when counting Go properties in the properties file.
-     */
-    private static final int _goLevelAmount = Integer.parseInt(AppResources.optionString("GoLevelAmount"));
-  
     /**
      * Action object for configuring the database.
      */

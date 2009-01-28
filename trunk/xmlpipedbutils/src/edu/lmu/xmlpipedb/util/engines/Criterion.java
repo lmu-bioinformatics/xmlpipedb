@@ -1,5 +1,7 @@
 package edu.lmu.xmlpipedb.util.engines;
 
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
+
 public class Criterion {
 
 	/**
@@ -10,12 +12,12 @@ public class Criterion {
 	 * @param path
 	 * @param query
 	 */
-	public Criterion( String name, String path, String query ) {
-		
-		// Name will also repent the table column
+	public Criterion( String name, String path, String query ) throws InvalidParameterException {
 		_name = name;
 		setTable(name);
-	
+		
+		if( path == null && query == null )
+			throw new InvalidParameterException("Both path and query were null, one of them must be non-null.");
 		if(path != null )
 			_digesterPath = path;
 		

@@ -231,7 +231,7 @@ public class MainController implements ActionListener {
     	String table = null;
     	element = AppResources.optionString("ElementLevel1");
     	table = AppResources.optionString("TableLevel1");
-    	try{
+    	//try{
 			if(!element.equals("") && element != null)
 				criteria.put(element, new Criterion("", element, table));
 	    	element = AppResources.optionString("ElementLevel2");
@@ -246,9 +246,9 @@ public class MainController implements ActionListener {
 			table = AppResources.optionString("TableLevel4");
 			if(!element.equals("") && element != null)
 				criteria.put(element, new Criterion("", element, table));
-    	} catch(InvalidParameterException e){
+    	//} catch(InvalidParameterException e){
     		//TODO: Send exception to log file
-    	}
+    	//}
 //		Create a file chooser and setup the input stream
 		InputStream is = null;
 		final JFileChooser fc = new JFileChooser();

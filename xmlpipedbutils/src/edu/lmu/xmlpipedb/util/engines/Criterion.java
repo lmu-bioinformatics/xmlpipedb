@@ -1,7 +1,5 @@
 package edu.lmu.xmlpipedb.util.engines;
 
-import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
-
 public class Criterion {
 
 	/**
@@ -11,12 +9,13 @@ public class Criterion {
 	 * @param name
 	 * @param path
 	 * @param query
-	 * @throws InvalidParameterException 
 	 */
-	public Criterion( String name, String path, String query ) throws InvalidParameterException {
+	public Criterion( String name, String path, String query ) {
+		
+		// Name will also repent the table column
 		_name = name;
-		if( path == null && query == null )
-			throw new InvalidParameterException("Both path and query were null, one of them must be non-null.");
+		setTable(name);
+	
 		if(path != null )
 			_digesterPath = path;
 		
@@ -69,27 +68,12 @@ public class Criterion {
 	}
 
 	/**
-	 * Sets the query field to be the String passed in. Also, parses out the
-	 * table name(s) from the query and sets the table field.
+	 * Sets the query field to be the String passed in. 
 	 * 
 	 * 
 	 * @param _query the _query to set
 	 */
 	public void setQuery(String _query) {
-
-		int fromIndex = _query.toLowerCase().indexOf(" from ");
-
-		String fromPart = _query.substring(fromIndex + 5);
-		
-		int whereIndex = fromPart.toLowerCase().indexOf(" where ");
-		if( whereIndex != -1 )
-			fromPart = fromPart.substring(0, whereIndex);
-		
-		int semicolonIndex = fromPart.indexOf(";");
-		if(semicolonIndex != -1 )
-			fromPart = fromPart.substring(0, semicolonIndex);
-		
-		setTable(fromPart.trim());
 		this._query = _query;
 	}
 	

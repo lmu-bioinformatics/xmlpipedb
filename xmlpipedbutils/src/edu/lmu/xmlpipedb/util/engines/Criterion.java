@@ -1,5 +1,7 @@
 package edu.lmu.xmlpipedb.util.engines;
 
+import java.util.HashMap;
+
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 public class Criterion {
@@ -11,13 +13,16 @@ public class Criterion {
 	 * @param name
 	 * @param path
 	 * @param query
+	 * @throws InvalidParameterException 
 	 */
 	public Criterion( String name, String path, String query ) throws InvalidParameterException {
+		
 		_name = name;
 		setTable(name);
 		
 		if( path == null && query == null )
 			throw new InvalidParameterException("Both path and query were null, one of them must be non-null.");
+		
 		if(path != null )
 			_digesterPath = path;
 		
@@ -72,10 +77,10 @@ public class Criterion {
 	/**
 	 * Sets the query field to be the String passed in. 
 	 * 
-	 * 
 	 * @param _query the _query to set
 	 */
 	public void setQuery(String _query) {
+
 		this._query = _query;
 	}
 	
@@ -115,7 +120,39 @@ public class Criterion {
 		this._xmlCount = count;
 	}
 
+	/**
+	 * @return Returns the flag that lets any parser know that this
+	 * specific instance requires an attribute look up as well. 
+	 */
+	public boolean getAttributeAware() {
+		return this._attributeAware;
+	}
 	
+	/**
+	 * @param Flag The value to set.
+	 */
+	public void setAttributeAware(boolean flag) {
+		this._attributeAware = flag;
+	}
+	
+	/**
+	 * @return A map of the attributes that are required to 
+	 * match the Criterion with an XML file.
+	 */
+	public HashMap<String, String> getAtrributes() {
+		return this._attributes;
+	}
+	
+	/**
+	 * Sets the map that allows a parser to search a 
+	 * nodes attribute for a successful match.
+	 *  
+	 * @param attributes The map to set
+	 */
+	public void setAttributes(HashMap<String, String> attributes) {
+		this.setAttributeAware(true);
+		this._attributes = attributes;
+	}
 	
 
 	// CLASS MEMBERS
@@ -125,6 +162,8 @@ public class Criterion {
 	private String _query = null;
 	private int _dbCount = -1;
 	private int _xmlCount = -1;
+	private boolean _attributeAware = false;
+	private HashMap<String, String> _attributes = null;
 	public enum Type { DATABASE, XML }
 
 	

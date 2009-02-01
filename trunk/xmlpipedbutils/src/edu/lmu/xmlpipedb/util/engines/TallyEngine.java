@@ -16,6 +16,7 @@ import org.apache.commons.digester.Rule;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.SimpleLog;
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.util.exceptions.HibernateQueryException;
@@ -36,7 +37,7 @@ public class TallyEngine {
 			throw new InvalidParameterException(
 					"The InputStream passed must not be null.");
 		}
-
+		
 		digestXmlFile(xmlFile);
 		return _criteria;
 	}
@@ -114,7 +115,7 @@ public class TallyEngine {
 		// Look Ma, I'm actually logging stuff (albeit not pretty)
 		SimpleLog logger = new SimpleLog("TallyEngineLogger");
 		logger.setLevel(SimpleLog.LOG_LEVEL_ERROR);
-
+		
 		Digester digester = new Digester();
 		try {
 			Set set = _criteria.keySet();
@@ -126,10 +127,11 @@ public class TallyEngine {
 				// item
 				crit.setXmlCount(0);
 			}
+			
 			digester.setValidating(false);
 			digester.setLogger(logger);
 			digester.parse(xml);
-
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -137,7 +139,7 @@ public class TallyEngine {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 	}
 
 	/**
@@ -150,12 +152,46 @@ public class TallyEngine {
 	 * 
 	 */
 	protected class EndOfRecordRule extends Rule {
+		
+		public void begin(String namespace, String name, Attributes attributes) {
+			
+			Digester tempDig = getDigester();
+			Criterion tempCrit = _criteria.get(tempDig.getMatch());
+			
+			if(tempCrit != null && tempCrit.getAttributeAware()
+					&& attributes != null && attributes.getLength() > 0) {
+		
+				// We only care about Criterion that wants us to look
+				// further within the node
+				HashMap<String, String> knownAttr = tempCrit.getAtrributes();
+				String value = null;
+				
+				for(String key : knownAttr.keySet()) {
+					value = knownAttr.get(key);
+				
+					// Get the value from the found attributes using key
+					// as the type
+					if(value.equals(attributes.getValue(key))) {
+						tempCrit.setXmlCount(tempCrit.getXmlCount() + 1);
+						_Log.debug("matched path: " + tempCrit.getDigesterPath() +
+								", attribute_name: " + key + ", attribute_type: " + value);						
+					}
+				}
+			}
+			
+		}
 
 		public void end(String namespace, String name) {
+			
 			_Log.debug("end of record: " + namespace + ", " + name);
 			Digester tempDig = getDigester();
 			Criterion tempCrit = _criteria.get(tempDig.getMatch());
-			tempCrit.setXmlCount(tempCrit.getXmlCount() + 1);
+		
+			// We already now that if we wanted were looking for
+			// attributes, then we would catch them at the beginning
+			// of the match
+			if(tempCrit != null && !tempCrit.getAttributeAware())
+				tempCrit.setXmlCount(tempCrit.getXmlCount() + 1);
 		}
 	}
 

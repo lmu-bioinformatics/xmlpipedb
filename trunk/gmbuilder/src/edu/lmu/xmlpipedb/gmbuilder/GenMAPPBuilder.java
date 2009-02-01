@@ -55,6 +55,7 @@ import shag.table.BeanTableModel;
 import shag.table.UsefulTable;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.UniProtSpeciesProfile;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.gmbuilder.resource.properties.AppResources;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
@@ -239,11 +240,13 @@ public class GenMAPPBuilder extends App {
                 }
             	HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
             	setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
+            	
             	HashMap<String, Criterion> goCriteria = new HashMap<String, Criterion>();
             	setTallyCriterion(goCriteria, TallyType.GO);
-
-                getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
+            	
                 getTallyResultsDatabase(goCriteria, hibernateConfiguration);
+                getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
+                
                 
                 // Gather the criteria into a list so that we can display them
                 // in a UsefulTable.
@@ -287,7 +290,7 @@ public class GenMAPPBuilder extends App {
                  * Columns used for displaying tally results.
                  */
                 final BeanColumn[] TallyColumns = {
-                		BeanColumn.create("XML Path", "digesterPath", String.class),
+                		BeanColumn.create("XML Path", "table", String.class),
                 	    BeanColumn.create("XML Count", "xmlCount", Integer.class),
                 };
                 BeanTableModel btm = new BeanTableModel(TallyColumns);
@@ -322,7 +325,7 @@ public class GenMAPPBuilder extends App {
                  * Columns used for displaying tally results.
                  */
                 final BeanColumn[] TallyColumns = {
-                		BeanColumn.create("XML Path", "digesterPath", String.class),
+                		BeanColumn.create("XML Path", "table", String.class),
                 	    BeanColumn.create("XML Count", "xmlCount", Integer.class),
                 };
                 BeanTableModel btm = new BeanTableModel(TallyColumns);
@@ -444,7 +447,8 @@ public class GenMAPPBuilder extends App {
      */
     private void setTallyCriterion(HashMap<String, Criterion> criteria, TallyType type) {
     	
-    	// We first need to grab the correct strings to access
+     	
+    	// We need to grab the correct strings to access
     	// the resource file
     	String mainPropertyString = null;
     	
@@ -457,6 +461,9 @@ public class GenMAPPBuilder extends App {
     	case UNIPROT:
     		mainPropertyString = "Uniprot";
     		break;
+    		
+    	default:
+    		_Log.error("Unknown property attribute.");
     	}
     	
     	String element = null;
@@ -466,20 +473,117 @@ public class GenMAPPBuilder extends App {
     	int levelAmount = Integer.parseInt(AppResources.optionString("" + mainPropertyString + "LevelAmount"));
     	int level = 0;
     	
-    	for(int i = 0; i < levelAmount; i++) {
-    		
-    	    level = i + 1;
-    	    
-    		query = AppResources.optionString(mainPropertyString + "QueryLevel" + level).trim();
-			element = AppResources.optionString(mainPropertyString + "ElementLevel" + level).trim();
-			name = AppResources.optionString(mainPropertyString + "TableNameLevel" + level).trim();
-			
-			criteria.put(name, new Criterion(name, element, query));
-		}
+    	try {
     	
+    		Criterion criterion;
+    		for(int i = 0; i < levelAmount; i++) {
+    		
+    	    	level = i + 1;
+    	    
+    			query = AppResources.optionString(mainPropertyString + "QueryLevel" + level).trim();
+    			name = AppResources.optionString(mainPropertyString + "TableNameLevel" + level).trim();	
+    			element = AppResources.optionString(mainPropertyString + "ElementLevel" + level).trim();
+			
+				criterion = new Criterion(name, element, query);
+				
+				// It takes a little bit more finesse to pull out the 
+				// element path for the criterion in the properties file
+				setXMLPathCriterion(element, criterion);
+				criteria.put(criterion.getDigesterPath(), criterion);
+				
+    		}
+    		
+    		
+    		
+    	} catch (InvalidParameterException e) {
+			_Log.error(e);
+		}
+	
     
     }
+    
+    /**
+     * Creates the species specific Criterion.
+     * 
+     * @param criteria The map of criteria
+     * @param species The name of the species (must be a known name)
+     */
+    private void setTallyCriterion(HashMap<String, Criterion> criteria, String species) {
+    	
+    	if("".equals(species))
+    		return;
+    	
+    	int levelAmount = Integer.parseInt(AppResources.optionString(species + "LevelAmount"));
+    	int level = 0;
+    	
+    	String element = null;
+    	String query = null;
+    	String name = null;
+    	
+    	try {
+    	
+    		Criterion criterion;
+    		for(int i = 0; i < levelAmount; i++) {
+    		
+    	    	level = i + 1;
+    	    
+    			query = AppResources.optionString(species + "QueryLevel" + level).trim();
+    			name = AppResources.optionString(species + "TableNameLevel" + level).trim();	
+    			element = AppResources.optionString(species+ "ElementLevel" + level).trim();
+			
+				criterion = new Criterion(name, element, query);
+				
+				// It takes a little bit more finesse to pull out the 
+				// element path for the criterion in the properties file
+				setXMLPathCriterion(element, criterion);
+				criteria.put(criterion.getDigesterPath(), criterion);
+				
+    		}
+    		
+    		
+    		
+    	} catch (InvalidParameterException e) {
+			_Log.error(e);
+		}
+	
+    }
+    
+    
+    /**
+     * In charge of parsing the properties string into an element path and
+     * attributes. 
+     *
+     * @param xmlElement The string found in the properties file
+     * @param criteria The object to update
+     */
+    private void setXMLPathCriterion(String xmlElement, Criterion criteria) {
+    	
+    	// The attributes are separated by a space
+    	String[] subStrings = xmlElement.split("&");
+    	
+		// The beginning of the first attribute lives after
+		// the first argument
+    	int attributeLength = subStrings.length;
+    	
+    	if(attributeLength > 1) {
+    		    	
+    		HashMap<String, String> attributes = new HashMap<String, String>();
+    		for(int i = 1; i < attributeLength; i+=2) {
+    
+    			// The first argument we come across is the name,
+    			// the second is the value
+    			attributes.put(subStrings[i], subStrings[i+1]);
+    		}
+  
+    		criteria.setAttributes(attributes);
+    		
+    	}
+    	
+    	criteria.setDigesterPath(subStrings[0]);
+ 
+    }
    
+    
     
    
     /**

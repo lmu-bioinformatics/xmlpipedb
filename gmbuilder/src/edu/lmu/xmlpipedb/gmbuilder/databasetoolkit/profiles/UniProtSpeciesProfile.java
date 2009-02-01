@@ -11,6 +11,7 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
+import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,6 +29,7 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.Syst
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
+import edu.lmu.xmlpipedb.gmbuilder.resource.properties.AppResources;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
@@ -347,4 +349,42 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	/**
+	 * Queries the configured database for the name of the species.  If there are more than one species
+	 * loaded into the database, the first record will be used.
+	 * 
+	 * @return the name of the species
+	 * @throws SQLException 
+	 */
+	public static String getSpeciesNameDB() {
+	
+		String name = "";
+		
+		try {
+			
+			ResultSet result;
+			PreparedStatement ps;
+			ps = ConnectionManager.getRelationalDBConnection().prepareStatement(
+					AppResources.optionString("SpeciesNameLocationQuery"));
+			
+			result = ps.executeQuery();
+			name = result.getString(0);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       
+	        
+        // We will only get back on column
+		return name;
+	}
+	
+	public static String getSpeciesNameXML(InputStream inputStream) {
+		return null;
+		
+	}
+	
+	
 }

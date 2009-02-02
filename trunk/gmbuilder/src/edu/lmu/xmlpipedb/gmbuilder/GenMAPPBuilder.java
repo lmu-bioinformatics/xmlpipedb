@@ -61,7 +61,9 @@ import edu.lmu.xmlpipedb.gmbuilder.resource.properties.AppResources;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.Criterion;
 import edu.lmu.xmlpipedb.util.engines.QueryEngine;
+import edu.lmu.xmlpipedb.util.engines.RuleType;
 import edu.lmu.xmlpipedb.util.engines.TallyEngine;
+import edu.lmu.xmlpipedb.util.engines.TallyEngineDelegate;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
@@ -74,7 +76,7 @@ import edu.lmu.xmlpipedb.util.gui.ImportPanel;
  * 
  * @author dondi
  */
-public class GenMAPPBuilder extends App {
+public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Starts the application.
      */
@@ -466,40 +468,7 @@ public class GenMAPPBuilder extends App {
     		_Log.error("Unknown property attribute.");
     	}
     	
-    	String element = null;
-    	String query = null;
-    	String name = null;
-    	
-    	int levelAmount = Integer.parseInt(AppResources.optionString("" + mainPropertyString + "LevelAmount"));
-    	int level = 0;
-    	
-    	try {
-    	
-    		Criterion criterion;
-    		for(int i = 0; i < levelAmount; i++) {
-    		
-    	    	level = i + 1;
-    	    
-    			query = AppResources.optionString(mainPropertyString + "QueryLevel" + level).trim();
-    			name = AppResources.optionString(mainPropertyString + "TableNameLevel" + level).trim();	
-    			element = AppResources.optionString(mainPropertyString + "ElementLevel" + level).trim();
-			
-				criterion = new Criterion(name, element, query);
-				
-				// It takes a little bit more finesse to pull out the 
-				// element path for the criterion in the properties file
-				setXMLPathCriterion(element, criterion);
-				criteria.put(criterion.getDigesterPath(), criterion);
-				
-    		}
-    		
-    		
-    		
-    	} catch (InvalidParameterException e) {
-			_Log.error(e);
-		}
-	
-    
+    	setTallyCriterion(criteria, mainPropertyString);
     }
     
     /**
@@ -514,8 +483,7 @@ public class GenMAPPBuilder extends App {
     		return;
     	
     	int levelAmount = Integer.parseInt(AppResources.optionString(species + "LevelAmount"));
-    	int level = 0;
-    	
+     	
     	String element = null;
     	String query = null;
     	String name = null;
@@ -524,23 +492,27 @@ public class GenMAPPBuilder extends App {
     	
     		Criterion criterion;
     		for(int i = 0; i < levelAmount; i++) {
-    		
-    	    	level = i + 1;
-    	    
-    			query = AppResources.optionString(species + "QueryLevel" + level).trim();
-    			name = AppResources.optionString(species + "TableNameLevel" + level).trim();	
-    			element = AppResources.optionString(species+ "ElementLevel" + level).trim();
-			
+    			    			
+    			query = AppResources.optionString(species + "QueryLevel" + i).trim();
+    			name = AppResources.optionString(species + "TableNameLevel" + i).trim();	
+    			element = AppResources.optionString(species+ "ElementLevel" + i).trim();
+    			
 				criterion = new Criterion(name, element, query);
+				criterion.setRuleType(RuleType.ENDOFRECORD);
 				
 				// It takes a little bit more finesse to pull out the 
-				// element path for the criterion in the properties file
+				// element path for the criterion in the properties file	
 				setXMLPathCriterion(element, criterion);
-				criteria.put(criterion.getDigesterPath(), criterion);
 				
+				// We don't want to erase over a previously defined key
+				Criterion possibleCriterion = criteria.get(criterion.getDigesterPath()); 
+				
+				if(possibleCriterion == null) {
+					criteria.put(criterion.getDigesterPath(), criterion);
+				} else {
+					possibleCriterion.addSubCriterion(criterion);
+				}
     		}
-    		
-    		
     		
     	} catch (InvalidParameterException e) {
 			_Log.error(e);
@@ -621,7 +593,10 @@ public class GenMAPPBuilder extends App {
     
     private void getTallyResultsXml( HashMap<String, Criterion> criteria, InputStream iStream ){
     	
+    	_currentCriteria = criteria;
     	TallyEngine te = new TallyEngine(criteria);
+    	te.setDelegate(this);
+    	
 		try {
 			criteria.putAll(te.getXmlFileCounts(iStream));
 
@@ -642,7 +617,10 @@ public class GenMAPPBuilder extends App {
     
     private void getTallyResultsDatabase( HashMap<String, Criterion> criteria, Configuration hibernateConfiguration ){
    	
+    	_currentCriteria = criteria;
     	TallyEngine te = new TallyEngine(criteria);
+    	te.setDelegate(this);
+    	
 		try {
 			/*
 			 * Here I am explicitly catching the HibernateException, which is a
@@ -667,6 +645,22 @@ public class GenMAPPBuilder extends App {
             _Log.error(e);
 		}
     }
+    
+    /**
+     * @see edu.lmu.xmlpipedb.util.engines.TallyEngineDelegate:processXMLBody(String)
+     */
+	public HashMap<String, Criterion> processXMLBody(String body) {
+		
+		HashMap<String, Criterion> additionalCriteria = new HashMap<String, Criterion>();
+		
+		String species = body.replaceAll(" ", "");
+		
+		setTallyCriterion(additionalCriteria, species);
+		_currentCriteria.putAll(additionalCriteria);
+		
+		return additionalCriteria;
+	}
+
 
 
     /**
@@ -896,6 +890,11 @@ public class GenMAPPBuilder extends App {
         
         return hibernateConfiguration;
     }
+    
+    /**
+     * The current criteria mapping that is being processed.
+     */
+    private HashMap<String, Criterion> _currentCriteria;
     
     /**
      * The types that the TallyEngine can deal with.

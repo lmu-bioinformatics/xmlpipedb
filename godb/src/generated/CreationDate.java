@@ -8,7 +8,7 @@
 
 package generated;
 
-public interface SavedBy {
+public interface CreationDate {
 
 
     /**

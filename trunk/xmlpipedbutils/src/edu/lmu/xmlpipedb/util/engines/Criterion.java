@@ -1,5 +1,6 @@
 package edu.lmu.xmlpipedb.util.engines;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
@@ -28,6 +29,27 @@ public class Criterion {
 		
 		if( query != null )
 			this.setQuery( query );
+	}
+	
+	/** 
+	 * @param c The criterion to add
+	 */
+	public void addSubCriterion(Criterion c) {
+		
+		if(_subCriteria == null) {
+			_subCriteria = new ArrayList<Criterion>();
+			
+			// Once we establish an addition of a sub criterion,
+			// the containing object automatically becomes a sub criterion
+			// as well
+			_subCriteria.add(this);
+		} 
+		
+		_subCriteria.add(c);
+	}
+	
+	public ArrayList<Criterion> getSubCriteria() {
+		return _subCriteria;
 	}
 
 	/**
@@ -154,6 +176,22 @@ public class Criterion {
 		this._attributes = attributes;
 	}
 	
+	/**
+	 * 
+	 * @param type Sets the rule associated with
+	 * the xml path.
+	 */
+	public void setRuleType(RuleType type) {
+		this._ruleType = type;
+	}
+	
+	/**
+	 * @return The type of rule associeated with
+	 * the xml path
+	 */
+	public RuleType getRuleType() {
+		return this._ruleType;
+	}	
 
 	// CLASS MEMBERS
 	private String _name = null;
@@ -162,6 +200,8 @@ public class Criterion {
 	private String _query = null;
 	private int _dbCount = -1;
 	private int _xmlCount = -1;
+	private ArrayList<Criterion> _subCriteria = null;
+	private RuleType _ruleType;
 	private boolean _attributeAware = false;
 	private HashMap<String, String> _attributes = null;
 	public enum Type { DATABASE, XML }

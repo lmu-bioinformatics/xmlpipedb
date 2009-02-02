@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -100,6 +101,10 @@ public class TallyEngine {
 	public void setCriteria(Map<String, Criterion> criteria) {
 		_criteria.putAll(criteria);
 	}
+	
+	public void get() {
+		
+	}
 
 	/**
 	 * Uses Jakarta Digester to handle xml parsing to DOM objects so we have
@@ -122,7 +127,8 @@ public class TallyEngine {
 			Iterator iter = set.iterator();
 			while (iter.hasNext()) {
 				Criterion crit = _criteria.get(iter.next());
-				digester.addRule(crit.getDigesterPath(), new EndOfRecordRule());
+				digester.addRule(crit.getDigesterPath(), getRule(crit.getRuleType()));
+
 				// initialize the count to 0, since I am trying to count this
 				// item
 				crit.setXmlCount(0);
@@ -140,6 +146,27 @@ public class TallyEngine {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	private Rule getRule(RuleType type) {
+		
+		Rule rule = null;
+		
+		switch(type) {
+		
+		case ENDOFRECORD:
+			rule = new EndOfRecordRule();
+			break;
+			
+		case FINDBODY:
+			rule = new FindBodyRule();
+			break;
+			
+		default:
+			_Log.equals("Unkown rule type found");
+		}
+		
+		return rule;
 	}
 
 	/**
@@ -160,21 +187,24 @@ public class TallyEngine {
 			
 			if(tempCrit != null && tempCrit.getAttributeAware()
 					&& attributes != null && attributes.getLength() > 0) {
-		
-				// We only care about Criterion that wants us to look
-				// further within the node
-				HashMap<String, String> knownAttr = tempCrit.getAtrributes();
-				String value = null;
 				
-				for(String key : knownAttr.keySet()) {
-					value = knownAttr.get(key);
+				for(Criterion subCritera : tempCrit.getSubCriteria()) {
+						
+					// We only care about Criterion that wants us to look
+					// further within the node
+					HashMap<String, String> knownAttr = subCritera.getAtrributes();
+					String value = null;
 				
-					// Get the value from the found attributes using key
-					// as the type
-					if(value.equals(attributes.getValue(key))) {
-						tempCrit.setXmlCount(tempCrit.getXmlCount() + 1);
-						_Log.debug("matched path: " + tempCrit.getDigesterPath() +
+					for(String key : knownAttr.keySet()) {
+						value = knownAttr.get(key);
+				
+						// Get the value from the found attributes using key
+						// as the type
+						if(value.equals(attributes.getValue(key))) {
+							tempCrit.setXmlCount(subCritera.getXmlCount() + 1);
+							_Log.debug("matched path: " + tempCrit.getDigesterPath() +
 								", attribute_name: " + key + ", attribute_type: " + value);						
+						}	
 					}
 				}
 			}
@@ -194,10 +224,101 @@ public class TallyEngine {
 				tempCrit.setXmlCount(tempCrit.getXmlCount() + 1);
 		}
 	}
+	
+	/**
+	 * This rule is in charge of finding a desired body of a node.
+	 * 
+	 * @author geocoso2
+	 *
+	 */
+	protected class FindBodyRule extends Rule {
+		
+		/**
+		 * @see org.apache.commons.digester.Rule:begin
+		 */
+		public void begin(String message, String name, Attributes attributes) {
+			
+			Digester tempDig = getDigester();
+			Criterion tempCrit = _criteria.get(tempDig.getMatch());
+			
+			if(tempCrit != null && tempCrit.getAttributeAware()
+					&& attributes != null && attributes.getLength() > 0) {
+		
+				
+				// We only care about Criterion that wants us to look
+				// further within the node
+				HashMap<String, String> knownAttr = tempCrit.getAtrributes();
+				String value = null;
+			
+				for(String key : knownAttr.keySet()) {
+					value = knownAttr.get(key);
+				
+					// Get the value from the found attributes using key
+					// as the type
+					if(value.equals(attributes.getValue(key))) {
+						_correctNode = true;
+						_Log.debug("matched path: " + tempCrit.getDigesterPath() +
+							", attribute_name: " + key + ", attribute_type: " + value);						
+					}
+					
+				}
+			}
+			
+		}
+		
+		/**
+		 * @see.org.apache.commons.digester.Rule:body
+		 */
+		public void body(String message, String name, String text) 
+										throws Exception {
+			
+			// We already know that body is called after the begin method
+			// has be called.  We can then infer that if _correctNode is
+			// set to true, then the node that this body lives in is the
+			// one we are looking for
+			if(_delegate != null && _correctNode) {
+				
+				
+				// To drop this rule, we must reset the entire rule
+				// collection
+				Digester tmpDigester = getDigester();
+				tmpDigester.getRules().clear();
+				_criteria.remove(tmpDigester.getMatch());
+				_criteria.putAll(_delegate.processXMLBody(text));
+				
+				
+				// We add the new rules to the digester
+				Set set = _criteria.keySet();
+				Iterator iter = set.iterator();
+				
+				while (iter.hasNext()) {
+					Criterion crit = _criteria.get(iter.next());
+					digester.addRule(crit.getDigesterPath(), new EndOfRecordRule());
+					// initialize the count to 0, since I am trying to count this
+					// item
+					crit.setXmlCount(0);
+				}
+				
+					
+			}
+		}
+		
+		boolean _correctNode = false;
+		
+	}
+	
+	/**
+	 * @param delegate The delegate that will receive call
+	 * back messages
+	 */
+	public void setDelegate(TallyEngineDelegate delegate) {
+		this._delegate = delegate;
+	}
 
 	private static Log _Log = LogFactory.getLog(TallyEngine.class);
 
 	// CLASS MEMBERS
 	HashMap<String, Criterion> _criteria;
+	TallyEngineDelegate _delegate;
 
 } // end class

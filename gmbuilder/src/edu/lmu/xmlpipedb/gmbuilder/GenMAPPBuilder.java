@@ -247,9 +247,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             	CriterionList goCriteria = new CriterionList();
             	setTallyCriterion(goCriteria, TallyType.GO);
             	
-                getTallyResultsDatabase(goCriteria, hibernateConfiguration);
                 getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
-                
+                getTallyResultsDatabase(goCriteria, hibernateConfiguration);
                 
                 // Gather the criteria into a list so that we can display them
                 // in a UsefulTable.

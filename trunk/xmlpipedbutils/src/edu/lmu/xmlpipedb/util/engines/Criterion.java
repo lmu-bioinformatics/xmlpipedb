@@ -30,27 +30,6 @@ public class Criterion {
 		if( query != null )
 			this.setQuery( query );
 	}
-	
-	/** 
-	 * @param c The criterion to add
-	 */
-	public void addSubCriterion(Criterion c) {
-		
-		if(_subCriteria == null) {
-			_subCriteria = new ArrayList<Criterion>();
-			
-			// Once we establish an addition of a sub criterion,
-			// the containing object automatically becomes a sub criterion
-			// as well
-			_subCriteria.add(this);
-		} 
-		
-		_subCriteria.add(c);
-	}
-	
-	public ArrayList<Criterion> getSubCriteria() {
-		return _subCriteria;
-	}
 
 	/**
 	 * @return Returns the digesterPath.
@@ -192,6 +171,11 @@ public class Criterion {
 	public RuleType getRuleType() {
 		return this._ruleType;
 	}	
+	
+	@Override 
+	public String toString() {
+		return _name;
+	}
 
 	// CLASS MEMBERS
 	private String _name = null;
@@ -200,7 +184,6 @@ public class Criterion {
 	private String _query = null;
 	private int _dbCount = -1;
 	private int _xmlCount = -1;
-	private ArrayList<Criterion> _subCriteria = null;
 	private RuleType _ruleType;
 	private boolean _attributeAware = false;
 	private HashMap<String, String> _attributes = null;

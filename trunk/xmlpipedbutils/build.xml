@@ -70,7 +70,7 @@
         </copy>
     </target>
     
-    <target name="compile" depends="compile-demo">
+    <target name="compile" depends="compile-utils">
     </target>
 
     <target name="jar" depends="compile" description="Makes the utility and demo JAR files.">

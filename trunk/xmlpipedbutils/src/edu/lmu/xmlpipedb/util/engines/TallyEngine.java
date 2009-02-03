@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -26,11 +27,11 @@ import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 
 public class TallyEngine {
 
-	public TallyEngine(HashMap<String, Criterion> criteria) {
+	public TallyEngine(CriterionList criteria) {
 		_criteria = criteria;
 	}
 
-	public Map<String, Criterion> getXmlFileCounts(InputStream xmlFile)
+	public CriterionList getXmlFileCounts(InputStream xmlFile)
 			throws XpdException {
 		// validate params
 		if (xmlFile == null) {
@@ -49,59 +50,73 @@ public class TallyEngine {
 			throw new InvalidParameterException(
 					"The QueryEngine passed must not be null.");
 
-		// HashMap<String, Criterion> retMap = new HashMap<String, Criterion>();
-		// setup query engine
 		Connection conn = qe.currentSession().connection();
-		PreparedStatement query = null;
+		
+		String column = executeQuery(conn, _criteria.firstCriterion, "value");
+		
+		if(column != "")
+			_delegate.processDBColumn(column);
+		
+		_criteria.removeBucket(_criteria.firstCriterion.getDigesterPath());
+		
+		ArrayList<Criterion> criteriaList = _criteria.getAllCriterion();
+		for(Criterion crit : criteriaList){
+			crit.setDbCount(0);
+			crit.setDbCount(Integer.parseInt(executeQuery(conn, crit, "count")));
+		}
+		
+	}
+	
+	public String executeQuery(Connection conn, Criterion crit, String column)
+			throws XpdException {
+		
 		ResultSet results = null;
+		String queryResult = "";
+		PreparedStatement query = null;
+		
+		// check if there is a valid table entry, if not go on to the next
+		// record
+		if (crit == null || crit.getQuery() == null || crit.getQuery().equals("")) {
+			return "";
+		}
+		
+		try {
+			query = conn.prepareStatement(crit.getQuery());
+			results = query.executeQuery();
 
-		Set set = _criteria.keySet();
-		Iterator iter = set.iterator();
-		while (iter.hasNext()) {
-			Criterion crit = _criteria.get(iter.next());
-			// check if there is a valid table entry, if not go on to the next
-			// record
-			if (crit.getQuery() == null || crit.getQuery().equals("")) {
-				continue;
-			}
+			results.next();
+			queryResult = results.getString(column);
+			// retMap.put(crit.getDigesterPath(), crit);
+
+		} catch (SQLException sqle) {
+			// TODO: Log exception
+			// came from HQLPanel -- probably not needed here
+			// qe.currentSession().reconnect();
+			throw new HibernateQueryException(sqle.getMessage());
+			// Need to clean up connection after SQL exceptions
+		} catch (Exception e) {
+			// TODO: Log exception
+			throw new XpdException(e.getMessage());
+		} finally {
 			try {
-				query = conn.prepareStatement(crit.getQuery());
-				results = query.executeQuery();
+				results.close();
+				query.close();
 
-				results.next();
-				crit.setDbCount(results.getInt("count"));
-				// retMap.put(crit.getDigesterPath(), crit);
-
-			} catch (SQLException sqle) {
-				// TODO: Log exception
-				// came from HQLPanel -- probably not needed here
-				// qe.currentSession().reconnect();
-				throw new HibernateQueryException(sqle.getMessage());
-				// Need to clean up connection after SQL exceptions
+				// We need to be sure to NOT close the connection or the
+				// session here. Leave it open!
 			} catch (Exception e) {
 				// TODO: Log exception
-				throw new XpdException(e.getMessage());
-			} finally {
-				try {
-					results.close();
-					query.close();
 
-					// We need to be sure to NOT close the connection or the
-					// session here. Leave it open!
-				} catch (Exception e) {
-					// TODO: Log exception
-
-				} // Ignore the errors here, nothing we can do anyways.
-			}
+			} // Ignore the errors here, nothing we can do anyways.
 		}
-
-		// return retMap;
+		
+		return queryResult;
 	}
-
+/*
 	public void setCriteria(Map<String, Criterion> criteria) {
 		_criteria.putAll(criteria);
 	}
-	
+	*/
 	public void get() {
 		
 	}
@@ -123,11 +138,11 @@ public class TallyEngine {
 		
 		Digester digester = new Digester();
 		try {
-			Set set = _criteria.keySet();
-			Iterator iter = set.iterator();
-			while (iter.hasNext()) {
-				Criterion crit = _criteria.get(iter.next());
-				digester.addRule(crit.getDigesterPath(), getRule(crit.getRuleType()));
+			ArrayList<Criterion> criteriaList = _criteria.getAllCriterion();
+			
+			for(Criterion crit : criteriaList) {
+				
+				digester.addRule(crit.getDigesterPath(), getRule(crit.getRuleType(), crit.getName()));
 
 				// initialize the count to 0, since I am trying to count this
 				// item
@@ -148,7 +163,7 @@ public class TallyEngine {
 		
 	}
 	
-	private Rule getRule(RuleType type) {
+	private Rule getRule(RuleType type, String name) {
 		
 		Rule rule = null;
 		
@@ -156,6 +171,7 @@ public class TallyEngine {
 		
 		case ENDOFRECORD:
 			rule = new EndOfRecordRule();
+			((EndOfRecordRule)rule).name = name;
 			break;
 			
 		case FINDBODY:
@@ -183,46 +199,55 @@ public class TallyEngine {
 		public void begin(String namespace, String name, Attributes attributes) {
 			
 			Digester tempDig = getDigester();
-			Criterion tempCrit = _criteria.get(tempDig.getMatch());
 			
-			if(tempCrit != null && tempCrit.getAttributeAware()
-					&& attributes != null && attributes.getLength() > 0) {
+			ArrayList<Criterion> bucket = _criteria.getBucket(tempDig.getMatch());
+			
+			for(Criterion crit : bucket) {
+					
+				// We only care about Criterion that wants us to look
+				// further within the node
+				if(crit.getAttributeAware()) {
+					HashMap<String, String> knownAttr = crit.getAtrributes();
+					String value = null; 
 				
-				for(Criterion subCritera : tempCrit.getSubCriteria()) {
-						
-					// We only care about Criterion that wants us to look
-					// further within the node
-					HashMap<String, String> knownAttr = subCritera.getAtrributes();
-					String value = null;
-				
-					for(String key : knownAttr.keySet()) {
+					Set<String> keys = knownAttr.keySet();
+									
+					for(String key : keys) {
+					
 						value = knownAttr.get(key);
-				
+
 						// Get the value from the found attributes using key
 						// as the type
-						if(value.equals(attributes.getValue(key))) {
-							tempCrit.setXmlCount(subCritera.getXmlCount() + 1);
-							_Log.debug("matched path: " + tempCrit.getDigesterPath() +
-								", attribute_name: " + key + ", attribute_type: " + value);						
-						}	
+						if(this.name == crit.getName() &&
+								value != null && value.equals(attributes.getValue(key))) {
+							crit.setXmlCount(crit.getXmlCount() + 1);
+							return;
+						}
 					}
 				}
+		
 			}
-			
 		}
+		
 
 		public void end(String namespace, String name) {
 			
 			_Log.debug("end of record: " + namespace + ", " + name);
 			Digester tempDig = getDigester();
-			Criterion tempCrit = _criteria.get(tempDig.getMatch());
-		
-			// We already now that if we wanted were looking for
+			ArrayList<Criterion> bucket = _criteria.getBucket(tempDig.getMatch());
+					
+			// We already now that if we wanted to look for
 			// attributes, then we would catch them at the beginning
-			// of the match
-			if(tempCrit != null && !tempCrit.getAttributeAware())
-				tempCrit.setXmlCount(tempCrit.getXmlCount() + 1);
+			// of the match. This means that there should only be on element
+			// in the bucket
+			if(bucket!= null && bucket.size() == 1) {
+				Criterion c = bucket.get(0);
+				c.setXmlCount(c.getXmlCount() + 1);
+			}
+			
 		}
+		
+		public String name;
 	}
 	
 	/**
@@ -239,31 +264,30 @@ public class TallyEngine {
 		public void begin(String message, String name, Attributes attributes) {
 			
 			Digester tempDig = getDigester();
-			Criterion tempCrit = _criteria.get(tempDig.getMatch());
-			
-			if(tempCrit != null && tempCrit.getAttributeAware()
-					&& attributes != null && attributes.getLength() > 0) {
+			ArrayList<Criterion> bucket = _criteria.getBucket(tempDig.getMatch());
 		
-				
-				// We only care about Criterion that wants us to look
-				// further within the node
-				HashMap<String, String> knownAttr = tempCrit.getAtrributes();
-				String value = null;
+			for(Criterion crit : bucket) {
 			
-				for(String key : knownAttr.keySet()) {
-					value = knownAttr.get(key);
+				if(attributes != null && attributes.getLength() > 0) {
+										
+						// We only care about Criterion that wants us to look
+						// further within the node
+						HashMap<String, String> knownAttr = crit.getAtrributes();
+						String value = null;
 				
-					// Get the value from the found attributes using key
-					// as the type
-					if(value.equals(attributes.getValue(key))) {
-						_correctNode = true;
-						_Log.debug("matched path: " + tempCrit.getDigesterPath() +
-							", attribute_name: " + key + ", attribute_type: " + value);						
-					}
-					
+						for(String key : knownAttr.keySet()) {
+							value = knownAttr.get(key);
+				
+							// Get the value from the found attributes using key
+							// as the type
+							if(value.equals(attributes.getValue(key))) {
+								_correctNode = true;
+								_Log.debug("matched path: " + crit.getDigesterPath() +
+										", attribute_name: " + key + ", attribute_type: " + value);						
+							}	
+						}
 				}
 			}
-			
 		}
 		
 		/**
@@ -278,28 +302,20 @@ public class TallyEngine {
 			// one we are looking for
 			if(_delegate != null && _correctNode) {
 				
-				
 				// To drop this rule, we must reset the entire rule
 				// collection
 				Digester tmpDigester = getDigester();
 				tmpDigester.getRules().clear();
-				_criteria.remove(tmpDigester.getMatch());
-				_criteria.putAll(_delegate.processXMLBody(text));
-				
+				_criteria = _delegate.processXMLBody(text);
+				_criteria.removeBucket(tmpDigester.getMatch());
 				
 				// We add the new rules to the digester
-				Set set = _criteria.keySet();
-				Iterator iter = set.iterator();
-				
-				while (iter.hasNext()) {
-					Criterion crit = _criteria.get(iter.next());
-					digester.addRule(crit.getDigesterPath(), new EndOfRecordRule());
-					// initialize the count to 0, since I am trying to count this
-					// item
+				ArrayList<Criterion> list = _criteria.getAllCriterion();
+				for(Criterion crit : list) {
 					crit.setXmlCount(0);
+					digester.addRule(crit.getDigesterPath(), getRule(crit.getRuleType(), crit.getName()));
 				}
 				
-					
 			}
 		}
 		
@@ -318,7 +334,7 @@ public class TallyEngine {
 	private static Log _Log = LogFactory.getLog(TallyEngine.class);
 
 	// CLASS MEMBERS
-	HashMap<String, Criterion> _criteria;
-	TallyEngineDelegate _delegate;
+	protected CriterionList _criteria;
+	protected TallyEngineDelegate _delegate;
 
 } // end class

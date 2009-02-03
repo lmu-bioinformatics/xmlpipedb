@@ -1,6 +1,6 @@
 package edu.lmu.xmlpipedb.util.engines;
 
-import java.util.HashMap;
+import java.util.ArrayList;;
 
 /**
  * This interface is responsible for defining the call back methods
@@ -21,15 +21,15 @@ public interface TallyEngineDelegate {
 	 * @param body The string that contains the body of a
 	 *  XML node
 	 */
-	public HashMap<String, Criterion> processXMLBody(String body);
+	public CriterionList processXMLBody(String body);
 	
 	
 	/**
 	 * 
 	 * 
 	 * @param column The entry for the column
-	 *
+	 */
 	public void processDBColumn(String column);
-	*/
+	
 
 }

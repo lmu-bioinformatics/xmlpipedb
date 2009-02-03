@@ -60,6 +60,7 @@ import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.gmbuilder.resource.properties.AppResources;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.Criterion;
+import edu.lmu.xmlpipedb.util.engines.CriterionList;
 import edu.lmu.xmlpipedb.util.engines.QueryEngine;
 import edu.lmu.xmlpipedb.util.engines.RuleType;
 import edu.lmu.xmlpipedb.util.engines.TallyEngine;
@@ -240,10 +241,10 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                     showConfigurationError();
                     return;
                 }
-            	HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
+            	CriterionList uniprotCriteria = new CriterionList();
             	setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
             	
-            	HashMap<String, Criterion> goCriteria = new HashMap<String, Criterion>();
+            	CriterionList goCriteria = new CriterionList();
             	setTallyCriterion(goCriteria, TallyType.GO);
             	
                 getTallyResultsDatabase(goCriteria, hibernateConfiguration);
@@ -260,10 +261,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                     BeanColumn.create("Database Count", "dbCount", Integer.class)
                 };
                 BeanTableModel btm = new BeanTableModel(TallyColumns);
-                List<Criterion> criteria = new ArrayList<Criterion>(uniprotCriteria.size() + goCriteria.size());
-                criteria.addAll(uniprotCriteria.values());
-                criteria.addAll(goCriteria.values());
-                btm.setData(criteria.toArray());
+                uniprotCriteria.addCriteria(goCriteria.getAllCriterion());
+                btm.setData(uniprotCriteria.getAllCriterion().toArray());
                 UsefulTable t = new UsefulTable(btm);
                 ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
             }
@@ -274,7 +273,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-             	HashMap<String, Criterion> goCriteria = new HashMap<String, Criterion>();
+            	CriterionList goCriteria = new CriterionList();
             	setTallyCriterion(goCriteria, TallyType.GO);
 
                 // Create a file chooser and setup the GO input stream
@@ -295,10 +294,9 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 		BeanColumn.create("XML Path", "table", String.class),
                 	    BeanColumn.create("XML Count", "xmlCount", Integer.class),
                 };
+                
                 BeanTableModel btm = new BeanTableModel(TallyColumns);
-                List<Criterion> criteria = new ArrayList<Criterion>(goCriteria.size() );
-                criteria.addAll(goCriteria.values());
-                btm.setData(criteria.toArray());
+                btm.setData(goCriteria.getAllCriterion().toArray());
                 UsefulTable t = new UsefulTable(btm);
                 ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
             }
@@ -309,7 +307,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-            	HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
+            	CriterionList uniprotCriteria = new CriterionList();
             	setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
 
                 // Create a file chooser and setup the UniProt input stream
@@ -331,9 +329,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 	    BeanColumn.create("XML Count", "xmlCount", Integer.class),
                 };
                 BeanTableModel btm = new BeanTableModel(TallyColumns);
-                List<Criterion> criteria = new ArrayList<Criterion>(uniprotCriteria.size() );
-                criteria.addAll(uniprotCriteria.values());
-                btm.setData(criteria.toArray());
+                btm.setData(uniprotCriteria.getAllCriterion().toArray());
                 UsefulTable t = new UsefulTable(btm);
                 ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
             }
@@ -373,7 +369,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             }
         };
     }
-
+    
+ 
     /**
      * Creates the persistent components in the application.
      */
@@ -447,7 +444,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      * @param criteria The HashMap to load.
      * @param type The type of tallys to grab from the properties file.
      */
-    private void setTallyCriterion(HashMap<String, Criterion> criteria, TallyType type) {
+    private void setTallyCriterion(CriterionList criteria, TallyType type) {
     	
      	
     	// We need to grab the correct strings to access
@@ -474,15 +471,19 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Creates the species specific Criterion.
      * 
-     * @param criteria The map of criteria
+     * @param criteria The list of criteria
      * @param species The name of the species (must be a known name)
      */
-    private void setTallyCriterion(HashMap<String, Criterion> criteria, String species) {
+    private void setTallyCriterion(CriterionList criteria, String species) {
     	
     	if("".equals(species))
     		return;
     	
-    	int levelAmount = Integer.parseInt(AppResources.optionString(species + "LevelAmount"));
+    	String speciesAmount = AppResources.optionString(species + "LevelAmount");
+    	if(speciesAmount == null || speciesAmount.equals(""))
+    		return;
+    	
+    	int levelAmount = Integer.parseInt(speciesAmount);
      	
     	String element = null;
     	String query = null;
@@ -503,16 +504,18 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 				// It takes a little bit more finesse to pull out the 
 				// element path for the criterion in the properties file	
 				setXMLPathCriterion(element, criterion);
+				criteria.addCriteria(criterion);
 				
-				// We don't want to erase over a previously defined key
-				Criterion possibleCriterion = criteria.get(criterion.getDigesterPath()); 
-				
-				if(possibleCriterion == null) {
-					criteria.put(criterion.getDigesterPath(), criterion);
-				} else {
-					possibleCriterion.addSubCriterion(criterion);
-				}
     		}
+    		
+    		// A species criteiron must be using a different rule
+    		ArrayList<Criterion> speciesCrit = criteria.getBucket(
+    					AppResources.optionString("SpeciesElementLevel").trim());
+    		if(speciesCrit != null) {
+    			speciesCrit.get(0).setRuleType(RuleType.FINDBODY);
+    			criteria.firstCriterion = speciesCrit.get(0);
+    		}
+    		
     		
     	} catch (InvalidParameterException e) {
 			_Log.error(e);
@@ -591,14 +594,15 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     
 
     
-    private void getTallyResultsXml( HashMap<String, Criterion> criteria, InputStream iStream ){
+    private void getTallyResultsXml(CriterionList criteria, InputStream iStream ){
     	
     	_currentCriteria = criteria;
     	TallyEngine te = new TallyEngine(criteria);
     	te.setDelegate(this);
     	
 		try {
-			criteria.putAll(te.getXmlFileCounts(iStream));
+			
+			te.getXmlFileCounts(iStream);
 
 		} catch (InvalidParameterException e) {
 			ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
@@ -615,7 +619,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     }
 
     
-    private void getTallyResultsDatabase( HashMap<String, Criterion> criteria, Configuration hibernateConfiguration ){
+    private void getTallyResultsDatabase(CriterionList criteria, Configuration hibernateConfiguration ){
    	
     	_currentCriteria = criteria;
     	TallyEngine te = new TallyEngine(criteria);
@@ -649,19 +653,38 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * @see edu.lmu.xmlpipedb.util.engines.TallyEngineDelegate:processXMLBody(String)
      */
-	public HashMap<String, Criterion> processXMLBody(String body) {
+	public CriterionList processXMLBody(String body) {
 		
-		HashMap<String, Criterion> additionalCriteria = new HashMap<String, Criterion>();
+		// This is where we will search for the species specific
+		// id systems
+		if(body == null)
+			return null;
 		
-		String species = body.replaceAll(" ", "");
+		String species = body.replaceAll(" ", "");	
+		setTallyCriterion(_currentCriteria, species);
 		
-		setTallyCriterion(additionalCriteria, species);
-		_currentCriteria.putAll(additionalCriteria);
+		// we want to remove the species Criterion from
+		// this list
+		_currentCriteria.removeBucket(AppResources.optionString("UniprotElementLevel0"));
 		
-		return additionalCriteria;
+		return _currentCriteria;
 	}
 
 
+	/**
+     * @see edu.lmu.xmlpipedb.util.engines.TallyEngineDelegate:processDBColumn(String)
+     */
+	public void processDBColumn(String column) {
+		
+		// This is where we will search for the species specific
+		// id systems
+		if(column == null || column.equals(""))
+			return;
+		
+		String species = column.replaceAll(" ", "");	
+		setTallyCriterion(_currentCriteria, species);
+		
+	}
 
     /**
      * Runs XML file and database tallies for UniProt and GO. The user is 
@@ -674,10 +697,10 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             showConfigurationError();
             return;
         }
-    	HashMap<String, Criterion> uniprotCriteria = new HashMap<String, Criterion>();
+    	CriterionList uniprotCriteria = new CriterionList();
     	setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
       	
-    	HashMap<String, Criterion> goCriteria = new HashMap<String, Criterion>();
+    	CriterionList goCriteria = new CriterionList();
     	setTallyCriterion(goCriteria, TallyType.GO);
     	
         // Create a file chooser and setup the UniProt and GO input streams
@@ -704,9 +727,9 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         // Gather the criteria into a list so that we can display them
         // in a UsefulTable.
         BeanTableModel btm = new BeanTableModel(TALLY_COLUMNS);
-        List<Criterion> criteria = new ArrayList<Criterion>(uniprotCriteria.size() + goCriteria.size());
-        criteria.addAll(uniprotCriteria.values());
-        criteria.addAll(goCriteria.values());
+        ArrayList<Criterion> criteria = new ArrayList<Criterion>();
+        criteria.addAll(uniprotCriteria.getAllCriterion());
+        criteria.addAll(goCriteria.getAllCriterion());
         btm.setData(criteria.toArray());
         UsefulTable t = new UsefulTable(btm);
         ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
@@ -894,7 +917,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * The current criteria mapping that is being processed.
      */
-    private HashMap<String, Criterion> _currentCriteria;
+    private CriterionList _currentCriteria;
     
     /**
      * The types that the TallyEngine can deal with.

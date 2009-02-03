@@ -52,12 +52,14 @@ public class TallyEngine {
 
 		Connection conn = qe.currentSession().connection();
 		
-		String column = executeQuery(conn, _criteria.firstCriterion, "value");
+		if(_criteria.firstCriterion != null) {
+			String column = executeQuery(conn, _criteria.firstCriterion, "value");
 		
-		if(column != "")
-			_delegate.processDBColumn(column);
+			if(column != "")
+				_delegate.processDBColumn(column);
 		
-		_criteria.removeBucket(_criteria.firstCriterion.getDigesterPath());
+			_criteria.removeBucket(_criteria.firstCriterion.getDigesterPath());
+		}
 		
 		ArrayList<Criterion> criteriaList = _criteria.getAllCriterion();
 		for(Criterion crit : criteriaList){

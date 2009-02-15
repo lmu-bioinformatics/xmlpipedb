@@ -25,7 +25,6 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -55,7 +54,6 @@ import shag.table.BeanTableModel;
 import shag.table.UsefulTable;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.UniProtSpeciesProfile;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.gmbuilder.resource.properties.AppResources;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
@@ -659,7 +657,11 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 		if(body == null)
 			return null;
 		
-		String species = body.replaceAll(" ", "");	
+		// Remove all spaces between the species name, along with
+		// any specific strain details.  The first element in the 
+		// splitted array coresponds with the proper species name.
+		String species = body.replaceAll(" ", "").split("\\(")[0];
+		
 		setTallyCriterion(_currentCriteria, species);
 		
 		// we want to remove the species Criterion from

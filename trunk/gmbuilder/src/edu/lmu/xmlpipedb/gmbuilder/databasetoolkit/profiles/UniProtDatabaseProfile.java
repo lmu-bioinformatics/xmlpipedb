@@ -48,13 +48,18 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
      * Constuctor.
      */
     public UniProtDatabaseProfile() {
+    	
+    	// Why are we creating all objects up front, instead of
+    	// waiting for the user to choose one?  We need to abstract just the
+    	// profile name out and access it later.
         super("org.uniprot.uniprot.Uniprot",
             "This profile defines the requirements "
                 + "for any UniProt centric gene database.",
             new SpeciesProfile[] {
                 new EscherichiaColiUniProtSpeciesProfile(),
                 new ArabidopsisThalianaUniProtSpeciesProfile(),
-                new PlasmodiumFalciparumUniProtSpeciesProfile()
+                new PlasmodiumFalciparumUniProtSpeciesProfile(),
+                new VibrioCholeraeUniprotSpeciesProfile()
             }
         );
     }

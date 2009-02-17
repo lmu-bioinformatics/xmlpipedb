@@ -85,5 +85,5 @@ public class VibrioCholeraeUniprotSpeciesProfile extends UniProtSpeciesProfile {
         }
     }
 
-    private static final Log _Log = LogFactory.getLog(PlasmodiumFalciparumUniProtSpeciesProfile.class);
+    private static final Log _Log = LogFactory.getLog(VibrioCholeraeUniprotSpeciesProfile.class);
 }

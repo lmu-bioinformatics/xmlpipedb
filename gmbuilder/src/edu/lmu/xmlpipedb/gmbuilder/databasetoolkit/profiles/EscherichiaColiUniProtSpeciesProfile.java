@@ -220,7 +220,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
         if (!SPECIES_TABLE.equals(systemTable1)) {
             systemCode = systemTable1;
         } else {
-            systemCode = "OrderedLocusNames";
+            systemCode = "Blattner";
         }
 
         // If SystemTable2 is NOT SPECIES_TABLE, then use it :: if SystemTable2
@@ -228,7 +228,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
         if (!SPECIES_TABLE.equals(systemTable2)) {
             relatedCode = systemTable2;
         } else {
-            relatedCode = "OrderedLocusNames";
+            relatedCode = "Blattner";
         }
         // ### local vars finished
 

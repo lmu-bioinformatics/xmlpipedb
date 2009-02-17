@@ -112,7 +112,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
         ResultSet result;
 
         for (Row row : primarySystemTableManager.getRows()) {
-            ps.setString(1, row.getValue("UID"));
+            ps.setInt(1, Integer.parseInt(row.getValue("UID")));
             result = ps.executeQuery();
 
             // We actually want to keep the case where multiple ordered locus
@@ -251,7 +251,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
             ResultSet result;
             for (Row row : systemTableManager.getRows()) {
                 if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(criteria)) {
-                    ps.setString(2, row.getValue("UID"));
+                    ps.setInt(2, Integer.parseInt(row.getValue("UID")));
                     result = ps.executeQuery();
                     while (result.next()) {
                         tableManager.submit(relationshipTable,

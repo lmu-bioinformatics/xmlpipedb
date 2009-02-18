@@ -59,10 +59,10 @@ public class VibrioCholeraeUniprotSpeciesProfile extends UniProtSpeciesProfile {
                 
                 // We want to remove the '_' here
                 String id = rs.getString("value");
-                id = id.replace("_", "");
+                String new_id = id.replace("_", "");
                 
-                _Log.debug("Remove '_' to create: " + id + " for surrogate " + hjid);
-                tableManager.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                _Log.debug("Remove '_' from " +id  + " to create: " + new_id + " for surrogate " + hjid);
+                result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
             }
         } catch(SQLException sqlexc) {
             logSQLException(sqlexc, sqlQuery);

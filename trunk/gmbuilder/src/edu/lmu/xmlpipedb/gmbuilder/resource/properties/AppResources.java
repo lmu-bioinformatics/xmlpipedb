@@ -56,7 +56,7 @@ public class AppResources {
         try{
         	option = _optionsBundle.getString(key);
         } catch( MissingResourceException e ){
-        	System.out.println("Opps. The key, " + key + " does not exist.");
+        	System.out.println("Oops. The key, " + key + " does not exist.");
         	return option;
         }
         return option;

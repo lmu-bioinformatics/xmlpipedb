@@ -12,6 +12,7 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -248,6 +249,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	@Override
 	public TableManager getSystemsTableManagerCustomizations(
 			TableManager tableManager, DatabaseProfile dbProfile) {
+		
         super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
         tableManager.submit("Systems", QueryType.update, new String[][] {
             { "SystemCode", SPECIES_SYSTEM_CODE },
@@ -261,6 +263,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
             { "SystemCode", SPECIES_SYSTEM_CODE },
             { "Species", "|" + getSpeciesName() + "|"}
         });
+               
 		return tableManager;
 	}
 
@@ -280,8 +283,64 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
     	List<String> comparisonList = new ArrayList<String>(2);
     	comparisonList.add("ordered locus");
     	comparisonList.add("ORF");
+    	
+    	
+    	TableManager result = super.systemTableManagerCustomizationsHelper(tableManager, 
+    			primarySystemTableManager, version, SPECIES_TABLE, comparisonList);
+    	
+    	// We need to move any ID in the Blattner Table
+        // that is in the form JWXXXX into its own table called
+        // W3110
+        final String w31ID = "JW*";
+        final String w32ID = "ECK12F*";
+        String getQuery = "select d.entrytype_gene_hjid as hjid, c.value " +
+            "from genenametype c inner join entrytype_genetype d " +
+            "on (c.entrytype_genetype_name_hjid = d.hjid) " +
+            "where (c.value similar to ?" +
+            "or c.value similar to ?)" +
+            "and type <> 'ordered locus names' " +
+            "group by d.entrytype_gene_hjid, c.value";
+        
+        String deleteQuery = "delete * " +
+        	"from Blattner b " +
+        	"where (b.ID similar to ? " +
+        	"or b.ID similar to ?)";
+
+        String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);
+        Connection c = ConnectionManager.getRelationalDBConnection();
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            // Query, iterate, add to table manager.
+            ps = c.prepareStatement(getQuery);
+            
+            ps.setString(1, w31ID);
+            ps.setString(1, w32ID);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                String hjid = Long.valueOf(rs.getLong("hjid")).toString();
+                
+                // We want to remove the '_' here
+                String id = rs.getString("value");
+                String new_id = id.replace("_", "");
+                
+                _Log.debug("Added " +id  + " obtained from Blattner to W3110 for surrogate " + hjid);
+                result.submit("W3110", QueryType.insert, new String[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+            }
+            
+            ps = c.prepareStatement(deleteQuery);
+            ps.setString(1, w31ID);
+            ps.setString(1, w32ID);
+            
+            rs = ps.executeQuery();
+            _Log.debug("Removed unwanted ids in Blattner");
+            
+            
+        } catch(SQLException sqlexc) {
+            logSQLException(sqlexc, deleteQuery);
+        }
 		
-		return super.systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, SPECIES_TABLE, comparisonList);
+		return result;
 	}
 
     /**
@@ -316,5 +375,19 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 		    "Bridge",
 		    "S");
 	}
+	
+	 /**
+     * Helper method for logging an SQL exception.
+     */
+    private void logSQLException(SQLException sqlexc, String sqlQuery) {
+        _Log.error("Exception trying to execute query: " + sqlQuery);
+        while (sqlexc != null) {
+            _Log.error("Error code: [" + sqlexc.getErrorCode() + "]");
+            _Log.error("Error message: [" + sqlexc.getMessage() + "]");
+            _Log.error("Error SQL State: [" + sqlexc.getSQLState() + "]");
+            sqlexc = sqlexc.getNextException();
+        }
+    }
+
 
 } // end class

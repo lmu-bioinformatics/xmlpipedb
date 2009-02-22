@@ -192,6 +192,8 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 		Map<String, SystemType> speciesSpecificAvailableSystemTables = new HashMap<String, SystemType>();
 
 		speciesSpecificAvailableSystemTables.put(SPECIES_TABLE, SystemType.Proper);
+		speciesSpecificAvailableSystemTables.put("W3110", SystemType.Proper);
+		
 		return speciesSpecificAvailableSystemTables;
 	}
 
@@ -250,6 +252,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	public TableManager getSystemsTableManagerCustomizations(
 			TableManager tableManager, DatabaseProfile dbProfile) {
 		
+		
         super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
         tableManager.submit("Systems", QueryType.update, new String[][] {
             { "SystemCode", SPECIES_SYSTEM_CODE },
@@ -263,6 +266,21 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
             { "SystemCode", SPECIES_SYSTEM_CODE },
             { "Species", "|" + getSpeciesName() + "|"}
         });
+        
+        tableManager.submit("Systems", QueryType.update, new String[][] {
+                { "SystemCode", "W3" },
+                { "System", "W3110" }
+        });
+        tableManager.submit("Systems", QueryType.update, new String[][] {
+                { "SystemCode", "W3" },
+                { "SystemName", "W3110"}
+        });
+        tableManager.submit("Systems", QueryType.update, new String[][] {
+                { "SystemCode", "W3"},
+                { "Species", "|" + getSpeciesName() + "|"}
+        });
+            
+        
                
 		return tableManager;
 	}
@@ -292,7 +310,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
         // that is in the form JWXXXX into its own table called
         // W3110
         final String w31ID = "JW*";
-        final String w32ID = "ECK12F*";
+        final String w32ID = "ECK*";
         String getQuery = "select d.entrytype_gene_hjid as hjid, c.value " +
             "from genenametype c inner join entrytype_genetype d " +
             "on (c.entrytype_genetype_name_hjid = d.hjid) " +
@@ -300,44 +318,35 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
             "or c.value similar to ?)" +
             "and type <> 'ordered locus names' " +
             "group by d.entrytype_gene_hjid, c.value";
-        
-        String deleteQuery = "delete * " +
-        	"from Blattner b " +
-        	"where (b.ID similar to ? " +
-        	"or b.ID similar to ?)";
 
         String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);
         Connection c = ConnectionManager.getRelationalDBConnection();
         PreparedStatement ps;
         ResultSet rs;
+        
         try {
             // Query, iterate, add to table manager.
             ps = c.prepareStatement(getQuery);
             
             ps.setString(1, w31ID);
-            ps.setString(1, w32ID);
+            ps.setString(2, w32ID);
             rs = ps.executeQuery();
             while (rs.next()) {
                 String hjid = Long.valueOf(rs.getLong("hjid")).toString();
                 
-                // We want to remove the '_' here
-                String id = rs.getString("value");
-                String new_id = id.replace("_", "");
-                
-                _Log.debug("Added " +id  + " obtained from Blattner to W3110 for surrogate " + hjid);
-                result.submit("W3110", QueryType.insert, new String[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+               
+                _Log.debug("Added " +rs.getString("value")  + " obtained from Blattner to W3110 for surrogate " + hjid);
+                result.delete("Blattner", "ID", rs.getString("value"));
+                result.submit("W3110", QueryType.insert, new String[][] { { "ID", rs.getString("value") },
+                		{ "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
             }
-            
-            ps = c.prepareStatement(deleteQuery);
-            ps.setString(1, w31ID);
-            ps.setString(1, w32ID);
-            
+        
             rs = ps.executeQuery();
             _Log.debug("Removed unwanted ids in Blattner");
             
             
         } catch(SQLException sqlexc) {
-            logSQLException(sqlexc, deleteQuery);
+            logSQLException(sqlexc, getQuery);
         }
 		
 		return result;

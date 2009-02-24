@@ -198,50 +198,6 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	}
 
 	/**
-	 * This method will normalize the systemTables input, then pass the 
-	 * normalized values to the Super class's method of the same name. This 
-	 * elminates redundant logic in parent and child classes and ensures  
-	 * that species not needing extra processing can choose to not override
-	 * this method secure in the knowledge that their results will be 
-	 * correct.
-	 * 
-	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getRelationsTableManagerCustomizations(java.lang.String,
-	 *      java.lang.String, java.util.Map,
-	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
-	 */
-	@Override
-	public TableManager getRelationsTableManagerCustomizations(
-			String systemTable1, String systemTable2,
-			Map<String, String> templateDefinedSystemToSystemCode,
-			TableManager tableManager) {
-        // ### create some local vars and set them
-        String systemCode = null;
-        String relatedCode = null;
-
-        // if SystemTable1 is NOT SPECIES_TABLE, then use it :: if SystemTable1
-        // IS the SPECIES_TABLE, call it OrderedLocusNames
-        if (!SPECIES_TABLE.equals(systemTable1)) {
-            systemCode = systemTable1;
-        } else {
-            systemCode = "Blattner";
-        }
-
-        // If SystemTable2 is NOT SPECIES_TABLE, then use it :: if SystemTable2
-        // IS the SPECIES_TABLE, call it OrderedLocusNames
-        if (!SPECIES_TABLE.equals(systemTable2)) {
-            relatedCode = systemTable2;
-        } else {
-            relatedCode = "Blattner";
-        }
-        // ### local vars finished
-
-        // Call the super class's method, now that SPECIES_TABLE specific
-        // normalization has been done
-        tableManager = super.getRelationsTableManagerCustomizations(systemCode, relatedCode, templateDefinedSystemToSystemCode, tableManager);
-        return tableManager;
-	}
-
-	/**
 	 * Add 2 SPECIES_TABLE specific items to the tableManager, then call the
 	 * super class to add the items all species will need.
 	 * 
@@ -253,7 +209,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 			TableManager tableManager, DatabaseProfile dbProfile) {
 		
 		
-        super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
+        tableManager = super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
         tableManager.submit("Systems", QueryType.update, new String[][] {
             { "SystemCode", SPECIES_SYSTEM_CODE },
             { "System", SPECIES_TABLE }
@@ -341,7 +297,6 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
                 		{ "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
             }
         
-            rs = ps.executeQuery();
             _Log.debug("Removed unwanted ids in Blattner");
             
             
@@ -359,6 +314,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
     public List<String> getSpeciesSpecificSystemCode(List<String> systemCodes, Map<String, String> templateDefinedSystemToSystemCode) {
         // JD: FIXME Why is this specifically adding the system code at index #2?
         systemCodes.add(2, SPECIES_SYSTEM_CODE);
+        systemCodes.add("W3");
         return systemCodes;
     }
 

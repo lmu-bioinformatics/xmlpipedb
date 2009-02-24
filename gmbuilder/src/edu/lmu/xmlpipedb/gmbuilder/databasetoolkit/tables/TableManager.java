@@ -198,7 +198,9 @@ public class TableManager {
 		for(Row row : dataSet) {
 			if(row.containsPair(TABLE_NAME_COLUMN, tableName)
 					&& row.containsPair(primaryKey, value)) {
-				dataSet.remove(row);				
+				dataSet.remove(row);
+				_Log.debug("Removed record with Primary key " +
+						primaryKey + ", " + value + " in table " + tableName);
 			}
 		}
     	
@@ -334,9 +336,9 @@ public class TableManager {
 	private boolean rowsEqualOnPK(Row row1, Row row2) {
         for (String primaryKey : primaryKeys) {
             if (_Log.isDebugEnabled()) {
-                _Log.debug("Processing " + primaryKey + " for rows " + row1 + " and " + row2);
-                _Log.debug("Row 1 value for primary key: " + row1.getValue(primaryKey));
-                _Log.debug("Row 2 value for primary key: " + row2.getValue(primaryKey));
+                //_Log.debug("Processing " + primaryKey + " for rows " + row1 + " and " + row2);
+                //_Log.debug("Row 1 value for primary key: " + row1.getValue(primaryKey));
+                //_Log.debug("Row 2 value for primary key: " + row2.getValue(primaryKey));
             }
 
             if (!row1.getValue(primaryKey).equals(row2.getValue(primaryKey))) {

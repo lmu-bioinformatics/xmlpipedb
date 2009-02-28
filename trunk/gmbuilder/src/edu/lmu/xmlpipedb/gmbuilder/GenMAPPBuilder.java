@@ -463,6 +463,18 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     	}
     	
     	setTallyCriterion(criteria, mainPropertyString);
+    	
+    	if(!_speciesCriterionLoaded) {
+    		
+    		// A species criteiron must be using a different rule
+    		ArrayList<Criterion> speciesCrit = criteria.getBucket(
+					AppResources.optionString("SpeciesElementLevel").trim());
+    		if(speciesCrit != null) {
+    			speciesCrit.get(0).setRuleType(RuleType.FINDBODY);
+    			criteria.firstCriterion = speciesCrit.get(0);
+    		}
+    	}
+		
     }
     
     /**
@@ -475,6 +487,11 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     	
     	if("".equals(species))
     		return;
+    	
+    	// Remove all spaces between the species name, along with
+		// any specific strain details.  The first element in the 
+		// splitted array coresponds with the proper species name.
+		species = species.replaceAll(" ", "").split("\\(")[0];
     	
     	String speciesAmount = AppResources.optionString(species + "LevelAmount");
     	if(speciesAmount == null || speciesAmount.equals(""))
@@ -503,14 +520,6 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 				setXMLPathCriterion(element, criterion);
 				criteria.addCriteria(criterion);
 				
-    		}
-    		
-    		// A species criteiron must be using a different rule
-    		ArrayList<Criterion> speciesCrit = criteria.getBucket(
-    					AppResources.optionString("SpeciesElementLevel").trim());
-    		if(speciesCrit != null) {
-    			speciesCrit.get(0).setRuleType(RuleType.FINDBODY);
-    			criteria.firstCriterion = speciesCrit.get(0);
     		}
     		
     		
@@ -654,20 +663,15 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 		
 		// This is where we will search for the species specific
 		// id systems
-		if(body == null)
-			return null;
+		if(body == null || _speciesCriterionLoaded)
+			return _currentCriteria;
 		
-		// Remove all spaces between the species name, along with
-		// any specific strain details.  The first element in the 
-		// splitted array coresponds with the proper species name.
-		String species = body.replaceAll(" ", "").split("\\(")[0];
-		
-		setTallyCriterion(_currentCriteria, species);
+		setTallyCriterion(_currentCriteria, body);
 		
 		// we want to remove the species Criterion from
 		// this list
 		_currentCriteria.removeBucket(AppResources.optionString("UniprotElementLevel0"));
-		
+		System.out.println("Setting XML body " + body);
 		return _currentCriteria;
 	}
 
@@ -679,11 +683,11 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 		
 		// This is where we will search for the species specific
 		// id systems
-		if(column == null || column.equals(""))
+		if(column == null || column.equals("") || _speciesCriterionLoaded)
 			return;
 		
-		String species = column.replaceAll(" ", "");	
-		setTallyCriterion(_currentCriteria, species);
+		System.out.println("Getting DB column " + column);
+		setTallyCriterion(_currentCriteria, column);
 		
 	}
 
@@ -698,9 +702,13 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             showConfigurationError();
             return;
         }
+        
+        // Just getting the criterion 
+        _speciesCriterionLoaded = false;
     	CriterionList uniprotCriteria = new CriterionList();
     	setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
       	
+    	_speciesCriterionLoaded = true;
     	CriterionList goCriteria = new CriterionList();
     	setTallyCriterion(goCriteria, TallyType.GO);
     	
@@ -717,24 +725,30 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         	ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
         	return;
         }
-
+        _speciesCriterionLoaded = false;
         getTallyResultsXml(uniprotCriteria, uniprotInputStream);
         getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
 		
+        _speciesCriterionLoaded = true;
         getTallyResultsXml(goCriteria, goInputStream);
         getTallyResultsDatabase(goCriteria, hibernateConfiguration);
-        
+        _speciesCriterionLoaded = false;
         
         // Gather the criteria into a list so that we can display them
         // in a UsefulTable.
         BeanTableModel btm = new BeanTableModel(TALLY_COLUMNS);
         ArrayList<Criterion> criteria = new ArrayList<Criterion>();
+ 
+        // Way way way, but okay for now.  Removing duplications
+        ArrayList<Criterion> criteriaToRemove = new ArrayList<Criterion>();
+        
+        
         criteria.addAll(uniprotCriteria.getAllCriterion());
         criteria.addAll(goCriteria.getAllCriterion());
         btm.setData(criteria.toArray());
         UsefulTable t = new UsefulTable(btm);
         ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
-
+        _speciesCriterionLoaded = false;
     }
 
     private void doResetUniprotAndGoDb(QueryEngine qe){
@@ -806,7 +820,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      * Columns used for displaying tally results.
      */
     private static final BeanColumn[] TALLY_COLUMNS = {
-        BeanColumn.create("XML Path", "digesterPath", String.class),
+        BeanColumn.create("XML Path", "table", String.class),
         BeanColumn.create("XML Count", "xmlCount", Integer.class),
         BeanColumn.create("Database Table", "table", String.class),
         BeanColumn.create("Database Count", "dbCount", Integer.class)
@@ -914,6 +928,12 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         
         return hibernateConfiguration;
     }
+    
+    /**
+     * Determines whether the species specific criteria has already
+     * been loaded.
+     */
+    boolean _speciesCriterionLoaded;
     
     /**
      * The current criteria mapping that is being processed.

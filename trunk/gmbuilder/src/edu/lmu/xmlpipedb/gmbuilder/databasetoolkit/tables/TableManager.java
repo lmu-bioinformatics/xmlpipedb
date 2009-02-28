@@ -184,27 +184,6 @@ public class TableManager {
             addRow(newRow);
         }
     }
-    
-    /**
-     * Removes a record from a table.
-     * 
-     * @param tableName
-     * @param primaryKey
-     */
-    public void delete(String tableName, String primaryKey, String value) {
-    	
-    	// We need to search through ALL rows in the table manager
-    	// to find the one to delete.  This is probably not good.
-		for(Row row : dataSet) {
-			if(row.containsPair(TABLE_NAME_COLUMN, tableName)
-					&& row.containsPair(primaryKey, value)) {
-				dataSet.remove(row);
-				_Log.debug("Removed record with Primary key " +
-						primaryKey + ", " + value + " in table " + tableName);
-			}
-		}
-    	
-    }
 
     /**
      * Returns the rows in this TableManager.

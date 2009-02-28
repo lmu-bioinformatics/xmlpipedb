@@ -86,13 +86,22 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
         return tableManager;
     }
 
+    /**
+	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.UniProtSpeciesProfile#systemTableManagerCustonmizationsHelper
+     */
+    protected TableManager systemTableManagerCustomizationsHelper(TableManager tableManager, TableManager primarySystemTableManager, Date version, String substituteTable, List<String> comparisonList) throws InvalidParameterException, SQLException {
+    	return systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, substituteTable, comparisonList, "");
+    }
+    
 	/**
 	 * Updates the tableManger passed in with values from the dbreferencestype 
 	 * table (which holds the <dbreferences type='XXX'> information. The exact
 	 * system table that is being generated is specified by the substituteTable
-	 * parameter. 
+	 * parameter. Uses a filter to not allow certain ids into the table.  The filter
+	 * must be a Java compatable regex.
 	 * 
      * @param comparisonList
+     * @param filter
 	 * @throws InvalidParameterException 
 	 * @throws SQLException 
 	 * @throws Exception 
@@ -100,7 +109,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
      *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
      *      java.util.Date)
      */
-    protected TableManager systemTableManagerCustomizationsHelper(TableManager tableManager, TableManager primarySystemTableManager, Date version, String substituteTable, List<String> comparisonList) throws InvalidParameterException, SQLException {
+   	protected TableManager systemTableManagerCustomizationsHelper(TableManager tableManager, TableManager primarySystemTableManager, Date version, String substituteTable, List<String> comparisonList, String filter) throws InvalidParameterException, SQLException {
     	if (comparisonList == null) {
             throw new InvalidParameterException("comparisonList may not be null. Ensure you are passing a valid ArrayList<String>, even if it is empty.");
     	}
@@ -124,7 +133,10 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                     // We want this name to appear in the OrderedLocusNames
                     // system table.
                     for (String id : result.getString("value").split("/")) {
-                        tableManager.submit(substituteTable, QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
+                    	
+                    	// Only add the ids that do no match the filter
+                    	if(!id.matches(filter))
+                    		tableManager.submit(substituteTable, QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
                     }
                 }
             }

@@ -336,7 +336,7 @@ public class Table {
         PreparedStatement ps = null;
         _Log.info("Number of records to process: sqlBuffer.size():: " + sqlBuffer.size());
         _Log.info("Number of records to process: sqlBuffer.toArray().length:: " + sqlBuffer.toArray().length);
-        for (SQLStatement sqlStatement : sqlBuffer.toArray(new SQLStatement[0])) {
+        for (SQLStatement sqlStatement : sqlBuffer) {
             try {
                 ps = connection.prepareStatement(sqlStatement.getSQL());
                 if (sqlStatement.getValues() != null) {

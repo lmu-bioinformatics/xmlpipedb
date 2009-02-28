@@ -258,51 +258,15 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
     	comparisonList.add("ordered locus");
     	comparisonList.add("ORF");
     	
-    	
+    	final String blattnerFilter = "(JW|ECK)[0-9a-zA-Z_.-]*";
+        final String w3110Filter = "b[0-9a-zA-Z_.-]*";
+       
     	TableManager result = super.systemTableManagerCustomizationsHelper(tableManager, 
-    			primarySystemTableManager, version, SPECIES_TABLE, comparisonList);
+    			primarySystemTableManager, version, SPECIES_TABLE, comparisonList, blattnerFilter);
+    	result = super.systemTableManagerCustomizationsHelper(result, 
+    			primarySystemTableManager, version, "W3110", comparisonList, w3110Filter);
     	
-    	// We need to move any ID in the Blattner Table
-        // that is in the form JWXXXX into its own table called
-        // W3110
-        final String w31ID = "JW*";
-        final String w32ID = "ECK*";
-        String getQuery = "select d.entrytype_gene_hjid as hjid, c.value " +
-            "from genenametype c inner join entrytype_genetype d " +
-            "on (c.entrytype_genetype_name_hjid = d.hjid) " +
-            "where (c.value similar to ?" +
-            "or c.value similar to ?)" +
-            "and type <> 'ordered locus names' " +
-            "group by d.entrytype_gene_hjid, c.value";
-
-        String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);
-        Connection c = ConnectionManager.getRelationalDBConnection();
-        PreparedStatement ps;
-        ResultSet rs;
-        
-        try {
-            // Query, iterate, add to table manager.
-            ps = c.prepareStatement(getQuery);
-            
-            ps.setString(1, w31ID);
-            ps.setString(2, w32ID);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                String hjid = Long.valueOf(rs.getLong("hjid")).toString();
-                
-               
-                _Log.debug("Added " +rs.getString("value")  + " obtained from Blattner to W3110 for surrogate " + hjid);
-                result.delete("Blattner", "ID", rs.getString("value"));
-                result.submit("W3110", QueryType.insert, new String[][] { { "ID", rs.getString("value") },
-                		{ "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
-            }
-        
-            _Log.debug("Removed unwanted ids in Blattner");
-            
-            
-        } catch(SQLException sqlexc) {
-            logSQLException(sqlexc, getQuery);
-        }
+    	
 		
 		return result;
 	}

@@ -313,7 +313,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 			speciesCriteria = "Blattner";
 			
 		// W3110-Blatnner
-		} else if((stp.systemTable1.equals("W3110") &&
+		} else if(stp.systemTable1.equals("W3110") &&
 				stp.systemTable2.equals(SPECIES_TABLE)) {
 			
 			speciesCriteria = "W3110";

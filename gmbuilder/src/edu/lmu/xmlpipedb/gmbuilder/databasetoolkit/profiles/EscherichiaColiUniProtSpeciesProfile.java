@@ -31,6 +31,7 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
@@ -258,6 +259,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
     	comparisonList.add("ordered locus");
     	comparisonList.add("ORF");
     	
+    	
     	final String blattnerFilter = "(JW|ECK)[0-9a-zA-Z_.-]*";
         final String w3110Filter = "b[0-9a-zA-Z_.-]*";
        
@@ -296,13 +298,50 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 			String relationshipTable, TableManager primarySystemTableManager,
 			TableManager systemTableManager, TableManager tableManager)
 			throws SQLException {
-		return super.speciesSpecificRelationshipTableHelper(relationshipTable,
-		    primarySystemTableManager,
-		    systemTableManager,
-		    tableManager,
-		    SPECIES_TABLE,
-		    "Bridge",
-		    "S");
+		
+		// We need to do a little pre-parsing because we have to deal with both species Relationship Tables (Blattner & W3110)
+		SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
+		
+		String speciesCriteria = "";
+		
+		// Blattner-W3110
+		if(stp.systemTable1.equals(SPECIES_TABLE) &&
+				stp.systemTable2.equals("W3110")) {
+			
+			// Because they are both species specfic system tables, the TableHelper
+			// should take care of it (it doesn't matter who gets assigned speciesCriteria)
+			speciesCriteria = "Blattner";
+			
+		// W3110-Blatnner
+		} else if((stp.systemTable1.equals("W3110") &&
+				stp.systemTable2.equals(SPECIES_TABLE)) {
+			
+			speciesCriteria = "W3110";
+			
+		// W3110-(non-species specific) || (non-species-specific)-W3110	
+		} else if(stp.systemTable1.equals("W3110") || 
+				stp.systemTable2.equals("W3110")) {
+			
+			speciesCriteria = "W3100";
+
+		// Blattner-(non-species specific) || (non-species-specific)-W3110
+		} else if(stp.systemTable1.equals(SPECIES_TABLE) || 
+				stp.systemTable2.equals(SPECIES_TABLE)) {
+			
+			speciesCriteria = SPECIES_TABLE;
+			
+		}
+		
+		tableManager = super.speciesSpecificRelationshipTableHelper(relationshipTable,
+			    primarySystemTableManager,
+			    systemTableManager,
+			    tableManager,
+			    speciesCriteria,
+			    "Bridge",
+			    "S");
+		
+		
+		return tableManager;
 	}
 	
 	 /**

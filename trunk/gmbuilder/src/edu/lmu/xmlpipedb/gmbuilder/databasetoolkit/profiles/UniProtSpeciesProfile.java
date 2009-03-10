@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -253,11 +254,14 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 		//   The gist of the following if / elseif / else block is:
 		//     if      stp.systemTable1 == Blatter, then do some stuff
 		//     elseif  stp.systemTable2 == Blatter AND systemTable1 is NOT UniProt, then do some other stuff
+        //	   elseif  stp.systemTable1 == Species System Table AND stp.systemTable2 == Species System Table, do the good stuff
 		//     else    do some different stuff
         //   NOTE: In the non-E.coli case, e.g. A.thaliana, substitute the term TAIR for Blattner, above.
 		
-
-        if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable1)) {
+        System.out.println("HERE IS THE TABLE: " + relationshipTable);
+        if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) &&
+        		!getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
+        	System.out.println("THIS IS WHERE IT COMES OUT1: " + relationshipTable);
             PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT id " + "FROM dbreferencetype " + "WHERE type = ? and " + "entrytype_dbreference_hjid = ?");
             ps.setString(1, stp.systemTable2);
             ResultSet result;
@@ -278,7 +282,9 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                 }
             }
             ps.close();
+            
         } else if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable2) && !stp.systemTable1.equals("UniProt")) {
+        	System.out.println("THIS IS WHERE IT COMES OUT2: " + relationshipTable);
             PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT entrytype_dbreference_hjid, id " + "FROM dbreferencetype where type = ?");
             ps.setString(1, stp.systemTable1);
             ResultSet result = ps.executeQuery();
@@ -309,7 +315,54 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                 }
             }
             ps.close();
+            
+         // Handle the case when it is Species-Species
+        } else if(getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) &&
+        		getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
+        	System.out.println("THIS IS WHERE IT COMES OUT3: " + relationshipTable);
+        	// Maps to contain the primary, related ids of the species specific tables
+        	HashMap<String, String> ss1 = new HashMap<String, String>();
+        	HashMap<String, String> ss2 = new HashMap<String, String>();
+        	
+        	for (Row row : systemTableManager.getRows()) {
+        		
+        		// Load up the proper maps so we can begin searching for matching UIDs 
+                if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(stp.systemTable1) &&
+                		row.getValue("UID") != null) {
+                   	ss1.put(row.getValue("UID"), row.getValue("ID"));
+                   	System.out.println(row.getValue("UID") + " NO " + row.getValue("ID"));
+                } else if(row.getValue(TableManager.TABLE_NAME_COLUMN).equals(stp.systemTable2) &&
+                		row.getValue("UID") != null) {
+                	ss2.put(row.getValue("UID"), row.getValue("ID"));
+                	System.out.println(row.getValue("UID") + " YES " + row.getValue("ID"));
+                }
+                 
+            }
+        	
+        	
+        	// Now we just find the UIDs that are in ss1 and ss2 and load the proper
+        	// relationship table
+        	Set<String> uids = ss1.keySet();
+        	for(String uid : uids) {
+        		System.out.println("uid : " + uid);
+        		if(ss2.containsKey(uid)) {
+        			
+        			_Log.debug("Added related id " + ss2.get(uid) + " for primary " + ss1.get(uid) + "to table " + stp);
+        			System.out.println("Added related id " + ss2.get(uid) + " for primary " + ss1.get(uid) + "to table " + stp);
+        			tableManager.submit(relationshipTable,
+                            QueryType.insert, new String[][] {
+                                { "\"Primary\"", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, ss1.get(uid)) },
+                                { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, ss2.get(uid)) },
+                                // TODO This is hard-coded. Fix it.
+                                { finalColumnName, finalColumnValue }
+                            }
+                        );
+        		}
+        	}
+        	
+        	
         } else {
+        	System.out.println("THIS IS WHERE IT COMES OUT4: " + relationshipTable);
 			// Go through each row (AKA row1...) in the systemTableManager that was passed in, checking for "Blattner"
 			//  If we find "Blattner", go through every row (AKA row2) in the primarySystemTableManger (AKA UniProt table)
 			//    check if row1's UID value is the same as row2's UID value,

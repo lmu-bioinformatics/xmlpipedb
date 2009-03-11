@@ -258,10 +258,10 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 		//     else    do some different stuff
         //   NOTE: In the non-E.coli case, e.g. A.thaliana, substitute the term TAIR for Blattner, above.
 		
-        System.out.println("HERE IS THE TABLE: " + relationshipTable);
+        _Log.debug("HERE IS THE TABLE: " + relationshipTable);
         if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) &&
         		!getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
-        	System.out.println("THIS IS WHERE IT COMES OUT1: " + relationshipTable);
+        	_Log.debug("THIS IS WHERE IT COMES OUT1: " + relationshipTable);
             PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT id " + "FROM dbreferencetype " + "WHERE type = ? and " + "entrytype_dbreference_hjid = ?");
             ps.setString(1, stp.systemTable2);
             ResultSet result;
@@ -282,44 +282,11 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                 }
             }
             ps.close();
-            
-        } else if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable2) && !stp.systemTable1.equals("UniProt")) {
-        	System.out.println("THIS IS WHERE IT COMES OUT2: " + relationshipTable);
-            PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT entrytype_dbreference_hjid, id " + "FROM dbreferencetype where type = ?");
-            ps.setString(1, stp.systemTable1);
-            ResultSet result = ps.executeQuery();
 
-            while (result.next()) {
-                String primary = result.getString("id");
-                String related = result.getString("entrytype_dbreference_hjid");
-
-                for (Row row : systemTableManager.getRows()) {
-                	_Log.debug("\nCriteria: [" + criteria + "]" + 
-                			  "\nRelated: [" + related + "]" +
-                			  "\nRow Table Name Colum value: [" + row.getValue(TableManager.TABLE_NAME_COLUMN) + "]" +
-                			  "\nRow UID value: [" + row.getValue("UID") + "]");
-                    if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(criteria) 
-                    		&& row.getValue("UID") != null
-                    		&& row.getValue("UID").equals(related)) {
-                        for (String id : row.getValue("ID").split("/")) {
-                            tableManager.submit(relationshipTable,
-                                QueryType.insert, new String[][] {
-                                    { "\"Primary\"", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, primary) },
-                                    { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, id) },
-                                    // TODO This is hard-coded. Fix it.
-                                    { finalColumnName, finalColumnValue }
-                                }
-                            );
-                        }
-                    }
-                }
-            }
-            ps.close();
-            
          // Handle the case when it is Species-Species
         } else if(getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) &&
         		getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
-        	System.out.println("THIS IS WHERE IT COMES OUT3: " + relationshipTable);
+        	_Log.debug("THIS IS WHERE IT COMES OUT3: " + relationshipTable);
         	// Maps to contain the primary, related ids of the species specific tables
         	HashMap<String, String> ss1 = new HashMap<String, String>();
         	HashMap<String, String> ss2 = new HashMap<String, String>();
@@ -360,9 +327,41 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
         		}
         	}
         	
+        } else if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable2) && !stp.systemTable1.equals("UniProt")) {
+        	_Log.debug("THIS IS WHERE IT COMES OUT2: " + relationshipTable);
+            PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT entrytype_dbreference_hjid, id " + "FROM dbreferencetype where type = ?");
+            ps.setString(1, stp.systemTable1);
+            ResultSet result = ps.executeQuery();
+
+            while (result.next()) {
+                String primary = result.getString("id");
+                String related = result.getString("entrytype_dbreference_hjid");
+
+                for (Row row : systemTableManager.getRows()) {
+                	_Log.debug("\nCriteria: [" + criteria + "]" + 
+                			  "\nRelated: [" + related + "]" +
+                			  "\nRow Table Name Colum value: [" + row.getValue(TableManager.TABLE_NAME_COLUMN) + "]" +
+                			  "\nRow UID value: [" + row.getValue("UID") + "]");
+                    if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(criteria) 
+                    		&& row.getValue("UID") != null
+                    		&& row.getValue("UID").equals(related)) {
+                        for (String id : row.getValue("ID").split("/")) {
+                            tableManager.submit(relationshipTable,
+                                QueryType.insert, new String[][] {
+                                    { "\"Primary\"", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, primary) },
+                                    { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, id) },
+                                    // TODO This is hard-coded. Fix it.
+                                    { finalColumnName, finalColumnValue }
+                                }
+                            );
+                        }
+                    }
+                }
+            }
+            ps.close();
         	
         } else {
-        	System.out.println("THIS IS WHERE IT COMES OUT4: " + relationshipTable);
+        	_Log.debug("THIS IS WHERE IT COMES OUT4: " + relationshipTable);
 			// Go through each row (AKA row1...) in the systemTableManager that was passed in, checking for "Blattner"
 			//  If we find "Blattner", go through every row (AKA row2) in the primarySystemTableManger (AKA UniProt table)
 			//    check if row1's UID value is the same as row2's UID value,

@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -38,6 +39,7 @@ import org.hibernate.cfg.Configuration;
 import edu.lmu.xmlpipedb.util.demo.resources.AppResources;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.Criterion;
+import edu.lmu.xmlpipedb.util.engines.CriterionList;
 import edu.lmu.xmlpipedb.util.engines.QueryEngine;
 import edu.lmu.xmlpipedb.util.engines.TallyEngine;
 import edu.lmu.xmlpipedb.util.exceptions.CouldNotLoadPropertiesException;
@@ -225,26 +227,26 @@ public class MainController implements ActionListener {
     }
 
     private void doGetTallies() {
-    	HashMap<String, Criterion> criteria = new HashMap<String, Criterion>();
+    	CriterionList criteria = new CriterionList();
     	String element = null;
     	String table = null;
     	element = AppResources.optionString("ElementLevel1");
     	table = AppResources.optionString("TableLevel1");
     	try{
 			if(!element.equals("") && element != null)
-				criteria.put(element, new Criterion("", element, table));
+				criteria.addCriteria(new Criterion("", element, table));
 	    	element = AppResources.optionString("ElementLevel2");
 	    	table = AppResources.optionString("TableLevel2");
 	    	if(!element.equals("") && element != null)
-				criteria.put(element, new Criterion("", element, table));
+	    		criteria.addCriteria(new Criterion("", element, table));
 			element = AppResources.optionString("ElementLevel3");
 			table = AppResources.optionString("TableLevel3");
 			if(!element.equals("") && element != null)
-				criteria.put(element, new Criterion("", element, table));
+				criteria.addCriteria(new Criterion("", element, table));
 			element = AppResources.optionString("ElementLevel4");
 			table = AppResources.optionString("TableLevel4");
 			if(!element.equals("") && element != null)
-				criteria.put(element, new Criterion("", element, table));
+				criteria.addCriteria(new Criterion("", element, table));
     	} catch(InvalidParameterException e){
     		//TODO: Send exception to log file
     	}
@@ -265,10 +267,11 @@ public class MainController implements ActionListener {
         	JOptionPane.showMessageDialog(null, "No file choosen. Command aborted.");
         	return;
         }
-		
+        
 		TallyEngine te = new TallyEngine(criteria);
+		
 		try {
-			criteria.putAll(te.getXmlFileCounts(is));
+			te.getXmlFileCounts(is);
 			/*
 			 * Here I am explicitly catching the HibernateException, which is a
 			 * pretty clear indication that the configuration was not done.
@@ -299,8 +302,10 @@ public class MainController implements ActionListener {
 		Set set = criteria.keySet();
 		Iterator iter = set.iterator();
 		while(iter.hasNext()){
-			Criterion crit = criteria.get(iter.next());
-			display += "\n" + crit.getDigesterPath() + ": \t " + crit.getXmlCount() + "   \t||   " +  crit.getTable() + ": \t " + crit.getDbCount();
+			ArrayList<Criterion> critBucket = criteria.getBucket((String)iter.next());
+			for(Criterion crit : critBucket) {
+				display += "\n" + crit.getDigesterPath() + ": \t " + crit.getXmlCount() + "   \t||   " +  crit.getTable() + ": \t " + crit.getDbCount();
+			}
 		}
 		JOptionPane.showMessageDialog(null, display);
 	}

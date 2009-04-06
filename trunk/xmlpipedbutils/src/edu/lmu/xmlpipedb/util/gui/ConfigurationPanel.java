@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -49,7 +50,7 @@ import edu.lmu.xmlpipedb.util.resources.AppResources;
  * @author J. Nicholas
  * 
  */
-public class ConfigurationPanel extends JPanel implements ActionListener, ItemListener {
+public class ConfigurationPanel extends UtilityDialogue implements ActionListener, ItemListener {
     /**
      * 
      */
@@ -64,7 +65,9 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * @throws FileNotFoundException
      */
     public ConfigurationPanel() throws CouldNotLoadPropertiesException, FileNotFoundException {
-
+    	
+    	setDelegate(null);
+    	
         try {
         	// create an instance of the config engine
             _configEngine = new ConfigurationEngine();
@@ -133,18 +136,18 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         this.add(new JScrollPane(_centerPanel,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-
+        
         Box buttonBox = Box.createHorizontalBox();
         buttonBox.add(Box.createHorizontalGlue());
         //buttonBox.add(_defaultButton);
         //buttonBox.add(Box.createHorizontalStrut(5));
         //buttonBox.add(_revertButton);
        // buttonBox.add(Box.createHorizontalStrut(5));
-        buttonBox.add(_applyButton);
         buttonBox.add(Box.createHorizontalStrut(5));
         buttonBox.add(_okButton);
-        buttonBox.add(Box.createHorizontalStrut(5));
+        buttonBox.add(Box.createHorizontalStrut(10));
         buttonBox.add(_cancelButton);
+              
         add(buttonBox, BorderLayout.SOUTH);
 
         this.validate();
@@ -178,8 +181,6 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         // adds entries for the selected type to the _centerPanel
         getFields((String)_typeCombo.getSelectedItem());
 
-        // *** instantiate the static action components (buttons) ***
-        _applyButton = new JButton(AppResources.messageString("config_apply"));
         _okButton = new JButton(AppResources.messageString("config_ok"));
         _cancelButton = new JButton(AppResources.messageString("config_cancel"));
         
@@ -210,9 +211,9 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         	// clear out the _centerPanel
             _centerPanel.removeAll();
             // put a new ComboBox in
-            getComboBox( (String)iEvent.getItem());
+            getComboBox((String)iEvent.getItem());
             // put new fields in
-            getFields( (String)iEvent.getItem());
+            getFields((String)iEvent.getItem());
             
             // ensure that everything shows up right away
             this.validate();
@@ -430,7 +431,6 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      */
     private void startListeningToUI() {
         // FIXME Dondi - This is a very fragile binding...must redesign...
-    	_applyButton.addActionListener(this);
     	_okButton.addActionListener(this);
         _cancelButton.addActionListener(this);
         //_revertButton.addActionListener(this);
@@ -510,13 +510,13 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 //          make the main panel invisible
             this.setVisible(false);
             this.validate();
-        } else if (aevt.getSource() == _applyButton) {
-//        	 do save
-            saveAction();
+            this.finish();
+            
         } else if (aevt.getSource() == _cancelButton) {
         	// make the main panel invisible
             this.setVisible(false);
             this.validate();
+            this.cancel();
         
         } else { // this is a radio button click
         	// update the currentCategory
@@ -540,7 +540,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
     private JCheckBox[] _propSelected;
     private JTextField[] _propValue;
     private JRadioButton _categoryRB;
-    private JButton _okButton, _cancelButton, _applyButton /*, _revertButton, _defaultButton*/;
+    private JButton _okButton, _cancelButton/*, _revertButton, _defaultButton*/;
     private JComboBox _typeCombo;
 
     //private Box _centerBox;

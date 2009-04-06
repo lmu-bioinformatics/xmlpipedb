@@ -10,6 +10,7 @@
 
 package edu.lmu.xmlpipedb.util.gui;
 
+import edu.lmu.xmlpipedb.util.resources.AppResources;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,7 +46,7 @@ import edu.lmu.xmlpipedb.util.engines.ImportEngine;
  *
  * @author Dave Hoffman
  */
-public class ImportPanel extends JPanel {
+public class ImportPanel extends UtilityDialogue {
 	/**
      * Creates a new instance of ImportPanel
      * @param hibernateConfiguration The hibernate configuration to save to
@@ -83,11 +84,12 @@ public class ImportPanel extends JPanel {
      *
      */
     private void createComponents() {
-        _previewButton = new JButton("preview");
+    	_cancelButton = new JButton(AppResources.messageString("import_cancel"));
+        _previewButton = new JButton(AppResources.messageString("import_preview"));
         _previewButton.setEnabled(false);
-        _importButton = new JButton("import");
+        _importButton = new JButton(AppResources.messageString("import_import"));
         _importButton.setEnabled(false);
-        _openButton = new JButton("open");
+        _openButton = new JButton(AppResources.messageString("import_open"));
         _textFieldPath = new JTextField();
         _xmlView = new JTextArea(10, 80);
         _xmlScrollArea = new JScrollPane(_xmlView);
@@ -120,6 +122,11 @@ public class ImportPanel extends JPanel {
                 previewButtonActionPerformed(evt);
             }
         });
+        _cancelButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent evt) {
+        		cancel();
+        	}
+        });
 
     }
     /*
@@ -146,11 +153,14 @@ public class ImportPanel extends JPanel {
         importBox.add(Box.createHorizontalStrut(10));
         importBox.add(Box.createHorizontalGlue());
         importBox.add(_importButton);
+        importBox.add(Box.createHorizontalStrut(10));
+        importBox.add(_cancelButton);
         southBox.add(importBox);
 
         this.add(southBox, BorderLayout.SOUTH);
 
         this.add(_xmlScrollArea, BorderLayout.CENTER);
+        
     }
 
     /*
@@ -307,6 +317,7 @@ public class ImportPanel extends JPanel {
             return "";
         }        
     }
+    
     private String _jaxbContextPath;
     private Configuration _hibernateConfiguration;
     private String _entryElement;
@@ -317,6 +328,7 @@ public class ImportPanel extends JPanel {
     private JTextArea _xmlView;
     private JButton _importButton;
     private JButton _openButton;
+    private JButton _cancelButton;
     private JProgressBar _progressBar;
     private File _xmlFile;
 }

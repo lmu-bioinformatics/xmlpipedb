@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.util.HashMap;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -70,12 +71,17 @@ public class ImportPanel extends UtilityDialogue {
      */
     public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration, String entryElement, HashMap<String,String> rootElementName) {
         _jaxbContextPath = jaxbContextPath;
+        _success = false;
         _hibernateConfiguration = hibernateConfiguration;
         _entryElement = entryElement;
         _rootElementName = rootElementName;
         createComponents();
         createActions();
         layoutComponents();
+    }
+    
+    public boolean wasImportSuccessful() {
+    	return _success;
     }
 
     /*
@@ -149,6 +155,7 @@ public class ImportPanel extends UtilityDialogue {
         southBox.add(Box.createVerticalStrut(5));
 
         Box importBox = Box.createHorizontalBox();
+        importBox.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         importBox.add(_previewButton);
         importBox.add(Box.createHorizontalStrut(10));
         importBox.add(Box.createHorizontalGlue());
@@ -216,6 +223,7 @@ public class ImportPanel extends UtilityDialogue {
                 System.out.println("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
                 importEngine.loadToDB(in);
                 System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
+                _success = true;
                 // notify user when import is complete
                 JOptionPane.showMessageDialog(this, "Import Complete: " + _xmlFile, "Import Complete", JOptionPane.INFORMATION_MESSAGE);
             } catch( IOException e ){
@@ -318,6 +326,7 @@ public class ImportPanel extends UtilityDialogue {
         }        
     }
     
+    private boolean _success;
     private String _jaxbContextPath;
     private Configuration _hibernateConfiguration;
     private String _entryElement;

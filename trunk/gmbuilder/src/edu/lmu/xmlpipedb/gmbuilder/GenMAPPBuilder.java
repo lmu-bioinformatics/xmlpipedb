@@ -10,6 +10,7 @@
 package edu.lmu.xmlpipedb.gmbuilder;
 
 import java.awt.Cursor;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -67,6 +69,7 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
+import edu.lmu.xmlpipedb.util.gui.DialogueDelegate;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
 
 /**
@@ -205,8 +208,9 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-            	doGoImport("generated", "Import GO XML File");
-                doProcessGO();
+            	if(doGoImport("generated", "Import GO XML File")) {
+            		doProcessGO();
+            	}
             }
         };
         
@@ -381,8 +385,18 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private void doConfigureDatabase() {
         try {
             ConfigurationPanel configPanel = new ConfigurationPanel();
-            ModalDialog.showPlainDialog("Configure Database", configPanel);
+            configPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             
+            JDialog dialog = new JDialog();
+            configPanel.setDelegate(dialog);
+            dialog.getContentPane().add(configPanel);
+            dialog.setTitle("Configure Database");
+            dialog.setModal(true);
+            dialog.setLocationRelativeTo(this.getFrontmostWindow());
+            dialog.setSize(600, 300);
+            
+            dialog.setVisible(true);
+           
             // Update components that rely on the configuration.
             _queryPanel.setHibernateConfiguration(createHibernateConfiguration());
         } catch(Exception exc) {
@@ -408,8 +422,18 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             rootElement.put("head",head );
             rootElement.put("tail","</uniprot>" );
             ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration, "uniprot/entry", rootElement);
+            
             importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            ModalDialog.showPlainDialog(title, importPanel);
+            
+            JDialog dialog = new JDialog();
+            importPanel.setDelegate(dialog);
+            dialog.getContentPane().add(importPanel);
+            dialog.setTitle(title);
+            dialog.setModal(true);
+            dialog.setLocationRelativeTo(this.getFrontmostWindow());
+            dialog.setSize(600, 300);    
+            dialog.setVisible(true);
+            
         } else {
             showConfigurationError();
         }
@@ -424,15 +448,31 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      *            The title of the dialog (helps prompt the user on what file to
      *            import)
      */
-    private void doGoImport(String jaxbContextPath, String title) {
+    private boolean doGoImport(String jaxbContextPath, String title) {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
+        
+        boolean success = false;
+        
         if (hibernateConfiguration != null) {
             ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration);
             importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            ModalDialog.showPlainDialog(title, importPanel);
+            
+            JDialog dialog = new JDialog();
+            importPanel.setDelegate(dialog);
+            dialog.getContentPane().add(importPanel);
+            dialog.setTitle(title);
+            dialog.setModal(true);
+            dialog.setLocationRelativeTo(this.getFrontmostWindow());
+            dialog.setSize(600, 300);    
+            dialog.setVisible(true);
+            
+            success = importPanel.wasImportSuccessful();
+            
         } else {
             showConfigurationError();
         }
+        
+        return success;
     }
     /**
      * Builds the criteria HashMap with the proper data to all the TallyEngine to 
@@ -464,7 +504,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     	
     	setTallyCriterion(criteria, mainPropertyString);
     	
-    	if(!_speciesCriterionLoaded) {
+    	
     		
     		// A species criteiron must be using a different rule
     		ArrayList<Criterion> speciesCrit = criteria.getBucket(
@@ -473,7 +513,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     			speciesCrit.get(0).setRuleType(RuleType.FINDBODY);
     			criteria.firstCriterion = speciesCrit.get(0);
     		}
-    	}
+    	
 		
     }
     
@@ -663,7 +703,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 		
 		// This is where we will search for the species specific
 		// id systems
-		if(body == null || _speciesCriterionLoaded)
+		if(body == null)
 			return _currentCriteria;
 		
 		setTallyCriterion(_currentCriteria, body);
@@ -683,7 +723,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 		
 		// This is where we will search for the species specific
 		// id systems
-		if(column == null || column.equals("") || _speciesCriterionLoaded)
+		if(column == null || column.equals(""))
 			return;
 		
 		System.out.println("Getting DB column " + column);
@@ -704,11 +744,11 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         }
         
         // Just getting the criterion 
-        _speciesCriterionLoaded = false;
+        
     	CriterionList uniprotCriteria = new CriterionList();
     	setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
       	
-    	_speciesCriterionLoaded = true;
+    	
     	CriterionList goCriteria = new CriterionList();
     	setTallyCriterion(goCriteria, TallyType.GO);
     	
@@ -725,30 +765,25 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         	ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
         	return;
         }
-        _speciesCriterionLoaded = false;
+        
         getTallyResultsXml(uniprotCriteria, uniprotInputStream);
         getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
 		
-        _speciesCriterionLoaded = true;
+        
         getTallyResultsXml(goCriteria, goInputStream);
         getTallyResultsDatabase(goCriteria, hibernateConfiguration);
-        _speciesCriterionLoaded = false;
+        
         
         // Gather the criteria into a list so that we can display them
         // in a UsefulTable.
         BeanTableModel btm = new BeanTableModel(TALLY_COLUMNS);
         ArrayList<Criterion> criteria = new ArrayList<Criterion>();
  
-        // Way way way, but okay for now.  Removing duplications
-        ArrayList<Criterion> criteriaToRemove = new ArrayList<Criterion>();
-        
-        
         criteria.addAll(uniprotCriteria.getAllCriterion());
         criteria.addAll(goCriteria.getAllCriterion());
         btm.setData(criteria.toArray());
         UsefulTable t = new UsefulTable(btm);
         ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
-        _speciesCriterionLoaded = false;
     }
 
     private void doResetUniprotAndGoDb(QueryEngine qe){
@@ -928,7 +963,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         
         return hibernateConfiguration;
     }
-    
+   
     /**
      * Determines whether the species specific criteria has already
      * been loaded.

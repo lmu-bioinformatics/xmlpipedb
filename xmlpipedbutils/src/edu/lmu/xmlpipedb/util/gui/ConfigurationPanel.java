@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -138,6 +139,7 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         
         Box buttonBox = Box.createHorizontalBox();
+        buttonBox.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
         buttonBox.add(Box.createHorizontalGlue());
         //buttonBox.add(_defaultButton);
         //buttonBox.add(Box.createHorizontalStrut(5));

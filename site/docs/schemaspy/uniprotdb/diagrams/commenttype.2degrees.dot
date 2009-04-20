@@ -74,8 +74,8 @@ digraph "twoDegreesRelationshipsDiagram" {
   "bpccommentgroupabsorptiontype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupabsorptiontype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">bpccommentgroupabsorptiontype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
       <TR><TD PORT="max" COLSPAN="3" ALIGN="LEFT">max</TD></TR>
@@ -88,8 +88,8 @@ digraph "twoDegreesRelationshipsDiagram" {
   "bpccommentgroupkineticstype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupkineticstype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">bpccommentgroupkineticstype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
       <TR><TD PORT="text" COLSPAN="3" ALIGN="LEFT">text</TD></TR>
@@ -101,7 +101,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "bpccommentgroupkineticstype_km" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupkineticstype_km</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">bpccommentgroupkineticstype_km</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -111,7 +111,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "bpccommentgroupkineticstype_vmax" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupkineticstype_vmax</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">bpccommentgroupkineticstype_vmax</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -121,8 +121,8 @@ digraph "twoDegreesRelationshipsDiagram" {
   "commenttype" [
     label=<
     <TABLE BORDER="2" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="2" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD><TD PORT="hjid.type" ALIGN="LEFT">int8[8]</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">commenttype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="2" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD><TD PORT="hjid.type" ALIGN="LEFT">int8[8]</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="2" ALIGN="LEFT">hjtype</TD><TD PORT="hjtype.type" ALIGN="LEFT">varchar[0]</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="2" ALIGN="LEFT">hjversion</TD><TD PORT="hjversion.type" ALIGN="LEFT">int8[8]</TD></TR>
       <TR><TD PORT="type" COLSPAN="2" ALIGN="LEFT">type</TD><TD PORT="type.type" ALIGN="LEFT">varchar[0]</TD></TR>
@@ -149,8 +149,8 @@ digraph "twoDegreesRelationshipsDiagram" {
   "commenttype_conflicttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype_conflicttype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">commenttype_conflicttype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
       <TR><TD PORT="type" COLSPAN="3" ALIGN="LEFT">type</TD></TR>
@@ -164,7 +164,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "commenttype_conflicttype_sequencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype_conflicttype_sequencetype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">commenttype_conflicttype_sequencetype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -174,8 +174,8 @@ digraph "twoDegreesRelationshipsDiagram" {
   "commenttype_linktype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype_linktype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">commenttype_linktype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
       <TR><TD PORT="uri" COLSPAN="3" ALIGN="LEFT">uri</TD></TR>
@@ -189,8 +189,8 @@ digraph "twoDegreesRelationshipsDiagram" {
   "eventtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">eventtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">eventtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
       <TR><TD PORT="type" COLSPAN="3" ALIGN="LEFT">type</TD></TR>
@@ -204,8 +204,8 @@ digraph "twoDegreesRelationshipsDiagram" {
   "evidencedstringtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">evidencedstringtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">evidencedstringtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
       <TR><TD PORT="status" COLSPAN="3" ALIGN="LEFT">status</TD></TR>
@@ -241,7 +241,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "featuretype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">featuretype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">featuretype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -251,8 +251,8 @@ digraph "twoDegreesRelationshipsDiagram" {
   "interactanttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">interactanttype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">interactanttype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
       <TR><TD PORT="label" COLSPAN="3" ALIGN="LEFT">label</TD></TR>
@@ -268,8 +268,8 @@ digraph "twoDegreesRelationshipsDiagram" {
   "isoformtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">isoformtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">isoformtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
       <TR><TD PORT="sequence" COLSPAN="3" ALIGN="LEFT">sequence</TD></TR>
@@ -284,7 +284,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "isoformtype_id" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">isoformtype_id</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">isoformtype_id</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -294,7 +294,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "isoformtype_nametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">isoformtype_nametype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">isoformtype_nametype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -304,7 +304,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "isoformtype_notetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">isoformtype_notetype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">isoformtype_notetype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -314,7 +314,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "isoformtype_sequencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">isoformtype_sequencetype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">isoformtype_sequencetype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -324,8 +324,8 @@ digraph "twoDegreesRelationshipsDiagram" {
   "locationtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">locationtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">locationtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
       <TR><TD PORT="sequence" COLSPAN="3" ALIGN="LEFT">sequence</TD></TR>
@@ -342,7 +342,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "positiontype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">positiontype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">positiontype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
     </TABLE>>
@@ -352,7 +352,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteinnamegroupalternativenametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteinnamegroupalternativenametype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteinnamegroupalternativenametype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -362,7 +362,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteinnamegrouprecommendednametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteinnamegrouprecommendednametype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteinnamegrouprecommendednametype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
@@ -372,7 +372,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteinnamegroupsubmittednametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteinnamegroupsubmittednametype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteinnamegroupsubmittednametype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -382,7 +382,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteintype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteintype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteintype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
@@ -392,7 +392,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteintype_componenttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteintype_componenttype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteintype_componenttype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
@@ -402,7 +402,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteintype_domaintype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteintype_domaintype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteintype_domaintype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
@@ -412,8 +412,8 @@ digraph "twoDegreesRelationshipsDiagram" {
   "subcellularlocationtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">subcellularlocationtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">subcellularlocationtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
       <TR><TD PORT="commenttype_subcellularlocation_hjid" COLSPAN="3" ALIGN="LEFT">commenttype_subcellularlocation_hjid</TD></TR>

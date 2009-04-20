@@ -1,9 +1,8 @@
 /* required colors MUST be specified in RGB hex notation or the diagrams won't have correct colors */
 
 body  {
-  color: #000;
-  background-color: #F7F7F7;
-  font-family: arial, geneva, helvetica, lucida, sans-serif;
+  color: #000000;
+  font-family: Georgia, Serif;
   margin: 0 0 0 0;
   padding: 0px;
 }
@@ -18,7 +17,7 @@ body  {
 
 /* background-color must be specified for th to propagate into diagrams */
 th {
-  background-color: #9BAB96;
+  background-color: #9b8559;
   text-align: left;
   padding: 0px 4px;
 }
@@ -32,7 +31,7 @@ tr.even td.detail {
 }
 
 tr.odd td.detail {
-  background-color: #F7F7F7;
+  background-color: #000000;
 }
 
 h1 {
@@ -41,25 +40,25 @@ h1 {
 
 /* background must be specified for .primaryKey to propagate into diagrams */
 .primaryKey {
-  background: #BED1B8;
+  background: #e16239;
   padding: 0px 4px;
 }
 
 /* background must be specified for .indexedColumn to propagate into diagrams */
 .indexedColumn {
-  background: #F4F7DA;
+  background: #f8df1b;
   padding: 0px 4px;
 }
 
 /* background must be specified for .excludedColumn to propagate into diagrams */
 .excludedColumn {
-  background: #C0C0C0;
+  background: #f4c04a;
   padding: 0px 4px;
 }
 
 /* background must be specified for .selectedTable to propagate into diagrams */
 .selectedTable {
-  background: #A9AB96;
+  background: #d9ab22;
 }
 
 .detail {
@@ -165,15 +164,15 @@ table {
 }
 
 a:link {
-  color: #489148;
+  color: maroon;
 }
 
 a:visited {
-  color: #183118;
+  color: #666;
 }
 
 .sortedByColumn {
-  background-color: #6C7769;
+  background-color: #e1771d;
 }
 
 .notSortedByColumn {
@@ -193,7 +192,7 @@ a:visited {
 #header {
   float:left;
   width: 100%;
-  background:#BED1B8 url("images/background.gif") repeat-x bottom;
+  background:#ffc70e url("images/background.gif") repeat-x bottom;
   font-size:80%;
   line-height:normal;
 }
@@ -245,7 +244,7 @@ a:visited {
 
 #header li:hover, #header li:hover a {
   background-position:0% -150px;
-  color:#9BAB96;
+  color:#ffac0e;
 }
 
 #header li:hover a {

@@ -22,8 +22,8 @@ digraph "compactRelationshipsDiagram" {
   "bpccommentgroupabsorptiontype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupabsorptiontype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">bpccommentgroupabsorptiontype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -33,8 +33,8 @@ digraph "compactRelationshipsDiagram" {
   "bpccommentgroupkineticstype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupkineticstype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">bpccommentgroupkineticstype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
     </TABLE>>
@@ -44,9 +44,9 @@ digraph "compactRelationshipsDiagram" {
   "bpccommentgroupkineticstype_km" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupkineticstype_km</TD></TR>
-      <TR><TD PORT="bpccommentgroupkineticstype_km_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">bpccommentgroupkineticstype_km_hjid</TD></TR>
-      <TR><TD PORT="bpccommentgroupkineticstype_km_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">bpccommentgroupkineticstype_km_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">bpccommentgroupkineticstype_km</TD></TR>
+      <TR><TD PORT="bpccommentgroupkineticstype_km_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">bpccommentgroupkineticstype_km_hjid</TD></TR>
+      <TR><TD PORT="bpccommentgroupkineticstype_km_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">bpccommentgroupkineticstype_km_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -56,9 +56,9 @@ digraph "compactRelationshipsDiagram" {
   "bpccommentgroupkineticstype_vmax" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupkineticstype_vmax</TD></TR>
-      <TR><TD PORT="bpccommentgroupkineticstype_vmax_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">bpccommentgroupkineticstype_vmax_hjid</TD></TR>
-      <TR><TD PORT="bpccommentgroupkineticstype_vmax_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">bpccommentgroupkineticstype_vmax_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">bpccommentgroupkineticstype_vmax</TD></TR>
+      <TR><TD PORT="bpccommentgroupkineticstype_vmax_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">bpccommentgroupkineticstype_vmax_hjid</TD></TR>
+      <TR><TD PORT="bpccommentgroupkineticstype_vmax_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">bpccommentgroupkineticstype_vmax_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -68,8 +68,8 @@ digraph "compactRelationshipsDiagram" {
   "citationtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">citationtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">citationtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="authorlist" COLSPAN="3" ALIGN="LEFT">authorlist</TD></TR>
       <TR><TD PORT="editorlist" COLSPAN="3" ALIGN="LEFT">editorlist</TD></TR>
       <TR><TD PORT="citingcitation" COLSPAN="3" ALIGN="LEFT">citingcitation</TD></TR>
@@ -82,8 +82,8 @@ digraph "compactRelationshipsDiagram" {
   "commenttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">commenttype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="conflict" COLSPAN="3" ALIGN="LEFT">conflict</TD></TR>
       <TR><TD PORT="text" COLSPAN="3" ALIGN="LEFT">text</TD></TR>
       <TR><TD PORT="kinetics" COLSPAN="3" ALIGN="LEFT">kinetics</TD></TR>
@@ -97,8 +97,8 @@ digraph "compactRelationshipsDiagram" {
   "commenttype_conflicttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype_conflicttype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">commenttype_conflicttype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="sequence" COLSPAN="3" ALIGN="LEFT">sequence</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
@@ -109,8 +109,8 @@ digraph "compactRelationshipsDiagram" {
   "commenttype_conflicttype_sequencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype_conflicttype_sequencetype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">commenttype_conflicttype_sequencetype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -120,8 +120,8 @@ digraph "compactRelationshipsDiagram" {
   "commenttype_linktype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype_linktype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">commenttype_linktype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="commenttype_link_hjid" COLSPAN="3" ALIGN="LEFT">commenttype_link_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
@@ -132,8 +132,8 @@ digraph "compactRelationshipsDiagram" {
   "dbreferencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">dbreferencetype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">dbreferencetype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="citationtype_dbreference_hjid" COLSPAN="3" ALIGN="LEFT">citationtype_dbreference_hjid</TD></TR>
       <TR><TD PORT="entrytype_dbreference_hjid" COLSPAN="3" ALIGN="LEFT">entrytype_dbreference_hjid</TD></TR>
       <TR><TD PORT="organismtype_dbreference_hjid" COLSPAN="3" ALIGN="LEFT">organismtype_dbreference_hjid</TD></TR>
@@ -146,8 +146,8 @@ digraph "compactRelationshipsDiagram" {
   "dbxref" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">dbxref</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">dbxref</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -157,9 +157,9 @@ digraph "compactRelationshipsDiagram" {
   "dbxref_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">dbxref_content</TD></TR>
-      <TR><TD PORT="dbxref_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">dbxref_content_hjid</TD></TR>
-      <TR><TD PORT="dbxref_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">dbxref_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">dbxref_content</TD></TR>
+      <TR><TD PORT="dbxref_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">dbxref_content_hjid</TD></TR>
+      <TR><TD PORT="dbxref_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">dbxref_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -169,8 +169,8 @@ digraph "compactRelationshipsDiagram" {
   "def" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">def</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">def</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -180,9 +180,9 @@ digraph "compactRelationshipsDiagram" {
   "def_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">def_content</TD></TR>
-      <TR><TD PORT="def_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">def_content_hjid</TD></TR>
-      <TR><TD PORT="def_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">def_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">def_content</TD></TR>
+      <TR><TD PORT="def_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">def_content_hjid</TD></TR>
+      <TR><TD PORT="def_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">def_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -192,8 +192,8 @@ digraph "compactRelationshipsDiagram" {
   "entrytype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="sequence" COLSPAN="3" ALIGN="LEFT">sequence</TD></TR>
       <TR><TD PORT="proteinexistence" COLSPAN="3" ALIGN="LEFT">proteinexistence</TD></TR>
       <TR><TD PORT="protein" COLSPAN="3" ALIGN="LEFT">protein</TD></TR>
@@ -207,9 +207,9 @@ digraph "compactRelationshipsDiagram" {
   "entrytype_accession" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype_accession</TD></TR>
-      <TR><TD PORT="entrytype_accession_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">entrytype_accession_hjid</TD></TR>
-      <TR><TD PORT="entrytype_accession_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">entrytype_accession_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype_accession</TD></TR>
+      <TR><TD PORT="entrytype_accession_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">entrytype_accession_hjid</TD></TR>
+      <TR><TD PORT="entrytype_accession_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">entrytype_accession_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -219,9 +219,9 @@ digraph "compactRelationshipsDiagram" {
   "entrytype_comment" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype_comment</TD></TR>
-      <TR><TD PORT="entrytype_comment_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">entrytype_comment_hjid</TD></TR>
-      <TR><TD PORT="entrytype_comment_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">entrytype_comment_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype_comment</TD></TR>
+      <TR><TD PORT="entrytype_comment_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">entrytype_comment_hjid</TD></TR>
+      <TR><TD PORT="entrytype_comment_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">entrytype_comment_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -231,8 +231,8 @@ digraph "compactRelationshipsDiagram" {
   "entrytype_genetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype_genetype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype_genetype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="entrytype_gene_hjid" COLSPAN="3" ALIGN="LEFT">entrytype_gene_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
@@ -243,9 +243,9 @@ digraph "compactRelationshipsDiagram" {
   "entrytype_name" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype_name</TD></TR>
-      <TR><TD PORT="entrytype_name_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">entrytype_name_hjid</TD></TR>
-      <TR><TD PORT="entrytype_name_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">entrytype_name_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype_name</TD></TR>
+      <TR><TD PORT="entrytype_name_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">entrytype_name_hjid</TD></TR>
+      <TR><TD PORT="entrytype_name_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">entrytype_name_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -255,8 +255,8 @@ digraph "compactRelationshipsDiagram" {
   "eventtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">eventtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">eventtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="commenttype_event_hjid" COLSPAN="3" ALIGN="LEFT">commenttype_event_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
@@ -267,8 +267,8 @@ digraph "compactRelationshipsDiagram" {
   "evidencedstringtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">evidencedstringtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">evidencedstringtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="proteinnamegroupalternativenametype_shortname_hjid" COLSPAN="3" ALIGN="LEFT">proteinnamegroupalternativenametype_shortname_hjid</TD></TR>
       <TR><TD PORT="proteinnamegrouprecommendednametype_shortname_hjid" COLSPAN="3" ALIGN="LEFT">proteinnamegrouprecommendednametype_shortname_hjid</TD></TR>
       <TR><TD PORT="proteintype_componenttype_cdantigenname_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_componenttype_cdantigenname_hjid</TD></TR>
@@ -289,8 +289,8 @@ digraph "compactRelationshipsDiagram" {
   "evidencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">evidencetype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">evidencetype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="entrytype_evidence_hjid" COLSPAN="3" ALIGN="LEFT">entrytype_evidence_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
@@ -301,8 +301,8 @@ digraph "compactRelationshipsDiagram" {
   "featuretype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">featuretype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">featuretype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="location" COLSPAN="3" ALIGN="LEFT">location</TD></TR>
       <TR><TD PORT="entrytype_feature_hjid" COLSPAN="3" ALIGN="LEFT">entrytype_feature_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
@@ -314,9 +314,9 @@ digraph "compactRelationshipsDiagram" {
   "featuretype_variation" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">featuretype_variation</TD></TR>
-      <TR><TD PORT="featuretype_variation_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">featuretype_variation_hjid</TD></TR>
-      <TR><TD PORT="featuretype_variation_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">featuretype_variation_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">featuretype_variation</TD></TR>
+      <TR><TD PORT="featuretype_variation_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">featuretype_variation_hjid</TD></TR>
+      <TR><TD PORT="featuretype_variation_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">featuretype_variation_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -326,8 +326,8 @@ digraph "compactRelationshipsDiagram" {
   "genelocationtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">genelocationtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">genelocationtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="name" COLSPAN="3" ALIGN="LEFT">name</TD></TR>
       <TR><TD PORT="entrytype_genelocation_hjid" COLSPAN="3" ALIGN="LEFT">entrytype_genelocation_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
@@ -339,8 +339,8 @@ digraph "compactRelationshipsDiagram" {
   "genenametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">genenametype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">genenametype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="entrytype_genetype_name_hjid" COLSPAN="3" ALIGN="LEFT">entrytype_genetype_name_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
@@ -351,8 +351,8 @@ digraph "compactRelationshipsDiagram" {
   "header" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">header</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">header</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -362,9 +362,9 @@ digraph "compactRelationshipsDiagram" {
   "header_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">header_content</TD></TR>
-      <TR><TD PORT="header_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">header_content_hjid</TD></TR>
-      <TR><TD PORT="header_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">header_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">header_content</TD></TR>
+      <TR><TD PORT="header_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">header_content_hjid</TD></TR>
+      <TR><TD PORT="header_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">header_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -374,8 +374,8 @@ digraph "compactRelationshipsDiagram" {
   "idspace" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">idspace</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">idspace</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -385,9 +385,9 @@ digraph "compactRelationshipsDiagram" {
   "idspace_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">idspace_content</TD></TR>
-      <TR><TD PORT="idspace_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">idspace_content_hjid</TD></TR>
-      <TR><TD PORT="idspace_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">idspace_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">idspace_content</TD></TR>
+      <TR><TD PORT="idspace_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">idspace_content_hjid</TD></TR>
+      <TR><TD PORT="idspace_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">idspace_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -397,8 +397,8 @@ digraph "compactRelationshipsDiagram" {
   "interactanttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">interactanttype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">interactanttype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="commenttype_interactant_hjid" COLSPAN="3" ALIGN="LEFT">commenttype_interactant_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
@@ -409,8 +409,8 @@ digraph "compactRelationshipsDiagram" {
   "intersectionof" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">intersectionof</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">intersectionof</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -420,9 +420,9 @@ digraph "compactRelationshipsDiagram" {
   "intersectionof_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">intersectionof_content</TD></TR>
-      <TR><TD PORT="intersectionof_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">intersectionof_content_hjid</TD></TR>
-      <TR><TD PORT="intersectionof_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">intersectionof_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">intersectionof_content</TD></TR>
+      <TR><TD PORT="intersectionof_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">intersectionof_content_hjid</TD></TR>
+      <TR><TD PORT="intersectionof_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">intersectionof_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -432,8 +432,8 @@ digraph "compactRelationshipsDiagram" {
   "isoformtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">isoformtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">isoformtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="sequence" COLSPAN="3" ALIGN="LEFT">sequence</TD></TR>
       <TR><TD PORT="note" COLSPAN="3" ALIGN="LEFT">note</TD></TR>
       <TR><TD PORT="commenttype_isoform_hjid" COLSPAN="3" ALIGN="LEFT">commenttype_isoform_hjid</TD></TR>
@@ -446,9 +446,9 @@ digraph "compactRelationshipsDiagram" {
   "isoformtype_id" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">isoformtype_id</TD></TR>
-      <TR><TD PORT="isoformtype_id_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">isoformtype_id_hjid</TD></TR>
-      <TR><TD PORT="isoformtype_id_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">isoformtype_id_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">isoformtype_id</TD></TR>
+      <TR><TD PORT="isoformtype_id_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">isoformtype_id_hjid</TD></TR>
+      <TR><TD PORT="isoformtype_id_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">isoformtype_id_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -458,8 +458,8 @@ digraph "compactRelationshipsDiagram" {
   "isoformtype_nametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">isoformtype_nametype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">isoformtype_nametype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="isoformtype_name_hjid" COLSPAN="3" ALIGN="LEFT">isoformtype_name_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
@@ -470,8 +470,8 @@ digraph "compactRelationshipsDiagram" {
   "isoformtype_notetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">isoformtype_notetype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">isoformtype_notetype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -481,8 +481,8 @@ digraph "compactRelationshipsDiagram" {
   "isoformtype_sequencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">isoformtype_sequencetype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">isoformtype_sequencetype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -492,8 +492,8 @@ digraph "compactRelationshipsDiagram" {
   "keywordtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">keywordtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">keywordtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="entrytype_keyword_hjid" COLSPAN="3" ALIGN="LEFT">entrytype_keyword_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
@@ -504,8 +504,8 @@ digraph "compactRelationshipsDiagram" {
   "locationtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">locationtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">locationtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="begin" COLSPAN="3" ALIGN="LEFT">begin</TD></TR>
       <TR><TD PORT="position" COLSPAN="3" ALIGN="LEFT">position</TD></TR>
       <TR><TD PORT="endposition" COLSPAN="3" ALIGN="LEFT">endposition</TD></TR>
@@ -519,8 +519,8 @@ digraph "compactRelationshipsDiagram" {
   "namelisttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">namelisttype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">namelisttype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
     </TABLE>>
@@ -530,9 +530,9 @@ digraph "compactRelationshipsDiagram" {
   "namelisttype_personorconsortium" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">namelisttype_personorconsortium</TD></TR>
-      <TR><TD PORT="namelisttype_personorconsortium_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">namelisttype_personorconsortium_hjid</TD></TR>
-      <TR><TD PORT="namelisttype_personorconsortium_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">namelisttype_personorconsortium_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">namelisttype_personorconsortium</TD></TR>
+      <TR><TD PORT="namelisttype_personorconsortium_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">namelisttype_personorconsortium_hjid</TD></TR>
+      <TR><TD PORT="namelisttype_personorconsortium_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">namelisttype_personorconsortium_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -542,8 +542,8 @@ digraph "compactRelationshipsDiagram" {
   "obo" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">obo</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">obo</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -553,9 +553,9 @@ digraph "compactRelationshipsDiagram" {
   "obo_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">obo_content</TD></TR>
-      <TR><TD PORT="obo_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">obo_content_hjid</TD></TR>
-      <TR><TD PORT="obo_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">obo_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">obo_content</TD></TR>
+      <TR><TD PORT="obo_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">obo_content_hjid</TD></TR>
+      <TR><TD PORT="obo_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">obo_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -565,8 +565,8 @@ digraph "compactRelationshipsDiagram" {
   "organismnametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">organismnametype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">organismnametype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="organismtype_name_hjid" COLSPAN="3" ALIGN="LEFT">organismtype_name_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
@@ -577,8 +577,8 @@ digraph "compactRelationshipsDiagram" {
   "organismtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">organismtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">organismtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="lineage" COLSPAN="3" ALIGN="LEFT">lineage</TD></TR>
       <TR><TD PORT="entrytype_organismhost_hjid" COLSPAN="3" ALIGN="LEFT">entrytype_organismhost_hjid</TD></TR>
       <TR><TD PORT="entrytype_organism_hjid" COLSPAN="3" ALIGN="LEFT">entrytype_organism_hjid</TD></TR>
@@ -591,8 +591,8 @@ digraph "compactRelationshipsDiagram" {
   "organismtype_lineagetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">organismtype_lineagetype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">organismtype_lineagetype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
     </TABLE>>
@@ -602,9 +602,9 @@ digraph "compactRelationshipsDiagram" {
   "organismtype_lineagetype_taxon" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">organismtype_lineagetype_taxon</TD></TR>
-      <TR><TD PORT="organismtype_lineagetype_taxon_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">organismtype_lineagetype_taxon_hjid</TD></TR>
-      <TR><TD PORT="organismtype_lineagetype_taxon_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">organismtype_lineagetype_taxon_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">organismtype_lineagetype_taxon</TD></TR>
+      <TR><TD PORT="organismtype_lineagetype_taxon_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">organismtype_lineagetype_taxon_hjid</TD></TR>
+      <TR><TD PORT="organismtype_lineagetype_taxon_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">organismtype_lineagetype_taxon_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -614,8 +614,8 @@ digraph "compactRelationshipsDiagram" {
   "positiontype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">positiontype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">positiontype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
     </TABLE>>
@@ -625,8 +625,8 @@ digraph "compactRelationshipsDiagram" {
   "propertytype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">propertytype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">propertytype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="dbreferencetype_property_hjid" COLSPAN="3" ALIGN="LEFT">dbreferencetype_property_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
@@ -637,8 +637,8 @@ digraph "compactRelationshipsDiagram" {
   "proteinexistencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteinexistencetype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteinexistencetype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -648,8 +648,8 @@ digraph "compactRelationshipsDiagram" {
   "proteinnamegroupalternativenametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteinnamegroupalternativenametype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteinnamegroupalternativenametype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="fullname" COLSPAN="3" ALIGN="LEFT">fullname</TD></TR>
       <TR><TD PORT="proteintype_componenttype_alternativename_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_componenttype_alternativename_hjid</TD></TR>
       <TR><TD PORT="proteintype_domaintype_alternativename_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_domaintype_alternativename_hjid</TD></TR>
@@ -663,8 +663,8 @@ digraph "compactRelationshipsDiagram" {
   "proteinnamegrouprecommendednametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteinnamegrouprecommendednametype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteinnamegrouprecommendednametype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="fullname" COLSPAN="3" ALIGN="LEFT">fullname</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
@@ -675,8 +675,8 @@ digraph "compactRelationshipsDiagram" {
   "proteinnamegroupsubmittednametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteinnamegroupsubmittednametype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteinnamegroupsubmittednametype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="fullname" COLSPAN="3" ALIGN="LEFT">fullname</TD></TR>
       <TR><TD PORT="proteintype_componenttype_submittedname_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_componenttype_submittedname_hjid</TD></TR>
       <TR><TD PORT="proteintype_domaintype_submittedname_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_domaintype_submittedname_hjid</TD></TR>
@@ -690,8 +690,8 @@ digraph "compactRelationshipsDiagram" {
   "proteintype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteintype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteintype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="allergenname" COLSPAN="3" ALIGN="LEFT">allergenname</TD></TR>
       <TR><TD PORT="biotechname" COLSPAN="3" ALIGN="LEFT">biotechname</TD></TR>
       <TR><TD PORT="recommendedname" COLSPAN="3" ALIGN="LEFT">recommendedname</TD></TR>
@@ -704,8 +704,8 @@ digraph "compactRelationshipsDiagram" {
   "proteintype_componenttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteintype_componenttype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteintype_componenttype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="allergenname" COLSPAN="3" ALIGN="LEFT">allergenname</TD></TR>
       <TR><TD PORT="biotechname" COLSPAN="3" ALIGN="LEFT">biotechname</TD></TR>
       <TR><TD PORT="recommendedname" COLSPAN="3" ALIGN="LEFT">recommendedname</TD></TR>
@@ -719,8 +719,8 @@ digraph "compactRelationshipsDiagram" {
   "proteintype_domaintype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteintype_domaintype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteintype_domaintype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="allergenname" COLSPAN="3" ALIGN="LEFT">allergenname</TD></TR>
       <TR><TD PORT="biotechname" COLSPAN="3" ALIGN="LEFT">biotechname</TD></TR>
       <TR><TD PORT="recommendedname" COLSPAN="3" ALIGN="LEFT">recommendedname</TD></TR>
@@ -734,8 +734,8 @@ digraph "compactRelationshipsDiagram" {
   "referencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">referencetype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">referencetype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="citation" COLSPAN="3" ALIGN="LEFT">citation</TD></TR>
       <TR><TD PORT="source" COLSPAN="3" ALIGN="LEFT">source</TD></TR>
       <TR><TD PORT="entrytype_reference_hjid" COLSPAN="3" ALIGN="LEFT">entrytype_reference_hjid</TD></TR>
@@ -748,9 +748,9 @@ digraph "compactRelationshipsDiagram" {
   "referencetype_scope" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">referencetype_scope</TD></TR>
-      <TR><TD PORT="referencetype_scope_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">referencetype_scope_hjid</TD></TR>
-      <TR><TD PORT="referencetype_scope_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">referencetype_scope_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">referencetype_scope</TD></TR>
+      <TR><TD PORT="referencetype_scope_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">referencetype_scope_hjid</TD></TR>
+      <TR><TD PORT="referencetype_scope_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">referencetype_scope_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -760,8 +760,8 @@ digraph "compactRelationshipsDiagram" {
   "relationship" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">relationship</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">relationship</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -771,9 +771,9 @@ digraph "compactRelationshipsDiagram" {
   "relationship_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">relationship_content</TD></TR>
-      <TR><TD PORT="relationship_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">relationship_content_hjid</TD></TR>
-      <TR><TD PORT="relationship_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">relationship_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">relationship_content</TD></TR>
+      <TR><TD PORT="relationship_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">relationship_content_hjid</TD></TR>
+      <TR><TD PORT="relationship_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">relationship_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -783,8 +783,8 @@ digraph "compactRelationshipsDiagram" {
   "sequencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">sequencetype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">sequencetype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -794,8 +794,8 @@ digraph "compactRelationshipsDiagram" {
   "source" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">source</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">source</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -805,9 +805,9 @@ digraph "compactRelationshipsDiagram" {
   "source_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">source_content</TD></TR>
-      <TR><TD PORT="source_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">source_content_hjid</TD></TR>
-      <TR><TD PORT="source_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">source_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">source_content</TD></TR>
+      <TR><TD PORT="source_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">source_content_hjid</TD></TR>
+      <TR><TD PORT="source_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">source_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -817,8 +817,8 @@ digraph "compactRelationshipsDiagram" {
   "sourcedatatype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">sourcedatatype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">sourcedatatype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
     </TABLE>>
@@ -828,9 +828,9 @@ digraph "compactRelationshipsDiagram" {
   "sourcedatatype_speciesorstrainorplasmid" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">sourcedatatype_speciesorstrainorplasmid</TD></TR>
-      <TR><TD PORT="sourcedatatype_speciesorstrainorplasmid_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">sourcedatatype_speciesorstrainorplasmid_hjid</TD></TR>
-      <TR><TD PORT="sourcedatatype_speciesorstrainorplasmid_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">sourcedatatype_speciesorstrainorplasmid_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">sourcedatatype_speciesorstrainorplasmid</TD></TR>
+      <TR><TD PORT="sourcedatatype_speciesorstrainorplasmid_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">sourcedatatype_speciesorstrainorplasmid_hjid</TD></TR>
+      <TR><TD PORT="sourcedatatype_speciesorstrainorplasmid_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">sourcedatatype_speciesorstrainorplasmid_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -840,8 +840,8 @@ digraph "compactRelationshipsDiagram" {
   "statustype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">statustype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">statustype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -851,8 +851,8 @@ digraph "compactRelationshipsDiagram" {
   "subcellularlocationtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">subcellularlocationtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">subcellularlocationtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="commenttype_subcellularlocation_hjid" COLSPAN="3" ALIGN="LEFT">commenttype_subcellularlocation_hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
@@ -863,8 +863,8 @@ digraph "compactRelationshipsDiagram" {
   "subsetdef" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">subsetdef</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">subsetdef</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -874,9 +874,9 @@ digraph "compactRelationshipsDiagram" {
   "subsetdef_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">subsetdef_content</TD></TR>
-      <TR><TD PORT="subsetdef_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">subsetdef_content_hjid</TD></TR>
-      <TR><TD PORT="subsetdef_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">subsetdef_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">subsetdef_content</TD></TR>
+      <TR><TD PORT="subsetdef_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">subsetdef_content_hjid</TD></TR>
+      <TR><TD PORT="subsetdef_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">subsetdef_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -886,8 +886,8 @@ digraph "compactRelationshipsDiagram" {
   "synonym" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">synonym</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">synonym</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -897,9 +897,9 @@ digraph "compactRelationshipsDiagram" {
   "synonym_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">synonym_content</TD></TR>
-      <TR><TD PORT="synonym_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">synonym_content_hjid</TD></TR>
-      <TR><TD PORT="synonym_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">synonym_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">synonym_content</TD></TR>
+      <TR><TD PORT="synonym_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">synonym_content_hjid</TD></TR>
+      <TR><TD PORT="synonym_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">synonym_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -909,8 +909,8 @@ digraph "compactRelationshipsDiagram" {
   "synonymcategory" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">synonymcategory</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">synonymcategory</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -920,9 +920,9 @@ digraph "compactRelationshipsDiagram" {
   "synonymcategory_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">synonymcategory_content</TD></TR>
-      <TR><TD PORT="synonymcategory_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">synonymcategory_content_hjid</TD></TR>
-      <TR><TD PORT="synonymcategory_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">synonymcategory_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">synonymcategory_content</TD></TR>
+      <TR><TD PORT="synonymcategory_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">synonymcategory_content_hjid</TD></TR>
+      <TR><TD PORT="synonymcategory_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">synonymcategory_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -932,8 +932,8 @@ digraph "compactRelationshipsDiagram" {
   "synonymtypedef" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">synonymtypedef</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">synonymtypedef</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -943,9 +943,9 @@ digraph "compactRelationshipsDiagram" {
   "synonymtypedef_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">synonymtypedef_content</TD></TR>
-      <TR><TD PORT="synonymtypedef_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">synonymtypedef_content_hjid</TD></TR>
-      <TR><TD PORT="synonymtypedef_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">synonymtypedef_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">synonymtypedef_content</TD></TR>
+      <TR><TD PORT="synonymtypedef_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">synonymtypedef_content_hjid</TD></TR>
+      <TR><TD PORT="synonymtypedef_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">synonymtypedef_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -955,8 +955,8 @@ digraph "compactRelationshipsDiagram" {
   "term" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">term</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">term</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -966,9 +966,9 @@ digraph "compactRelationshipsDiagram" {
   "term_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">term_content</TD></TR>
-      <TR><TD PORT="term_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">term_content_hjid</TD></TR>
-      <TR><TD PORT="term_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">term_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">term_content</TD></TR>
+      <TR><TD PORT="term_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">term_content_hjid</TD></TR>
+      <TR><TD PORT="term_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">term_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -978,8 +978,8 @@ digraph "compactRelationshipsDiagram" {
   "typedef" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">typedef</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">typedef</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -989,9 +989,9 @@ digraph "compactRelationshipsDiagram" {
   "typedef_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">typedef_content</TD></TR>
-      <TR><TD PORT="typedef_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">typedef_content_hjid</TD></TR>
-      <TR><TD PORT="typedef_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">typedef_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">typedef_content</TD></TR>
+      <TR><TD PORT="typedef_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">typedef_content_hjid</TD></TR>
+      <TR><TD PORT="typedef_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">typedef_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -1001,8 +1001,8 @@ digraph "compactRelationshipsDiagram" {
   "uniprottype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">uniprottype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">uniprottype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -1012,8 +1012,8 @@ digraph "compactRelationshipsDiagram" {
   "xrefanalog" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">xrefanalog</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">xrefanalog</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -1023,9 +1023,9 @@ digraph "compactRelationshipsDiagram" {
   "xrefanalog_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">xrefanalog_content</TD></TR>
-      <TR><TD PORT="xrefanalog_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">xrefanalog_content_hjid</TD></TR>
-      <TR><TD PORT="xrefanalog_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">xrefanalog_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">xrefanalog_content</TD></TR>
+      <TR><TD PORT="xrefanalog_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">xrefanalog_content_hjid</TD></TR>
+      <TR><TD PORT="xrefanalog_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">xrefanalog_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -1035,8 +1035,8 @@ digraph "compactRelationshipsDiagram" {
   "xrefunknown" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">xrefunknown</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">xrefunknown</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -1046,9 +1046,9 @@ digraph "compactRelationshipsDiagram" {
   "xrefunknown_content" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">xrefunknown_content</TD></TR>
-      <TR><TD PORT="xrefunknown_content_hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">xrefunknown_content_hjid</TD></TR>
-      <TR><TD PORT="xrefunknown_content_hjindex" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">xrefunknown_content_hjindex</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">xrefunknown_content</TD></TR>
+      <TR><TD PORT="xrefunknown_content_hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">xrefunknown_content_hjid</TD></TR>
+      <TR><TD PORT="xrefunknown_content_hjindex" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">xrefunknown_content_hjindex</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>

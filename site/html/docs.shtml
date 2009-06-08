@@ -4,12 +4,12 @@
     <!--#include virtual="doclist.html" -->
 
     <li>Read Me for <a href="download.shtml#e.coliK12"><i>Escherichia
-    coli</i> K12 Gene Database</a> (276K PDF, revision 20070302)
+    coli</i> K12 Gene Database</a> (284K PDF, revision 20090529)
     <ul>
-        <li><a href="docs/ReadMeEcoliK12_20060731x.pdf">Direct
+        <li><a href="docs/ReadMe_Ec-K12-Std_External_20090529.pdf">Direct
         from this site</a></li>
         <li><a
-            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMeEcoliK12_20060731x.pdf?download">SourceForge
+            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Ec-K12-Std_External_20090529.pdf?download">SourceForge
         mirror</a></li>
     </ul>
     </li>

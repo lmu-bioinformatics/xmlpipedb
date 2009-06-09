@@ -13,6 +13,17 @@
         mirror</a></li>
     </ul>
     </li>
+
+    <li>Read Me for <a href="download.shtml#p.falciparum"><i>Plasmodium
+    falciparum</i> (isolate 3D7) Gene Database</a> (744K PDF, revision 20090604)
+    <ul>
+        <li><a href="docs/ReadMe_Pf-Std_External_20090604.pdf">Direct
+        from this site</a></li>
+        <li><a
+            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Pf-Std_External_20090604.pdf?download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
 </ul>
 
 <p>XMLPipeDB is an open source suite of Java-based tools for

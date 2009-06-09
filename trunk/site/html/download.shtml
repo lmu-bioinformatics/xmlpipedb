@@ -37,14 +37,31 @@ XMLPipeDB project site on SourceForge:</p>
 coli</i> K12</a></h4>
 <ul>
     <li><a
-        href="http://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=199426&amp;release_id=493257">Release
-    20060731x</a></li>
-    <li>Read Me (276K PDF, revision 20070302)
+        href="https://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=199426&amp;release_id=688358">Release
+    20090529</a></li>
+    <li>Read Me (284K PDF, revision 20090529)
     <ul>
-        <li><a href="docs/ReadMeEcoliK12_20060731x.pdf">Direct
+        <li><a href="docs/ReadMe_Ec-K12-Std_External_20090529.pdf">Direct
         from this site</a></li>
         <li><a
-            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMeEcoliK12_20060731x.pdf?download">SourceForge
+            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Ec-K12-Std_External_20090529.pdf?download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
+</ul>
+
+<h4><a name="p.falciparum">GenMAPP Gene Database for <i>Plasmodium
+falciparum</i> (isolate 3D7)</a></h4>
+<ul>
+    <li><a
+        href="https://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=300870&amp;release_id=688667">Release
+    20090604</a></li>
+    <li>Read Me (744K PDF, revision 20090604)
+    <ul>
+        <li><a href="docs/ReadMe_Pf-Std_External_20090604.pdf">Direct
+        from this site</a></li>
+        <li><a
+            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Pf-Std_External_20090604.pdf?download">SourceForge
         mirror</a></li>
     </ul>
     </li>

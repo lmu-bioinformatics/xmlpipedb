@@ -33,6 +33,23 @@ XMLPipeDB project site on SourceForge:</p>
 
 <h3><a name="gdb">Gene Databases</a></h3>
 
+<h4><a name="a.thaliana">GenMAPP Gene Database for <i>Arabidopsis
+thaliana</i></a></h4>
+<ul>
+    <li><a
+        href="https://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=239512&amp;release_id=689246">Release
+    20090610</a></li>
+    <li>Read Me (268K PDF, revision 20090610)
+    <ul>
+        <li><a href="docs/ReadMe_At-Std_External_20090610.pdf">Direct
+        from this site</a></li>
+        <li><a
+            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_At-Std_External_20090610.pdf?download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
+</ul>
+
 <h4><a name="e.coliK12">GenMAPP Gene Database for <i>Escherichia
 coli</i> K12</a></h4>
 <ul>

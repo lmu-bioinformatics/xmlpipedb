@@ -3,6 +3,17 @@
 <ul>
     <!--#include virtual="doclist.html" -->
 
+    <li>Read Me for <a href="download.shtml#a.thaliana"><i>Arabidopsis
+    thaliana</i> Gene Database</a> (268K PDF, revision 20090610)
+    <ul>
+        <li><a href="docs/ReadMe_At-Std_External_20090610.pdf">Direct
+        from this site</a></li>
+        <li><a
+            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_At-Std_External_20090610.pdf?download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
+
     <li>Read Me for <a href="download.shtml#e.coliK12"><i>Escherichia
     coli</i> K12 Gene Database</a> (284K PDF, revision 20090529)
     <ul>

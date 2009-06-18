@@ -179,6 +179,29 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         mb.add(new WindowMenu(this));
         return mb;
     }
+    
+    /**
+     * A species name found within an XML file needs to have some special
+     * parsing done to it in order to match it with the proper species name
+     * in the gmbuilder.properties file for the TallyEngine.
+     * 
+     */
+    private String getSpeciesNameFromString(String species) {
+    	
+    	String speciesString = "";
+    	
+    	if(species != null) {
+    		
+    		speciesString = species.toLowerCase();
+    		
+    		String[] substrings = speciesString.replaceAll(" ", "").split("\\(");
+    		
+    		if(substrings.length > 0)
+    			speciesString =  substrings[0];
+    	}
+    	
+    	return speciesString;
+    }
 
     /**
      * Creates the actions performed by the application.
@@ -531,7 +554,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     	// Remove all spaces between the species name, along with
 		// any specific strain details.  The first element in the 
 		// splitted array coresponds with the proper species name.
-		species = species.replaceAll(" ", "").split("\\(")[0];
+		species = getSpeciesNameFromString(species);
     	
     	String speciesAmount = AppResources.optionString(species + "LevelAmount");
     	if(speciesAmount == null || speciesAmount.equals(""))

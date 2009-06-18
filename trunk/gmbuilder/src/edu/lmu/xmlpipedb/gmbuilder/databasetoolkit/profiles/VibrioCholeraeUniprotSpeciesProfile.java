@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.commons.logging.Log;
@@ -59,10 +60,17 @@ public class VibrioCholeraeUniprotSpeciesProfile extends UniProtSpeciesProfile {
                 
                 // We want to remove the '_' here
                 String id = rs.getString("value");
-                String new_id = id.replace("_", "");
                 
-                _Log.debug("Remove '_' from " +id  + " to create: " + new_id + " for surrogate " + hjid);
-                result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                String[] substrings = id.split("/");
+                String new_id = null;
+                for(int i = 0; i < substrings.length; i++) {
+                	
+                
+                	new_id = id.replace("_", "");
+                
+                	_Log.debug("Remove '_' from " +id  + " to create: " + new_id + " for surrogate " + hjid);
+                	result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                }
             }
         } catch(SQLException sqlexc) {
             logSQLException(sqlexc, sqlQuery);

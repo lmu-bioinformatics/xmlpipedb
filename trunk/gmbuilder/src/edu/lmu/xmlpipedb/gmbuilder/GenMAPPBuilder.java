@@ -531,7 +531,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     		
     		// A species criteiron must be using a different rule
     		ArrayList<Criterion> speciesCrit = criteria.getBucket(
-					AppResources.optionString("SpeciesElementLevel").trim());
+					AppResources.optionString("species_element_level").trim());
     		if(speciesCrit != null) {
     			speciesCrit.get(0).setRuleType(RuleType.FINDBODY);
     			criteria.firstCriterion = speciesCrit.get(0);
@@ -556,7 +556,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 		// splitted array coresponds with the proper species name.
 		species = getSpeciesNameFromString(species);
     	
-    	String speciesAmount = AppResources.optionString(species + "LevelAmount");
+    	String speciesAmount = AppResources.optionString(species + "_level_amount");
     	if(speciesAmount == null || speciesAmount.equals(""))
     		return;
     	
@@ -571,9 +571,9 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     		Criterion criterion;
     		for(int i = 0; i < levelAmount; i++) {
     			    			
-    			query = AppResources.optionString(species + "QueryLevel" + i).trim();
-    			name = AppResources.optionString(species + "TableNameLevel" + i).trim();	
-    			element = AppResources.optionString(species+ "ElementLevel" + i).trim();
+    			query = AppResources.optionString(species + "_query_level" + i).trim();
+    			name = AppResources.optionString(species + "_table_name_level" + i).trim();	
+    			element = AppResources.optionString(species+ "_element_level" + i).trim();
     			
 				criterion = new Criterion(name, element, query);
 				criterion.setRuleType(RuleType.ENDOFRECORD);
@@ -733,7 +733,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 		
 		// we want to remove the species Criterion from
 		// this list
-		_currentCriteria.removeBucket(AppResources.optionString("UniprotElementLevel0"));
+		_currentCriteria.removeBucket(AppResources.optionString("uniprot_element_level0"));
 		System.out.println("Setting XML body " + body);
 		return _currentCriteria;
 	}

@@ -35,6 +35,17 @@
         mirror</a></li>
     </ul>
     </li>
+
+    <li>Read Me for <a href="download.shtml#v.cholerae"><i>Vibrio
+    cholerae</i> O1 biovar El Tor str. N16961 Gene Database</a> (264K PDF, revision 20090622)
+    <ul>
+        <li><a href="docs/ReadMe_Vc-Std_External_20090622.pdf">Direct
+        from this site</a></li>
+        <li><a
+            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Vc-Std_External_20090622.pdf?download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
 </ul>
 
 <p>XMLPipeDB is an open source suite of Java-based tools for

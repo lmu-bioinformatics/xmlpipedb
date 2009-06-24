@@ -84,6 +84,23 @@ falciparum</i> (isolate 3D7)</a></h4>
     </li>
 </ul>
 
+<h4><a name="v.cholerae">GenMAPP Gene Database for <i>Vibrio
+    cholerae</i> O1 biovar El Tor str. N16961 Gene Database</a></h4>
+<ul>
+    <li><a
+        href="https://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=300869&amp;release_id=692140">Release
+    20090622</a></li>
+    <li>Read Me (264K PDF, revision 20090622)
+    <ul>
+        <li><a href="docs/ReadMe_Vc-Std_External_20090622.pdf">Direct
+        from this site</a></li>
+        <li><a
+            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Vc-Std_External_20090622.pdf?download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
+</ul>
+
 <h3>System Requirements</h3>
 
 <h4>Recommended Hardware</h4>

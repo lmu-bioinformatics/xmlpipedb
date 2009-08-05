@@ -17,6 +17,9 @@ import java.awt.Container;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * A 1.4 file that provides utility methods for
  * creating form- or grid-style layouts with SpringLayout.
@@ -56,7 +59,7 @@ public class SpringUtilities {
         try {
             layout = (SpringLayout)parent.getLayout();
         } catch (ClassCastException exc) {
-            System.err.println("The first argument to makeGrid must use SpringLayout.");
+            _Log.error("The first argument to makeGrid must use SpringLayout.");
             return;
         }
 
@@ -159,7 +162,7 @@ public class SpringUtilities {
         try {
             layout = (SpringLayout)parent.getLayout();
         } catch (ClassCastException exc) {
-            System.err.println("The first argument to makeCompactGrid must use SpringLayout.");
+            _Log.error("The first argument to makeCompactGrid must use SpringLayout.");
             return;
         }
 
@@ -204,4 +207,9 @@ public class SpringUtilities {
         pCons.setConstraint(SpringLayout.SOUTH, y);
         pCons.setConstraint(SpringLayout.EAST, x);
     }
+    
+    /**
+     * The SpringUtilities log.
+     */
+    private static final Log _Log = LogFactory.getLog(SpringUtilities.class);
 }

@@ -371,9 +371,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			ps = ConnectionManager.getRelationalDBConnection()
 					.prepareStatement(nameSQL);
 			ps.setInt(1, Integer.parseInt(row.getValue("UID")));
-			System.out.println(row.getValue("UID"));
-			System.out.println(row.getValue("Species"));
-			System.out.println(ps.toString());
+			_Log.debug("Species: [" + row.getValue("Species") + "]");
+			_Log.debug(ps.toString());
 			result = ps.executeQuery();
 			while (result.next()) {
 				_Log.debug("Record: [" + ++recordCounter + "]");

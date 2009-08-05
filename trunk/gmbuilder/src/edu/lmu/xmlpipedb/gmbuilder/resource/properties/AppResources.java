@@ -8,6 +8,9 @@ package edu.lmu.xmlpipedb.gmbuilder.resource.properties;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * @author J. Nicholas
  *
@@ -35,7 +38,7 @@ public class AppResources {
         try{
         	message = _messageBundle.getString(key);
         } catch( MissingResourceException e){
-        	System.out.println("Oops. The key, " + key + " does not exist.");
+        	_Log.error("Oops. The key, " + key + " does not exist.");
         	return message;
         }
         return message;
@@ -56,7 +59,7 @@ public class AppResources {
         try{
         	option = _optionsBundle.getString(key);
         } catch( MissingResourceException e ){
-        	System.out.println("Oops. The key, " + key + " does not exist.");
+        	_Log.error("Oops. The key, " + key + " does not exist.");
         	return option;
         }
         return option;
@@ -74,4 +77,9 @@ public class AppResources {
    	optionString("opt_langfilepackage") + "." +		
    	optionString("opt_language") + 
 	"_messages";
+   
+   /**
+    * The resource class log.
+    */
+   private static final Log _Log = LogFactory.getLog(AppResources.class);
 }

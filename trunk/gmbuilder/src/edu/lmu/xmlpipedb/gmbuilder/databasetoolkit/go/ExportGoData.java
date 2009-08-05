@@ -64,7 +64,7 @@ public class ExportGoData {
     }
 
     /**
-     * Staring point for exporing go data to genMAPP
+     * Staring point for exporting go data to genMAPP
      * 
      * @throws ClassNotFoundException
      * @throws SQLException
@@ -73,14 +73,14 @@ public class ExportGoData {
      * @throws IOException
      * @throws JAXBException
      */
-    public void export(File GOA_File) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
+    public void export(File goaFile) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
         String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(3, "GeneOntology export - creating tables...");
         godb.createTables(connection);
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(10, "GeneOntology export - populating tables...");
-        populateGoTables(GOA_File);
+        populateGoTables(goaFile);
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(40, "GeneOntology export - flushing tables...");
         godb.updateSystemsTable(connection, Date, "T");
@@ -97,7 +97,7 @@ public class ExportGoData {
      */
     public void populateGeneOntologyStage(Configuration hibernateConfiguration) throws SQLException {
         SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
-        // opne Hibernate session
+        // open Hibernate session
         Session session = sessionFactory.openSession();
 
         _Log.info("creating: " + GOTable.GeneOntologyStage);
@@ -121,7 +121,7 @@ public class ExportGoData {
             try { ps.close(); } catch(Exception exc) { _Log.error(exc); }
         }
         
-        Iterator iter = null;
+        Iterator<?> iter = null;
         String Species = null;
         String Remarks = null;
 
@@ -130,7 +130,7 @@ public class ExportGoData {
 
         // Grab all term object
         _Log.debug("Performing query...");
-        iter = session.createQuery("from generated.impl.TermImpl").iterate();
+        iter = (Iterator<?>)session.createQuery("from generated.impl.TermImpl").iterate();
 
         _Log.debug("Beginning iteration...");
         _Log.debug("Beginning " + GOTable.GeneOntologyStage + " transaction");
@@ -138,7 +138,7 @@ public class ExportGoData {
         long counter = 0;
         while (iter.hasNext()) {
             TermImpl term = (TermImpl)iter.next();
-            List content = term.getContent();
+            List<?> content = term.getContent();
             _Log.debug("Processing term " + term.getHjid() +", content size = " + content.size());
             counter++;
             if (counter % 1000 == 0) {
@@ -218,11 +218,11 @@ public class ExportGoData {
      * @throws IOException
      * @throws JAXBException
      */
-    private void populateGoTables(File GOA_File) throws SQLException, HibernateException, SAXException, IOException, JAXBException {
+    private void populateGoTables(File goaFile) throws SQLException, HibernateException, SAXException, IOException, JAXBException {
         _Log.info("Populating UniProt-GO table...");
-        populateUniprotGoTable(GOA_File);
+        populateUniprotGoTable(goaFile);
         _Log.info("Populating GeneOntology table...");
-        populateGeneOntologyTable();
+        populateGeneOntology();
         _Log.info("Populating GeneOntologyTree...");
         populateGeneOntologyTree();
         _Log.info("Populating GeneOntologyCount...");
@@ -272,6 +272,7 @@ public class ExportGoData {
             // Count the number of times each GO ID child maps to a unique UP ID
             // as defined in the Uniprot-GO table
             getTotalCount(id, uniprot_IDs);
+            _Log.debug("Inserting UniProt-GO count record (" + id + ", " + count + ")");
             String[] values = new String[] { id, count + "", uniprot_IDs.size() + "" };
             godb.insert(connection, GOTable.UniProt_GoCount, values);
         }
@@ -285,7 +286,6 @@ public class ExportGoData {
         r.next();
         String total = r.getString(1);
         godb.insert(connection, GOTable.UniProt_GoCount, new String[] { "GO", 0 + "", total });
-
     }
 
     /**
@@ -324,48 +324,41 @@ public class ExportGoData {
      * @throws IOException
      * @throws SQLException
      */
-    private void populateUniprotGoTable(File GOA_File) throws IOException, SQLException {
-        BufferedReader in = new BufferedReader(new FileReader(GOA_File.getCanonicalPath()));
+    private void populateUniprotGoTable(File goaFile) throws IOException, SQLException {
+        _Log.debug("Processing GOA file: " + goaFile);
+        BufferedReader in = new BufferedReader(new FileReader(goaFile.getCanonicalPath()));
         String line = null;
         HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
         
         Pattern idPattern1 = Pattern.compile("UniProtKB/[\\w-]+:(\\w+)");
+        Pattern idPattern1a = Pattern.compile("UniProtKB/[\\w-]+\\s+(\\w+)");
         Pattern idPattern2 = Pattern.compile("UniProt(KB)?\\s+(\\w{6})");
         Pattern goIDPattern = Pattern.compile("GO:(\\w+)");
         while ((line = in.readLine()) != null) {
-            // Grab the Uniprot ID
+            _Log.debug("Processing GOA line: " + line);
+
+            // Grab the Uniprot ID --- the multiple patterns are needed to accommodate various known GOA file formats.
             Matcher m1 = idPattern1.matcher(line);
+            Matcher m1a = idPattern1a.matcher(line);
             Matcher m2 = idPattern2.matcher(line);
             boolean regexp1 = m1.find();
+            boolean regexp1a = m1a.find();
             boolean regexp2 = m2.find();
             if (regexp1 || regexp2) {
-                String Up_ID = regexp1 ? m1.group(1) : m2.group(2);
-                // Grab the GO ID(s)
+                String uniprotID = regexp1 ? m1.group(1) : (regexp1a ? m1a.group(1) : m2.group(2));
+                // Grab the GO ID(s).
                 Matcher match = goIDPattern.matcher(line);
                 while (match.find()) {
                     String GO_ID = match.group(1);
-                    String key = Up_ID + "," + GO_ID;
+                    String key = uniprotID + "," + GO_ID;
                     if (!unique.containsKey(key)) {
                         unique.put(key, true);
-                        String[] values = new String[] { Up_ID, GO_ID, "" };
+                        String[] values = new String[] { uniprotID, GO_ID, "" };
                         godb.insert(connection, GOTable.UniProt_Go, values);
                     }
                 }
             }
         }
-    }
-
-    /**
-     * Populate genMAPP's two tables: GeneOntologyStage -- data containing all
-     * species GeneOntology -- data containing user specied species
-     * 
-     * @param session
-     *            A hibernate session (needed for HQL queries)
-     * @throws SQLException
-     */
-    private void populateGeneOntologyTable() throws SQLException {
-//        populateGeneOntologyStage(session);
-        populateGeneOntology();
     }
 
     /**
@@ -388,28 +381,11 @@ public class ExportGoData {
             // For each of these IDs, grab the corresponding stage records, and process.
             ResultSet relatedRS = relatedPS.executeQuery();
             while (relatedRS.next()) {
-                stagePS.setString(1, relatedRS.getString("Related"));
+                String relatedString = relatedRS.getString("Related");
+                _Log.debug("Processing related term: " + relatedString);
+                stagePS.setString(1, relatedString);
                 processIDs(stagePS);
-//                ResultSet stageRS = stagePS.executeQuery();
-//                while (stageRS.next()) {
-//                    String[] values = getGoValues(stageRS);
-//                    String key = values[ID_COL] + "," + values[PARENT_COL];
-//                    if (!duplicates.containsKey(key)) {
-//                        duplicates.put(key, true);
-//                        godb.insert(connection, GOTable.GeneOntology, values);
-//                        insertParents(values[PARENT_COL]);
-//                    }
-//                }
-//                stageRS.close();
             }
-//            ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sql);
-//            ResultSet results = ps.executeQuery();
-//            _Log.info("creating: " + GOTable.GeneOntology);
-//            while (results.next()) {
-//                String[] values = getGoValues(results);
-//                godb.insert(connection, GOTable.GeneOntology, values);
-//                insertParents(values[PARENT_COL]);
-//            }
         } catch(SQLException sqlexc) {
             throw sqlexc;
         } catch(Exception exc) {
@@ -515,6 +491,7 @@ public class ExportGoData {
         while (iter.hasNext()) {
             id = iter.next();
             count = goCount.get(id);
+            _Log.debug("Inserting GeneOntology count record (" + id + ", " + count + ")");
             godb.insert(connection, GOTable.GeneOntologyCount, new String[] { id, count + "" });
         }
     }
@@ -543,9 +520,8 @@ public class ExportGoData {
             } else {
                 goCount.put(id, 1);
             }
+            _Log.debug("Inserting child row (" + id + ", " + name + ")");
             godb.insert(connection, GOTable.GeneOntologyTree, new String[] { orderNo++ + "", level + "", id, name });
-            // Used for feedback; should be replaced with something else
-            // System.out.println(orderNo);
             insertChildren(id, level + 1);
         }
         ps.close();

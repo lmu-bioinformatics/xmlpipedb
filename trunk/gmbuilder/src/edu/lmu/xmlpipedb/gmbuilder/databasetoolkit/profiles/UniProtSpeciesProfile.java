@@ -297,11 +297,11 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                 if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(stp.systemTable1) &&
                 		row.getValue("UID") != null) {
                    	ss1.put(row.getValue("UID"), row.getValue("ID"));
-                   	System.out.println(row.getValue("UID") + " NO " + row.getValue("ID"));
+                   	_Log.debug(row.getValue("UID") + " NO " + row.getValue("ID"));
                 } else if(row.getValue(TableManager.TABLE_NAME_COLUMN).equals(stp.systemTable2) &&
                 		row.getValue("UID") != null) {
                 	ss2.put(row.getValue("UID"), row.getValue("ID"));
-                	System.out.println(row.getValue("UID") + " YES " + row.getValue("ID"));
+                	_Log.debug(row.getValue("UID") + " YES " + row.getValue("ID"));
                 }
                  
             }

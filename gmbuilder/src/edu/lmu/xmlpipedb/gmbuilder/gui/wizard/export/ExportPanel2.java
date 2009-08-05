@@ -282,16 +282,16 @@ public class ExportPanel2 extends JPanel {
 	}
 	
 	/**
-	 * Verifies if all information is entered.
-	 * @return
-	 */
-	protected boolean isAllInformationEntered() {
-		if(genmappDatabaseFile.getName().equals("") || 
-				goAssociationsFile.getName().equals("")) {
-			return false;
-		}
-		return true;
-	}
+     * Verifies if all information is entered.
+     * 
+     * @return
+     */
+    protected boolean isAllInformationEntered() {
+        if ("".equals(genmappDatabaseFile.getName()) || "".equals(goAssociationsFile.getName())) {
+            return false;
+        }
+        return true;
+    }
 
 	/**
 	 * Submits all information collected on the panel.

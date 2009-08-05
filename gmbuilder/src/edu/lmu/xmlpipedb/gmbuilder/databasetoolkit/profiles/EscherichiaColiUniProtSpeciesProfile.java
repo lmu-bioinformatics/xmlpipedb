@@ -12,7 +12,6 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -343,19 +342,5 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 		
 		return tableManager;
 	}
-	
-	 /**
-     * Helper method for logging an SQL exception.
-     */
-    private void logSQLException(SQLException sqlexc, String sqlQuery) {
-        _Log.error("Exception trying to execute query: " + sqlQuery);
-        while (sqlexc != null) {
-            _Log.error("Error code: [" + sqlexc.getErrorCode() + "]");
-            _Log.error("Error message: [" + sqlexc.getMessage() + "]");
-            _Log.error("Error SQL State: [" + sqlexc.getSQLState() + "]");
-            sqlexc = sqlexc.getNextException();
-        }
-    }
 
-
-} // end class
+}

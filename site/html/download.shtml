@@ -4,7 +4,7 @@
     href="#gdb">Gene Databases</a> for their species of interest.
 Software developers in bioinformatics (or other areas) that wish to
 automate the creation of relational databases from XML sources will be
-interested in the releases available from <a
+interested in the releases available from <a class="external"
     href="http://sourceforge.net/project/showfiles.php?group_id=158533">SourceForge</a>.</p>
 
 <h3>Source Code and Full XMLPipeDB Suite</h3>
@@ -13,15 +13,15 @@ interested in the releases available from <a
 XMLPipeDB project site on SourceForge:</p>
 
 <ul>
-    <li><a
+    <li><a class="external"
         href="http://sourceforge.net/project/showfiles.php?group_id=158533">All
     XMLPipeDB file releases</a></li>
 
-    <li><a
+    <li><a class="external"
         href="http://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=198529">GenMAPP
     Builder</a></li>
 
-    <li><a
+    <li><a class="external"
         href="http://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=177646">XSD-to-DB</a></li>
 </ul>
 
@@ -36,14 +36,14 @@ XMLPipeDB project site on SourceForge:</p>
 <h4><a name="a.thaliana">GenMAPP Gene Database for <i>Arabidopsis
 thaliana</i></a></h4>
 <ul>
-    <li><a
+    <li><a class="external"
         href="https://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=239512&amp;release_id=689246">Release
     20090610</a></li>
     <li>Read Me (268K PDF, revision 20090610)
     <ul>
         <li><a href="docs/ReadMe_At-Std_External_20090610.pdf">Direct
         from this site</a></li>
-        <li><a
+        <li><a class="external"
             href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_At-Std_External_20090610.pdf?download">SourceForge
         mirror</a></li>
     </ul>
@@ -53,14 +53,14 @@ thaliana</i></a></h4>
 <h4><a name="e.coliK12">GenMAPP Gene Database for <i>Escherichia
 coli</i> K12</a></h4>
 <ul>
-    <li><a
+    <li><a class="external"
         href="https://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=199426&amp;release_id=688358">Release
     20090529</a></li>
     <li>Read Me (284K PDF, revision 20090529)
     <ul>
         <li><a href="docs/ReadMe_Ec-K12-Std_External_20090529.pdf">Direct
         from this site</a></li>
-        <li><a
+        <li><a class="external"
             href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Ec-K12-Std_External_20090529.pdf?download">SourceForge
         mirror</a></li>
     </ul>
@@ -70,14 +70,14 @@ coli</i> K12</a></h4>
 <h4><a name="p.falciparum">GenMAPP Gene Database for <i>Plasmodium
 falciparum</i> (isolate 3D7)</a></h4>
 <ul>
-    <li><a
+    <li><a class="external"
         href="https://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=300870&amp;release_id=688667">Release
     20090604</a></li>
     <li>Read Me (744K PDF, revision 20090604)
     <ul>
         <li><a href="docs/ReadMe_Pf-Std_External_20090604.pdf">Direct
         from this site</a></li>
-        <li><a
+        <li><a class="external"
             href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Pf-Std_External_20090604.pdf?download">SourceForge
         mirror</a></li>
     </ul>
@@ -87,14 +87,14 @@ falciparum</i> (isolate 3D7)</a></h4>
 <h4><a name="v.cholerae">GenMAPP Gene Database for <i>Vibrio
     cholerae</i> O1 biovar El Tor str. N16961 Gene Database</a></h4>
 <ul>
-    <li><a
+    <li><a class="external"
         href="https://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=300869&amp;release_id=692140">Release
     20090622</a></li>
     <li>Read Me (264K PDF, revision 20090622)
     <ul>
         <li><a href="docs/ReadMe_Vc-Std_External_20090622.pdf">Direct
         from this site</a></li>
-        <li><a
+        <li><a class="external"
             href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Vc-Std_External_20090622.pdf?download">SourceForge
         mirror</a></li>
     </ul>
@@ -115,15 +115,15 @@ falciparum</i> (isolate 3D7)</a></h4>
 
 <h4>Gene Databases</h4>
 <ul>
-    <li><a href="http://www.genmapp.org/download.asp">GenMAPP
+    <li><a class="external" href="http://www.genmapp.org/download.asp">GenMAPP
     software</a></li>
 </ul>
 
 <h4>GenMAPP Builder</h4>
 <ul>
-    <li><a href="http://java.sun.com">Java 5 Runtime
+    <li><a class="external" href="http://java.sun.com">Java 5 Runtime
     Environment</a></li>
-    <li>Relational database with available JDBC driver (only <a
+    <li>Relational database with available JDBC driver (only <a class="external"
         href="http://www.postgresql.org">PostgreSQL</a> has been
     explicitly tested so far)</li>
     <li>Microsoft Jet Database Engine (for exporting Gene
@@ -132,24 +132,24 @@ falciparum</i> (isolate 3D7)</a></h4>
 
 <h4>XSD-to-DB</h4>
 <ul>
-    <li><a href="http://java.sun.com">Java 5 Runtime
+    <li><a class="external" href="http://java.sun.com">Java 5 Runtime
     Environment</a></li>
 </ul>
 
 <h4>XMLPipeDB Utilities</h4>
 <ul>
-    <li><a href="http://java.sun.com">Java 5 Runtime
+    <li><a class="external" href="http://java.sun.com">Java 5 Runtime
     Environment</a></li>
-    <li>Relational database with available JDBC driver (only <a
+    <li>Relational database with available JDBC driver (only <a class="external"
         href="http://www.postgresql.org">PostgreSQL</a> has been
     explicitly tested so far)</li>
 </ul>
 
 <h4>Database Libraries (UniProtDB, GODB)</h4>
 <ul>
-    <li><a href="http://java.sun.com">Java 5 Runtime
+    <li><a class="external" href="http://java.sun.com">Java 5 Runtime
     Environment</a></li>
-    <li>Relational database with available JDBC driver (only <a
+    <li>Relational database with available JDBC driver (only <a class="external"
         href="http://www.postgresql.org">PostgreSQL</a> has been
     explicitly tested so far)</li>
 </ul>

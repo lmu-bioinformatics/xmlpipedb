@@ -15,6 +15,11 @@
 <p class="dataline">Department of Electrical Engineering and
 Computer Science</p>
 
+<h3>Manager of Laboratory Facilities</h3>
+
+<h4>Andr&eacute;s Buritic&aacute;</h4>
+<p class="dataline">Department of Electrical Engineering and Computer Science</p>
+
 <h3>Research Assistants</h3>
 
 <p class="dataline">Alexandrea Alphonso</p>
@@ -54,7 +59,7 @@ Computer Science</p>
 <p class="dataline">David Hoffman</p>
 <p class="dataline">Babak Naffas</p>
 <p class="dataline">Jeffrey Nicholas</p>
-<p class="dataline"><a href="http://cs.lmu.edu/~nak/" title="nak">Ryan
+<p class="dataline"><a href="http://www.cs.lmu.edu/~nak/" title="nak">Ryan
 Nakamoto</a></p>
 <p class="dataline">Derek Smith</p>
 </div>
@@ -82,7 +87,7 @@ Nakamoto</a></p>
 
 <div class="contributorBlock">
 <h4>Web Site</h4>
-<p class="dataline"><a href="http://cs.lmu.edu/~nak/" title="nak">Ryan
+<p class="dataline"><a href="http://www.cs.lmu.edu/~nak/" title="nak">Ryan
 Nakamoto</a></p>
 <p class="dataline">Wesley Citti (XMLPipeDB logo)</p>
 </div>
@@ -90,12 +95,12 @@ Nakamoto</a></p>
 <p>If you would like to participate in or contribute to XMLPipeDB,
 please contact <a href="mailto:kdahlquist@lmu.edu">Dr. Dahlquist</a> or
 <a href="mailto:dondi@lmu.edu">Dr. Dionisio</a> either directly or
-through our <a href="http://sourceforge.net/projects/xmlpipedb">SourceForge
+through our <a class="external" href="http://sourceforge.net/projects/xmlpipedb">SourceForge
 project</a>.</p>
 
 <h3>Acknowledgments</h3>
 
-<div class="contributorBlock">We would like to thank the <a
+<div class="contributorBlock">We would like to thank the <a class="external"
     href="http://www.genmapp.org">GenMAPP.org</a> Development Group,
 especially Bruce R. Conklin, Steven C. Lawlor, and Scott W. Doniger. We
 also wish to thank the LMU Departments of Biology and Electrical
@@ -103,5 +108,5 @@ Engineering &amp; Computer Science for giving us the opportunity to
 team-teach bioinformatics at LMU, as well as the <a
     href="http://cse.lmu.edu">Seaver College of Science &amp;
 Engineering</a> for encouraging interdisciplinary research. Thank you also
-to <a href="http://www.technocage.com/~caskey">Caskey Dickson</a> for
+to <a class="external" href="http://www.technocage.com/~caskey">Caskey Dickson</a> for
 all of his technical assistance.</div>

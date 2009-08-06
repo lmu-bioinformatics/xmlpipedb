@@ -8,7 +8,7 @@
     <ul>
         <li><a href="docs/ReadMe_At-Std_External_20090610.pdf">Direct
         from this site</a></li>
-        <li><a
+        <li><a class="external"
             href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_At-Std_External_20090610.pdf?download">SourceForge
         mirror</a></li>
     </ul>
@@ -19,7 +19,7 @@
     <ul>
         <li><a href="docs/ReadMe_Ec-K12-Std_External_20090529.pdf">Direct
         from this site</a></li>
-        <li><a
+        <li><a class="external"
             href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Ec-K12-Std_External_20090529.pdf?download">SourceForge
         mirror</a></li>
     </ul>
@@ -30,7 +30,7 @@
     <ul>
         <li><a href="docs/ReadMe_Pf-Std_External_20090604.pdf">Direct
         from this site</a></li>
-        <li><a
+        <li><a class="external"
             href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Pf-Std_External_20090604.pdf?download">SourceForge
         mirror</a></li>
     </ul>
@@ -41,7 +41,7 @@
     <ul>
         <li><a href="docs/ReadMe_Vc-Std_External_20090622.pdf">Direct
         from this site</a></li>
-        <li><a
+        <li><a class="external"
             href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Vc-Std_External_20090622.pdf?download">SourceForge
         mirror</a></li>
     </ul>
@@ -55,7 +55,7 @@ exporting information to and from XML data with minimum manual
 processing of the data. While its applicability is fairly general, the
 original motivation for XMLPipeDB was to create a solution for the
 management of biological data from different sources that are used to
-create Gene Databases for <a href="http://www.genmapp.org">GenMAPP</a>
+create Gene Databases for <a class="external" href="http://www.genmapp.org">GenMAPP</a>
 (Gene Map Annotator and Pathway Profiler), software for viewing and
 analyzing DNA microarray and other genomic and proteomic data on
 biological pathways.</p>
@@ -82,9 +82,9 @@ designers: the XSD-to-DB application takes a well-formed XSD or DTD file
 and converts it into a collection of Java source code and Hibernate
 mapping files that allows XML files based on that definition file to be
 read into a relational database. XSD-to-DB&rsquo;s conversion functions
-are based on the open source <a href="https://hyperjaxb2.dev.java.net">Hyperjaxb2</a>
-project, which adds <a href="http://www.hibernate.org">Hibernate</a>
-functionality to Sun Microsystems&rsquo; <a
+are based on the open source <a class="external" href="https://hyperjaxb2.dev.java.net">Hyperjaxb2</a>
+project, which adds <a class="external" href="http://www.hibernate.org">Hibernate</a>
+functionality to Sun Microsystems&rsquo; <a class="external"
     href="http://java.sun.com/webservices/jaxb">JAXB</a> library. The
 XMLPipeDB Utilities library is a suite of Java classes that provide
 functions needed by many XMLPipeDB database applications. Specifically,
@@ -103,13 +103,13 @@ UniProt-to-GO associations file into a relational database. The database
 can then be queried by organism in order to produce a GenMAPP Gene
 Database.</p>
 
-<p>GenMAPP Builder has been tested for use with the open source <a
+<p>GenMAPP Builder has been tested for use with the open source <a class="external"
     href="http://www.postgresql.org">PostgreSQL</a> relational database,
 but can be used with any other relational database management system for
 which a JDBC driver is available. JDBC-to-ODBC connectivity is used to
 transfer data from this relational database to a Microsoft Access MDB
 file, which is the format expected by the GenMAPP application.</p>
 
-<p>XMLPipeDB is available under the <a
+<p>XMLPipeDB is available under the <a class="external"
     href="http://www.gnu.org/licenses/lgpl.html">GNU Lesser General
 Public License (LGPL)</a>.</p>

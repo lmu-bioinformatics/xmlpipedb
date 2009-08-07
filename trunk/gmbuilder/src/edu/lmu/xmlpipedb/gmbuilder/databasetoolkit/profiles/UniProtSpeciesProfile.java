@@ -340,7 +340,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                 for (Row row : systemTableManager.getRows()) {
                 	_Log.debug("\nCriteria: [" + criteria + "]" + 
                 			  "\nRelated: [" + related + "]" +
-                			  "\nRow Table Name Colum value: [" + row.getValue(TableManager.TABLE_NAME_COLUMN) + "]" +
+                			  "\nRow Table Name Column value: [" + row.getValue(TableManager.TABLE_NAME_COLUMN) + "]" +
                 			  "\nRow UID value: [" + row.getValue("UID") + "]");
                     if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(criteria) 
                     		&& row.getValue("UID") != null

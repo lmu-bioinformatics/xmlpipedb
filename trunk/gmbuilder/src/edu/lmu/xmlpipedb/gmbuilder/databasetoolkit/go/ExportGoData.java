@@ -326,7 +326,14 @@ public class ExportGoData {
      */
     private void populateUniprotGoTable(File goaFile) throws IOException, SQLException {
         _Log.debug("Processing GOA file: " + goaFile);
-        BufferedReader in = new BufferedReader(new FileReader(goaFile.getCanonicalPath()));
+        populateUniprotGoTable(new BufferedReader(new FileReader(goaFile.getCanonicalPath())), godb, connection);
+    }
+
+    /**
+     * The actual GOA reader; null godb and connection arguments interpret this
+     * as a test call, and produce debug statements instead.
+     */
+    protected static void populateUniprotGoTable(BufferedReader in, Go godb, Connection connection) throws IOException, SQLException {
         String line = null;
         HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
         
@@ -344,17 +351,21 @@ public class ExportGoData {
             boolean regexp1 = m1.find();
             boolean regexp1a = m1a.find();
             boolean regexp2 = m2.find();
-            if (regexp1 || regexp2) {
+            if (regexp1 || regexp1a || regexp2) {
                 String uniprotID = regexp1 ? m1.group(1) : (regexp1a ? m1a.group(1) : m2.group(2));
                 // Grab the GO ID(s).
                 Matcher match = goIDPattern.matcher(line);
                 while (match.find()) {
-                    String GO_ID = match.group(1);
-                    String key = uniprotID + "," + GO_ID;
+                    String goID = match.group(1);
+                    String key = uniprotID + "," + goID;
                     if (!unique.containsKey(key)) {
                         unique.put(key, true);
-                        String[] values = new String[] { uniprotID, GO_ID, "" };
-                        godb.insert(connection, GOTable.UniProt_Go, values);
+                        String[] values = new String[] { uniprotID, goID, "" };
+                        if ((godb != null) && (connection != null)) {
+                            godb.insert(connection, GOTable.UniProt_Go, values);
+                        } else {
+                            _Log.debug("UniProt-GO pair: " + uniprotID + ", " + goID);
+                        }
                     }
                 }
             }

@@ -9,6 +9,7 @@
         <fileSet>
             <includes>
                 <include>README*</include>
+                <include>LICENSE*</include>
             </includes>
         </fileSet>
         <!-- Classes. -->

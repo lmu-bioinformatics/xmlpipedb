@@ -38,9 +38,15 @@ Instructions
 
   (in Windows, replace the forward slash [/] after <path> with a backslash
    character [\])
+
+- Running the match utility with no arguments produces a quick reminder of the
+  arguments that it needs.
    
 - The match utility takes text from standard input, so all other mechanisms
   for standard input will also apply, if you are familiar with them.
+
+- The match utility can report results based on regular expression groups.
+  To do this, add the desired group number after the regular expression.
 
 
 License

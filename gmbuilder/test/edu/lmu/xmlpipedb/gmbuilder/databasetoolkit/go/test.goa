@@ -1,6 +1,0 @@
-UniProtKB	P15455	12S1_ARATH		GO:0045735	GOA:interpro|GO_REF:0000002	IEA	InterPro:IPR006044	F	CRA1, At5g44120, MLN1.4: 12S seed storage protein CRA1 precursor [Contains: 12S seed storage protein CRA1 alpha chain		protein	taxon:3702	20080613	UniProtKB	
-UniProtKB	P15455	12S1_ARATH		GO:0045735	GOA:interpro|GO_REF:0000002	IEA	InterPro:IPR006045	F	CRA1, At5g44120, MLN1.4: 12S seed storage protein CRA1 precursor [Contains: 12S seed storage protein CRA1 alpha chain		protein	taxon:3702	20080613	UniProtKB	
-UniProtKB/Swiss-Prot	A6V1E9	accA		GO:0006633	GO_REF:0000020	IEA	HAMAP:MF_00823	P	Acetyl-coenzyme A carboxylase carboxyl transferase subunit alpha	PSPA7_1500|accA|ACCA_PSEA7	protein	taxon:381754	20090717	UniProtKB	
-UniProtKB/Swiss-Prot	A6V1E9	accA		GO:0006633	GO_REF:0000002	IEA	InterPro:IPR001095	P	Acetyl-coenzyme A carboxylase carboxyl transferase subunit alpha	PSPA7_1500|accA|ACCA_PSEA7	protein	taxon:381754	20090716	UniProtKB	
-UniProtKB/Swiss-Prot	Q9HX17	PA4010		GO:0019104	GO_REF:0000020	IEA	HAMAP:MF_00527	F	Putative 3-methyladenine DNA glycosylase	PA4010|3MGH_PSEAE	protein	taxon:287	20090618	UniProtKB
-UniProtKB/Swiss-Prot	Q9HX17	PA4010		GO:0016787	GO_REF:0000004	IEA	SP_KW:KW-0378	F	Putative 3-methyladenine DNA glycosylase	PA4010|3MGH_PSEAE	protein	taxon:287	20090629	UniProtKB

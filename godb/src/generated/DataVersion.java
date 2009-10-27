@@ -8,7 +8,7 @@
 
 package generated;
 
-public interface InverseOf {
+public interface DataVersion {
 
 
     /**

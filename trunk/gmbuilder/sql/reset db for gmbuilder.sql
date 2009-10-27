@@ -21,6 +21,7 @@ drop table Comment;
 drop table Consider;
 drop table CreatedBy;
 drop table CreationDate;
+drop table DataVersion;
 drop table Date;
 drop table Dbname;
 drop table Dbxref;
@@ -137,6 +138,13 @@ create table CreatedBy (
     primary key (Hjid)
 );
 create table CreationDate (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
+create table DataVersion (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,

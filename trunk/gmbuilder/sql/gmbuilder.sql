@@ -47,6 +47,13 @@ create table CreationDate (
     Content varchar,
     primary key (Hjid)
 );
+create table DataVersion (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
 create table Date (
     Hjid int8 not null,
     Hjtype varchar not null,

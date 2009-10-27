@@ -58,6 +58,11 @@
     </target>
 
     <target name="dist" depends="clean, compile" description="Build distribution">
+        <!-- Copy the license file to the top of the archive -->
+        <copy todir="${dist.dir}">
+            <fileset dir="${basedir}" includes="LICENSE" />
+        </copy>
+
         <!-- Copy libraries to the lib folder -->
         <copy todir="${dist.dir}/lib">
             <fileset dir="${lib.dir}" includes="**/*.jar" />

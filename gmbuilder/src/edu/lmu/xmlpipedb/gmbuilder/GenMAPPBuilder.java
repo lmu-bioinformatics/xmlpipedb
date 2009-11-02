@@ -12,10 +12,7 @@ package edu.lmu.xmlpipedb.gmbuilder;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -191,8 +188,9 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
             String[] substrings = speciesString.replaceAll(" ", "").split("\\(");
 
-            if (substrings.length > 0)
+            if (substrings.length > 0) {
                 speciesString = substrings[0];
+            }
         }
 
         return speciesString;
@@ -277,8 +275,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                  */
                 final BeanColumn[] TallyColumns = { BeanColumn.create("Database Table", "table", String.class), BeanColumn.create("Database Count", "dbCount", Integer.class) };
                 BeanTableModel btm = new BeanTableModel(TallyColumns);
-                uniprotCriteria.addCriteria(goCriteria.getAllCriterion());
-                btm.setData(uniprotCriteria.getAllCriterion().toArray());
+                uniprotCriteria.addCriteria(goCriteria.getAllCriteria());
+                btm.setData(uniprotCriteria.getAllCriteria().toArray());
                 UsefulTable t = new UsefulTable(btm);
                 ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
             }
@@ -293,13 +291,13 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 setTallyCriterion(goCriteria, TallyType.GO);
 
                 // Create a file chooser and setup the GO input stream
-                InputStream goInputStream = getXmlFile("Select GO XML file");
-                if (goInputStream == null) {
+                File goFile = getXmlFile("Select GO XML file");
+                if (goFile == null) {
                     ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
                     return;
                 }
 
-                getTallyResultsXml(goCriteria, goInputStream);
+                getTallyResultsXml(goCriteria, goFile);
 
                 // Gather the criteria into a list so that we can display them
                 // in a UsefulTable.
@@ -309,7 +307,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 final BeanColumn[] TallyColumns = { BeanColumn.create("XML Path", "table", String.class), BeanColumn.create("XML Count", "xmlCount", Integer.class), };
 
                 BeanTableModel btm = new BeanTableModel(TallyColumns);
-                btm.setData(goCriteria.getAllCriterion().toArray());
+                btm.setData(goCriteria.getAllCriteria().toArray());
                 UsefulTable t = new UsefulTable(btm);
                 ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
             }
@@ -324,13 +322,13 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
 
                 // Create a file chooser and setup the UniProt input stream
-                InputStream uniprotInputStream = getXmlFile("Select UniProt XML file");
-                if (uniprotInputStream == null) {
+                File uniprotFile = getXmlFile("Select UniProt XML file");
+                if (uniprotFile == null) {
                     ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
                     return;
                 }
 
-                getTallyResultsXml(uniprotCriteria, uniprotInputStream);
+                getTallyResultsXml(uniprotCriteria, uniprotFile);
 
                 // Gather the criteria into a list so that we can display them
                 // in a UsefulTable.
@@ -339,7 +337,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                  */
                 final BeanColumn[] TallyColumns = { BeanColumn.create("XML Path", "table", String.class), BeanColumn.create("XML Count", "xmlCount", Integer.class), };
                 BeanTableModel btm = new BeanTableModel(TallyColumns);
-                btm.setData(uniprotCriteria.getAllCriterion().toArray());
+                btm.setData(uniprotCriteria.getAllCriteria().toArray());
                 UsefulTable t = new UsefulTable(btm);
                 ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
             }
@@ -627,9 +625,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      * Returns an InputStream with the file chosen or null if no file was
      * chosen.
      */
-    private InputStream getXmlFile(String customText) {
+    private File getXmlFile(String customText) {
         // Create a file chooser and setup the UniProt and GO input streams
-        InputStream iStream = null;
         int returnVal; // used by FileChooser fc
         final JFileChooser fc = new JFileChooser();
         fc.setCurrentDirectory(new File(_lastFilePath));
@@ -637,23 +634,15 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         // Get UniProt XML file
         returnVal = fc.showDialog(getFrontmostWindow(), customText);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                _lastFilePath = fc.getSelectedFile().getAbsolutePath();
-                fc.setCurrentDirectory(new File(_lastFilePath));
-                iStream = new FileInputStream(fc.getSelectedFile());
-                return iStream;
-
-            } catch(FileNotFoundException e1) {
-                ModalDialog.showErrorDialog("File Not Found", "The chosen file was not accessible. Try again.");
-                _Log.error(e1);
-                return null;
-            }
+            _lastFilePath = fc.getSelectedFile().getAbsolutePath();
+            fc.setCurrentDirectory(new File(_lastFilePath));
+            return fc.getSelectedFile();
         } else {
             return null;
         }
     }
 
-    private void getTallyResultsXml(CriterionList criteria, InputStream iStream) {
+    private void getTallyResultsXml(CriterionList criteria, File xmlFile) {
 
         _currentCriteria = criteria;
         TallyEngine te = new TallyEngine(criteria);
@@ -661,7 +650,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
         try {
 
-            te.getXmlFileCounts(iStream);
+            te.getXmlFileCounts(xmlFile);
 
         } catch(InvalidParameterException e) {
             ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
@@ -763,22 +752,22 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         setTallyCriterion(goCriteria, TallyType.GO);
 
         // Create a file chooser and setup the UniProt and GO input streams
-        InputStream uniprotInputStream = getXmlFile("Select UniProt XML file");
-        if (uniprotInputStream == null) {
+        File uniprotFile = getXmlFile("Select UniProt XML file");
+        if (uniprotFile == null) {
             ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
             return;
         }
 
-        InputStream goInputStream = getXmlFile("Select GO XML file");
-        if (goInputStream == null) {
+        File goFile = getXmlFile("Select GO XML file");
+        if (goFile == null) {
             ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
             return;
         }
 
-        getTallyResultsXml(uniprotCriteria, uniprotInputStream);
+        getTallyResultsXml(uniprotCriteria, uniprotFile);
         getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
 
-        getTallyResultsXml(goCriteria, goInputStream);
+        getTallyResultsXml(goCriteria, goFile);
         getTallyResultsDatabase(goCriteria, hibernateConfiguration);
 
         // Gather the criteria into a list so that we can display them
@@ -786,8 +775,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         BeanTableModel btm = new BeanTableModel(TALLY_COLUMNS);
         List<Criterion> criteria = new ArrayList<Criterion>();
 
-        criteria.addAll(uniprotCriteria.getAllCriterion());
-        criteria.addAll(goCriteria.getAllCriterion());
+        criteria.addAll(uniprotCriteria.getAllCriteria());
+        criteria.addAll(goCriteria.getAllCriteria());
         btm.setData(criteria.toArray());
         UsefulTable t = new UsefulTable(btm);
         ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));

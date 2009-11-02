@@ -116,7 +116,7 @@ public class CriterionList {
      * 
      * @return The list of Criterion
      */
-    public List<Criterion> getAllCriterion() {
+    public List<Criterion> getAllCriteria() {
 
         List<Criterion> list = new ArrayList<Criterion>();
 

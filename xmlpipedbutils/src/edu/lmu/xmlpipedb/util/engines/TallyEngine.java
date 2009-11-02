@@ -1,7 +1,7 @@
 package edu.lmu.xmlpipedb.util.engines;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +28,7 @@ public class TallyEngine {
         _criteria = criteria;
     }
 
-    public CriterionList getXmlFileCounts(InputStream xmlFile) throws XpdException {
+    public CriterionList getXmlFileCounts(File xmlFile) throws XpdException {
         // validate params
         if (xmlFile == null) {
             // TODO: Log exception
@@ -57,7 +57,7 @@ public class TallyEngine {
             _criteria.removeBucket(_criteria.firstCriterion.getDigesterPath());
         }
 
-        List<Criterion> criteriaList = _criteria.getAllCriterion();
+        List<Criterion> criteriaList = _criteria.getAllCriteria();
         for (Criterion crit : criteriaList) {
             crit.setDbCount(0);
             crit.setDbCount(Integer.parseInt(executeQuery(conn, crit, "count")));
@@ -128,28 +128,50 @@ public class TallyEngine {
      * passes it to the saveEntry method, which uses JAXB and Hibernate to save
      * the contents to the database.
      */
-    private void digestXmlFile(InputStream xml) {
+    private void digestXmlFile(File xml) {
         // Look Ma, I'm actually logging stuff (albeit not pretty)
         SimpleLog logger = new SimpleLog("TallyEngineLogger");
         logger.setLevel(SimpleLog.LOG_LEVEL_ERROR);
 
         Digester digester = new Digester();
         try {
-            List<Criterion> criteriaList = _criteria.getAllCriterion();
+            List<Criterion> criteriaList = _criteria.getAllCriteria();
 
+            // For the first pass, we only do FINDBODY so that we can determine
+            // build the final, content-dependent set of rules.
             for (Criterion crit : criteriaList) {
-                _Log.debug("Adding rule for criterion " + crit.getDigesterPath() + ", " + crit.getRuleType() + ", " + crit.getName());
-                digester.addRule(crit.getDigesterPath(), getRule(crit.getRuleType(), crit.getName()));
-
-                // initialize the count to 0, since I am trying to count this
-                // item
-                crit.setXmlCount(0);
+                if (crit.getRuleType().equals(RuleType.FINDBODY)) {
+                    _Log.debug("First pass, adding rule for criterion " + crit.getDigesterPath() + ", " + crit.getRuleType() + ", " + crit.getName());
+                    digester.addRule(crit.getDigesterPath(), getRule(crit.getRuleType(), crit.getName()));
+    
+                    // initialize the count to 0, since I am trying to count this
+                    // item
+                    crit.setXmlCount(0);
+                }
             }
 
             digester.setValidating(false);
             digester.setLogger(logger);
             digester.parse(xml);
 
+            // For the second pass, we do the real counting; this time, we only
+            // to ENDOFRECORD criteria.
+            criteriaList = _criteria.getAllCriteria();
+            digester = new Digester();
+            for (Criterion crit : criteriaList) {
+                if (crit.getRuleType().equals(RuleType.ENDOFRECORD)) {
+                    _Log.debug("Second pass, adding rule for criterion " + crit.getDigesterPath() + ", " + crit.getRuleType() + ", " + crit.getName());
+                    digester.addRule(crit.getDigesterPath(), getRule(crit.getRuleType(), crit.getName()));
+    
+                    // initialize the count to 0, since I am trying to count this
+                    // item
+                    crit.setXmlCount(0);
+                }
+            }
+
+            digester.setValidating(false);
+            digester.setLogger(logger);
+            digester.parse(xml);
         } catch(IOException e) {
             _Log.error("I/O exception", e);
         } catch(SAXException e) {
@@ -202,7 +224,6 @@ public class TallyEngine {
 
             // Build the list of criteria that will need to be bumped by this
             // match.
-            critToCount = null;
             for (Criterion crit : bucket) {
 
                 // We only care about Criterion that wants us to look
@@ -220,23 +241,12 @@ public class TallyEngine {
                         // Get the value from the found attributes using key
                         // as the type
                         if (this.name.equals(crit.getName()) && value != null && value.equals(attributes.getValue(key))) {
-                            critToCount = crit;
+                            crit.setXmlCount(crit.getXmlCount() + 1);
                             return;
                         }
                     }
                 }
 
-            }
-        }
-
-        /**
-         * @see org.apache.commons.digester.Rule#body(java.lang.String, java.lang.String, java.lang.String)
-         */
-        public void body(String message, String name, String text) throws Exception {
-            if (critToCount != null) {
-                // TallyEngine assumes that a slash (/) pertains to multiple
-                // values.
-                critToCount.setXmlCount(critToCount.getXmlCount() + text.split("/").length);
             }
         }
 
@@ -248,19 +258,24 @@ public class TallyEngine {
             Digester tempDig = getDigester();
             List<Criterion> bucket = _criteria.getBucket(tempDig.getMatch());
 
-            // We already now that if we wanted to look for
+            // We already know that if we wanted to look for
             // attributes, then we would catch them at the beginning
             // of the match. This means that there should only be one element
             // in the bucket
-            if (bucket != null && bucket.size() == 1) {
-                Criterion c = bucket.get(0);
-                c.setXmlCount(c.getXmlCount() + 1);
-            }
+//            if (bucket != null && bucket.size() == 1) {
+//                Criterion c = bucket.get(0);
+//                c.setXmlCount(c.getXmlCount() + 1);
+//            }
 
+            // This is for criteria that did not involve any attributes.
+            for (Criterion crit: bucket) {
+                if (!crit.getAttributeAware()) {
+                    crit.setXmlCount(crit.getXmlCount() + 1);
+                }
+            }
         }
 
         private String name;
-        private Criterion critToCount;
     }
 
     /**
@@ -321,12 +336,12 @@ public class TallyEngine {
                 _criteria.removeBucket(tmpDigester.getMatch());
 
                 // We add the new rules to the digester
-                List<Criterion> list = _criteria.getAllCriterion();
-                for (Criterion crit : list) {
-                    crit.setXmlCount(0);
-                    _Log.debug("Adding rule for criterion " + crit.getDigesterPath() + ", " + crit.getRuleType() + ", " + crit.getName());
-                    digester.addRule(crit.getDigesterPath(), getRule(crit.getRuleType(), crit.getName()));
-                }
+//                List<Criterion> list = _criteria.getAllCriterion();
+//                for (Criterion crit : list) {
+//                    crit.setXmlCount(0);
+//                    _Log.debug("Adding rule for criterion " + crit.getDigesterPath() + ", " + crit.getRuleType() + ", " + crit.getName());
+//                    digester.addRule(crit.getDigesterPath(), getRule(crit.getRuleType(), crit.getName()));
+//                }
 
             }
         }

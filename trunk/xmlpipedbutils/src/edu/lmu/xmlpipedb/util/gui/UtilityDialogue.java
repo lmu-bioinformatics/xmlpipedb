@@ -1,8 +1,7 @@
 package edu.lmu.xmlpipedb.util.gui;
 
-import javax.swing.JPanel;
 import javax.swing.JDialog;
-import java.awt.event.WindowEvent;
+import javax.swing.JPanel;
 
 /**
  * Any JPanel that wishes to turn into a dialogue box to be used

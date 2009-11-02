@@ -10,7 +10,6 @@
 
 package edu.lmu.xmlpipedb.util.gui;
 
-import edu.lmu.xmlpipedb.util.resources.AppResources;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +30,6 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -42,34 +40,44 @@ import javax.swing.filechooser.FileFilter;
 import org.hibernate.cfg.Configuration;
 
 import edu.lmu.xmlpipedb.util.engines.ImportEngine;
+import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 /**
- *
+ * 
  * @author Dave Hoffman
  */
 public class ImportPanel extends UtilityDialogue {
-	/**
+    /**
      * Creates a new instance of ImportPanel
-     * @param hibernateConfiguration The hibernate configuration to save to
-     * @param jaxbContextPath The context path for the jaxb
+     * 
+     * @param hibernateConfiguration
+     *            The hibernate configuration to save to
+     * @param jaxbContextPath
+     *            The context path for the jaxb
      */
     public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration) {
         this(jaxbContextPath, hibernateConfiguration, "", null);
     }
-	
-	/**
+
+    /**
      * Creates a new instance of ImportPanel
-	 * @param jaxbContextPath The context path for the jaxb
-	 * @param hibernateConfiguration The hibernate configuration to save to
-     * @param entryElement Used to parse each record from the XML input file. 
-     * 						For a uniprot XML file, this would normally be "uniprot/entry"
-     * @param rootElementName Map<String, String> containing a "head" and a "tail".
-     * 						  This is used to surround the extracted record for processing
-     * 						  The "head" must have the complete beginning tag (inclusive all 
-     * 						  namespace delcarations, attributes, etc.), e.g.: <bookstore xlsns:http://mybookstore.org/bookstore> The "tail" need only have
-     * 						  the correct closing tag, e.g.: </bookstore>
+     * 
+     * @param jaxbContextPath
+     *            The context path for the jaxb
+     * @param hibernateConfiguration
+     *            The hibernate configuration to save to
+     * @param entryElement
+     *            Used to parse each record from the XML input file. For a
+     *            uniprot XML file, this would normally be "uniprot/entry"
+     * @param rootElementName
+     *            Map<String, String> containing a "head" and a "tail". This is
+     *            used to surround the extracted record for processing The
+     *            "head" must have the complete beginning tag (inclusive all
+     *            namespace delcarations, attributes, etc.), e.g.: <bookstore
+     *            xlsns:http://mybookstore.org/bookstore> The "tail" need only
+     *            have the correct closing tag, e.g.: </bookstore>
      */
-    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration, String entryElement, HashMap<String,String> rootElementName) {
+    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration, String entryElement, HashMap<String, String> rootElementName) {
         _jaxbContextPath = jaxbContextPath;
         _success = false;
         _hibernateConfiguration = hibernateConfiguration;
@@ -79,18 +87,16 @@ public class ImportPanel extends UtilityDialogue {
         createActions();
         layoutComponents();
     }
-    
+
     public boolean wasImportSuccessful() {
-    	return _success;
+        return _success;
     }
 
-    /*
-     *
+    /** 
      * Create all swing components
-     *
      */
     private void createComponents() {
-    	_cancelButton = new JButton(AppResources.messageString("import_cancel"));
+        _cancelButton = new JButton(AppResources.messageString("import_done"));
         _previewButton = new JButton(AppResources.messageString("import_preview"));
         _previewButton.setEnabled(false);
         _importButton = new JButton(AppResources.messageString("import_import"));
@@ -101,11 +107,9 @@ public class ImportPanel extends UtilityDialogue {
         _xmlScrollArea = new JScrollPane(_xmlView);
         _progressBar = new JProgressBar();
     }
-    /*
-     *
-     *
-     * Create actions for the panel 
-     *
+
+    /** 
+     * Create actions for the panel
      */
     private void createActions() {
         _textFieldPath.addKeyListener(new KeyAdapter() {
@@ -129,17 +133,15 @@ public class ImportPanel extends UtilityDialogue {
             }
         });
         _cancelButton.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent evt) {
-        		cancel();
-        	}
+            public void actionPerformed(ActionEvent evt) {
+                cancel();
+            }
         });
 
     }
-    /*
-     *
+
+    /** 
      * Layout the swing components
-     *
-     *
      */
     private void layoutComponents() {
         setLayout(new BorderLayout());
@@ -167,13 +169,11 @@ public class ImportPanel extends UtilityDialogue {
         this.add(southBox, BorderLayout.SOUTH);
 
         this.add(_xmlScrollArea, BorderLayout.CENTER);
-        
+
     }
 
-    /*
-     *
+    /** 
      * The preview action when the button is pushed
-     *
      */
     private void previewButtonActionPerformed(ActionEvent evt) {
         boolean proceedWithPreview = (_xmlFile != null);
@@ -183,28 +183,25 @@ public class ImportPanel extends UtilityDialogue {
                 proceedWithPreview = true;
             }
         }
-        //see Java API to understand why this is ok to use a thread and not a swing worker
+        // see Java API to understand why this is ok to use a thread and not a
+        // swing worker
         if (proceedWithPreview) {
             (new Thread(new FilePreview(_xmlFile, _xmlView))).start();
         } else {
             JOptionPane.showMessageDialog(this, "Please Open a Valid XML File", "Missing or Invalid File", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    /*
-     *
-     * When something is typed in the text field the buttons are enabled. 
-     *
+
+    /** 
+     * When something is typed in the text field the buttons are enabled.
      */
     private void TextFieldPathKeyTyped(java.awt.event.KeyEvent evt) {
         _previewButton.setEnabled(true);
         _importButton.setEnabled(true);
     }
 
-    /*
-     *
+    /** 
      * Import the opened file
-     *
      */
     private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {
         boolean proceedWithImport = (_xmlFile != null);
@@ -220,36 +217,35 @@ public class ImportPanel extends UtilityDialogue {
                 // does the progress monitor popup
                 InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(this, "Reading " + _xmlFile, new FileInputStream(_xmlFile)));
                 ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration, _entryElement, _rootElementName);
-                System.out.println("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
+                System.out.println("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
                 importEngine.loadToDB(in);
-                System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
+                System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
                 _success = true;
                 // notify user when import is complete
                 JOptionPane.showMessageDialog(this, "Import Complete: " + _xmlFile, "Import Complete", JOptionPane.INFORMATION_MESSAGE);
-            } catch( IOException e ){
-            	e.printStackTrace();
+            } catch(IOException e) {
+                e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "An I/O exception occured while trying to read the file " + _xmlFile, "Error", JOptionPane.ERROR_MESSAGE);
             } catch(Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            } catch(OutOfMemoryError e){
-            	System.out.println("Error occurred at : " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );            	
-            	e.printStackTrace();
-            	System.out.print("SystemOutOfMemoryError. Message = " + e.getMessage() +
-            			"LocalizedMessage = " +e.getLocalizedMessage());
-            }
-            finally{
-            	//System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );            	
+            } catch(OutOfMemoryError e) {
+                System.out.println("Error occurred at : " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
+                e.printStackTrace();
+                System.out.print("SystemOutOfMemoryError. Message = " + e.getMessage() + "LocalizedMessage = " + e.getLocalizedMessage());
+            } finally {
+                // System.out.println("Import Finished at: " +
+                // DateFormat.getTimeInstance(DateFormat.LONG).format(
+                // System.currentTimeMillis()) );
             }
         } else {
             JOptionPane.showMessageDialog(this, "Please Open a Valid XML File", "Missing or Invalid File", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-   
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {
         JFileChooser fc = new JFileChooser();
-        fc.setFileFilter(new XMLFilter()); 
+        fc.setFileFilter(new XMLFilter());
         fc.setCurrentDirectory(new File("."));
         if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             _xmlFile = fc.getSelectedFile();
@@ -260,9 +256,8 @@ public class ImportPanel extends UtilityDialogue {
     }
 
     /*
-     *
-     * This class is for displaying text in the text area in a different thread. 
-     *
+     * 
+     * This class is for displaying text in the text area in a different thread.
      */
     private class FilePreview implements Runnable {
         File myFile;
@@ -275,7 +270,7 @@ public class ImportPanel extends UtilityDialogue {
 
         public void run() {
             try {
-                //does the progress monitor popup
+                // does the progress monitor popup
                 InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(myArea.getParent(), "Reading " + myFile, new FileInputStream(myFile)));
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
@@ -284,53 +279,51 @@ public class ImportPanel extends UtilityDialogue {
                 while ((line = reader.readLine()) != null) {
                     myArea.append(line + "\n");
                     myArea.setRows(myArea.getRows() + 1);
-                    if (line.length() > myArea.getColumns())
+                    if (line.length() > myArea.getColumns()) {
                         myArea.setColumns(line.length());
+                    }
                 }
             } catch(Exception e) {
 
             }
         }
     }
+
     /*
-     *
+     * 
      * A filter for xml files
-     *
      */
-    private class XMLFilter extends FileFilter
-    {
+    private class XMLFilter extends FileFilter {
 
-        public boolean accept(File f)
-        {
-            //if it is a directory -- we want to show it so return true.
-            if (f.isDirectory())
+        public boolean accept(File f) {
+            // if it is a directory -- we want to show it so return true.
+            if (f.isDirectory()) {
                 return true;
-            //get the extension of the file
-            String extension = getExtension(f);
-            if ((extension.equals("xml")) || (extension.equals("XML")))
-            return true;
+            }
 
-            return false;
+            // get the extension of the file
+            return "xml".equalsIgnoreCase(getExtension(f));
         }
-        public String getDescription()
-        {
+
+        public String getDescription() {
             return "XML files";
         }
-        private String getExtension(File f)
-        {
+
+        private String getExtension(File f) {
             String s = f.getName();
             int i = s.lastIndexOf('.');
-            if (i > 0 &&  i < s.length() - 1)
-                return s.substring(i+1).toLowerCase();
+            if (i > 0 && i < s.length() - 1) {
+                return s.substring(i + 1).toLowerCase();
+            }
             return "";
-        }        
+        }
     }
-    
+
     private boolean _success;
     private String _jaxbContextPath;
     private Configuration _hibernateConfiguration;
     private String _entryElement;
-    private HashMap<String,String> _rootElementName;
+    private HashMap<String, String> _rootElementName;
     private JButton _previewButton;
     private JTextField _textFieldPath;
     private JScrollPane _xmlScrollArea;

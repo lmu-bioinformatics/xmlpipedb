@@ -35,6 +35,25 @@ public class PlasmodiumFalciparumUniProtSpeciesProfile extends UniProtSpeciesPro
     }
 
     /**
+     * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.UniProtSpeciesProfile#getSystemsTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile)
+     */
+    @Override
+    public TableManager getSystemsTableManagerCustomizations(TableManager tableManager, DatabaseProfile dbProfile) {
+        super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
+        tableManager.submit("Systems", QueryType.update, new String[][] {
+            { "SystemCode", "N" },
+            { "Species", "|" + getSpeciesName() + "|" }
+        });
+
+        tableManager.submit("Systems", QueryType.update, new String[][] {
+            { "SystemCode", "N" },
+            { "Link", "http://plasmodb.org/plasmo/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=PlasmoDB&source_id=~" }
+        });
+
+        return tableManager;
+    }
+
+    /**
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.UniProtSpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, java.util.Date)
      */
     @Override

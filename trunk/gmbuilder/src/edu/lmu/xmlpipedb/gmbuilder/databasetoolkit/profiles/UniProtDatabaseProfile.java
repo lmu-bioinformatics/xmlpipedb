@@ -60,7 +60,9 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						new ArabidopsisThalianaUniProtSpeciesProfile(),
 						new PlasmodiumFalciparumUniProtSpeciesProfile(),
 						new VibrioCholeraeUniprotSpeciesProfile(),
-						new SaccharomycesCerevisiaeUniProtSpeciesProfile() });
+						new SaccharomycesCerevisiaeUniProtSpeciesProfile(),
+						new MycobacteriumTuberculosisUniProtSpeciesProfile() });
+
 	}
 
 	/*

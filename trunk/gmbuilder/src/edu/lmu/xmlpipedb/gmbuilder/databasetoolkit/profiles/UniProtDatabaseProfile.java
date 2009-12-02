@@ -5,7 +5,7 @@
  * Description: This class is a sub-class of
  * DatabaseProfile and defines the UniProt centric
  * customizations associated with the databse.
- *     
+ *
  * Revision History:
  * 20060620: Initial Revision.
  * *****************************************************/
@@ -59,12 +59,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						new EscherichiaColiUniProtSpeciesProfile(),
 						new ArabidopsisThalianaUniProtSpeciesProfile(),
 						new PlasmodiumFalciparumUniProtSpeciesProfile(),
-						new VibrioCholeraeUniprotSpeciesProfile() });
+						new VibrioCholeraeUniprotSpeciesProfile(),
+						new SaccharomycesCerevisiaeUniProtSpeciesProfile() });
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#
 	 * isAvailable(java.sql.Connection)
@@ -85,7 +86,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#
 	 * checkRequirements(java.sql.Connection)
@@ -133,7 +134,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#
 	 * getMODSystem()
@@ -204,7 +205,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 	 */
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#
 	 * getDatabaseSpecificSystemTables()
@@ -238,10 +239,10 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		 * the record has a date/time to know that their is a table for that
 		 * system in the database (yes this is stupid, but we're not here to
 		 * change GenMAPP).
-		 * 
+		 *
 		 * Note: in the original, this actually only does this for systems that
 		 * arenot species specific. (hence the "!").
-		 * 
+		 *
 		 * With the if-block commented out the date update will be applied to
 		 * all entries. Additional processing is done below.
 		 */
@@ -296,7 +297,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#
 	 * getPrimarySystemTableManager()
@@ -724,7 +725,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 	/**
 	 * A helper method for getting the second pass TableManagers, specifically
 	 * the relationship TableManagers.
-	 * 
+	 *
 	 * @return
 	 * @throws SQLException
 	 * @throws Exception

@@ -13,14 +13,25 @@ public class SaccharomycesCerevisiaeUniProtSpeciesProfile extends
 	public TableManager getSystemsTableManagerCustomizations(TableManager tableManager, DatabaseProfile dbProfile) {
 	    super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
 	    tableManager.submit("Systems", QueryType.update, new String[][] {
-	        { "SystemCode", "N" },
+	        { "SystemCode", "D" },
 	        { "Species", "|" + getSpeciesName() + "|" }
 	    });
 
 	    tableManager.submit("Systems", QueryType.update, new String[][] {
-	        { "SystemCode", "N" },
-	        { "Link", "http://www.yeastgenome.org/cgi-bin/locus.fpl?locus=~" }
+	        { "SystemCode", "D" },
+	        { "Link", "http://www.yeastgenome.org/cgi-bin/locus.fpl?dbid=~" }
 	    });
+
+	    tableManager.submit("Systems", QueryType.update, new String[][] {
+		        { "SystemCode", "En" },
+		        { "Species", "|" + getSpeciesName() + "|" }
+		});
+
+	    tableManager.submit("Systems", QueryType.update, new String[][] {
+		        { "SystemCode", "En" },
+		        { "Link", "http://www.ensembl.org/Saccharomyces_cerevisiae/Gene/Summary?g=~" }
+		});
+
 
 	    return tableManager;
 	}

@@ -225,6 +225,26 @@ public class TableManager {
     }
 
     /**
+     * Eliminates the table rows for the given table name; typically used when
+     * the target table turns out to need a different schema from the "usual"
+     * table type represented by this table manager.
+     */
+    public void removeTableRowsFor(String tableName) {
+        List<Row> rowsToRemove = new ArrayList<Row>();
+        for (Row r: dataSet) {
+            if (r.getValue(TABLE_NAME_COLUMN).equals(tableName)) {
+                rowsToRemove.add(r);
+            }
+        }
+        
+        _Log.debug("Removing rows for table named " + tableName + "...");
+        _Log.debug("Initial row count: " + dataSet.size());
+        dataSet.removeAll(rowsToRemove);
+        tableNames.remove(tableName);
+        _Log.debug("Post-remove row count: " + dataSet.size());
+    }
+
+    /**
      * Adds a row to the data set ignoring primary key(s).
      * 
      * @param columnNamesToValues

@@ -720,6 +720,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 	@Override
 	public TableManager[] getSecondPassTableManagers() throws SQLException {
 		List<TableManager> tableManagers = new ArrayList<TableManager>();
+		tableManagers.addAll(speciesProfile.getSpeciesSpecificCustomTables(version));
 		tableManagers.add(getSecondPassRelationshipTables());
 		return tableManagers.toArray(new TableManager[0]);
 	}

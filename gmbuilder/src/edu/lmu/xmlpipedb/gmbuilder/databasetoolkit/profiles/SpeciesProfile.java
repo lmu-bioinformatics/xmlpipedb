@@ -14,6 +14,7 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -156,4 +157,14 @@ public abstract class SpeciesProfile extends Profile {
 	public abstract List<String> getSpeciesSpecificSystemCode(
 			List<String> systemCodes,
 			Map<String, String> templateDefinedSystemToSystemCode);
+	
+	/**
+	 * Returns any other species-specific tables that fit neither the mold of
+	 * a standard system table, the primary system table, or any other prior
+	 * tables.
+	 */
+	public List<TableManager> getSpeciesSpecificCustomTables(Date version) throws SQLException {
+	    return new ArrayList<TableManager>();
+	}
+
 }

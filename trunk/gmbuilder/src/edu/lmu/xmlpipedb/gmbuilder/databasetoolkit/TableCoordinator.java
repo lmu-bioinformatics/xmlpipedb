@@ -15,8 +15,8 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.Table;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 
 
 /**

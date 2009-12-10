@@ -9,7 +9,6 @@ import java.sql.SQLException;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-//import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMaPP;
 
 public class ExportGmDbTest extends TestCase {
 

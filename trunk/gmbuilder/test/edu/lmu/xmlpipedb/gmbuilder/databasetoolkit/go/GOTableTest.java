@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.GOTable;
-
 /**
  * Unit tests for the Go class.
  * 

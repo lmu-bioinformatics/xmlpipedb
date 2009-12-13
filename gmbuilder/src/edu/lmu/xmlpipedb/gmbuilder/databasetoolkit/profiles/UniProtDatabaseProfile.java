@@ -62,7 +62,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						new VibrioCholeraeUniprotSpeciesProfile(),
 						new SaccharomycesCerevisiaeUniProtSpeciesProfile(),
 						new MycobacteriumTuberculosisUniProtSpeciesProfile(),
-						new PseudomonasAeruginosaUniProtSpeciesProfile() });
+						new PseudomonasAeruginosaUniProtSpeciesProfile(), 
+						new StaphylococcusAureusMRSA252UniProtSpeciesProfile() });
 	}
 
 	/*

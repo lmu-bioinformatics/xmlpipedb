@@ -36,11 +36,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentListener;
 
-import shag.LayoutConstants;
+import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile;
 import edu.lmu.xmlpipedb.gmbuilder.gui.util.SpringUtilities;
+
+import shag.App;
+import shag.LayoutConstants;
 
 /**
  * @author Joey J. Barrett Class: ExportPanel1
@@ -155,8 +158,8 @@ public class ExportPanel1 extends JPanel {
         modifyFormattedTextField = new JFormattedTextField(new SimpleDateFormat("MM/dd/yyyy"));
         modifyFormattedTextField.setText(new SimpleDateFormat("MM/dd/yyyy").format(new Date()));
 
-        // Notes | JTextArea | empty
-        notesTextArea = new JTextArea(2, 40);
+        // Notes | JTextArea | GenMAPP Builder version
+        notesTextArea = new JTextArea("Exported by " + App.get().getAppName() + " " + GenMAPPBuilder.VERSION, 2, 40);
         notesTextArea.setBorder(new EtchedBorder());
 
         JPanel leftPanel = new JPanel(new SpringLayout());

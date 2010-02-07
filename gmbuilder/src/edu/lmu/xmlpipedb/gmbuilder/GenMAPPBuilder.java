@@ -25,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JScrollPane;
@@ -40,12 +41,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
-import shag.App;
-import shag.dialog.ModalDialog;
-import shag.menu.WindowMenu;
-import shag.table.BeanColumn;
-import shag.table.BeanTableModel;
-import shag.table.UsefulTable;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
@@ -63,6 +58,14 @@ import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.ImportPanel;
 
+import shag.App;
+import shag.dialog.ModalDialog;
+import shag.menu.WindowMenu;
+import shag.table.BeanColumn;
+import shag.table.BeanTableModel;
+import shag.table.UsefulTable;
+import shag.util.PlatformIdentifier;
+
 /**
  * GenMAPPBuilder is a GUI application for loading, querying, and exporting data
  * used by GenMAPP.
@@ -70,6 +73,11 @@ import edu.lmu.xmlpipedb.util.gui.ImportPanel;
  * @author dondi
  */
 public class GenMAPPBuilder extends App implements TallyEngineDelegate {
+    /**
+     * Version string.
+     */
+    public static final String VERSION = "2.0b40";
+
     /**
      * Starts the application.
      */
@@ -107,6 +115,19 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     }
 
     /**
+     * @see shag.App#showAboutBox()
+     */
+    @Override
+    public void showAboutBox() {
+        ModalDialog.showPlainDialog("About " + getAppName(), new JLabel(
+            "<html><center>" +
+            "<h1>&nbsp;&nbsp;&nbsp;" + getAppName() + " " + VERSION + "&nbsp;&nbsp;&nbsp;</h1>" +
+            "<h3>Part of the XMLPipeDB Software Suite</h3>" +
+            "<i>A project of the LMU Bioinformatics Group</i>" +
+            "</center></html>"));
+    }
+
+    /**
      * Returns the current Hibernate configuration.
      * 
      * @return The current Hibernate configuration
@@ -128,7 +149,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      */
     @Override
     protected JFrame getStartupFrame() {
-        JFrame result = new JFrame(getAppName());
+        JFrame result = new JFrame(getAppName() + " " + VERSION);
         result.setJMenuBar(createJMenuBar());
         result.setContentPane(_queryPanel);
         result.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -168,6 +189,22 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         // mb.add(dbMenu);
 
         mb.add(new WindowMenu(this));
+        
+        if (!PlatformIdentifier.isMac()) {
+            JMenu helpMenu = new JMenu("Help");
+            helpMenu.add(new AbstractAction("About " + getAppName()) {
+                
+                /**
+                 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+                 */
+                public void actionPerformed(ActionEvent aevt) {
+                    showAboutBox();
+                }
+
+            });
+            mb.add(helpMenu);
+        }
+
         return mb;
     }
 

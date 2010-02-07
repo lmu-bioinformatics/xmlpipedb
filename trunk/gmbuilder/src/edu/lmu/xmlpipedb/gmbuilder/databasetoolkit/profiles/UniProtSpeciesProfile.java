@@ -71,24 +71,20 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
      */
     @Override
     public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws SQLException, InvalidParameterException {
-            	
     	/*
     	 * This method is only called (and therefore this bit 'o logic is only
     	 * invoked) when the species specific class has not overridden this
     	 * method. These values may (or may not) be a good default.
     	 */
-    	ArrayList<String> comparisonList = new ArrayList<String>(2);
+    	List<String> comparisonList = new ArrayList<String>(2);
     	comparisonList.add("ordered locus");
     	comparisonList.add("ORF");
     	
-    	tableManager = systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "OrderedLocusNames", comparisonList );
-    	
-
-        return tableManager;
+        return systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "OrderedLocusNames", comparisonList);
     }
 
     /**
-	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.UniProtSpeciesProfile#systemTableManagerCustonmizationsHelper
+	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.UniProtSpeciesProfile#systemTableManagerCustomizationsHelper
      */
     protected TableManager systemTableManagerCustomizationsHelper(TableManager tableManager, TableManager primarySystemTableManager, Date version, String substituteTable, List<String> comparisonList) throws InvalidParameterException, SQLException {
     	return systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, substituteTable, comparisonList, "");

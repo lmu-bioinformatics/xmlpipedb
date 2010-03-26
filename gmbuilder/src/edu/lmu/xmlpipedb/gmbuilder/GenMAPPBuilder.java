@@ -2,7 +2,7 @@
  * Filename: GenMAPPBuilder.java
  * Author: LMU
  * Program: gmBuilder
- * Description: Main application.    
+ * Description: Main application.
  * Revision History:
  * 20060426: Initial Revision.
  * *****************************************************/
@@ -69,7 +69,7 @@ import shag.util.PlatformIdentifier;
 /**
  * GenMAPPBuilder is a GUI application for loading, querying, and exporting data
  * used by GenMAPP.
- * 
+ *
  * @author dondi
  */
 public class GenMAPPBuilder extends App implements TallyEngineDelegate {
@@ -129,7 +129,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
     /**
      * Returns the current Hibernate configuration.
-     * 
+     *
      * @return The current Hibernate configuration
      */
     public Configuration getCurrentHibernateConfiguration() {
@@ -169,6 +169,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         fileMenu.addSeparator();
         fileMenu.add(_importUniprotAction);
         fileMenu.add(_importGOAction);
+        fileMenu.add(_importGOAssociationAction);
         fileMenu.addSeparator();
         fileMenu.add(_processGOAction);
         fileMenu.addSeparator();
@@ -189,11 +190,11 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         // mb.add(dbMenu);
 
         mb.add(new WindowMenu(this));
-        
+
         if (!PlatformIdentifier.isMac()) {
             JMenu helpMenu = new JMenu("Help");
             helpMenu.add(new AbstractAction("About " + getAppName()) {
-                
+
                 /**
                  * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
                  */
@@ -212,7 +213,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      * A species name found within an XML file needs to have some special
      * parsing done to it in order to match it with the proper species name in
      * the gmbuilder.properties file for the TallyEngine.
-     * 
+     *
      */
     private String getSpeciesNameFromString(String species) {
 
@@ -234,7 +235,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
     /**
      * Creates the actions performed by the application.
-     * 
+     *
      */
     private void createActions() {
         _configureDBAction = new AbstractAction("Configure Database...") {
@@ -264,6 +265,15 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                     doProcessGO();
                 }
             }
+        };
+
+        _importGOAssociationAction = new AbstractAction("Import GOA File...") {
+        	/**
+             * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+             */
+        	public void actionPerformed(ActionEvent aevt) {
+        		doGoAssociationImport("org.goa.goa","Import GOA File"); // Purpose of first string
+        	}
         };
 
         _runTalliesAction = new AbstractAction("Run XML and Database Tallies for UniProt and GO (The Full Monty)") {
@@ -452,7 +462,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
     /**
      * Imports an XML file into the database.
-     * 
+     *
      * @param jaxbContextPath
      *            The context path under which to store the object
      * @param title
@@ -486,7 +496,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
     /**
      * Imports an XML file into the database.
-     * 
+     *
      * @param jaxbContextPath
      *            The context path under which to store the object
      * @param title
@@ -521,9 +531,50 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     }
 
     /**
+     * Imports an GOA file into the database.
+     *
+     * @param jaxbContextPath
+     *            The context path under which to store the object
+     * @param title
+     *            The title of the dialog (helps prompt the user on what file to
+     *            import)
+     */
+    private void doGoAssociationImport(String jaxbContextPath, String title){
+    	// IN PROGRESS - DM
+    	Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
+
+    	if (hibernateConfiguration != null) {
+    		ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration);
+    		importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+    		JDialog dialog = new JDialog();
+            importPanel.setDelegate(dialog);
+            dialog.getContentPane().add(importPanel);
+            dialog.setTitle(title);
+            dialog.setModal(true);
+            dialog.setLocationRelativeTo(this.getFrontmostWindow());
+            dialog.setSize(600, 300);
+            dialog.setVisible(true);
+
+    	} else {
+    		showConfigurationError();
+    	}
+    }
+
+    /**
+     * Imports a GOA file into the database.
+     *
+     * @param jaxbContextPath
+     *            The context path under which to store the object
+     * @param title
+     *            The title of the dialog (helps prompt the user on what file to
+     *            import)
+     */
+
+    /**
      * Builds the criteria HashMap with the proper data to all the TallyEngine
      * to run properly.
-     * 
+     *
      * @param criteria
      *            The HashMap to load.
      * @param type
@@ -562,7 +613,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
     /**
      * Creates the species specific Criterion.
-     * 
+     *
      * @param criteria
      *            The list of criteria
      * @param species
@@ -623,7 +674,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * In charge of parsing the properties string into an element path and
      * attributes.
-     * 
+     *
      * @param xmlElement
      *            The string found in the properties file
      * @param criteria
@@ -843,7 +894,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     // // }
     // // FileInputStream fis = new FileInputStream(_defaultPropertiesUrl);
     // // _defaultProperties.load(fis);
-    //			
+    //
     // //getClass().getResourceAsStream(_defaultPropertiesUrl);
     // FileInputStream fis = new
     // FileInputStream("./sql/reset db for gmbuilder.sql");
@@ -851,7 +902,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     // // Here BufferedInputStream is added for fast reading.
     // BufferedInputStream bis = new BufferedInputStream(fis);
     // DataInputStream dis = new DataInputStream(bis);
-    //	        
+    //
     // // dis.available() returns 0 if the file does not have more lines.
     // while (dis.available() != 0) {
     //
@@ -859,7 +910,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     // // the console.
     // sql += dis.readLine();
     // }
-    //			
+    //
     // query = conn.prepareStatement( sql );
     // query.executeQuery();
     //
@@ -882,7 +933,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     // Leave it open!
     // } catch(Exception e) {
     // // TODO: Log exception
-    //                
+    //
     // } // Ignore the errors here, nothing we can do anyways.
     // }
     //
@@ -915,6 +966,15 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             }
         }
     }
+
+/*    private void doProcessGOAnnotations() {
+    	try {
+    	} catch(IOException e) {
+
+    	} catch(Exception e){
+
+    	}
+    }*/
 
     /**
      * Exports the content of the current database to a GenMAPP database file.
@@ -1033,6 +1093,11 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      * Action object for importing a go file into the database.
      */
     private Action _importGOAction;
+
+    /**
+     * Action object for importing a goa file into the database
+     */
+    private Action _importGOAssociationAction;
 
     /**
      * Action object for processing the currently stored GO data.

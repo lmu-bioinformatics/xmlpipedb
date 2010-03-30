@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- *****************************************************************************
 	UniProt Knowledgebase
-	Version: 	$Revision: 1.21 $
-	Date:		$Date: 2008/09/25 15:37:31 $
+	Version: 	$Revision: 1.33 $
+	Date:		$Date: 2010/02/23 10:15:02 $
 
 	Copyright (c) 2003 UniProt consortium
 	All rights reserved.
@@ -114,13 +114,14 @@
             <xs:documentation>Defines the locations/origins of the shown sequence (OG line).</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="name" type="statusType" minOccurs="0"/>
+            <xs:element name="name" type="statusType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="type" use="required">
             <xs:simpleType>
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="apicoplast"/>
                     <xs:enumeration value="chloroplast"/>
+                    <xs:enumeration value="organellar chromatophore"/>
                     <xs:enumeration value="cyanelle"/>
                     <xs:enumeration value="hydrogenosome"/>
                     <xs:enumeration value="mitochondrion"/>
@@ -255,6 +256,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:choice maxOccurs="unbounded">
+            <!-- 
             <xs:element name="species">
                 <xs:complexType>
                     <xs:simpleContent>
@@ -264,6 +266,7 @@
                     </xs:simpleContent>
                 </xs:complexType>
             </xs:element>
+            -->
             <xs:element name="strain">
                 <xs:complexType>
                     <xs:simpleContent>
@@ -344,23 +347,23 @@
             <xs:element name="absorption" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="max" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max" type="evidencedStringType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="text" type="evidencedStringType" minOccurs="0" maxOccurs="1"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="kinetics" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="KM" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element name="Vmax" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="KM" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="Vmax" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="text" type="evidencedStringType" minOccurs="0" maxOccurs="1"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="phDependence" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="redoxPotential" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="temperatureDependence" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="phDependence" type="evidencedStringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="redoxPotential" type="evidencedStringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="temperatureDependence" type="evidencedStringType" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:group>
 
@@ -512,6 +515,7 @@
                     <xs:enumeration value="developmental stage"/>
                     <xs:enumeration value="disease"/>
                     <xs:enumeration value="domain"/>
+                    <xs:enumeration value="disruption phenotype"/>
                     <xs:enumeration value="enzyme regulation"/>
                     <xs:enumeration value="function"/>
                     <xs:enumeration value="induction"/>
@@ -532,6 +536,14 @@
                     <xs:enumeration value="interaction"/>
                 </xs:restriction>
             </xs:simpleType>
+        </xs:attribute>
+
+        <xs:attribute name="locationType" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>Optional element that defines the type of the location where RNA editing takes place. Common values are
+                   "Not_applicable" and "Undetermined".
+                </xs:documentation>
+            </xs:annotation>
         </xs:attribute>
         <xs:attribute name="evidence" type="xs:string" use="optional"/>
     </xs:complexType>
@@ -636,6 +648,7 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
+        <xs:attribute name="evidence" type="xs:string" use="optional"/>
     </xs:complexType>
 
     <xs:complexType name="locationType">
@@ -684,7 +697,7 @@
             </xs:element>
             <xs:element name="allergenName" type="evidencedStringType" minOccurs="0"/>
             <xs:element name="biotechName" type="evidencedStringType" minOccurs="0"/>
-            <xs:element name="CdAntigenName" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="cdAntigenName" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="innName" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:group>
@@ -755,7 +768,15 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="status" type="xs:string" use="optional"/>
+        <xs:attribute name="status" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="by similarity"/>
+                    <xs:enumeration value="probable"/>
+                    <xs:enumeration value="potential"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
         <xs:attribute name="id" type="xs:string" use="optional"/>
         <xs:attribute name="description" type="xs:string" use="optional"/>
         <xs:attribute name="evidence" type="xs:string" use="optional"/>
@@ -764,18 +785,19 @@
     <!--  Feature definition ends  -->
     <!--  Organism definition begins  -->
     <xs:complexType name="organismType">
-        <xs:sequence>
-            <xs:element name="name" type="organismNameType" maxOccurs="unbounded"/>
-            <xs:element name="dbReference" type="dbReferenceType" maxOccurs="unbounded"/>
-            <xs:element name="lineage" minOccurs="0">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="taxon" type="xs:string" maxOccurs="unbounded"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-        <xs:attribute name="key" type="xs:string" use="required"/>
+            <xs:sequence>
+                <xs:element name="name" type="organismNameType" maxOccurs="unbounded"/>
+                <xs:element name="dbReference" type="dbReferenceType" maxOccurs="unbounded"/>
+                <xs:element name="lineage" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="taxon" type="xs:string" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        <!--<xs:attribute name="key" type="xs:string" use="required"/>-->
+        <xs:attribute name="evidence" type="xs:string" use="optional"/>
     </xs:complexType>
     <!--  Organism definition ends  -->
 
@@ -786,9 +808,9 @@
                 <xs:attribute name="status" use="optional">
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
-                            <xs:enumeration value="By similarity"/>
-                            <xs:enumeration value="Probable"/>
-                            <xs:enumeration value="Potential"/>
+                            <xs:enumeration value="by similarity"/>
+                            <xs:enumeration value="probable"/>
+                            <xs:enumeration value="potential"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
@@ -865,11 +887,11 @@
         <xs:attribute name="type" use="required">
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="Evidence at protein level"/>
-                    <xs:enumeration value="Evidence at transcript level"/>
-                    <xs:enumeration value="Inferred from homology"/>
-                    <xs:enumeration value="Predicted"/>
-                    <xs:enumeration value="Uncertain"/>
+                    <xs:enumeration value="evidence at protein level"/>
+                    <xs:enumeration value="evidence at transcript level"/>
+                    <xs:enumeration value="inferred from homology"/>
+                    <xs:enumeration value="predicted"/>
+                    <xs:enumeration value="uncertain"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -892,7 +914,7 @@
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="organism" type="organismType" maxOccurs="unbounded"/>
+                <xs:element name="organism" type="organismType" />
                 <xs:element name="organismHost" type="organismType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="geneLocation" type="geneLocationType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="reference" type="referenceType" maxOccurs="unbounded"/>

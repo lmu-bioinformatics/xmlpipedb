@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping auto-import="false" default-cascade="all-delete-orphan" default-lazy="false">
 <class name="org.uniprot.uniprot.ReferenceType" table="ReferenceType">
@@ -9,8 +9,15 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
+<many-to-one class="org.uniprot.uniprot.SourceDataType" name="Source">
+<column name="Source"/>
+</many-to-one>
 <property name="Key">
 <column name="Key"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<property name="Evidence">
+<column name="Evidence"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
 <many-to-one class="org.uniprot.uniprot.CitationType" name="Citation">
@@ -27,13 +34,6 @@
 <column name="Hjvalue"/>
 </element>
 </list>
-<property name="Evidence">
-<column name="Evidence"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
-<many-to-one class="org.uniprot.uniprot.SourceDataType" name="Source">
-<column name="Source"/>
-</many-to-one>
 <subclass discriminator-value="org.uniprot.uniprot.ReferenceType" name="org.uniprot.uniprot.impl.ReferenceTypeImpl"/>
 </class>
 </hibernate-mapping>

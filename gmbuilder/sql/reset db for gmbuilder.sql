@@ -710,95 +710,99 @@ create sequence hibernate_sequence;
 
 -------- uniprot 
 
-alter table BpcCommentGroupKineticsType_KM drop constraint FK7F295DF8108A5F95;
-alter table BpcCommentGroupKineticsType_Vmax drop constraint FK5A4F44644A8788C9;
+alter table BpcCommentGroupAbsorptionType drop constraint FK1D8423BEC81D818D;
+alter table BpcCommentGroupAbsorptionType drop constraint FK1D8423BEC7E8E1C4;
+alter table BpcCommentGroupKineticsType drop constraint FKE5FBEB69C81D818D;
 alter table CitationType drop constraint FK7C9796E136491E54;
 alter table CitationType drop constraint FK7C9796E1F57415A4;
 alter table CitationType drop constraint FK7C9796E1F22C5486;
-alter table CommentType drop constraint FKE0CB5219C81D818D;
 alter table CommentType drop constraint FKE0CB521925E10D55;
+alter table CommentType drop constraint FKE0CB521947B1940B;
+alter table CommentType drop constraint FKE0CB5219C81D818D;
 alter table CommentType drop constraint FKE0CB5219D8CF5AEB;
+alter table CommentType drop constraint FKE0CB52191CDB7784;
 alter table CommentType drop constraint FKE0CB5219CFA3BF01;
+alter table CommentType drop constraint FKE0CB5219A0F7078F;
 alter table CommentType_ConflictType drop constraint FK6F5452B2BCD5B9D1;
 alter table CommentType_LinkType drop constraint FK856AB5DA6ECF92FD;
-alter table DbReferenceType drop constraint FKE43B3D27E13D04B6;
-alter table DbReferenceType drop constraint FKE43B3D279338FF06;
 alter table DbReferenceType drop constraint FKE43B3D2762738266;
+alter table DbReferenceType drop constraint FKE43B3D279338FF06;
+alter table DbReferenceType drop constraint FKE43B3D27E13D04B6;
 alter table EntryType drop constraint FK5ADFA2AC25CD0850;
-alter table EntryType drop constraint FK5ADFA2AC4B853B11;
-alter table EntryType drop constraint FK5ADFA2AC4029D2B4;
 alter table EntryType drop constraint FK5ADFA2AC3FCD2588;
+alter table EntryType drop constraint FK5ADFA2AC4029D2B4;
+alter table EntryType drop constraint FK5ADFA2AC4B853B11;
+alter table EntryType drop constraint FK5ADFA2AC48F8F456;
 alter table EntryType_Accession drop constraint FKF3878E31135B043F;
 alter table EntryType_Comment drop constraint FK208663ACA2DDBA4;
 alter table EntryType_GeneType drop constraint FK80090042CB570028;
 alter table EntryType_Name drop constraint FK3476D05E4CB1A72;
 alter table EventType drop constraint FK7951B8D4603AD4E9;
 alter table EvidenceType drop constraint FK3691F25187BE97A6;
-alter table EvidencedStringType drop constraint FK45D53F9828B45AC8;
-alter table EvidencedStringType drop constraint FK45D53F98E79B22E0;
-alter table EvidencedStringType drop constraint FK45D53F989043D942;
-alter table EvidencedStringType drop constraint FK45D53F98C23C0BE6;
-alter table EvidencedStringType drop constraint FK45D53F98E6DAD713;
-alter table EvidencedStringType drop constraint FK45D53F98440FD91C;
-alter table EvidencedStringType drop constraint FK45D53F9833363EE4;
-alter table EvidencedStringType drop constraint FK45D53F9899B8B42A;
-alter table EvidencedStringType drop constraint FK45D53F987DE00ADC;
-alter table EvidencedStringType drop constraint FK45D53F98ECF3308B;
 alter table EvidencedStringType drop constraint FK45D53F9857F232CF;
-alter table FeatureType drop constraint FK4CF1BB3022D4956D;
+alter table EvidencedStringType drop constraint FK45D53F9833363EE4;
+alter table EvidencedStringType drop constraint FK45D53F98C23C0BE6;
+alter table EvidencedStringType drop constraint FK45D53F989043D942;
+alter table EvidencedStringType drop constraint FK45D53F98ECF3308B;
+alter table EvidencedStringType drop constraint FK45D53F98440FD91C;
+alter table EvidencedStringType drop constraint FK45D53F987DE00ADC;
+alter table EvidencedStringType drop constraint FK45D53F9828B45AC8;
+alter table EvidencedStringType drop constraint FK45D53F9899B8B42A;
+alter table EvidencedStringType drop constraint FK45D53F984A8788C9;
+alter table EvidencedStringType drop constraint FK45D53F98E6DAD713;
+alter table EvidencedStringType drop constraint FK45D53F98108A5F95;
+alter table EvidencedStringType drop constraint FK45D53F98E79B22E0;
 alter table FeatureType drop constraint FK4CF1BB302D6B089C;
+alter table FeatureType drop constraint FK4CF1BB3022D4956D;
 alter table FeatureType_Variation drop constraint FKA6F63BA4953DD530;
-alter table GeneLocationType drop constraint FK3055BC64B7CEE32F;
 alter table GeneLocationType drop constraint FK3055BC647F1C3193;
 alter table GeneNameType drop constraint FKC89D6EBA37EA5013;
 alter table InteractantType drop constraint FKDCFA0AABDB8BD172;
-alter table IsoformType drop constraint FK981CF9833419C097;
-alter table IsoformType drop constraint FK981CF9838394509A;
 alter table IsoformType drop constraint FK981CF98352DFFC35;
+alter table IsoformType drop constraint FK981CF9838394509A;
+alter table IsoformType drop constraint FK981CF9833419C097;
 alter table IsoformType_Id drop constraint FK93D161776BE415D0;
 alter table IsoformType_NameType drop constraint FKAEF4DFC12DDC4D60;
 alter table KeywordType drop constraint FK1603ACA37C00D25A;
+alter table LocationType drop constraint FK65214AF9D640322;
 alter table LocationType drop constraint FK65214AFEE2F2184;
 alter table LocationType drop constraint FK65214AFC7310104;
-alter table LocationType drop constraint FK65214AF9D640322;
 alter table LocationType drop constraint FK65214AFC19E1136;
 alter table NameListType_PersonOrConsortium drop constraint FK452761F5969E4EA2;
 alter table OrganismNameType drop constraint FK8F6D77774EBD64E2;
 alter table OrganismType drop constraint FK44B91F4C46DCD7E3;
-alter table OrganismType drop constraint FK44B91F4C3E7D0A0B;
 alter table OrganismType drop constraint FK44B91F4C167DA5B0;
 alter table OrganismType_LineageType_Taxon drop constraint FK261F89FDF8D2E7E4;
 alter table PropertyType drop constraint FKD64442CF68B562BE;
-alter table ProteinNameGroupAlternativeNameType drop constraint FK872C08E15ABF3D8B;
-alter table ProteinNameGroupAlternativeNameType drop constraint FK872C08E11748F9FA;
 alter table ProteinNameGroupAlternativeNameType drop constraint FK872C08E1D2FF36E6;
+alter table ProteinNameGroupAlternativeNameType drop constraint FK872C08E15ABF3D8B;
 alter table ProteinNameGroupAlternativeNameType drop constraint FK872C08E154D01CA0;
+alter table ProteinNameGroupAlternativeNameType drop constraint FK872C08E11748F9FA;
 alter table ProteinNameGroupRecommendedNameType drop constraint FK7709318F1748F9FA;
 alter table ProteinNameGroupSubmittedNameType drop constraint FKF248BBEF5298F7D8;
+alter table ProteinNameGroupSubmittedNameType drop constraint FKF248BBEF7D501C7D;
 alter table ProteinNameGroupSubmittedNameType drop constraint FKF248BBEF77F80ED2;
 alter table ProteinNameGroupSubmittedNameType drop constraint FKF248BBEF1748F9FA;
-alter table ProteinNameGroupSubmittedNameType drop constraint FKF248BBEF7D501C7D;
+alter table ProteinType drop constraint FK4419093D4E30B06D;
 alter table ProteinType drop constraint FK4419093DE2F9B389;
 alter table ProteinType drop constraint FK4419093D8BA451BD;
-alter table ProteinType drop constraint FK4419093D4E30B06D;
+alter table ProteinType_ComponentType drop constraint FK2B00F6354E30B06D;
 alter table ProteinType_ComponentType drop constraint FK2B00F635B41920E6;
 alter table ProteinType_ComponentType drop constraint FK2B00F635E2F9B389;
 alter table ProteinType_ComponentType drop constraint FK2B00F6358BA451BD;
-alter table ProteinType_ComponentType drop constraint FK2B00F6354E30B06D;
-alter table ProteinType_DomainType drop constraint FKE3F7C680E2F9B389;
 alter table ProteinType_DomainType drop constraint FKE3F7C6802D1C63B;
-alter table ProteinType_DomainType drop constraint FKE3F7C6808BA451BD;
 alter table ProteinType_DomainType drop constraint FKE3F7C6804E30B06D;
+alter table ProteinType_DomainType drop constraint FKE3F7C680E2F9B389;
+alter table ProteinType_DomainType drop constraint FKE3F7C6808BA451BD;
 alter table ReferenceType drop constraint FK8F0BD50574685D78;
 alter table ReferenceType drop constraint FK8F0BD50510F9E9B2;
 alter table ReferenceType drop constraint FK8F0BD505DC62F600;
 alter table ReferenceType_Scope drop constraint FK1973EE7AA4A5F7EF;
-alter table SourceDataType_SpeciesOrStrainOrPlasmid drop constraint FKD57105C356B60B70;
+alter table SourceDataType_StrainOrPlasmidOrTransposon drop constraint FKCA5BD2F07FE97B63;
+alter table StatusType drop constraint FK859A666C5B7CA8F2;
 alter table SubcellularLocationType drop constraint FKDAB41539501D42C4;
 drop table BpcCommentGroupAbsorptionType;
 drop table BpcCommentGroupKineticsType;
-drop table BpcCommentGroupKineticsType_KM;
-drop table BpcCommentGroupKineticsType_Vmax;
 drop table CitationType;
 drop table CommentType;
 drop table CommentType_ConflictType;
@@ -848,8 +852,8 @@ drop table ReferenceType_Scope;
 drop table SequenceType;
 drop table SourceDataType;
 drop table SourceDataType_PlasmidType;
-drop table SourceDataType_SpeciesOrStrainOrPlasmid;
 drop table SourceDataType_SpeciesType;
+drop table SourceDataType_StrainOrPlasmidOrTransposon;
 drop table SourceDataType_StrainType;
 drop table SourceDataType_TissueType;
 drop table SourceDataType_TransposonType;
@@ -861,81 +865,70 @@ create table BpcCommentGroupAbsorptionType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Max varchar,
-    Text varchar,
+    Text int8,
+    Max int8,
     primary key (Hjid)
 );
 create table BpcCommentGroupKineticsType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Text varchar,
+    Text int8,
     primary key (Hjid)
-);
-create table BpcCommentGroupKineticsType_KM (
-    BpcCommentGroupKineticsType_KM_Hjid int8 not null,
-    Hjvalue varchar,
-    BpcCommentGroupKineticsType_KM_Hjindex int4 not null,
-    primary key (BpcCommentGroupKineticsType_KM_Hjid, BpcCommentGroupKineticsType_KM_Hjindex)
-);
-create table BpcCommentGroupKineticsType_Vmax (
-    BpcCommentGroupKineticsType_Vmax_Hjid int8 not null,
-    Hjvalue varchar,
-    BpcCommentGroupKineticsType_Vmax_Hjindex int4 not null,
-    primary key (BpcCommentGroupKineticsType_Vmax_Hjid, BpcCommentGroupKineticsType_Vmax_Hjindex)
 );
 create table CitationType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
+    CitingCitation int8,
     Db varchar,
-    First varchar,
-    Type varchar,
-    Institute varchar,
-    Publisher varchar,
-    Locator varchar,
-    Date_Hjclass varchar,
-    Date_Hjid int8,
-    City varchar,
-    Last varchar,
-    AuthorList int8,
     Number varchar,
-    Country varchar,
+    Type varchar,
     Volume varchar,
+    AuthorList int8,
+    Country varchar,
+    First varchar,
+    City varchar,
     Title varchar,
     Name varchar,
+    Publisher varchar,
+    Last varchar,
+    Date_Hjclass varchar,
+    Date_Hjid int8,
+    Locator varchar,
     EditorList int8,
-    CitingCitation int8,
+    Institute varchar,
     primary key (Hjid)
 );
 create table CommentType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Type varchar,
     Experiments numeric,
-    Conflict int8,
+    TemperatureDependence int8,
     Method varchar,
-    Text int8,
-    PhDependence varchar,
-    Kinetics int8,
-    Mass float4,
+    Type varchar,
+    Conflict int8,
     Error varchar,
-    TemperatureDependence varchar,
-    OrganismsDiffer bool,
-    Molecule varchar,
-    Evidence varchar,
     Name varchar,
-    RedoxPotential varchar,
+    Text int8,
+    PhDependence int8,
+    Molecule varchar,
+    LocationType varchar,
+    Mass float4,
+    Kinetics int8,
     Absorption int8,
+    RedoxPotential int8,
+    OrganismsDiffer bool,
+    Evidence varchar,
     primary key (Hjid)
 );
 create table CommentType_ConflictType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Type varchar,
     Ref varchar,
+    Type varchar,
     Sequence int8,
     primary key (Hjid)
 );
@@ -944,8 +937,8 @@ create table CommentType_ConflictType_SequenceType (
     Hjtype varchar not null,
     Hjversion int8 not null,
     Resource varchar,
-    Version numeric,
     Id varchar,
+    Version numeric,
     primary key (Hjid)
 );
 create table CommentType_LinkType (
@@ -975,10 +968,10 @@ create table DbReferenceType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Type varchar,
     Key varchar,
-    Evidence varchar,
+    Type varchar,
     Id varchar,
+    Evidence varchar,
     CitationType_DbReference_Hjid int8,
     CitationType_DbReference_Hjindex int4,
     EntryType_DbReference_Hjid int8,
@@ -991,12 +984,13 @@ create table EntryType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Modified timestamp,
-    Sequence int8,
-    Version numeric,
     ProteinExistence int8,
     Dataset varchar,
     Created timestamp,
+    Modified timestamp,
+    Sequence int8,
+    Version numeric,
+    Organism int8,
     Protein int8,
     UniprotType_Entry_Hjid int8,
     UniprotType_Entry_Hjindex int4,
@@ -1042,11 +1036,11 @@ create table EvidenceType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Type varchar,
-    Key varchar,
-    Attribute varchar,
-    Date timestamp,
     Category varchar,
+    Key varchar,
+    Date timestamp,
+    Type varchar,
+    Attribute varchar,
     EntryType_Evidence_Hjid int8,
     EntryType_Evidence_Hjindex int4,
     primary key (Hjid)
@@ -1058,42 +1052,46 @@ create table EvidencedStringType (
     Status varchar,
     Value varchar,
     Evidence varchar,
+    BpcCommentGroupKineticsType_Vmax_Hjid int8,
+    BpcCommentGroupKineticsType_Vmax_Hjindex int4,
+    BpcCommentGroupKineticsType_KM_Hjid int8,
+    BpcCommentGroupKineticsType_KM_Hjindex int4,
     ProteinNameGroupAlternativeNameType_ShortName_Hjid int8,
     ProteinNameGroupAlternativeNameType_ShortName_Hjindex int4,
     ProteinNameGroupRecommendedNameType_ShortName_Hjid int8,
     ProteinNameGroupRecommendedNameType_ShortName_Hjindex int4,
-    ProteinType_ComponentType_CdAntigenName_Hjid int8,
-    ProteinType_ComponentType_CdAntigenName_Hjindex int4,
     ProteinType_ComponentType_InnName_Hjid int8,
     ProteinType_ComponentType_InnName_Hjindex int4,
-    ProteinType_DomainType_CdAntigenName_Hjid int8,
-    ProteinType_DomainType_CdAntigenName_Hjindex int4,
+    ProteinType_ComponentType_CdAntigenName_Hjid int8,
+    ProteinType_ComponentType_CdAntigenName_Hjindex int4,
     ProteinType_DomainType_InnName_Hjid int8,
     ProteinType_DomainType_InnName_Hjindex int4,
-    ProteinType_CdAntigenName_Hjid int8,
-    ProteinType_CdAntigenName_Hjindex int4,
+    ProteinType_DomainType_CdAntigenName_Hjid int8,
+    ProteinType_DomainType_CdAntigenName_Hjindex int4,
     ProteinType_InnName_Hjid int8,
     ProteinType_InnName_Hjindex int4,
+    ProteinType_CdAntigenName_Hjid int8,
+    ProteinType_CdAntigenName_Hjindex int4,
+    SubcellularLocationType_Orientation_Hjid int8,
+    SubcellularLocationType_Orientation_Hjindex int4,
     SubcellularLocationType_Topology_Hjid int8,
     SubcellularLocationType_Topology_Hjindex int4,
     SubcellularLocationType_Location_Hjid int8,
     SubcellularLocationType_Location_Hjindex int4,
-    SubcellularLocationType_Orientation_Hjid int8,
-    SubcellularLocationType_Orientation_Hjindex int4,
     primary key (Hjid)
 );
 create table FeatureType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Original varchar,
-    Type varchar,
     Status varchar,
     Ref varchar,
     Description varchar,
-    Evidence varchar,
+    Type varchar,
     Location int8,
+    Original varchar,
     Id varchar,
+    Evidence varchar,
     EntryType_Feature_Hjid int8,
     EntryType_Feature_Hjindex int4,
     primary key (Hjid)
@@ -1110,7 +1108,6 @@ create table GeneLocationType (
     Hjversion int8 not null,
     Type varchar,
     Evidence varchar,
-    Name int8,
     EntryType_GeneLocation_Hjid int8,
     EntryType_GeneLocation_Hjindex int4,
     primary key (Hjid)
@@ -1119,8 +1116,8 @@ create table GeneNameType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Type varchar,
     Value varchar,
+    Type varchar,
     Evidence varchar,
     EntryType_GeneType_Name_Hjid int8,
     EntryType_GeneType_Name_Hjindex int4,
@@ -1141,8 +1138,8 @@ create table IsoformType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Sequence int8,
     Note int8,
+    Sequence int8,
     CommentType_Isoform_Hjid int8,
     CommentType_Isoform_Hjindex int4,
     primary key (Hjid)
@@ -1175,8 +1172,8 @@ create table IsoformType_SequenceType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Type varchar,
     Ref varchar,
+    Type varchar,
     primary key (Hjid)
 );
 create table KeywordType (
@@ -1184,8 +1181,8 @@ create table KeywordType (
     Hjtype varchar not null,
     Hjversion int8 not null,
     Value varchar,
-    Evidence varchar,
     Id varchar,
+    Evidence varchar,
     EntryType_Keyword_Hjid int8,
     EntryType_Keyword_Hjindex int4,
     primary key (Hjid)
@@ -1194,10 +1191,10 @@ create table LocationType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
+    EndPosition int8,
+    Position int8,
     Sequence varchar,
     Begin int8,
-    Position int8,
-    EndPosition int8,
     CommentType_Location_Hjid int8,
     CommentType_Location_Hjindex int4,
     primary key (Hjid)
@@ -1219,8 +1216,8 @@ create table OrganismNameType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Type varchar,
     Value varchar,
+    Type varchar,
     OrganismType_Name_Hjid int8,
     OrganismType_Name_Hjindex int4,
     primary key (Hjid)
@@ -1229,12 +1226,10 @@ create table OrganismType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Key varchar,
     Lineage int8,
+    Evidence varchar,
     EntryType_OrganismHost_Hjid int8,
     EntryType_OrganismHost_Hjindex int4,
-    EntryType_Organism_Hjid int8,
-    EntryType_Organism_Hjindex int4,
     primary key (Hjid)
 );
 create table OrganismType_LineageType (
@@ -1262,14 +1257,15 @@ create table PositionType (
     Hjversion int8 not null,
     Status varchar,
     Position numeric,
+    Evidence varchar,
     primary key (Hjid)
 );
 create table PropertyType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Type varchar,
     Value varchar,
+    Type varchar,
     DbReferenceType_Property_Hjid int8,
     DbReferenceType_Property_Hjindex int4,
     primary key (Hjid)
@@ -1321,8 +1317,8 @@ create table ProteinType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    AllergenName int8,
     BiotechName int8,
+    AllergenName int8,
     RecommendedName int8,
     primary key (Hjid)
 );
@@ -1330,8 +1326,8 @@ create table ProteinType_ComponentType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    AllergenName int8,
     BiotechName int8,
+    AllergenName int8,
     RecommendedName int8,
     ProteinType_Component_Hjid int8,
     ProteinType_Component_Hjindex int4,
@@ -1341,8 +1337,8 @@ create table ProteinType_DomainType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    AllergenName int8,
     BiotechName int8,
+    AllergenName int8,
     RecommendedName int8,
     ProteinType_Domain_Hjid int8,
     ProteinType_Domain_Hjindex int4,
@@ -1352,10 +1348,10 @@ create table ReferenceType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Key varchar,
-    Citation int8,
-    Evidence varchar,
     Source int8,
+    Key varchar,
+    Evidence varchar,
+    Citation int8,
     EntryType_Reference_Hjid int8,
     EntryType_Reference_Hjindex int4,
     primary key (Hjid)
@@ -1370,14 +1366,14 @@ create table SequenceType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Modified timestamp,
-    Value varchar,
-    Version numeric,
-    Precursor bool,
-    Mass numeric,
-    Fragment varchar,
-    Length numeric,
     Checksum varchar,
+    Value varchar,
+    Modified timestamp,
+    Mass numeric,
+    Length numeric,
+    Precursor bool,
+    Version numeric,
+    Fragment varchar,
     primary key (Hjid)
 );
 create table SourceDataType (
@@ -1394,13 +1390,6 @@ create table SourceDataType_PlasmidType (
     Evidence varchar,
     primary key (Hjid)
 );
-create table SourceDataType_SpeciesOrStrainOrPlasmid (
-    SourceDataType_SpeciesOrStrainOrPlasmid_Hjid int8 not null,
-    SourceDataType_SpeciesOrStrainOrPlasmid_Hjclass varchar,
-    SourceDataType_SpeciesOrStrainOrPlasmid_Hjchildid int8,
-    SourceDataType_SpeciesOrStrainOrPlasmid_Hjindex int4 not null,
-    primary key (SourceDataType_SpeciesOrStrainOrPlasmid_Hjid, SourceDataType_SpeciesOrStrainOrPlasmid_Hjindex)
-);
 create table SourceDataType_SpeciesType (
     Hjid int8 not null,
     Hjtype varchar not null,
@@ -1408,6 +1397,13 @@ create table SourceDataType_SpeciesType (
     Ref varchar,
     Value varchar,
     primary key (Hjid)
+);
+create table SourceDataType_StrainOrPlasmidOrTransposon (
+    SourceDataType_StrainOrPlasmidOrTransposon_Hjid int8 not null,
+    SourceDataType_StrainOrPlasmidOrTransposon_Hjclass varchar,
+    SourceDataType_StrainOrPlasmidOrTransposon_Hjchildid int8,
+    SourceDataType_StrainOrPlasmidOrTransposon_Hjindex int4 not null,
+    primary key (SourceDataType_StrainOrPlasmidOrTransposon_Hjid, SourceDataType_StrainOrPlasmidOrTransposon_Hjindex)
 );
 create table SourceDataType_StrainType (
     Hjid int8 not null,
@@ -1439,6 +1435,8 @@ create table StatusType (
     Hjversion int8 not null,
     Status varchar,
     Value varchar,
+    GeneLocationType_Name_Hjid int8,
+    GeneLocationType_Name_Hjindex int4,
     primary key (Hjid)
 );
 create table SubcellularLocationType (
@@ -1456,14 +1454,18 @@ create table UniprotType (
     Copyright varchar,
     primary key (Hjid)
 );
-alter table BpcCommentGroupKineticsType_KM 
-    add constraint FK7F295DF8108A5F95 
-    foreign key (BpcCommentGroupKineticsType_KM_Hjid) 
-    references BpcCommentGroupKineticsType;
-alter table BpcCommentGroupKineticsType_Vmax 
-    add constraint FK5A4F44644A8788C9 
-    foreign key (BpcCommentGroupKineticsType_Vmax_Hjid) 
-    references BpcCommentGroupKineticsType;
+alter table BpcCommentGroupAbsorptionType 
+    add constraint FK1D8423BEC81D818D 
+    foreign key (Text) 
+    references EvidencedStringType;
+alter table BpcCommentGroupAbsorptionType 
+    add constraint FK1D8423BEC7E8E1C4 
+    foreign key (Max) 
+    references EvidencedStringType;
+alter table BpcCommentGroupKineticsType 
+    add constraint FKE5FBEB69C81D818D 
+    foreign key (Text) 
+    references EvidencedStringType;
 alter table CitationType 
     add constraint FK7C9796E136491E54 
     foreign key (CitingCitation) 
@@ -1477,21 +1479,33 @@ alter table CitationType
     foreign key (EditorList) 
     references NameListType;
 alter table CommentType 
-    add constraint FKE0CB5219C81D818D 
-    foreign key (Text) 
-    references EvidencedStringType;
-alter table CommentType 
     add constraint FKE0CB521925E10D55 
     foreign key (Absorption) 
     references BpcCommentGroupAbsorptionType;
+alter table CommentType 
+    add constraint FKE0CB521947B1940B 
+    foreign key (TemperatureDependence) 
+    references EvidencedStringType;
+alter table CommentType 
+    add constraint FKE0CB5219C81D818D 
+    foreign key (Text) 
+    references EvidencedStringType;
 alter table CommentType 
     add constraint FKE0CB5219D8CF5AEB 
     foreign key (Kinetics) 
     references BpcCommentGroupKineticsType;
 alter table CommentType 
+    add constraint FKE0CB52191CDB7784 
+    foreign key (RedoxPotential) 
+    references EvidencedStringType;
+alter table CommentType 
     add constraint FKE0CB5219CFA3BF01 
     foreign key (Conflict) 
     references CommentType_ConflictType;
+alter table CommentType 
+    add constraint FKE0CB5219A0F7078F 
+    foreign key (PhDependence) 
+    references EvidencedStringType;
 alter table CommentType_ConflictType 
     add constraint FK6F5452B2BCD5B9D1 
     foreign key (Sequence) 
@@ -1501,33 +1515,37 @@ alter table CommentType_LinkType
     foreign key (CommentType_Link_Hjid) 
     references CommentType;
 alter table DbReferenceType 
-    add constraint FKE43B3D27E13D04B6 
-    foreign key (EntryType_DbReference_Hjid) 
-    references EntryType;
+    add constraint FKE43B3D2762738266 
+    foreign key (OrganismType_DbReference_Hjid) 
+    references OrganismType;
 alter table DbReferenceType 
     add constraint FKE43B3D279338FF06 
     foreign key (CitationType_DbReference_Hjid) 
     references CitationType;
 alter table DbReferenceType 
-    add constraint FKE43B3D2762738266 
-    foreign key (OrganismType_DbReference_Hjid) 
-    references OrganismType;
+    add constraint FKE43B3D27E13D04B6 
+    foreign key (EntryType_DbReference_Hjid) 
+    references EntryType;
 alter table EntryType 
     add constraint FK5ADFA2AC25CD0850 
     foreign key (ProteinExistence) 
     references ProteinExistenceType;
 alter table EntryType 
-    add constraint FK5ADFA2AC4B853B11 
-    foreign key (UniprotType_Entry_Hjid) 
-    references UniprotType;
+    add constraint FK5ADFA2AC3FCD2588 
+    foreign key (Protein) 
+    references ProteinType;
 alter table EntryType 
     add constraint FK5ADFA2AC4029D2B4 
     foreign key (Sequence) 
     references SequenceType;
 alter table EntryType 
-    add constraint FK5ADFA2AC3FCD2588 
-    foreign key (Protein) 
-    references ProteinType;
+    add constraint FK5ADFA2AC4B853B11 
+    foreign key (UniprotType_Entry_Hjid) 
+    references UniprotType;
+alter table EntryType 
+    add constraint FK5ADFA2AC48F8F456 
+    foreign key (Organism) 
+    references OrganismType;
 alter table EntryType_Accession 
     add constraint FKF3878E31135B043F 
     foreign key (EntryType_Accession_Hjid) 
@@ -1553,65 +1571,69 @@ alter table EvidenceType
     foreign key (EntryType_Evidence_Hjid) 
     references EntryType;
 alter table EvidencedStringType 
-    add constraint FK45D53F9828B45AC8 
-    foreign key (SubcellularLocationType_Topology_Hjid) 
-    references SubcellularLocationType;
-alter table EvidencedStringType 
-    add constraint FK45D53F98E79B22E0 
-    foreign key (ProteinType_DomainType_CdAntigenName_Hjid) 
-    references ProteinType_DomainType;
-alter table EvidencedStringType 
-    add constraint FK45D53F989043D942 
-    foreign key (SubcellularLocationType_Location_Hjid) 
-    references SubcellularLocationType;
-alter table EvidencedStringType 
-    add constraint FK45D53F98C23C0BE6 
-    foreign key (ProteinType_ComponentType_CdAntigenName_Hjid) 
-    references ProteinType_ComponentType;
-alter table EvidencedStringType 
-    add constraint FK45D53F98E6DAD713 
-    foreign key (SubcellularLocationType_Orientation_Hjid) 
-    references SubcellularLocationType;
-alter table EvidencedStringType 
-    add constraint FK45D53F98440FD91C 
-    foreign key (ProteinNameGroupRecommendedNameType_ShortName_Hjid) 
-    references ProteinNameGroupRecommendedNameType;
+    add constraint FK45D53F9857F232CF 
+    foreign key (ProteinType_InnName_Hjid) 
+    references ProteinType;
 alter table EvidencedStringType 
     add constraint FK45D53F9833363EE4 
     foreign key (ProteinType_DomainType_InnName_Hjid) 
     references ProteinType_DomainType;
 alter table EvidencedStringType 
-    add constraint FK45D53F9899B8B42A 
-    foreign key (ProteinType_ComponentType_InnName_Hjid) 
+    add constraint FK45D53F98C23C0BE6 
+    foreign key (ProteinType_ComponentType_CdAntigenName_Hjid) 
     references ProteinType_ComponentType;
 alter table EvidencedStringType 
-    add constraint FK45D53F987DE00ADC 
-    foreign key (ProteinNameGroupAlternativeNameType_ShortName_Hjid) 
-    references ProteinNameGroupAlternativeNameType;
+    add constraint FK45D53F989043D942 
+    foreign key (SubcellularLocationType_Location_Hjid) 
+    references SubcellularLocationType;
 alter table EvidencedStringType 
     add constraint FK45D53F98ECF3308B 
     foreign key (ProteinType_CdAntigenName_Hjid) 
     references ProteinType;
 alter table EvidencedStringType 
-    add constraint FK45D53F9857F232CF 
-    foreign key (ProteinType_InnName_Hjid) 
-    references ProteinType;
-alter table FeatureType 
-    add constraint FK4CF1BB3022D4956D 
-    foreign key (EntryType_Feature_Hjid) 
-    references EntryType;
+    add constraint FK45D53F98440FD91C 
+    foreign key (ProteinNameGroupRecommendedNameType_ShortName_Hjid) 
+    references ProteinNameGroupRecommendedNameType;
+alter table EvidencedStringType 
+    add constraint FK45D53F987DE00ADC 
+    foreign key (ProteinNameGroupAlternativeNameType_ShortName_Hjid) 
+    references ProteinNameGroupAlternativeNameType;
+alter table EvidencedStringType 
+    add constraint FK45D53F9828B45AC8 
+    foreign key (SubcellularLocationType_Topology_Hjid) 
+    references SubcellularLocationType;
+alter table EvidencedStringType 
+    add constraint FK45D53F9899B8B42A 
+    foreign key (ProteinType_ComponentType_InnName_Hjid) 
+    references ProteinType_ComponentType;
+alter table EvidencedStringType 
+    add constraint FK45D53F984A8788C9 
+    foreign key (BpcCommentGroupKineticsType_Vmax_Hjid) 
+    references BpcCommentGroupKineticsType;
+alter table EvidencedStringType 
+    add constraint FK45D53F98E6DAD713 
+    foreign key (SubcellularLocationType_Orientation_Hjid) 
+    references SubcellularLocationType;
+alter table EvidencedStringType 
+    add constraint FK45D53F98108A5F95 
+    foreign key (BpcCommentGroupKineticsType_KM_Hjid) 
+    references BpcCommentGroupKineticsType;
+alter table EvidencedStringType 
+    add constraint FK45D53F98E79B22E0 
+    foreign key (ProteinType_DomainType_CdAntigenName_Hjid) 
+    references ProteinType_DomainType;
 alter table FeatureType 
     add constraint FK4CF1BB302D6B089C 
     foreign key (Location) 
     references LocationType;
+alter table FeatureType 
+    add constraint FK4CF1BB3022D4956D 
+    foreign key (EntryType_Feature_Hjid) 
+    references EntryType;
 alter table FeatureType_Variation 
     add constraint FKA6F63BA4953DD530 
     foreign key (FeatureType_Variation_Hjid) 
     references FeatureType;
-alter table GeneLocationType 
-    add constraint FK3055BC64B7CEE32F 
-    foreign key (Name) 
-    references StatusType;
 alter table GeneLocationType 
     add constraint FK3055BC647F1C3193 
     foreign key (EntryType_GeneLocation_Hjid) 
@@ -1625,17 +1647,17 @@ alter table InteractantType
     foreign key (CommentType_Interactant_Hjid) 
     references CommentType;
 alter table IsoformType 
-    add constraint FK981CF9833419C097 
-    foreign key (Note) 
-    references IsoformType_NoteType;
+    add constraint FK981CF98352DFFC35 
+    foreign key (Sequence) 
+    references IsoformType_SequenceType;
 alter table IsoformType 
     add constraint FK981CF9838394509A 
     foreign key (CommentType_Isoform_Hjid) 
     references CommentType;
 alter table IsoformType 
-    add constraint FK981CF98352DFFC35 
-    foreign key (Sequence) 
-    references IsoformType_SequenceType;
+    add constraint FK981CF9833419C097 
+    foreign key (Note) 
+    references IsoformType_NoteType;
 alter table IsoformType_Id 
     add constraint FK93D161776BE415D0 
     foreign key (IsoformType_Id_Hjid) 
@@ -1649,6 +1671,10 @@ alter table KeywordType
     foreign key (EntryType_Keyword_Hjid) 
     references EntryType;
 alter table LocationType 
+    add constraint FK65214AF9D640322 
+    foreign key (CommentType_Location_Hjid) 
+    references CommentType;
+alter table LocationType 
     add constraint FK65214AFEE2F2184 
     foreign key (Position) 
     references PositionType;
@@ -1656,10 +1682,6 @@ alter table LocationType
     add constraint FK65214AFC7310104 
     foreign key (Begin) 
     references PositionType;
-alter table LocationType 
-    add constraint FK65214AF9D640322 
-    foreign key (CommentType_Location_Hjid) 
-    references CommentType;
 alter table LocationType 
     add constraint FK65214AFC19E1136 
     foreign key (EndPosition) 
@@ -1677,10 +1699,6 @@ alter table OrganismType
     foreign key (EntryType_OrganismHost_Hjid) 
     references EntryType;
 alter table OrganismType 
-    add constraint FK44B91F4C3E7D0A0B 
-    foreign key (EntryType_Organism_Hjid) 
-    references EntryType;
-alter table OrganismType 
     add constraint FK44B91F4C167DA5B0 
     foreign key (Lineage) 
     references OrganismType_LineageType;
@@ -1693,21 +1711,21 @@ alter table PropertyType
     foreign key (DbReferenceType_Property_Hjid) 
     references DbReferenceType;
 alter table ProteinNameGroupAlternativeNameType 
-    add constraint FK872C08E15ABF3D8B 
-    foreign key (ProteinType_AlternativeName_Hjid) 
-    references ProteinType;
-alter table ProteinNameGroupAlternativeNameType 
-    add constraint FK872C08E11748F9FA 
-    foreign key (FullName) 
-    references EvidencedStringType;
-alter table ProteinNameGroupAlternativeNameType 
     add constraint FK872C08E1D2FF36E6 
     foreign key (ProteinType_ComponentType_AlternativeName_Hjid) 
     references ProteinType_ComponentType;
 alter table ProteinNameGroupAlternativeNameType 
+    add constraint FK872C08E15ABF3D8B 
+    foreign key (ProteinType_AlternativeName_Hjid) 
+    references ProteinType;
+alter table ProteinNameGroupAlternativeNameType 
     add constraint FK872C08E154D01CA0 
     foreign key (ProteinType_DomainType_AlternativeName_Hjid) 
     references ProteinType_DomainType;
+alter table ProteinNameGroupAlternativeNameType 
+    add constraint FK872C08E11748F9FA 
+    foreign key (FullName) 
+    references EvidencedStringType;
 alter table ProteinNameGroupRecommendedNameType 
     add constraint FK7709318F1748F9FA 
     foreign key (FullName) 
@@ -1717,6 +1735,10 @@ alter table ProteinNameGroupSubmittedNameType
     foreign key (ProteinType_ComponentType_SubmittedName_Hjid) 
     references ProteinType_ComponentType;
 alter table ProteinNameGroupSubmittedNameType 
+    add constraint FKF248BBEF7D501C7D 
+    foreign key (ProteinType_SubmittedName_Hjid) 
+    references ProteinType;
+alter table ProteinNameGroupSubmittedNameType 
     add constraint FKF248BBEF77F80ED2 
     foreign key (ProteinType_DomainType_SubmittedName_Hjid) 
     references ProteinType_DomainType;
@@ -1724,10 +1746,10 @@ alter table ProteinNameGroupSubmittedNameType
     add constraint FKF248BBEF1748F9FA 
     foreign key (FullName) 
     references EvidencedStringType;
-alter table ProteinNameGroupSubmittedNameType 
-    add constraint FKF248BBEF7D501C7D 
-    foreign key (ProteinType_SubmittedName_Hjid) 
-    references ProteinType;
+alter table ProteinType 
+    add constraint FK4419093D4E30B06D 
+    foreign key (AllergenName) 
+    references EvidencedStringType;
 alter table ProteinType 
     add constraint FK4419093DE2F9B389 
     foreign key (BiotechName) 
@@ -1736,8 +1758,8 @@ alter table ProteinType
     add constraint FK4419093D8BA451BD 
     foreign key (RecommendedName) 
     references ProteinNameGroupRecommendedNameType;
-alter table ProteinType 
-    add constraint FK4419093D4E30B06D 
+alter table ProteinType_ComponentType 
+    add constraint FK2B00F6354E30B06D 
     foreign key (AllergenName) 
     references EvidencedStringType;
 alter table ProteinType_ComponentType 
@@ -1752,8 +1774,12 @@ alter table ProteinType_ComponentType
     add constraint FK2B00F6358BA451BD 
     foreign key (RecommendedName) 
     references ProteinNameGroupRecommendedNameType;
-alter table ProteinType_ComponentType 
-    add constraint FK2B00F6354E30B06D 
+alter table ProteinType_DomainType 
+    add constraint FKE3F7C6802D1C63B 
+    foreign key (ProteinType_Domain_Hjid) 
+    references ProteinType;
+alter table ProteinType_DomainType 
+    add constraint FKE3F7C6804E30B06D 
     foreign key (AllergenName) 
     references EvidencedStringType;
 alter table ProteinType_DomainType 
@@ -1761,17 +1787,9 @@ alter table ProteinType_DomainType
     foreign key (BiotechName) 
     references EvidencedStringType;
 alter table ProteinType_DomainType 
-    add constraint FKE3F7C6802D1C63B 
-    foreign key (ProteinType_Domain_Hjid) 
-    references ProteinType;
-alter table ProteinType_DomainType 
     add constraint FKE3F7C6808BA451BD 
     foreign key (RecommendedName) 
     references ProteinNameGroupRecommendedNameType;
-alter table ProteinType_DomainType 
-    add constraint FKE3F7C6804E30B06D 
-    foreign key (AllergenName) 
-    references EvidencedStringType;
 alter table ReferenceType 
     add constraint FK8F0BD50574685D78 
     foreign key (EntryType_Reference_Hjid) 
@@ -1788,12 +1806,17 @@ alter table ReferenceType_Scope
     add constraint FK1973EE7AA4A5F7EF 
     foreign key (ReferenceType_Scope_Hjid) 
     references ReferenceType;
-alter table SourceDataType_SpeciesOrStrainOrPlasmid 
-    add constraint FKD57105C356B60B70 
-    foreign key (SourceDataType_SpeciesOrStrainOrPlasmid_Hjid) 
+alter table SourceDataType_StrainOrPlasmidOrTransposon 
+    add constraint FKCA5BD2F07FE97B63 
+    foreign key (SourceDataType_StrainOrPlasmidOrTransposon_Hjid) 
     references SourceDataType;
+alter table StatusType 
+    add constraint FK859A666C5B7CA8F2 
+    foreign key (GeneLocationType_Name_Hjid) 
+    references GeneLocationType;
 alter table SubcellularLocationType 
     add constraint FKDAB41539501D42C4 
     foreign key (CommentType_SubcellularLocation_Hjid) 
     references CommentType;
 create sequence hibernate_sequence;
+

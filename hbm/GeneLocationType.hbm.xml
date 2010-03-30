@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false" default-cascade="all-delete-orphan" default-lazy="false">
+<class name="org.uniprot.uniprot.GeneLocationType" table="GeneLocationType">
+<id name="Hjid" type="org.hibernate.type.LongType">
+<generator class="native"/>
+</id>
+<discriminator type="org.hibernate.type.StringType">
+<column name="Hjtype"/>
+</discriminator>
+<version name="Hjversion" type="org.hibernate.type.LongType"/>
+<property name="Type">
+<column name="Type"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<property name="Evidence">
+<column name="Evidence"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<many-to-one class="org.uniprot.uniprot.StatusType" name="Name">
+<column name="Name"/>
+</many-to-one>
+<subclass discriminator-value="org.uniprot.uniprot.GeneLocationType" name="org.uniprot.uniprot.impl.GeneLocationTypeImpl"/>
+</class>
+</hibernate-mapping>

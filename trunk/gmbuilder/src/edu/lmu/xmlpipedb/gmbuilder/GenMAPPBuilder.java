@@ -76,7 +76,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "2.0b41";
+    public static final String VERSION = "2.0b42";
 
     /**
      * Starts the application.
@@ -539,26 +539,33 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      *            The title of the dialog (helps prompt the user on what file to
      *            import)
      */
-    private void doGoAssociationImport(String jaxbContextPath, String title){
-    	// IN PROGRESS - DM
-    	Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
+    private void doGoAssociationImport(String jaxbContextPath, String title) {
+        ModalDialog.showInformationDialog("New Feature in Progress", "The ability to import GOA files into the relational database is currently in progress.");
 
-    	if (hibernateConfiguration != null) {
-    		ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration);
-    		importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    		JDialog dialog = new JDialog();
-            importPanel.setDelegate(dialog);
-            dialog.getContentPane().add(importPanel);
-            dialog.setTitle(title);
-            dialog.setModal(true);
-            dialog.setLocationRelativeTo(this.getFrontmostWindow());
-            dialog.setSize(600, 300);
-            dialog.setVisible(true);
-
-    	} else {
-    		showConfigurationError();
-    	}
+        // IN PROGRESS - DM
+        // Don: This code block is specific to XML imports.  Since GOA is not
+        //      an XML import, ImportPanel is not applicable.  Instead, implement
+        //      your own file chooser sequence here (pretty much a standalone version
+        //      of what's currently in the export wizard), then call the database
+        //      import code from that point.
+//        Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
+//
+//        if (hibernateConfiguration != null) {
+//            ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration);
+//            importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+//
+//            JDialog dialog = new JDialog();
+//            importPanel.setDelegate(dialog);
+//            dialog.getContentPane().add(importPanel);
+//            dialog.setTitle(title);
+//            dialog.setModal(true);
+//            dialog.setLocationRelativeTo(this.getFrontmostWindow());
+//            dialog.setSize(600, 300);
+//            dialog.setVisible(true);
+//
+//        } else {
+//            showConfigurationError();
+//        }
     }
 
     /**

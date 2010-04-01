@@ -1,11 +1,11 @@
 /********************************************************
- * Filename: ExportPanel1Description.java
+ * Filename: ExportPanel1Descriptor.java
  * Author: Joey J. Barrett
  * Program: gmBuilder
  * Description: A subclass of WizardPanelDescriptor which
- * outlines provides the nessecary requirements for 
+ * outlines provides the nessecary requirements for
  * creating a wizard panel.
- *     
+ *
  * Revision History:
  * 20060620: Initial Revision.
  * *****************************************************/
@@ -24,44 +24,44 @@ import com.nexes.wizard.WizardPanelDescriptor;
  * Class: ExportPanel1Descriptor
  */
 public class ExportPanel1Descriptor extends WizardPanelDescriptor implements DocumentListener {
-    
+
     public static final String IDENTIFIER = "EXPORT_PANEL1";
-   
-    private ExportPanel1 panel1; 
-    
+
+    private ExportPanel1 panel1;
+
     /**
      * Constructor
      */
     public ExportPanel1Descriptor() {
         panel1 = new ExportPanel1();
         panel1.addDocumentListener(this);
-        
+
         setPanelDescriptorIdentifier(IDENTIFIER);
         setPanelComponent(panel1);
-        
+
     }
-    
+
     /* (non-Javadoc)
      * @see com.nexes.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
      */
     public Object getNextPanelDescriptor() {
         return ExportPanel2Descriptor.IDENTIFIER;
     }
-    
+
     /* (non-Javadoc)
      * @see com.nexes.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
      */
     public Object getBackPanelDescriptor() {
         return null;
-    }  
-    
+    }
+
     /* (non-Javadoc)
      * @see com.nexes.wizard.WizardPanelDescriptor#aboutToDisplayPanel()
      */
     public void aboutToDisplayPanel() {
         setNextButton();
     }
-    
+
     /* (non-Javadoc)
      * @see com.nexes.wizard.WizardPanelDescriptor#aboutToHidePanel()
      */
@@ -70,7 +70,7 @@ public class ExportPanel1Descriptor extends WizardPanelDescriptor implements Doc
 		panel1.submitInformationEntered();
        } catch (ParseException ignored) {}
     }
-    
+
     /**
      * Sets the next button accordingly.
      */
@@ -78,7 +78,7 @@ public class ExportPanel1Descriptor extends WizardPanelDescriptor implements Doc
         if (panel1.isAllInformationEntered())
            getWizard().setNextFinishButtonEnabled(true);
         else
-           getWizard().setNextFinishButtonEnabled(false);           
+           getWizard().setNextFinishButtonEnabled(false);
    }
 
 	/* (non-Javadoc)

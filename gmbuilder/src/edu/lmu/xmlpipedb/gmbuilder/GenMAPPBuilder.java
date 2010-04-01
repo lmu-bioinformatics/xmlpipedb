@@ -541,7 +541,18 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      */
     private void doGoAssociationImport(String jaxbContextPath, String title) {
         ModalDialog.showInformationDialog("New Feature in Progress", "The ability to import GOA files into the relational database is currently in progress.");
-
+        /*Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
+        JFileChooser chooser = new JFileChooser(".");
+        if (hibernateConfiguration != null) {
+        	if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                goAssociationsFile = chooser.getSelectedFile();
+                if (goAssociationsFile == null) {
+                    goAssociationsFile = new File("");
+                }
+                goAssocationsTextField.setText(goAssociationsFile.getName());
+            }
+        }*/
+        
         // IN PROGRESS - DM
         // Don: This code block is specific to XML imports.  Since GOA is not
         //      an XML import, ImportPanel is not applicable.  Instead, implement
@@ -568,15 +579,6 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 //        }
     }
 
-    /**
-     * Imports a GOA file into the database.
-     *
-     * @param jaxbContextPath
-     *            The context path under which to store the object
-     * @param title
-     *            The title of the dialog (helps prompt the user on what file to
-     *            import)
-     */
 
     /**
      * Builds the criteria HashMap with the proper data to all the TallyEngine

@@ -1,11 +1,11 @@
 /********************************************************
- * Filename: ExportPanel5Description.java
+ * Filename: ExportPanel5Descriptor.java
  * Author: Joey J. Barrett
  * Program: gmBuilder
  * Description: A subclass of WizardPanelDescriptor which
- * outlines provides the nessecary requirements for 
+ * outlines provides the nessecary requirements for
  * creating a wizard panel.
- *     
+ *
  * Revision History:
  * 20060620: Initial Revision.
  * *****************************************************/
@@ -34,16 +34,16 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
  * Class: ExportPanel5Descriptor
  */
 public class ExportPanel5Descriptor extends WizardPanelDescriptor {
-    
+
     public static final String IDENTIFIER = "EXPORT_PANEL5";
-    
+
     ExportPanel5 panel5;
-    
+
     /**
      * Constructor.
      */
     public ExportPanel5Descriptor() {
-        
+
         panel5 = new ExportPanel5();
         setPanelDescriptorIdentifier(IDENTIFIER);
         setPanelComponent(panel5);
@@ -55,28 +55,28 @@ public class ExportPanel5Descriptor extends WizardPanelDescriptor {
     public Object getNextPanelDescriptor() {
         return FINISH;
     }
-    
+
     /* (non-Javadoc)
      * @see com.nexes.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
      */
     public Object getBackPanelDescriptor() {
         return null;
     }
-    
-    
+
+
     /* (non-Javadoc)
      * @see com.nexes.wizard.WizardPanelDescriptor#aboutToDisplayPanel()
      */
     public void aboutToDisplayPanel() {
-        
+
         ExportPanel5.setProgress(0, "Preparing for export...");
-        
+
 
         getWizard().setNextFinishButtonEnabled(false);
         getWizard().setBackButtonEnabled(false);
-        
+
     }
-    
+
     /**
      * @see com.nexes.wizard.WizardPanelDescriptor#displayingPanel()
      */
@@ -112,6 +112,6 @@ public class ExportPanel5Descriptor extends WizardPanelDescriptor {
 
         t.start();
     }
-    
+
     private static final Log _Log = LogFactory.getLog(ExportPanel5Descriptor.class);
 }

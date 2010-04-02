@@ -2,9 +2,9 @@
  * Filename: DatabaseProfile.java
  * Author: Joey J. Barrett
  * Program: gmBuilder
- * Description: Sub-class this class for a new 
+ * Description: Sub-class this class for a new
  * gene-centric database profile.
- *     
+ *
  * Revision History:
  * 20060620: Initial Revision.
  * *****************************************************/
@@ -35,16 +35,16 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
  * DatabaseProfiles contain the SpeciesProfiles for the species supported by that
- * database that are available in our system for export. For example, if the 
- * DatabaseProfile is for Uniprot and we have imported data for E.coli and 
+ * database that are available in our system for export. For example, if the
+ * DatabaseProfile is for Uniprot and we have imported data for E.coli and
  * A.thaliana, there would be 2 SpeciesProfiles in the speciesProfilesAvailable
  * array. Once one of those is selected, that SpeciesProfile will be set in
  * the speciesProfile object.
- * 
- * Currently, DatabaseProfile objects are created by the ExportToGenMAPP 
- * in the static initializer. The DP objects are then updated by getting 
+ *
+ * Currently, DatabaseProfile objects are created by the ExportToGenMAPP
+ * in the static initializer. The DP objects are then updated by getting
  * references to them through static methods in ExportToGenMAPP.
- * 
+ *
  * @author Joey J. Barrett Class: DatabaseProfile
  * @author Jeffrey Nicholas
  */
@@ -111,7 +111,7 @@ public abstract class DatabaseProfile extends Profile {
     /**
      * The constructor creates a DatabaseProfile object that contains an array
      * of SpeciesProfile objects.
-     * 
+     *
      * @param name
      * @param description
      * @param speciesProfilesAvailable
@@ -120,7 +120,7 @@ public abstract class DatabaseProfile extends Profile {
         super(name, description);
         this.speciesProfilesAvailable = speciesProfilesAvailable;
         this.displayOrderPreset = DisplayOrderPreset.alphabetical;
-        
+
 		//FIXME jn -- TEMP CODE START
 //        	URL u = getClass().getResource("/edu/lmu/xmlpipedb/gmbuilder/resource/dbfiles/GeneDBTmpl.mdb");
 //        	URI uri = null;
@@ -134,16 +134,16 @@ public abstract class DatabaseProfile extends Profile {
 //			File f = new File(uri.getPath());
 //			f.exists();
 //			f.getAbsoluteFile();
-			
+
 		//FIXME jn -- TEMP CODE END
-		
+
     }
 
     /**
      * Returns whether this profile is available within the given connection. A
      * sub-class must define exactly what needs to be verified to be a valid
      * X-centric database.
-     * 
+     *
      * @param connection
      * @return
      * @throws SQLException
@@ -154,7 +154,7 @@ public abstract class DatabaseProfile extends Profile {
      * Returns whether this profile matches any other requirements for the
      * X-centric database. This is place to check for species contained in the
      * database.
-     * 
+     *
      * @param connection
      * @throws SQLException
      */
@@ -162,7 +162,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Returns the available species profiles contained in this database.
-     * 
+     *
      * @return
      */
     public SpeciesProfile[] getSpeciesProfilesFound() {
@@ -171,7 +171,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Returns the available display order options.
-     * 
+     *
      * @return
      */
     public DisplayOrderPreset[] getAvailableDisplayOrderPresets() {
@@ -182,7 +182,7 @@ public abstract class DatabaseProfile extends Profile {
      * Returns the available system tables found in this database. It is the
      * difference between the tables defined in the template file and the tables
      * found in the database.
-     * 
+     *
      * @return
      */
     public Map<String, SystemType> getAvailableSystemTables() {
@@ -202,7 +202,7 @@ public abstract class DatabaseProfile extends Profile {
     /**
      * Returns a map of the database specific system tables. For an example of
      * how to do this look at the sub-classes of this class.
-     * 
+     *
      * @return
      */
     public abstract Map<String, SystemType> getDatabaseSpecificSystemTables();
@@ -211,7 +211,7 @@ public abstract class DatabaseProfile extends Profile {
      * Returns the relationship tables based on the chosen system tables in the
      * export wizard. It uses the predefined definition for relationship table
      * combinations.
-     * 
+     *
      * @return
      */
     public String[] getAvailableRelationshipTables() {
@@ -244,7 +244,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Returns the profile name.
-     * 
+     *
      * @return
      */
     public String getProfileName() {
@@ -253,7 +253,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Returns the profile description.
-     * 
+     *
      * @return
      */
     public String getProfileDescription() {
@@ -262,7 +262,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Returns the MODSystem for this X-centric database.
-     * 
+     *
      * @return
      */
     public abstract String getMODSystem();
@@ -270,14 +270,14 @@ public abstract class DatabaseProfile extends Profile {
     /**
      * Returns the display order of the chosen system tables using the display
      * order option chosen in the export wizard.
-     * 
+     *
      * @return
      */
     public abstract String getDefaultDisplayOrder();
 
     /**
      * Returns the GenMAPP database chosen in the export wizard.
-     * 
+     *
      * @return
      */
     public String getGenMAPPDatabase() {
@@ -287,7 +287,7 @@ public abstract class DatabaseProfile extends Profile {
     /**
      * Returns the alternate connection chosen in the export wizard. (not
      * finished implementation)
-     * 
+     *
      * @return
      */
     public ConnectionConfiguration getConnectionConfiguration() {
@@ -296,7 +296,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Returns the associations file chosen in the export wizard.
-     * 
+     *
      * @return
      */
     public File getAssociationsFile() {
@@ -306,7 +306,7 @@ public abstract class DatabaseProfile extends Profile {
     /**
      * Returns the primary system table for this X-centric database. The primary
      * system table must have a system type of "Primary".
-     * 
+     *
      * @return
      */
     public String getPrimarySystemTable() {
@@ -321,8 +321,8 @@ public abstract class DatabaseProfile extends Profile {
     /**
      * Returns a map of the chosen system tables from the export wizard.
      * System tables may include: UniProt, PDB, Pfam, InterPro, or GeneOntology
-     * for UniProt's E.coli database, for example. 
-     * 
+     * for UniProt's E.coli database, for example.
+     *
      * @return Map
      */
     public Map<String, SystemType> getSystemTables() {
@@ -331,7 +331,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Returns the selected species profile chosen in the export wizard.
-     * 
+     *
      * @param selectedProfile
      */
     public SpeciesProfile getSelectedSpeciesProfile() {
@@ -340,7 +340,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Sets the selected species profile chosen in the export wizard.
-     * 
+     *
      * @param selectedProfile
      */
     public void setSelectedSpeciesProfile(SpeciesProfile selectedProfile) {
@@ -349,7 +349,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Sets the owner string for the Gene Database to be exported.
-     * 
+     *
      * @param owner
      *            The owner string
      */
@@ -359,7 +359,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Returns the version date for the Gene Database to be exported.
-     * 
+     *
      * @return The version date for the Gene Database to be exported
      */
     public Date getVersion() {
@@ -368,7 +368,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Sets the version date for the Gene Database to be exported.
-     * 
+     *
      * @param version
      *            The version date
      */
@@ -378,7 +378,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Sets the MOD system name for the Gene Database to be exported.
-     * 
+     *
      * @param modSystem
      *            The MOD system name
      */
@@ -388,7 +388,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Sets the species name for the Gene Database to be exported.
-     * 
+     *
      * @param speciesName
      *            The species name to use
      */
@@ -398,7 +398,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Sets the modify date to use for the Gene Database to be exported.
-     * 
+     *
      * @param modify
      *            The modify date to use
      */
@@ -408,7 +408,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Sets the display order string for the Gene Database to be exported.
-     * 
+     *
      * @param displayOrder
      *            The display order string to use
      */
@@ -418,7 +418,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Sets the note string for the Gene Database to be exported.
-     * 
+     *
      * @param notes
      *            The notes to include
      */
@@ -428,7 +428,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Sets the connections and associations file chosen in the export wizard.
-     * 
+     *
      * @param genMAPPDatabase
      * @param connectionConfiguration
      * @param associationsFile
@@ -440,9 +440,17 @@ public abstract class DatabaseProfile extends Profile {
     }
 
     /**
+     * Sets the associations file chosen in the import wizard
+     */
+    public void setGOAProperties(File associationsFile) {
+    	this.associationsFile = associationsFile;
+    }
+
+
+    /**
      * Sets the table properties, specifically the system tables (both proper
      * and improper) from the export wizard. ExportPanel3 gets these values
-     * 
+     *
      * @param properSystemTables
      * @param improperSystemTables
      */
@@ -463,7 +471,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Sets the relationship tables chosen in the export wizard.
-     * 
+     *
      * @param relationshipTables
      */
     public void setRelationshipTableProperties(String[] relationshipTables) {
@@ -474,15 +482,15 @@ public abstract class DatabaseProfile extends Profile {
      * Returns table managers associated with the first pass through the tables
      * to be created. It also updates the export wizard to which tables it is
      * preparing.
-     * 
+     *
      * @return
-     * @throws InvalidParameterException 
+     * @throws InvalidParameterException
      * @throws Exception
      */
     //JN - 2007-02-24 -- This stuff was in-lined in the ExportToGenMAPP.export()
     //  method a few months ago. It should no longer be needed and I've now
     //  commented it out. If this causes any issues, they should be addressed
-    //  by changing the call and/or functionality, but *not* by adding this 
+    //  by changing the call and/or functionality, but *not* by adding this
     //  back in.
 //    public TableManager[] getFirstPassTableManagers() throws SQLException, InvalidParameterException {
 //        List<TableManager> tableManagers = new ArrayList<TableManager>();
@@ -514,7 +522,7 @@ public abstract class DatabaseProfile extends Profile {
     /**
      * Returns table managers associated with the second pass through the tables
      * to be created. This is to be defined by a X-centric database.
-     * 
+     *
      * @return
      * @throws SQLException
      * @throws Exception
@@ -523,7 +531,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Prepares a TableManager for this database.
-     * 
+     *
      * @return TableManager
      * @throws Exception
      */
@@ -537,7 +545,7 @@ public abstract class DatabaseProfile extends Profile {
      * Prepares the relations TableManager for this database. If a species
      * specific change is required the getRelationTableManagerCustomization()
      * function is called.
-     * 
+     *
      * @return
      * @throws Exception
      */
@@ -558,7 +566,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Returns a TableManager for the "Other" table.
-     * 
+     *
      * @return
      */
     public TableManager getOtherTableManager() {
@@ -568,7 +576,7 @@ public abstract class DatabaseProfile extends Profile {
     /**
      * This function must be implemented by an X-centric database and should the
      * return the systems table manager associated with that database.
-     * 
+     *
      * @return
      * @throws Exception
      */
@@ -578,7 +586,7 @@ public abstract class DatabaseProfile extends Profile {
      * This function must be implemented by an X-centric database and should
      * return a TableManager with the primary system table information
      * associated with that database.
-     * 
+     *
      * @return
      * @throws Exception
      */
@@ -587,9 +595,9 @@ public abstract class DatabaseProfile extends Profile {
     /**
      * This function must be implemented by an X-centric database and should
      * return a TableManager with all system tables.
-     * 
+     *
      * @return
-     * @throws InvalidParameterException 
+     * @throws InvalidParameterException
      * @throws Exception
      */
     public abstract TableManager getSystemTableManager() throws SQLException, InvalidParameterException;
@@ -600,9 +608,9 @@ public abstract class DatabaseProfile extends Profile {
      * database. Relationship tables are tables like: UniProt-EMBL, UniProt-PDB,
      * and UniProt-Blattner. There are likely to be several tables of this type
      * in an Export.
-     * 
+     *
      * @return
-     * @throws InvalidParameterException 
+     * @throws InvalidParameterException
      * @throws Exception
      */
     public abstract List<TableManager> getRelationshipTableManager() throws SQLException, InvalidParameterException;
@@ -612,7 +620,7 @@ public abstract class DatabaseProfile extends Profile {
      * to query the database for which tables have actually been created rather
      * than the few hardcoded values and a compiling of the other tables assumed
      * created.
-     * 
+     *
      * @return
      * @throws Exception
      */
@@ -651,7 +659,7 @@ public abstract class DatabaseProfile extends Profile {
 
     /**
      * Returns the chosen export connection from the export wizard.
-     * 
+     *
      * @return Connection
      * @throws Exception
      */

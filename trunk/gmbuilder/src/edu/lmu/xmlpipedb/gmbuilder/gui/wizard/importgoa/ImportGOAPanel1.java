@@ -36,6 +36,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentListener;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ImportGOA;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 
@@ -304,10 +305,7 @@ public class ImportGOAPanel1 extends JPanel {
 		 * DatabaseProfile and ConnectionManager classes. The following line
 		 * now needs to pass a String, not a File (like it used to).
 		*/
-		databaseProfile.setDatabaseProperties(
-				null,
-				null,
-				goAssociationsFile);
-		ExportToGenMAPP.setDatabaseProfile(databaseProfile);
+		databaseProfile.setGOAProperties(goAssociationsFile);
+		ImportGOA.setDatabaseProfile(databaseProfile);
 	}
 }

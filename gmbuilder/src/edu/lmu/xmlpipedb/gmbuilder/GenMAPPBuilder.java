@@ -44,6 +44,9 @@ import org.xml.sax.SAXException;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ImportGOA;
+//import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ImportGoData;
+import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.importgoa.ImportGOAWizard;
 import edu.lmu.xmlpipedb.gmbuilder.resource.properties.AppResources;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.Criterion;
@@ -541,6 +544,48 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      */
     private void doGoAssociationImport(String jaxbContextPath, String title) {
         ModalDialog.showInformationDialog("New Feature in Progress", "The ability to import GOA files into the relational database is currently in progress.");
+
+        /*try {
+            getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+            Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
+            if (hibernateConfiguration != null) {
+                ImportGOA.init(hibernateConfiguration);
+                getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                new ImportGOAWizard(this.getFrontmostWindow());
+                ImportGOA.cleanup();
+            } else {
+                showConfigurationError();
+            }
+
+        } catch(HibernateException e) {
+            ModalDialog.showErrorDialog("HIBERNATE error.");
+            _Log.error(e);
+        } catch(SAXException e) {
+            ModalDialog.showErrorDialog("SAX error.");
+            _Log.error(e);
+        } catch(JAXBException e) {
+            ModalDialog.showErrorDialog("JAXB error.");
+            _Log.error(e);
+        } catch(SQLException e) {
+            ModalDialog.showErrorDialog("SQL error.");
+            _Log.error(e);
+        } catch(IOException e) {
+            ModalDialog.showErrorDialog("I/O error.");
+            _Log.error(e);
+        } catch(ClassNotFoundException e) {
+            ModalDialog.showErrorDialog("Database driver error.");
+            _Log.error(e);
+        } catch(Exception e) {
+            ModalDialog.showErrorDialog(e.toString());
+            _Log.error(e);
+        } finally {
+            try {
+                ImportGOA.cleanup();
+            } catch(SQLException ignored) {
+            }
+        }*/
+
         /*Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         JFileChooser chooser = new JFileChooser(".");
         if (hibernateConfiguration != null) {
@@ -552,7 +597,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 goAssocationsTextField.setText(goAssociationsFile.getName());
             }
         }*/
-        
+
         // IN PROGRESS - DM
         // Don: This code block is specific to XML imports.  Since GOA is not
         //      an XML import, ImportPanel is not applicable.  Instead, implement

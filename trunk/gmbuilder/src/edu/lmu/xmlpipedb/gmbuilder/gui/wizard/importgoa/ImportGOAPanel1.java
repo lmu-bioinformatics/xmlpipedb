@@ -49,13 +49,13 @@ public class ImportGOAPanel1 extends JPanel {
 	private static final long serialVersionUID = -2257129989592002163L;
 	private JFileChooser chooser = new JFileChooser(".");
 
-	private JRadioButton genmappRadioButton;
-	private JRadioButton otherRadioButton;
+//	private JRadioButton genmappRadioButton;
+//	private JRadioButton otherRadioButton;
 
-	private File genmappDatabaseFile = new File("");
-	private JTextField genmappDatabaseTextField;
-	private JButton chooseGenMAPPDatabaseButton;
-	private JLabel chooseGenMAPPDatabaseLabel;
+//	private File genmappDatabaseFile = new File("");
+//	private JTextField genmappDatabaseTextField;
+//	private JButton chooseGenMAPPDatabaseButton;
+//	private JLabel chooseGenMAPPDatabaseLabel;
 
 	private JLabel otherDatabaseSettings;
 
@@ -99,10 +99,10 @@ public class ImportGOAPanel1 extends JPanel {
 	/* TODO - After reviewing panel appearance of ExportPanel2, alter or remove components as necessary */
     private JPanel getContentPanel() {
 
-    	JPanel genmappPanel = new JPanel();
+/*    	JPanel genmappPanel = new JPanel();
     	genmappDatabaseTextField = new JTextField(15);
     	genmappDatabaseTextField.setEditable(false);
-	    Action chooseGenMAPPDatabaseAction = new AbstractAction("Specify File...") {
+        Action chooseGenMAPPDatabaseAction = new AbstractAction("Specify File...") {
 			private static final long serialVersionUID = 3215450361259127899L;
 
 	        public void actionPerformed(ActionEvent e) {
@@ -113,11 +113,11 @@ public class ImportGOAPanel1 extends JPanel {
 	    chooseGenMAPPDatabaseLabel = new JLabel("Create GenMAPP Database:");
     	genmappPanel.add(chooseGenMAPPDatabaseLabel);
     	genmappPanel.add(genmappDatabaseTextField);
-    	genmappPanel.add(chooseGenMAPPDatabaseButton);
+    	genmappPanel.add(chooseGenMAPPDatabaseButton);*/
 
 
     	JPanel otherPanel = new JPanel();
-    	otherDatabaseSettings = new JLabel("Choose other database settings here:");
+    	otherDatabaseSettings = new JLabel("Choose GO Associations (GOA) file:");
     	otherPanel.add(otherDatabaseSettings);
 
     	JPanel goPanel = new JPanel();
@@ -136,7 +136,7 @@ public class ImportGOAPanel1 extends JPanel {
 	    goPanel.add(chooseGoAssociationsFile);
 
 
-    	genmappRadioButton = new JRadioButton();
+/*    	genmappRadioButton = new JRadioButton();
     	genmappRadioButton.setText("GenMAPP Gene Database File");
     	genmappRadioButton.addActionListener(new ActionListener() {
 
@@ -162,12 +162,12 @@ public class ImportGOAPanel1 extends JPanel {
 
     	ButtonGroup buttonGroup = new ButtonGroup();
     	buttonGroup.add(genmappRadioButton);
-    	buttonGroup.add(otherRadioButton);
+    	buttonGroup.add(otherRadioButton);*/
 
     	JPanel centerPanel = new JPanel(new GridLayout(0,1));
-    	centerPanel.add(genmappRadioButton);
-    	centerPanel.add(genmappPanel);
-    	centerPanel.add(otherRadioButton);
+//    	centerPanel.add(genmappRadioButton);
+//    	centerPanel.add(genmappPanel);
+//    	centerPanel.add(otherRadioButton);
     	centerPanel.add(otherPanel);
 
     	JPanel contentPanel = new JPanel(new BorderLayout());
@@ -182,17 +182,17 @@ public class ImportGOAPanel1 extends JPanel {
 	 */
 	protected void displayAvailableInformation() {
 
-		genmappDatabaseFile = new File("");
-		genmappDatabaseTextField.setText("");
+//		genmappDatabaseFile = new File("");
+//		genmappDatabaseTextField.setText("");
 		goAssociationsFile = new File("");
 		goAssocationsTextField.setText("");
 
-		genmappRadioButton.setSelected(true);
-		otherRadioButton.setSelected(false);
+//		genmappRadioButton.setSelected(true);
+//		otherRadioButton.setSelected(false);
 
 		DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
 
-		if(databaseProfile.getGenMAPPDatabase() != null) {
+/*		if(databaseProfile.getGenMAPPDatabase() != null) {
 			// DEV NOTE: JN 7/15/2006 -- I changed the next line from receiving the file directly
 			// to receiving a string and converting it to a file.
 			// I've been cleaning up the use of File references, by changing them
@@ -205,7 +205,7 @@ public class ImportGOAPanel1 extends JPanel {
 			chooseGenMAPPDatabaseButton.setEnabled(true);
 			chooseGenMAPPDatabaseLabel.setEnabled(true);
 			genmappRadioButton.setSelected(true);
-		}
+		}*/
 
 		if(databaseProfile.getAssociationsFile() != null) {
 			goAssociationsFile = databaseProfile.getAssociationsFile();
@@ -218,7 +218,7 @@ public class ImportGOAPanel1 extends JPanel {
 	 * @param documentListener
 	 */
 	protected void addDocumentListener(DocumentListener documentListener) {
-		genmappDatabaseTextField.getDocument().addDocumentListener(documentListener);
+//		genmappDatabaseTextField.getDocument().addDocumentListener(documentListener);
 		goAssocationsTextField.getDocument().addDocumentListener(documentListener);
 	}
 
@@ -226,29 +226,29 @@ public class ImportGOAPanel1 extends JPanel {
 	 * Sets dynamic content based on a button
 	 * selection.
 	 */
-	protected void otherRadioButtonSelected() {
+/*	protected void otherRadioButtonSelected() {
 		genmappDatabaseTextField.setEnabled(false);
 		chooseGenMAPPDatabaseButton.setEnabled(false);
 		chooseGenMAPPDatabaseLabel.setEnabled(false);
 		otherDatabaseSettings.setEnabled(true);
-	}
+	}*/
 
 	/**
 	 * Sets dynamic content based on a button
 	 * selection.
 	 */
-	protected void genmappRadioButtonSelected() {
+/*	protected void genmappRadioButtonSelected() {
 		genmappDatabaseTextField.setEnabled(true);
 		chooseGenMAPPDatabaseButton.setEnabled(true);
 		chooseGenMAPPDatabaseLabel.setEnabled(true);
 		otherDatabaseSettings.setEnabled(false);
-	}
+	}*/
 
 	/**
 	 * Displays a file chooser for creating
 	 * a GenMAPP database file.
 	 */
-	protected void chooseGenMAPPDatabase() {
+/*	protected void chooseGenMAPPDatabase() {
 
 		String defaultFileName = GenMAPPBuilderUtilities.getDefaultGDBFilename(ExportToGenMAPP.getDatabaseProfile().getSelectedSpeciesProfile().getSpeciesName(), new Date());
 		File exportFolder = new File("./export/");
@@ -266,7 +266,7 @@ public class ImportGOAPanel1 extends JPanel {
             }
             genmappDatabaseTextField.setText(genmappDatabaseFile.getName());
         }
-	}
+	}*/
 
 	/**
 	 * Displays a file chooser for selecting
@@ -289,7 +289,7 @@ public class ImportGOAPanel1 extends JPanel {
      * @return
      */
     protected boolean isAllInformationEntered() {
-        if ("".equals(genmappDatabaseFile.getName()) || "".equals(goAssociationsFile.getName())) {
+        if ("".equals(goAssociationsFile.getName())) {
             return false;
         }
         return true;
@@ -305,7 +305,7 @@ public class ImportGOAPanel1 extends JPanel {
 		 * now needs to pass a String, not a File (like it used to).
 		*/
 		databaseProfile.setDatabaseProperties(
-				genmappDatabaseFile.getAbsolutePath(),
+				null,
 				null,
 				goAssociationsFile);
 		ExportToGenMAPP.setDatabaseProfile(databaseProfile);

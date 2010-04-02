@@ -27,6 +27,7 @@ import org.xml.sax.SAXException;
 import com.nexes.wizard.WizardPanelDescriptor;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP; /* Will probably not be used in this class; to be removed upon investiagtion */
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ImportGOA;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 
@@ -70,7 +71,7 @@ public class ImportGOAPanel2Descriptor extends WizardPanelDescriptor {
      */
     public void aboutToDisplayPanel() {
 
-        ImportGOAPanel2.setProgress(0, "Preparing for export...");
+        ImportGOAPanel2.setProgress(0, "Preparing for GOA import...");
 
 
         getWizard().setNextFinishButtonEnabled(false);
@@ -88,23 +89,23 @@ public class ImportGOAPanel2Descriptor extends WizardPanelDescriptor {
             public void run() {
                 try {
                     getWizard().getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    ExportToGenMAPP.export();
-                    ExportPanel5.setProgress(100, "Export completed successfully.");
+                    ImportGOA.GOAimport();
+                    ImportGOAPanel2.setProgress(100, "Import completed successfully.");
                     getWizard().setNextFinishButtonEnabled(true);
                 } catch(HibernateException e) {
-                    _Log.fatal("Export problem", e);
+                    _Log.fatal("Import GOA problem", e);
                 } catch(ClassNotFoundException e) {
-                    _Log.fatal("Export problem", e);
+                    _Log.fatal("Import GOA problem", e);
                 } catch(SQLException e) {
-                    _Log.fatal("Export problem", e);
+                    _Log.fatal("Import GOA problem", e);
                 } catch(SAXException e) {
-                    _Log.fatal("Export problem", e);
+                    _Log.fatal("Import GOA problem", e);
                 } catch(IOException e) {
-                    _Log.fatal("Export problem", e);
+                    _Log.fatal("Import GOA problem", e);
                 } catch(JAXBException e) {
-                    _Log.fatal("Export problem", e);
+                    _Log.fatal("Import GOA problem", e);
                 } catch (InvalidParameterException e) {
-                	_Log.fatal("Export problem", e);
+                	_Log.fatal("Import GOA problem", e);
 				} finally {
                     getWizard().getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }

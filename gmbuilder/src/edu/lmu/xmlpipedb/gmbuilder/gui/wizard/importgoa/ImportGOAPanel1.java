@@ -300,7 +300,7 @@ public class ImportGOAPanel1 extends JPanel {
 	 * Submits all information collected on the panel.
 	 */
 	protected void submitInformationEntered() {
-		DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
+		DatabaseProfile databaseProfile = ImportGOA.getDatabaseProfile();
 		/* JN 7/15/2006 -- I eliminated most (many?) of the uses of File in the
 		 * DatabaseProfile and ConnectionManager classes. The following line
 		 * now needs to pass a String, not a File (like it used to).

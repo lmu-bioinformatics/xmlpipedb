@@ -8,7 +8,7 @@
  * creating a wizard panel.
  *
  * Revision History:
- * 20060620: Initial Revision.
+ * 20100402: Initial Revision, based upon ExportPanel2Descriptor.java.
  * *****************************************************/
 
 package edu.lmu.xmlpipedb.gmbuilder.gui.wizard.importgoa;

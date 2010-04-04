@@ -275,7 +275,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
         	public void actionPerformed(ActionEvent aevt) {
-        		doGoAssociationImport("org.goa.goa","Import GOA File"); // Purpose of first string
+        		doGoAssociationImport(); // Purpose of first string
         	}
         };
 
@@ -542,11 +542,11 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      *            The title of the dialog (helps prompt the user on what file to
      *            import)
      */
-    private void doGoAssociationImport(String jaxbContextPath, String title) {
-      ModalDialog.showInformationDialog("New Feature in Progress", "The ability to import GOA files into the relational database is currently in progress.");
+    private void doGoAssociationImport() {
+//      ModalDialog.showInformationDialog("New Feature in Progress", "The ability to import GOA files into the relational database is currently in progress.");
 
 // Uncomment to line 589 to implement current GOA import
-/*        try {
+        try {
             getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
             Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
@@ -586,7 +586,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             } catch(SQLException ignored) {
             }
         }
-*/
+
 
         /*Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         JFileChooser chooser = new JFileChooser(".");

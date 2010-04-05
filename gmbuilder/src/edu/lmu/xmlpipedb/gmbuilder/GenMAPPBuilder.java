@@ -44,9 +44,9 @@ import org.xml.sax.SAXException;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ImportGOA;
-//import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ImportGoData;
-import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.importgoa.ImportGOAWizard;
+//import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ImportGOA;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ImportGoData;
+import edu.lmu.xmlpipedb.gmbuilder.gui.util.ImportGOAPanel;
 import edu.lmu.xmlpipedb.gmbuilder.resource.properties.AppResources;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.Criterion;
@@ -275,7 +275,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
         	public void actionPerformed(ActionEvent aevt) {
-        		doGoAssociationImport(); // Purpose of first string
+        		doGoAssociationImport("Import GOA File"); // Purpose of first string
         	}
         };
 
@@ -542,11 +542,26 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      *            The title of the dialog (helps prompt the user on what file to
      *            import)
      */
-    private void doGoAssociationImport() {
+    private void doGoAssociationImport(String title) {
 //      ModalDialog.showInformationDialog("New Feature in Progress", "The ability to import GOA files into the relational database is currently in progress.");
+    	Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
+    	if (hibernateConfiguration != null) {
+            ImportGOAPanel importGOAPanel = new ImportGOAPanel(hibernateConfiguration);
+            importGOAPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
+            JDialog dialog = new JDialog();
+            importGOAPanel.setDelegate(dialog);
+            dialog.getContentPane().add(importGOAPanel);
+            dialog.setTitle(title);
+            dialog.setModal(true);
+            dialog.setLocationRelativeTo(this.getFrontmostWindow());
+            dialog.setSize(600, 300);
+            dialog.setVisible(true);
+    	} else {
+    		showConfigurationError();
+    	}
 // Uncomment to line 589 to implement current GOA import
-        try {
+/*        try {
             getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
             Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
@@ -586,9 +601,9 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             } catch(SQLException ignored) {
             }
         }
+*/
 
-
-        /*Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
+/*        Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         JFileChooser chooser = new JFileChooser(".");
         if (hibernateConfiguration != null) {
         	if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {

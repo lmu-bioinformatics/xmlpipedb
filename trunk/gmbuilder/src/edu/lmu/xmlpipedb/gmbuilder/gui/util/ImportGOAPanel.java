@@ -23,6 +23,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.FileReader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.HashMap;
 
@@ -42,6 +47,7 @@ import org.hibernate.cfg.Configuration;
 
 import edu.lmu.xmlpipedb.util.gui.UtilityDialogue;
 import edu.lmu.xmlpipedb.util.engines.ImportEngine;
+import edu.lmu.xmlpipedb.util.engines.QueryEngine;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 /**
@@ -215,12 +221,59 @@ public class ImportGOAPanel extends UtilityDialogue {
 
         if (proceedWithImport) {
         	JOptionPane.showMessageDialog(this, "File Valid; Import in Development", "Import in Development", JOptionPane.ERROR_MESSAGE);
-/*            try {
+        	QueryEngine qe = new QueryEngine(_hibernateConfiguration);
+            Connection conn = qe.currentSession().connection();
+            PreparedStatement query = null;
+            ResultSet results = null;
+            String tableCreator = "create table Goa ( "
+            	+ "DB VARCHAR(30), "
+            	+ "DB_Object_ID VARCHAR(30), "
+            	+ "DB_Object_Symbol VARCHAR(15), "
+            	+ "Qualifier VARCHAR(38), "
+            	+ "GO_ID VARCHAR(10), "
+            	+ "DB_Reference VARCHAR(20), "
+            	+ "Evidence_Code VARCHAR(3), "
+            	+ "With_or_From VARCHAR(30), "
+            	+ "Aspect VARCHAR(1), "
+            	+ "DB_Object_Name VARCHAR(50), "
+            	+ "DB_Object_Synonym VARCHAR(40), "
+            	+ "DB_Object_Type VARCHAR(15), "
+            	+ "Taxon VARCHAR(30), "
+            	+ "Date DATE, "
+            	+ "DB_Object_ID VARCHAR(30), "
+            	+ "Assigned_By VARCHAR(15), "
+            	+ "Annotation_Extension VARCHAR(50), "
+            	+ "Gene_Product_Form_ID VARCHAR(20))";
+
+        	try {
                 // does the progress monitor popup
-                InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(this, "Reading " + _goaFile, new FileInputStream(_goaFile)));
-                ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration, _entryElement, _rootElementName);
+                //InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(this, "Reading " + _goaFile, new FileInputStream(_goaFile)));
+            	BufferedReader in = new BufferedReader(new FileReader(_goaFile));
+                //ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration, _entryElement, _rootElementName);
                 System.out.println("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
-                importEngine.loadToDB(in);
+                String l;
+                String[] temp = null;
+                String[] temp2 = null;
+                //while ((l = in.readLine()) != null) {
+                for (int i = 0; i < 10; i++) {
+                	l = in.readLine();
+                	temp = l.split("\t");
+                	if (temp.length == 15) {
+                		temp2 = new String[17];
+                		System.arraycopy(temp, 0, temp2, 0, 15);
+                		temp2[15] = "";
+                		temp2[16] = "";
+                		temp = new String[17];
+                		System.arraycopy(temp2, 0, temp, 0, 17);
+                		temp2 = null;
+                	}
+                	for (int j = 0; j < 17; j++) {
+                		System.out.print(temp[j] + "-|-");
+                	}
+                	temp = null;
+                	System.out.println("");
+                }
+                //importEngine.loadToDB(in);
                 System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
                 _success = true;
                 // notify user when import is complete
@@ -228,6 +281,10 @@ public class ImportGOAPanel extends UtilityDialogue {
             } catch(IOException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "An I/O exception occured while trying to read the file " + _goaFile, "Error", JOptionPane.ERROR_MESSAGE);
+ /*           } catch(SQLException sqle) {
+                JOptionPane.showMessageDialog(this, sqle.getMessage());
+                //Need to clean up connection after SQL exceptions
+                qe.currentSession().reconnect();*/
             } catch(Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -239,7 +296,7 @@ public class ImportGOAPanel extends UtilityDialogue {
                 // System.out.println("Import Finished at: " +
                 // DateFormat.getTimeInstance(DateFormat.LONG).format(
                 // System.currentTimeMillis()) );
-            }*/
+            }
         } else {
             JOptionPane.showMessageDialog(this, "Please Open a Valid GOA File", "Missing or Invalid File", JOptionPane.ERROR_MESSAGE);
         }
@@ -293,7 +350,7 @@ public class ImportGOAPanel extends UtilityDialogue {
 
     /*
      *
-     * A filter for xml files
+     * A filter for goa files
      */
     private class GOAFilter extends FileFilter {
 

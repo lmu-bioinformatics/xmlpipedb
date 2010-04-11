@@ -221,29 +221,32 @@ public class ImportGOAPanel extends UtilityDialogue {
 
         if (proceedWithImport) {
         	JOptionPane.showMessageDialog(this, "File Valid; Import in Development", "Import in Development", JOptionPane.ERROR_MESSAGE);
+
         	QueryEngine qe = new QueryEngine(_hibernateConfiguration);
             Connection conn = qe.currentSession().connection();
             PreparedStatement query = null;
             ResultSet results = null;
-            String tableCreator = "create table Goa ( "
-            	+ "DB VARCHAR(30), "
-            	+ "DB_Object_ID VARCHAR(30), "
-            	+ "DB_Object_Symbol VARCHAR(15), "
-            	+ "Qualifier VARCHAR(38), "
-            	+ "GO_ID VARCHAR(10), "
-            	+ "DB_Reference VARCHAR(20), "
-            	+ "Evidence_Code VARCHAR(3), "
-            	+ "With_or_From VARCHAR(30), "
-            	+ "Aspect VARCHAR(1), "
-            	+ "DB_Object_Name VARCHAR(50), "
-            	+ "DB_Object_Synonym VARCHAR(40), "
-            	+ "DB_Object_Type VARCHAR(15), "
-            	+ "Taxon VARCHAR(30), "
-            	+ "Date DATE, "
-            	+ "DB_Object_ID VARCHAR(30), "
-            	+ "Assigned_By VARCHAR(15), "
-            	+ "Annotation_Extension VARCHAR(50), "
-            	+ "Gene_Product_Form_ID VARCHAR(20))";
+            String tableCreator = "CREATE TABLE goa ( "
+            	+ "primdbkey integer PRIMARY KEY, "
+            	+ "db varchar(30), "
+            	+ "db_object_id varchar(30), "
+            	+ "db_object_symbol varchar(15), "
+            	+ "qualifier varchar(38), "
+            	+ "go_id varchar(10), "
+            	+ "db_reference varchar(20), "
+            	+ "evidence_code varchar(3), "
+            	+ "with_or_from varchar(30), "
+            	+ "aspect varchar(1), "
+            	+ "db_object_name varchar(50), "
+            	+ "db_object_synonym varchar(40), "
+            	+ "db_object_type varchar(15), "
+            	+ "taxon varchar(30), "
+            	+ "date date, "
+            	+ "assigned_by varchar(15), "
+            	+ "annotation_extension varchar(50), "
+            	+ "gene_product_form_id varchar(20));";
+            String insert = "INSERT INTO goa VALUES "
+            	+ "('?', '?','?','?','?','?','?','?','?','?','?','?','?','?','?','?','?','?');";
 
         	try {
                 // does the progress monitor popup
@@ -254,10 +257,19 @@ public class ImportGOAPanel extends UtilityDialogue {
                 String l;
                 String[] temp = null;
                 String[] temp2 = null;
+                int primarykeyid = 1;
+
+                // Create table
+                query = conn.prepareStatement(tableCreator);
+                query.executeUpdate();
+                query.close();
+
+                query = conn.prepareStatement(insert);
                 //while ((l = in.readLine()) != null) {
                 for (int i = 0; i < 10; i++) {
                 	l = in.readLine();
                 	temp = l.split("\t");
+
                 	if (temp.length == 15) {
                 		temp2 = new String[17];
                 		System.arraycopy(temp, 0, temp2, 0, 15);
@@ -267,13 +279,25 @@ public class ImportGOAPanel extends UtilityDialogue {
                 		System.arraycopy(temp2, 0, temp, 0, 17);
                 		temp2 = null;
                 	}
+
+                	// Insert into table
+                	query.setInt(1, primarykeyid);
+                	for (int k = 0; k < 17; k++){
+                		query.setString(k+2, temp[k]);
+                	}
+                	query.executeUpdate();
+
+                	/*
                 	for (int j = 0; j < 17; j++) {
                 		System.out.print(temp[j] + "-|-");
                 	}
-                	temp = null;
                 	System.out.println("");
+                	*/
+
+                	temp = null;
+                	primarykeyid++;
                 }
-                //importEngine.loadToDB(in);
+                query.close();
                 System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
                 _success = true;
                 // notify user when import is complete
@@ -281,10 +305,10 @@ public class ImportGOAPanel extends UtilityDialogue {
             } catch(IOException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "An I/O exception occured while trying to read the file " + _goaFile, "Error", JOptionPane.ERROR_MESSAGE);
- /*           } catch(SQLException sqle) {
+            } catch(SQLException sqle) {
                 JOptionPane.showMessageDialog(this, sqle.getMessage());
                 //Need to clean up connection after SQL exceptions
-                qe.currentSession().reconnect();*/
+                qe.currentSession().reconnect();
             } catch(Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

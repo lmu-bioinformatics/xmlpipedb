@@ -94,6 +94,7 @@ drop table XrefAnalog;
 drop table XrefAnalog_Content;
 drop table XrefUnknown;
 drop table XrefUnknown_Content;
+drop table Goa;
 drop sequence hibernate_sequence;
 create table Acc (
     Hjid int8 not null,
@@ -639,6 +640,27 @@ create table XrefUnknown_Content (
     XrefUnknown_Content_Hjchildid int8,
     XrefUnknown_Content_Hjindex int4 not null,
     primary key (XrefUnknown_Content_Hjid, XrefUnknown_Content_Hjindex)
+);
+create table Goa (
+    PrimDBKey int8 not null,
+    DB varchar not null,
+    DB_Object_ID varchar not null,
+    DB_Object_Symbol varchar not null,
+    Qualifier varchar,
+    GO_ID varchar not null,
+    DB_Reference varchar not null,
+    Evidence_Code varchar not null,
+    With_or_From varchar,
+    Aspect varchar not null,
+    DB_Object_Name varchar,
+    DB_Object_Synonym varchar,
+    DB_Object_Type varchar not null,
+    Taxon varchar not null,
+    Date date not null,
+    Assigned_By varchar not null,
+    Annotation_Extension varchar,
+    Gene_Product_Form_Id varchar,
+    primary key (PrimDBKey)
 );
 alter table Dbxref_Content 
     add constraint FKD2EC78D3F25E5D81 

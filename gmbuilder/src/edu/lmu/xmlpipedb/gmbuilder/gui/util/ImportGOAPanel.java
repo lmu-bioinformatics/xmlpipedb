@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Date;
 import java.text.DateFormat;
 import java.util.HashMap;
 
@@ -236,12 +237,14 @@ public class ImportGOAPanel extends UtilityDialogue {
                 String l;
                 String[] temp = null;
                 String[] temp2 = null;
+                Date tempdate = new Date(0000-00-00);
                 int primarykeyid = 1;
 
+
                 query = conn.prepareStatement(insert);
-                //while ((l = in.readLine()) != null) {
-                for (int i = 0; i < 10; i++) {
-                	l = in.readLine();
+                while ((l = in.readLine()) != null) {
+                /*for (int i = 0; i < 10; i++) {
+                	l = in.readLine();*/
                 	temp = l.split("\t");
 
                 	if (temp.length == 15) {
@@ -263,7 +266,11 @@ public class ImportGOAPanel extends UtilityDialogue {
                 	// Insert into table
                 	query.setInt(1, primarykeyid);
                 	for (int k = 0; k < 17; k++){
-                		query.setString(k+2, temp[k]);
+                		if (k == 13) {
+                			query.setDate(k+2, tempdate.valueOf(temp[k].substring(0,4) + "-" + temp[k].substring(4,6) + "-" + temp[k].substring(6,8)));
+                		} else {
+                			query.setString(k+2, temp[k]);
+                		}
                 	}
                 	query.executeUpdate();
 

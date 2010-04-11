@@ -20,13 +20,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.HashMap;
@@ -43,11 +42,11 @@ import javax.swing.JTextField;
 import javax.swing.ProgressMonitorInputStream;
 import javax.swing.filechooser.FileFilter;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import edu.lmu.xmlpipedb.util.gui.UtilityDialogue;
-import edu.lmu.xmlpipedb.util.engines.ImportEngine;
-import edu.lmu.xmlpipedb.util.engines.QueryEngine;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 /**
@@ -88,8 +87,6 @@ public class ImportGOAPanel extends UtilityDialogue {
     public ImportGOAPanel(Configuration hibernateConfiguration, String entryElement, HashMap<String, String> rootElementName) {
         _success = false;
         _hibernateConfiguration = hibernateConfiguration;
-        _entryElement = entryElement;
-        _rootElementName = rootElementName;
         createComponents();
         createActions();
         layoutComponents();
@@ -222,33 +219,15 @@ public class ImportGOAPanel extends UtilityDialogue {
         if (proceedWithImport) {
         	JOptionPane.showMessageDialog(this, "File Valid; Import in Development", "Import in Development", JOptionPane.ERROR_MESSAGE);
 
-        	QueryEngine qe = new QueryEngine(_hibernateConfiguration);
-            Connection conn = qe.currentSession().connection();
+        	Session session = null;
             PreparedStatement query = null;
-            ResultSet results = null;
-            String tableCreator = "CREATE TABLE goa ( "
-            	+ "primdbkey integer PRIMARY KEY, "
-            	+ "db varchar(30), "
-            	+ "db_object_id varchar(30), "
-            	+ "db_object_symbol varchar(15), "
-            	+ "qualifier varchar(38), "
-            	+ "go_id varchar(10), "
-            	+ "db_reference varchar(20), "
-            	+ "evidence_code varchar(3), "
-            	+ "with_or_from varchar(30), "
-            	+ "aspect varchar(1), "
-            	+ "db_object_name varchar(50), "
-            	+ "db_object_synonym varchar(40), "
-            	+ "db_object_type varchar(15), "
-            	+ "taxon varchar(30), "
-            	+ "date date, "
-            	+ "assigned_by varchar(15), "
-            	+ "annotation_extension varchar(50), "
-            	+ "gene_product_form_id varchar(20));";
             String insert = "INSERT INTO goa VALUES "
-            	+ "('?', '?','?','?','?','?','?','?','?','?','?','?','?','?','?','?','?','?');";
+            	+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         	try {
+                SessionFactory sessionFactory = _hibernateConfiguration.buildSessionFactory();
+                session = sessionFactory.openSession();
+                Connection conn = session.connection();
                 // does the progress monitor popup
                 //InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(this, "Reading " + _goaFile, new FileInputStream(_goaFile)));
             	BufferedReader in = new BufferedReader(new FileReader(_goaFile));
@@ -259,11 +238,6 @@ public class ImportGOAPanel extends UtilityDialogue {
                 String[] temp2 = null;
                 int primarykeyid = 1;
 
-                // Create table
-/*                query = conn.prepareStatement(tableCreator);
-                query.executeUpdate();
-                query.close();
-*/
                 query = conn.prepareStatement(insert);
                 //while ((l = in.readLine()) != null) {
                 for (int i = 0; i < 10; i++) {
@@ -303,7 +277,7 @@ public class ImportGOAPanel extends UtilityDialogue {
                 	temp = null;
                 	primarykeyid++;
                 }
-                query.close();
+                conn.commit();
                 System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
                 _success = true;
                 // notify user when import is complete
@@ -314,7 +288,6 @@ public class ImportGOAPanel extends UtilityDialogue {
             } catch(SQLException sqle) {
                 JOptionPane.showMessageDialog(this, sqle.getMessage());
                 //Need to clean up connection after SQL exceptions
-                qe.currentSession().reconnect();
             } catch(Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -326,6 +299,8 @@ public class ImportGOAPanel extends UtilityDialogue {
                 // System.out.println("Import Finished at: " +
                 // DateFormat.getTimeInstance(DateFormat.LONG).format(
                 // System.currentTimeMillis()) );
+                try { query.close(); } catch(Exception exc) { }
+                try { session.close(); } catch(Exception exc) { }
             }
         } else {
             JOptionPane.showMessageDialog(this, "Please Open a Valid GOA File", "Missing or Invalid File", JOptionPane.ERROR_MESSAGE);
@@ -410,8 +385,6 @@ public class ImportGOAPanel extends UtilityDialogue {
 
     private boolean _success;
     private Configuration _hibernateConfiguration;
-    private String _entryElement;
-    private HashMap<String, String> _rootElementName;
     private JButton _previewButton;
     private JTextField _textFieldPath;
     private JScrollPane _goaScrollArea;

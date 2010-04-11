@@ -260,10 +260,10 @@ public class ImportGOAPanel extends UtilityDialogue {
                 int primarykeyid = 1;
 
                 // Create table
-                query = conn.prepareStatement(tableCreator);
+/*                query = conn.prepareStatement(tableCreator);
                 query.executeUpdate();
                 query.close();
-
+*/
                 query = conn.prepareStatement(insert);
                 //while ((l = in.readLine()) != null) {
                 for (int i = 0; i < 10; i++) {
@@ -279,7 +279,13 @@ public class ImportGOAPanel extends UtilityDialogue {
                 		System.arraycopy(temp2, 0, temp, 0, 17);
                 		temp2 = null;
                 	}
-
+/*
+                	for (int q = 0; q < temp.length; q++) {
+                		if (temp[q] == "") {
+                			temp[q] == null;
+                		}
+                	}
+*/
                 	// Insert into table
                 	query.setInt(1, primarykeyid);
                 	for (int k = 0; k < 17; k++){

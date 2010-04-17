@@ -391,7 +391,7 @@ public class ExportGoData {
     	PreparedStatement uniProtAndGOIDPS = null;
     	_Log.info("creating: " + GOTable.UniProt_Go);
     	try {
-    		uniProtAndGOIDPS = connection.prepareStatement(uniProtAndGOIDSQL);
+    		uniProtAndGOIDPS = ConnectionManager.getRelationalDBConnection().prepareStatement(uniProtAndGOIDSQL);
     		ResultSet uniProtAndGOIDRS = uniProtAndGOIDPS.executeQuery();
     		while (uniProtAndGOIDRS.next()) {
 

@@ -31,9 +31,9 @@ XMLPipeDB project site on SourceForge:</p>
     <!--#include virtual="doclist.html" -->
 </ul>
 
-<h3><a name="gdb">Gene Databases</a></h3>
+<h3><a id="gdb">Gene Databases</a></h3>
 
-<h4><a name="a.thaliana">GenMAPP Gene Database for <i>Arabidopsis
+<h4><a id="a.thaliana">GenMAPP Gene Database for <i>Arabidopsis
 thaliana</i></a></h4>
 <ul>
     <li><a class="external"
@@ -50,7 +50,7 @@ thaliana</i></a></h4>
     </li>
 </ul>
 
-<h4><a name="e.coliK12">GenMAPP Gene Database for <i>Escherichia
+<h4><a id="e.coliK12">GenMAPP Gene Database for <i>Escherichia
 coli</i> K12</a></h4>
 <ul>
     <li><a class="external"
@@ -67,7 +67,7 @@ coli</i> K12</a></h4>
     </li>
 </ul>
 
-<h4><a name="p.falciparum">GenMAPP Gene Database for <i>Plasmodium
+<h4><a id="p.falciparum">GenMAPP Gene Database for <i>Plasmodium
 falciparum</i> (isolate 3D7)</a></h4>
 <ul>
     <li><a class="external"
@@ -84,7 +84,7 @@ falciparum</i> (isolate 3D7)</a></h4>
     </li>
 </ul>
 
-<h4><a name="v.cholerae">GenMAPP Gene Database for <i>Vibrio
+<h4><a id="v.cholerae">GenMAPP Gene Database for <i>Vibrio
     cholerae</i> O1 biovar El Tor str. N16961 Gene Database</a></h4>
 <ul>
     <li><a class="external"

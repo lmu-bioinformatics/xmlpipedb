@@ -25,7 +25,7 @@
                 A Project of the LMU Bioinformatics Group<br/>
                 <a href="http://www.lmu.edu"><img src="img/home_lmu_logo.gif" alt="LMU Logo" height="85" width="137"/></a>
             </div>
-            <h1 class="title"><a name="top">XMLPipeDB</a></h1>
+            <h1 class="title"><a id="top">XMLPipeDB</a></h1>
             <p>A Reusable, Open Source Tool Chain for Building Relational Databases from XML Sources</p>
         </div>
 

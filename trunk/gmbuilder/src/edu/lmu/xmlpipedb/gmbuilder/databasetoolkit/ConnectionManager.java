@@ -4,7 +4,7 @@
  * Program: gmBuilder
  * Description: Manages all connection required by
  * GenMAPP builder.
- *     
+ *
  * Revision History:
  * 20060620: Initial Revision.
  * *****************************************************/
@@ -34,7 +34,7 @@ import org.hibernate.cfg.Configuration;
 public class ConnectionManager {
 
 	//FIXME Fix this to use getResource() rather than hardcoded
-	private static final String GENMAPP_DATABASE_TEMPLATE = 
+	private static final String GENMAPP_DATABASE_TEMPLATE =
 		"/edu/lmu/xmlpipedb/gmbuilder/resource/dbfiles/GeneDBTmpl.mdb";
 
     private static final Log _Log = LogFactory.getLog(ConnectionManager.class);
@@ -45,8 +45,8 @@ public class ConnectionManager {
 	private static Connection relationalDBConnection = null;
 	private static Connection genMAPPDBConnection = null;
 	private static Connection genMAPPTemplateDBConnection = null;
-	
-	
+
+
 	static{
 		URL u = null;
 		try {
@@ -57,12 +57,12 @@ public class ConnectionManager {
 			_Log.error("Error while creating URI from URL. URL = " + u);
 		}
 	}
-	
+
 	/**
-	 * Opens a connection to the relational database.  If the parameter 
-	 * is null an exception is thrown.  If the connection is still open, 
+	 * Opens a connection to the relational database.  If the parameter
+	 * is null an exception is thrown.  If the connection is still open,
 	 * an exception is thrown.
-	 * 
+	 *
 	 * @param hibernateConfiguration
 	 * @throws Exception
 	 */
@@ -78,12 +78,12 @@ public class ConnectionManager {
 			throw new Exception("A relational database connection is not specified.");
 		}
 	}
-	
+
 	/**
-	 * Opens a connection to the GenMAPP Access database.  If the parameter 
-	 * is null an exception is thrown.  If the connection is still 
+	 * Opens a connection to the GenMAPP Access database.  If the parameter
+	 * is null an exception is thrown.  If the connection is still
 	 * open, an exception is thrown.
-	 * 
+	 *
 	 * @param genMAPPDatabase
 	 * @throws Exception
 	 */
@@ -100,20 +100,20 @@ public class ConnectionManager {
                 } catch(SQLException e) {
                     _Log.error("Unable to open Access connection", e);
                 }
-			} else {				
+			} else {
 				_Log.error("A GenMAPP database connection cannot be created " +
 						"while a previous connection is still open.");
-			}	
+			}
 		} else {
 			_Log.error("A GenMAPP database connection is not specified.");
 		}
 	}
-	
+
 	/**
-	 * Opens a connection to the GenMAPP relational database.  If the parameter 
-	 * is null an exception is thrown.  If the connection is still 
+	 * Opens a connection to the GenMAPP relational database.  If the parameter
+	 * is null an exception is thrown.  If the connection is still
 	 * open, an exception is thrown.
-	 * 
+	 *
 	 * @param connectionConfiguration
 	 * @throws Exception
 	 */
@@ -123,26 +123,26 @@ public class ConnectionManager {
 			if(genMAPPDBConnection == null) {
 				try {
                     DriverManager.registerDriver(connectionConfiguration.getDriver());
-                    genMAPPDBConnection = DriverManager.getConnection(connectionConfiguration.getConnectionURL(), 
+                    genMAPPDBConnection = DriverManager.getConnection(connectionConfiguration.getConnectionURL(),
                             connectionConfiguration.getUserName(), connectionConfiguration.getPassword());
                 } catch(SQLException e) {
                     _Log.error("Unable to open connection to " + connectionConfiguration.getConnectionURL(), e);
                 }
-			} else {				
+			} else {
 				_Log.error("A GenMAPP database connection cannot be created " +
 						"while a previous connection is still open.");
-			}	
+			}
 		} else {
 			_Log.error("A GenMAPP database connection is not specified.");
 		}
 	}
-	
+
 	/**
 	 * Opens a connection to the GenMAPP template database by copying the
-	 * template file to a temporary location.  If the 
-	 * connection is still open, an exception is thrown.  
+	 * template file to a temporary location.  If the
+	 * connection is still open, an exception is thrown.
 	 * NOTE: THIS CONNECTION SHOULD BE USED AS READ ONLY!!!
-	 * @throws Exception 
+	 * @throws Exception
 	 * @throws Exception
 	 */
 	public static void openGenMAPPTemplateDB() throws Exception {
@@ -158,16 +158,16 @@ public class ConnectionManager {
 			 * however, is not so cool and cannot deal.
 			 */
 			genMAPPTemplateDBConnection = openAccessDatabaseConnection(TEMPORARY_GENMAPP_DATABASE_TEMPLATE.getAbsolutePath());
-			
+
 			//Open a connection to the GenMAPP template database.
 // JN			genMAPPTemplateDBConnection = openAccessDatabaseConnection(TEMPORARY_GENMAPP_DATABASE_TEMPLATE);
 
 		} else {
 			throw new Exception("A GenMAPP template database connection cannot be created " +
 			"while a previous connection is still open.");
-		}	
+		}
 	}
-	
+
 	/**
 	 * @return A connection to the GenMAPP database.
 	 * @throws Exception
@@ -178,7 +178,7 @@ public class ConnectionManager {
 		}
 		return genMAPPDBConnection;
 	}
-	
+
 	/**
 	 * @return A connection to the relational dabase.
 	 * @throws Exception
@@ -190,7 +190,7 @@ public class ConnectionManager {
 
         return relationalDBConnection;
 	}
-	
+
 	/**
 	 * NOTE: THIS CONNECTION SHOULD BE USED AS READ ONLY!!!
 	 * @return A connection to the GenMAPP template database.
@@ -202,7 +202,7 @@ public class ConnectionManager {
 		}
 		return genMAPPTemplateDBConnection;
 	}
-	
+
 	/**
 	 * Returns true if the connection is open, false otherwise.
 	 * @return
@@ -214,7 +214,7 @@ public class ConnectionManager {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Returns true if the connection is open, false otherwise.
 	 * @return
@@ -226,7 +226,7 @@ public class ConnectionManager {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Returns true if the connection is open, false otherwise.
 	 * @return
@@ -238,11 +238,11 @@ public class ConnectionManager {
 			return false;
 		}
 	}
-	
+
 	/**
-	 * Close and set null the open GenMAPP database and connection.  
+	 * Close and set null the open GenMAPP database and connection.
 	 * If the connection is null nothing happens.
-	 * 
+	 *
 	 * @throws SQLException
 	 */
 	public static void closeGenMAPPDB() throws SQLException {
@@ -251,11 +251,11 @@ public class ConnectionManager {
 			genMAPPDBConnection = null;
 		}
 	}
-	
+
 	/**
-	 * Close and set null the open relational database connection.  
+	 * Close and set null the open relational database connection.
 	 * If the connection is null nothing happens.
-	 * 
+	 *
 	 * @throws SQLException
 	 */
 	public static void closeRelationalDB() throws SQLException {
@@ -264,11 +264,11 @@ public class ConnectionManager {
 			relationalDBConnection = null;
 		}
 	}
-	
+
 	/**
-	 * Close and set null the open GenMAPP template database connection.  
+	 * Close and set null the open GenMAPP template database connection.
 	 * If the connection is null nothing happens.
-	 * 
+	 *
 	 * @throws SQLException
 	 */
 	public static void closeGenMAPPTemplateDB() throws SQLException {
@@ -278,11 +278,11 @@ public class ConnectionManager {
 			genMAPPTemplateDBConnection = null;
 		}
 	}
-	
+
 	/**
-	 * Close and set null all open connections.  
+	 * Close and set null all open connections.
 	 * If a connection is null nothing happens.
-	 * 
+	 *
 	 * @throws SQLException
 	 */
 	public static void closeAll() throws SQLException {
@@ -290,58 +290,58 @@ public class ConnectionManager {
 		closeGenMAPPDB();
 		closeGenMAPPTemplateDB();
 	}
-	
+
 
 	/**
 	 * Open a relational database connection.
-	 * 
+	 *
 	 * @param hibernateConfiguration
 	 * @throws SQLException
-	 * @throws ClassNotFoundException 
+	 * @throws ClassNotFoundException
 	 */
 	private static void openRelationalDatabaseConnection(Configuration hibernateConfiguration) throws SQLException, ClassNotFoundException {
 		//TODO Fix this to update it to the new xpdutils stuff.
 		Class.forName("org.postgresql.Driver");
 		relationalDBConnection = DriverManager.getConnection(
-				hibernateConfiguration.getProperty("hibernate.connection.url"), 
-				hibernateConfiguration.getProperty("hibernate.connection.username"), 
+				hibernateConfiguration.getProperty("hibernate.connection.url"),
+				hibernateConfiguration.getProperty("hibernate.connection.username"),
 				hibernateConfiguration.getProperty("hibernate.connection.password"));
 	}
-	
+
 	/**
 	 * Open the GenMAPP database connection.
-	 * 
+	 *
 	 * @param databaseFile
 	 * @return
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private static Connection openAccessDatabaseConnection(String databaseFile) throws ClassNotFoundException, SQLException {
 		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
 
 		StringBuffer databaseConnectionString;
-		
+
 		// Life is a little different when playing on a Vista machine
 		String osName = System.getProperty("os.name");
-		
+		/*
 		if(osName.equals("Windows Vista")) {
 	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=");
 	      databaseConnectionString.append(databaseFile);
-		} else {
+		} else {*/
 	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
 	      databaseConnectionString.append(databaseFile);
 	      databaseConnectionString.append(";DriverID=22;READONLY=false}");
-		}
-			    
+		//}
+
 	    return DriverManager.getConnection(databaseConnectionString.toString(), "", "");
 	}
-	
+
 
 	private static void copyFile(String originalFilePath, File newFile) throws IOException {
 		InputStream in = ConnectionManager.class.getResourceAsStream(originalFilePath);
 		OutputStream out = new FileOutputStream(newFile);
-	    
+
         // Transfer bytes from in to out
         byte[] buf = new byte[1024];
         int len;

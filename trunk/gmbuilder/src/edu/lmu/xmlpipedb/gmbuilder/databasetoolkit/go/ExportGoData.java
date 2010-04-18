@@ -387,7 +387,7 @@ public class ExportGoData {
 
     private void populateUniprotGoTableFromSQL() throws SQLException {
     	HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
-    	String uniProtAndGOIDSQL = "select with_or_from, go_id from goa where with_or_from like 'UniProtKB:%' or with_or_from like 'UniProt:%'";
+    	String uniProtAndGOIDSQL = "select db_object_id, go_id from goa where db like '%UniProt%'";
     	PreparedStatement uniProtAndGOIDPS = null;
     	_Log.info("creating: " + GOTable.UniProt_Go);
     	try {
@@ -395,12 +395,12 @@ public class ExportGoData {
     		ResultSet uniProtAndGOIDRS = uniProtAndGOIDPS.executeQuery();
     		while (uniProtAndGOIDRS.next()) {
 
-    			String uniProtID = uniProtAndGOIDRS.getString("with_or_from");
-    			if (uniProtID.startsWith("UniProtKB:")) {
+    			String uniProtID = uniProtAndGOIDRS.getString("db_object_id");
+    			/*if (uniProtID.startsWith("UniProtKB:")) {
     				uniProtID = uniProtID.substring(10);
     			} else if (uniProtID.startsWith("UniProt:")) {
     				uniProtID = uniProtID.substring(8);
-    			}
+    			}*/
     			uniProtID = uniProtID.trim();
 
     			String goID = uniProtAndGOIDRS.getString("go_id");

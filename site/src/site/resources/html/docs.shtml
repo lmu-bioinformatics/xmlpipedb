@@ -9,7 +9,7 @@
         <li><a href="docs/ReadMe_At-Std_External_20090610.pdf">Direct
         from this site</a></li>
         <li><a class="external"
-            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_At-Std_External_20090610.pdf?download">SourceForge
+            href="http://sourceforge.net/projects/xmlpipedb/files/A.%20thaliana%20Gene%20Database/A.%20thaliana%2020090610/ReadMe_At-Std_External_20090610.pdf/download">SourceForge
         mirror</a></li>
     </ul>
     </li>
@@ -20,7 +20,7 @@
         <li><a href="docs/ReadMe_Ec-K12-Std_External_20090529.pdf">Direct
         from this site</a></li>
         <li><a class="external"
-            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Ec-K12-Std_External_20090529.pdf?download">SourceForge
+            href="http://sourceforge.net/projects/xmlpipedb/files/E.%20coli%20K12%20Gene%20Database/E.%20coli%20K12%2020090529/ReadMe_Ec-K12-Std_External_20090529.pdf/download">SourceForge
         mirror</a></li>
     </ul>
     </li>
@@ -31,7 +31,29 @@
         <li><a href="docs/ReadMe_Pf-Std_External_20090604.pdf">Direct
         from this site</a></li>
         <li><a class="external"
-            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Pf-Std_External_20090604.pdf?download">SourceForge
+            href="http://sourceforge.net/projects/xmlpipedb/files/P.%20falciparum%20Gene%20Database/P.%20falciparum%2020090604/ReadMe_Pf-Std_External_20090604.pdf/download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
+
+    <li>Read Me for <a href="download.shtml#p.aeruginosa"><i>Pseudomonas
+    aeruginosa</i> Gene Database</a> (274K PDF, revision 20100212)
+    <ul>
+        <li><a href="docs/ReadMe_Pa-Std_External_20100212.pdf">Direct
+        from this site</a></li>
+        <li><a class="external"
+            href="http://sourceforge.net/projects/xmlpipedb/files/P.%20aeruginosa%20PAO1%20Gene%20Database/P.%20aeruginosa%2020100212/ReadMe_Pa-Std_External_20100212.pdf/download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
+
+    <li>Read Me for <a href="download.shtml#s.aureus"><i>Staphylococcus
+    aureus</i> Gene Database</a> (274K PDF, revision 20100218)
+    <ul>
+        <li><a href="docs/ReadMe_Sa-Std_External_20100218.pdf">Direct
+        from this site</a></li>
+        <li><a class="external"
+            href="http://sourceforge.net/projects/xmlpipedb/files/S.%20aureus%20MRSA%20252%20Gene%20Database/S.%20aureus%2020100218/ReadMe_Sa-Std_External_20100218.pdf/download">SourceForge
         mirror</a></li>
     </ul>
     </li>
@@ -42,7 +64,7 @@
         <li><a href="docs/ReadMe_Vc-Std_External_20090622.pdf">Direct
         from this site</a></li>
         <li><a class="external"
-            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Vc-Std_External_20090622.pdf?download">SourceForge
+            href="http://sourceforge.net/projects/xmlpipedb/files/V.%20cholerae%20Gene%20Database/V.%20cholerae%2020090622/ReadMe_Vc-Std_External_20090622.pdf/download">SourceForge
         mirror</a></li>
     </ul>
     </li>

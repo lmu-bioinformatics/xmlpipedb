@@ -37,14 +37,14 @@ XMLPipeDB project site on SourceForge:</p>
 thaliana</i></a></h4>
 <ul>
     <li><a class="external"
-        href="https://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=239512&amp;release_id=689246">Release
+        href="http://sourceforge.net/projects/xmlpipedb/files/A.%20thaliana%20Gene%20Database/A.%20thaliana%2020090610">Release
     20090610</a></li>
     <li>Read Me (268K PDF, revision 20090610)
     <ul>
         <li><a href="docs/ReadMe_At-Std_External_20090610.pdf">Direct
         from this site</a></li>
         <li><a class="external"
-            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_At-Std_External_20090610.pdf?download">SourceForge
+            href="http://sourceforge.net/projects/xmlpipedb/files/A.%20thaliana%20Gene%20Database/A.%20thaliana%2020090610/ReadMe_At-Std_External_20090610.pdf/download">SourceForge
         mirror</a></li>
     </ul>
     </li>
@@ -54,14 +54,14 @@ thaliana</i></a></h4>
 coli</i> K12</a></h4>
 <ul>
     <li><a class="external"
-        href="https://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=199426&amp;release_id=688358">Release
+        href="http://sourceforge.net/projects/xmlpipedb/files/E.%20coli%20K12%20Gene%20Database/E.%20coli%20K12%2020090529">Release
     20090529</a></li>
     <li>Read Me (284K PDF, revision 20090529)
     <ul>
         <li><a href="docs/ReadMe_Ec-K12-Std_External_20090529.pdf">Direct
         from this site</a></li>
         <li><a class="external"
-            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Ec-K12-Std_External_20090529.pdf?download">SourceForge
+            href="http://sourceforge.net/projects/xmlpipedb/files/E.%20coli%20K12%20Gene%20Database/E.%20coli%20K12%2020090529/ReadMe_Ec-K12-Std_External_20090529.pdf/download">SourceForge
         mirror</a></li>
     </ul>
     </li>
@@ -71,14 +71,48 @@ coli</i> K12</a></h4>
 falciparum</i> (isolate 3D7)</a></h4>
 <ul>
     <li><a class="external"
-        href="https://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=300870&amp;release_id=688667">Release
+        href="http://sourceforge.net/projects/xmlpipedb/files/P.%20falciparum%20Gene%20Database/P.%20falciparum%2020090604">Release
     20090604</a></li>
     <li>Read Me (744K PDF, revision 20090604)
     <ul>
         <li><a href="docs/ReadMe_Pf-Std_External_20090604.pdf">Direct
         from this site</a></li>
         <li><a class="external"
-            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Pf-Std_External_20090604.pdf?download">SourceForge
+            href="http://sourceforge.net/projects/xmlpipedb/files/P.%20falciparum%20Gene%20Database/P.%20falciparum%2020090604/ReadMe_Pf-Std_External_20090604.pdf/download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
+</ul>
+
+<h4><a id="p.aeruginosa">GenMAPP Gene Database for <i>Pseudomonas
+aeruginosa</i> str. PAO1</a></h4>
+<ul>
+    <li><a class="external"
+        href="http://sourceforge.net/projects/xmlpipedb/files/P.%20aeruginosa%20PAO1%20Gene%20Database/P.%20aeruginosa%2020100212">Release
+    20100212</a></li>
+    <li>Read Me (274K PDF, revision 20100212)
+    <ul>
+        <li><a href="docs/ReadMe_Pa-Std_External_20100212.pdf">Direct
+        from this site</a></li>
+        <li><a class="external"
+            href="http://sourceforge.net/projects/xmlpipedb/files/P.%20aeruginosa%20PAO1%20Gene%20Database/P.%20aeruginosa%2020100212/ReadMe_Pa-Std_External_20100212.pdf/download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
+</ul>
+
+<h4><a id="s.aureus">GenMAPP Gene Database for <i>Staphylococcus
+aureus</i> (strain MRSA252)</a></h4>
+<ul>
+    <li><a class="external"
+        href="http://sourceforge.net/projects/xmlpipedb/files/S.%20aureus%20MRSA%20252%20Gene%20Database/S.%20aureus%2020100218">Release
+    20100218</a></li>
+    <li>Read Me (274K PDF, revision 20100218)
+    <ul>
+        <li><a href="docs/ReadMe_Sa-Std_External_20100218.pdf">Direct
+        from this site</a></li>
+        <li><a class="external"
+            href="http://sourceforge.net/projects/xmlpipedb/files/S.%20aureus%20MRSA%20252%20Gene%20Database/S.%20aureus%2020100218/ReadMe_Sa-Std_External_20100218.pdf/download">SourceForge
         mirror</a></li>
     </ul>
     </li>
@@ -88,14 +122,14 @@ falciparum</i> (isolate 3D7)</a></h4>
     cholerae</i> O1 biovar El Tor str. N16961 Gene Database</a></h4>
 <ul>
     <li><a class="external"
-        href="https://sourceforge.net/project/showfiles.php?group_id=158533&amp;package_id=300869&amp;release_id=692140">Release
+        href="http://sourceforge.net/projects/xmlpipedb/files/V.%20cholerae%20Gene%20Database/V.%20cholerae%2020090622">Release
     20090622</a></li>
     <li>Read Me (264K PDF, revision 20090622)
     <ul>
         <li><a href="docs/ReadMe_Vc-Std_External_20090622.pdf">Direct
         from this site</a></li>
         <li><a class="external"
-            href="http://prdownloads.sourceforge.net/xmlpipedb/ReadMe_Vc-Std_External_20090622.pdf?download">SourceForge
+            href="http://sourceforge.net/projects/xmlpipedb/files/V.%20cholerae%20Gene%20Database/V.%20cholerae%2020090622/ReadMe_Vc-Std_External_20090622.pdf/download">SourceForge
         mirror</a></li>
     </ul>
     </li>

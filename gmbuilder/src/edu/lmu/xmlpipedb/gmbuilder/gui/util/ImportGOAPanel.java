@@ -245,6 +245,11 @@ public class ImportGOAPanel extends UtilityDialogue {
                 while ((l = in.readLine()) != null) {
                 /*for (int i = 0; i < 10; i++) {
                 	l = in.readLine();*/
+
+                	if (primarykeyid % 5000 == 0) {
+                		System.out.println("Importing Line # " + primarykeyid + "...");
+                	}
+
                 	temp = l.split("\t");
 
                 	if (temp.length == 15) {
@@ -285,6 +290,7 @@ public class ImportGOAPanel extends UtilityDialogue {
                 	primarykeyid++;
                 }
                 conn.commit();
+                System.out.println("Imported " + primarykeyid + " lines from GOA file.");
                 System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
                 _success = true;
                 // notify user when import is complete

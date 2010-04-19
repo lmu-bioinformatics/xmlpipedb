@@ -214,7 +214,7 @@ public class ExportPanel2 extends JPanel {
     	aspectButtonGroup.add(onlyCAspectRadioButton);
     	aspectButtonGroup.add(onlyPAspectRadioButton);
 
-    	JPanel goaAspectPanel = new JPanel(new GridLayout(1,0));
+    	JPanel goaAspectPanel = new JPanel(new GridLayout(4,1));
     	goaAspectPanel.add(allAspectRadioButton);
     	goaAspectPanel.add(onlyFAspectRadioButton);
     	goaAspectPanel.add(onlyCAspectRadioButton);

@@ -389,7 +389,7 @@ public class ExportGoData {
 
     private void populateUniprotGoTableFromSQL(char chosenAspect) throws SQLException {
     	HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
-    	String uniProtAndGOIDSQL = "select db_object_id, go_id from goa where db like '%UniProt%'";
+    	String uniProtAndGOIDSQL = "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%'";
     	PreparedStatement uniProtAndGOIDPS = null;
     	_Log.info("creating: " + GOTable.UniProt_Go);
 
@@ -422,6 +422,15 @@ public class ExportGoData {
     			}
     			goID = goID.trim();
 
+    			String evidenceCode = uniProtAndGOIDRS.getString("evidence_code");
+    			evidenceCode = evidenceCode.trim();
+
+    			String withOrFrom = uniProtAndGOIDRS.getString("with_or_from");
+    			if (withOrFrom.startsWith("GO:")) {
+    				withOrFrom = withOrFrom.substring(3);
+    			}
+    			withOrFrom = withOrFrom.trim();
+
     			String key = uniProtID + "," + goID;
     			if (!unique.containsKey(key)) {
     				unique.put(key, true);
@@ -431,6 +440,19 @@ public class ExportGoData {
                     } else {
                         _Log.debug("UniProt-GO pair: " + uniProtID + ", " + goID);
                     }
+    			}
+
+    			if (evidenceCode == "IC") {
+    				key = uniProtID + "," + withOrFrom;
+        			if (!unique.containsKey(key)) {
+        				unique.put(key, true);
+                        String[] values = new String[] { uniProtID, withOrFrom, "" };
+                        if ((godb != null) && (connection != null)) {
+                            godb.insert(connection, GOTable.UniProt_Go, values);
+                        } else {
+                            _Log.debug("UniProt-GO pair: " + uniProtID + ", " + goID);
+                        }
+        			}
     			}
 
     		}

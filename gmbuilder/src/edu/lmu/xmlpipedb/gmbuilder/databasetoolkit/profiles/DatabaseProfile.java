@@ -79,6 +79,7 @@ public abstract class DatabaseProfile extends Profile {
     protected File associationsFile = null;
     protected Map<String, SystemType> systemTables;
     protected String[] relationshipTables;
+    protected char chosenAspect;
 
     protected TableManager primarySystemTableManager = null;
     protected TableManager systemTableManager = null;
@@ -304,6 +305,15 @@ public abstract class DatabaseProfile extends Profile {
     }
 
     /**
+     * Returns the aspect chosen in the export wizard.
+     *
+     * @return
+     */
+    public char getChosenAspect() {
+    	return chosenAspect;
+    }
+
+    /**
      * Returns the primary system table for this X-centric database. The primary
      * system table must have a system type of "Primary".
      *
@@ -427,16 +437,16 @@ public abstract class DatabaseProfile extends Profile {
     }
 
     /**
-     * Sets the connections and associations file chosen in the export wizard.
+     * Sets the connections and aspect chosen in the export wizard.
      *
      * @param genMAPPDatabase
      * @param connectionConfiguration
-     * @param associationsFile
+     * @param chosenAspect
      */
-    public void setDatabaseProperties(String genMAPPDatabase, ConnectionConfiguration connectionConfiguration, File associationsFile) {
+    public void setDatabaseProperties(String genMAPPDatabase, ConnectionConfiguration connectionConfiguration, char chosenAspect) {
         this.genMAPPDatabase = genMAPPDatabase;
         this.connectionConfiguration = connectionConfiguration;
-        this.associationsFile = associationsFile;
+        this.chosenAspect = chosenAspect;
     }
 
     /**
@@ -446,6 +456,14 @@ public abstract class DatabaseProfile extends Profile {
     	this.associationsFile = associationsFile;
     }
 
+    /**
+     * Sets the aspect chosen in the export wizard.
+     *
+     * @param chosenAspect
+     */
+    public void setChosenAspect(char chosenAspect) {
+    	this.chosenAspect = chosenAspect;
+    }
 
     /**
      * Sets the table properties, specifically the system tables (both proper

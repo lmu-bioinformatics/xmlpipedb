@@ -70,8 +70,6 @@ public class ImportGOAPanel extends UtilityDialogue {
     /**
      * Creates a new instance of ImportPanel
      *
-     * @param jaxbContextPath
-     *            The context path for the jaxb
      * @param hibernateConfiguration
      *            The hibernate configuration to save to
      * @param entryElement
@@ -218,8 +216,6 @@ public class ImportGOAPanel extends UtilityDialogue {
         }
 
         if (proceedWithImport) {
-        	JOptionPane.showMessageDialog(this, "File Valid; Import in Development", "Import in Development", JOptionPane.ERROR_MESSAGE);
-
         	Session session = null;
             PreparedStatement query = null;
             String insert = "INSERT INTO goa VALUES "

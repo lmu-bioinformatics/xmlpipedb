@@ -595,7 +595,6 @@ public class ATSpeciesProfileTest {
 					// from ExportPanel2
 					result.setDatabaseProperties(
 							"./unitTest.gdb",
-							null,
 							null); // we are not doing GO, so no need for a GO file
 					
 					// from ExportPanel3

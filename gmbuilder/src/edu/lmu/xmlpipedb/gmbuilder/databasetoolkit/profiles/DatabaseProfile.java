@@ -437,6 +437,13 @@ public abstract class DatabaseProfile extends Profile {
     }
 
     /**
+     * Convenience method for automatically selecting the "all" aspect.
+     */
+    public void setDatabaseProperties(String genMAPPDatabase, ConnectionConfiguration connectionConfiguration) {
+        setDatabaseProperties(genMAPPDatabase, connectionConfiguration, 'A');
+    }
+    
+    /**
      * Sets the connections and aspect chosen in the export wizard.
      *
      * @param genMAPPDatabase

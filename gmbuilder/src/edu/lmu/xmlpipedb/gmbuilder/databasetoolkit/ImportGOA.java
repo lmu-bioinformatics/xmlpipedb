@@ -15,7 +15,6 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
@@ -25,10 +24,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ImportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 

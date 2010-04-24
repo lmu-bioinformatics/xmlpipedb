@@ -9,9 +9,6 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,8 +19,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBException;
 
@@ -659,6 +654,7 @@ public class ExportGoData {
     private static final int PARENT_COL = 4 - 1;
     private static final int ID_COL 	= 1 - 1;
 
+    @SuppressWarnings("unused")
     private char chosenAspect;
     private int orderNo;
     private Connection connection;

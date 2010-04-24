@@ -323,8 +323,7 @@ public class ConnectionManager {
 		StringBuffer databaseConnectionString;
 
 		// Life is a little different when playing on a Vista machine
-		String osName = System.getProperty("os.name");
-		/*
+		/*String osName = System.getProperty("os.name");
 		if(osName.equals("Windows Vista")) {
 	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=");
 	      databaseConnectionString.append(databaseFile);

@@ -43,10 +43,8 @@ import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
-import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
-//import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ImportGOA;
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ImportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.gui.util.ImportGOAPanel;
+import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.gmbuilder.resource.properties.AppResources;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.Criterion;
@@ -79,7 +77,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "2.0b42";
+    public static final String VERSION = "2.0b43";
 
     /**
      * Starts the application.

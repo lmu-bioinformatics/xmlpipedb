@@ -596,7 +596,7 @@ public class ExportGoData {
     }
 
     /**
-     * A recursive fucntion that traverse each branch
+     * A recursive function that traverse each branch
      *
      * @param parent
      *            The parent ID

@@ -204,7 +204,7 @@ public class ImportGOAPanel extends UtilityDialogue {
     }
 
     /**
-     * Import the opened file; to be massively redone to use GOA files instead of XML files
+     * Imports the opened file GOA file
      */
     private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {
         boolean proceedWithImport = (_goaFile != null);
@@ -222,13 +222,14 @@ public class ImportGOAPanel extends UtilityDialogue {
             	+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         	try {
+        		// Establishes connection to PostgreSQL database
                 SessionFactory sessionFactory = _hibernateConfiguration.buildSessionFactory();
                 session = sessionFactory.openSession();
                 Connection conn = session.connection();
-                // does the progress monitor popup
-                //InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(this, "Reading " + _goaFile, new FileInputStream(_goaFile)));
+
+                // Creates BufferedReader for selected GOA file
             	BufferedReader in = new BufferedReader(new FileReader(_goaFile));
-                //ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration, _entryElement, _rootElementName);
+
                 System.out.println("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
                 String l;
                 String[] temp = null;
@@ -239,15 +240,17 @@ public class ImportGOAPanel extends UtilityDialogue {
 
                 query = conn.prepareStatement(insert);
                 while ((l = in.readLine()) != null) {
-                /*for (int i = 0; i < 10; i++) {
-                	l = in.readLine();*/
 
+                	// Reports every 5000th line of GOA imported
                 	if (primarykeyid % 5000 == 0) {
                 		System.out.println("Importing Line # " + primarykeyid + "...");
                 	}
 
+                	// Splits line into an array of strings based upon tab-delimited format
                 	temp = l.split("\t");
 
+                	// Detects if file is in GAF 1.0 and converts the table to GAF 2.0
+                	// (see http://www.geneontology.org/GO.format.gaf-2_0.shtml)
                 	if (temp.length == 15) {
                 		temp2 = new String[17];
                 		System.arraycopy(temp, 0, temp2, 0, 15);
@@ -257,14 +260,8 @@ public class ImportGOAPanel extends UtilityDialogue {
                 		System.arraycopy(temp2, 0, temp, 0, 17);
                 		temp2 = null;
                 	}
-/*
-                	for (int q = 0; q < temp.length; q++) {
-                		if (temp[q] == "") {
-                			temp[q] == null;
-                		}
-                	}
-*/
-                	// Insert into table
+
+                	// Replaces ?s in query with values from string array
                 	query.setInt(1, primarykeyid);
                 	for (int k = 0; k < 17; k++){
                 		if (k == 13) {
@@ -273,14 +270,9 @@ public class ImportGOAPanel extends UtilityDialogue {
                 			query.setString(k+2, temp[k]);
                 		}
                 	}
-                	query.executeUpdate();
 
-                	/*
-                	for (int j = 0; j < 17; j++) {
-                		System.out.print(temp[j] + "-|-");
-                	}
-                	System.out.println("");
-                	*/
+                	// Executes insert statement
+                	query.executeUpdate();
 
                 	temp = null;
                 	primarykeyid++;
@@ -305,9 +297,6 @@ public class ImportGOAPanel extends UtilityDialogue {
                 e.printStackTrace();
                 System.out.print("SystemOutOfMemoryError. Message = " + e.getMessage() + "LocalizedMessage = " + e.getLocalizedMessage());
             } finally {
-                // System.out.println("Import Finished at: " +
-                // DateFormat.getTimeInstance(DateFormat.LONG).format(
-                // System.currentTimeMillis()) );
                 try { query.close(); } catch(Exception exc) { }
                 try { session.close(); } catch(Exception exc) { }
             }

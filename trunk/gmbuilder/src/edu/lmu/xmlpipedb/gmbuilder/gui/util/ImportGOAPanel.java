@@ -278,8 +278,9 @@ public class ImportGOAPanel extends UtilityDialogue {
                 		// Executes insert statement
                 		query.executeUpdate();
                 		temp = null;
+                		primarykeyid++;
                 	}
-                	primarykeyid++;
+
                 }
                 conn.commit();
                 System.out.println("Imported " + primarykeyid + " lines from GOA file.");

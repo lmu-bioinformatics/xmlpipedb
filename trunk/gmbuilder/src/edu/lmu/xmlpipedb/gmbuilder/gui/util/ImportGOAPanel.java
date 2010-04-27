@@ -241,40 +241,44 @@ public class ImportGOAPanel extends UtilityDialogue {
                 query = conn.prepareStatement(insert);
                 while ((l = in.readLine()) != null) {
 
-                	// Reports every 5000th line of GOA imported
-                	if (primarykeyid % 5000 == 0) {
-                		System.out.println("Importing Line # " + primarykeyid + "...");
-                	}
+                	// Prevents tag at beginning of GAF 2.0 from being imported
+                	if (!(l.startsWith("!"))) {
 
-                	// Splits line into an array of strings based upon tab-delimited format
-                	temp = l.split("\t");
-
-                	// Detects if file is in GAF 1.0 and converts the table to GAF 2.0
-                	// (see http://www.geneontology.org/GO.format.gaf-2_0.shtml)
-                	if (temp.length == 15) {
-                		temp2 = new String[17];
-                		System.arraycopy(temp, 0, temp2, 0, 15);
-                		temp2[15] = "";
-                		temp2[16] = "";
-                		temp = new String[17];
-                		System.arraycopy(temp2, 0, temp, 0, 17);
-                		temp2 = null;
-                	}
-
-                	// Replaces ?s in query with values from string array
-                	query.setInt(1, primarykeyid);
-                	for (int k = 0; k < 17; k++){
-                		if (k == 13) {
-                			query.setDate(k+2, tempdate.valueOf(temp[k].substring(0,4) + "-" + temp[k].substring(4,6) + "-" + temp[k].substring(6,8)));
-                		} else {
-                			query.setString(k+2, temp[k]);
+                		// Reports every 5000th line of GOA imported
+                		if (primarykeyid % 5000 == 0) {
+                			System.out.println("Importing Line # " + primarykeyid + "...");
                 		}
+
+
+                		// Splits line into an array of strings based upon tab-delimited format
+                		temp = l.split("\t");
+
+                		// Detects if file is in GAF 1.0 and converts the table to GAF 2.0
+                		// (see http://www.geneontology.org/GO.format.gaf-2_0.shtml)
+                		if (temp.length == 15) {
+                			temp2 = new String[17];
+                			System.arraycopy(temp, 0, temp2, 0, 15);
+                			temp2[15] = "";
+                			temp2[16] = "";
+                			temp = new String[17];
+                			System.arraycopy(temp2, 0, temp, 0, 17);
+                			temp2 = null;
+                		}
+
+                		// Replaces ?s in query with values from string array
+                		query.setInt(1, primarykeyid);
+                		for (int k = 0; k < 17; k++){
+                			if (k == 13) {
+                				query.setDate(k+2, tempdate.valueOf(temp[k].substring(0,4) + "-" + temp[k].substring(4,6) + "-" + temp[k].substring(6,8)));
+                			} else {
+                				query.setString(k+2, temp[k]);
+                			}
+                		}
+
+                		// Executes insert statement
+                		query.executeUpdate();
+                		temp = null;
                 	}
-
-                	// Executes insert statement
-                	query.executeUpdate();
-
-                	temp = null;
                 	primarykeyid++;
                 }
                 conn.commit();

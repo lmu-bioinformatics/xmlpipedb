@@ -43,10 +43,14 @@ import javax.swing.JTextField;
 import javax.swing.ProgressMonitorInputStream;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
+import edu.lmu.xmlpipedb.gmbuilder.util.ImportGOAEngine;
 import edu.lmu.xmlpipedb.util.gui.UtilityDialogue;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 
@@ -216,6 +220,26 @@ public class ImportGOAPanel extends UtilityDialogue {
         }
 
         if (proceedWithImport) {
+        	try {
+        		ImportGOAEngine importGOAEngine = new ImportGOAEngine(_hibernateConfiguration);
+                importGOAEngine.importToSQL(_goaFile);
+                JOptionPane.showMessageDialog(this, "Import Complete: " + _goaFile, "Import Complete", JOptionPane.INFORMATION_MESSAGE);
+        	} catch(IOException e) {
+        		e.printStackTrace();
+        		JOptionPane.showMessageDialog(this, "An I/O exception occured while trying to read the file " + _goaFile, "Error", JOptionPane.ERROR_MESSAGE);
+        	} catch(SQLException sqle) {
+        		JOptionPane.showMessageDialog(this, sqle.getMessage());
+        		//Need to clean up connection after SQL exceptions
+        	} catch(Exception e) {
+        		e.printStackTrace();
+        		JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        	} catch(OutOfMemoryError e) {
+        		_Log.info("Error occurred at : " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
+        		e.printStackTrace();
+        		_Log.info("SystemOutOfMemoryError. Message = " + e.getMessage() + "LocalizedMessage = " + e.getLocalizedMessage());
+        	}
+
+        	/*
         	Session session = null;
             PreparedStatement query = null;
             String insert = "INSERT INTO goa VALUES "
@@ -230,61 +254,81 @@ public class ImportGOAPanel extends UtilityDialogue {
                 // Creates BufferedReader for selected GOA file
             	BufferedReader in = new BufferedReader(new FileReader(_goaFile));
 
-                System.out.println("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
-                String l;
-                String[] temp = null;
-                String[] temp2 = null;
+            	_Log.info("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
+                String inputLine;
+                String[] goaColumns = null;
+                String[] goaColumnsTemp = null;
                 Date tempdate = new Date(0000-00-00);
                 int primarykeyid = 1;
+                int linesRead = 0;
+                int totalLines = getNumberOfLinesInGOA();
+                int percentCrossedMultiplier = 1;
+                double percentRead = 0.0;
 
 
                 query = conn.prepareStatement(insert);
-                while ((l = in.readLine()) != null) {
+                while ((inputLine = in.readLine()) != null) {
 
                 	// Prevents tag at beginning of GAF 2.0 from being imported
-                	if (!(l.startsWith("!"))) {
+                	if (!(inputLine.startsWith("!"))) {
 
-                		// Reports every 5000th line of GOA imported
-                		if (primarykeyid % 5000 == 0) {
-                			System.out.println("Importing Line # " + primarykeyid + "...");
+                		// Reports line imports at a set interval of GOA imported
+                		if (primarykeyid % LINE_IMPORT_REPORT_INTERVAL == 0) {
+                			_Log.info("Importing Line # " + primarykeyid + "...");
                 		}
 
 
                 		// Splits line into an array of strings based upon tab-delimited format
-                		temp = l.split("\t");
+                		goaColumns = inputLine.split("\t");
 
-                		// Detects if file is in GAF 1.0 and converts the table to GAF 2.0
-                		// (see http://www.geneontology.org/GO.format.gaf-2_0.shtml)
-                		if (temp.length == 15) {
-                			temp2 = new String[17];
-                			System.arraycopy(temp, 0, temp2, 0, 15);
-                			temp2[15] = "";
-                			temp2[16] = "";
-                			temp = new String[17];
-                			System.arraycopy(temp2, 0, temp, 0, 17);
-                			temp2 = null;
-                		}
 
-                		// Replaces ?s in query with values from string array
-                		query.setInt(1, primarykeyid);
-                		for (int k = 0; k < 17; k++){
-                			if (k == 13) {
-                				query.setDate(k+2, tempdate.valueOf(temp[k].substring(0,4) + "-" + temp[k].substring(4,6) + "-" + temp[k].substring(6,8)));
-                			} else {
-                				query.setString(k+2, temp[k]);
+                		if (goaColumns.length == GAF10NUMOFCOLUMNS || goaColumns.length == GAF20NUMOFCOLUMNS) {
+
+                			// Detects if file is in GAF 1.0 and converts the table to GAF 2.0
+                			// (see http://www.geneontology.org/GO.format.gaf-2_0.shtml)
+                			if (goaColumns.length == GAF10NUMOFCOLUMNS) {
+                				goaColumnsTemp = new String[GAF20NUMOFCOLUMNS];
+                				System.arraycopy(goaColumns, 0, goaColumnsTemp, 0, GAF10NUMOFCOLUMNS);
+                				goaColumnsTemp[15] = "";
+                				goaColumnsTemp[16] = "";
+                				goaColumns = new String[GAF20NUMOFCOLUMNS];
+                				System.arraycopy(goaColumnsTemp, 0, goaColumns, 0, GAF20NUMOFCOLUMNS);
+                				goaColumnsTemp = null;
                 			}
-                		}
 
-                		// Executes insert statement
-                		query.executeUpdate();
-                		temp = null;
-                		primarykeyid++;
+                			// Inserts parameters into query to be placed in IN parameter placeholders (?) when executed
+                			query.setInt(1, primarykeyid);
+                			for (int k = 0; k < GAF20NUMOFCOLUMNS; k++){
+                				if (k == DATECOLUMN) {
+                					query.setDate(k+2, tempdate.valueOf(goaColumns[k].substring(0,4) + "-" + goaColumns[k].substring(4,6) + "-" + goaColumns[k].substring(6,8)));
+                				} else {
+                					query.setString(k+2, goaColumns[k]);
+                				}
+                			}
+
+                			// Executes insert statement
+                			query.executeUpdate();
+                			goaColumns = null;
+                			primarykeyid++;
+                		} else {
+                			_Log.debug("Line not imported, improper number of columns");
+                		}
+                	} else {
+                		_Log.debug("Line not imported, identified as a tag: " + inputLine);
+                	}
+
+                	linesRead++;
+                	percentRead = (100.0 * ((double)linesRead / (double)totalLines));
+                	if (percentRead >= (PERCENT_LINES_READ * (double)percentCrossedMultiplier)) {
+                		_Log.info((PERCENT_LINES_READ * (double)percentCrossedMultiplier) + "% of GOA read...");
+                		_Log.debug("Actual percent imported: " + percentRead +"%");
+                		percentCrossedMultiplier++;
                 	}
 
                 }
                 conn.commit();
-                System.out.println("Imported " + primarykeyid + " lines from GOA file.");
-                System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
+                _Log.info("Imported " + primarykeyid + " lines from GOA file.");
+                _Log.info("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
                 _success = true;
                 // notify user when import is complete
                 JOptionPane.showMessageDialog(this, "Import Complete: " + _goaFile, "Import Complete", JOptionPane.INFORMATION_MESSAGE);
@@ -298,13 +342,13 @@ public class ImportGOAPanel extends UtilityDialogue {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             } catch(OutOfMemoryError e) {
-                System.out.println("Error occurred at : " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
+            	_Log.info("Error occurred at : " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
                 e.printStackTrace();
-                System.out.print("SystemOutOfMemoryError. Message = " + e.getMessage() + "LocalizedMessage = " + e.getLocalizedMessage());
+                _Log.info("SystemOutOfMemoryError. Message = " + e.getMessage() + "LocalizedMessage = " + e.getLocalizedMessage());
             } finally {
                 try { query.close(); } catch(Exception exc) { }
                 try { session.close(); } catch(Exception exc) { }
-            }
+            }*/
         } else {
             JOptionPane.showMessageDialog(this, "Please Open a Valid GOA File", "Missing or Invalid File", JOptionPane.ERROR_MESSAGE);
         }
@@ -385,6 +429,44 @@ public class ImportGOAPanel extends UtilityDialogue {
             return "";
         }
     }
+
+    private int getNumberOfLinesInGOA(){
+    	int lineCounter = 0;
+    	SessionFactory sessionFactory = _hibernateConfiguration.buildSessionFactory();
+        Session session = sessionFactory.openSession();
+        Connection conn = session.connection();
+        String inputLine = null;
+
+        try {
+
+        	// Creates BufferedReader for selected GOA file
+        	BufferedReader in = new BufferedReader(new FileReader(_goaFile));
+
+        	while ((inputLine = in.readLine()) != null) {
+        		lineCounter++;
+        	}
+        	return lineCounter;
+    	} catch(IOException e) {
+    		e.printStackTrace();
+    		JOptionPane.showMessageDialog(this, "An I/O exception occured while trying to read the file " + _goaFile, "Error", JOptionPane.ERROR_MESSAGE);
+    	} catch(Exception e) {
+    		e.printStackTrace();
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    	}
+    	return lineCounter;
+    }
+
+    /**
+     * Log object for ImportGOAPanel.
+     */
+    private static final Log _Log = LogFactory.getLog(ImportGOAPanel.class);
+
+    private static final int GAF10NUMOFCOLUMNS = 15;
+    private static final int GAF20NUMOFCOLUMNS = 17;
+    private static final int DATECOLUMN = 13;
+    private static final int LINE_IMPORT_REPORT_INTERVAL = 5000;
+    private static final double PERCENT_LINES_READ = 10.0;
+
 
     private boolean _success;
     private Configuration _hibernateConfiguration;

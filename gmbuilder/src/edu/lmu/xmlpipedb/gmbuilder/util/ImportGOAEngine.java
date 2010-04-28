@@ -63,7 +63,7 @@ public class ImportGOAEngine {
             // Creates BufferedReader for selected GOA file
         	BufferedReader in = new BufferedReader(new FileReader(_goaFile));
 
-        	_Log.info("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
+        	_Log.warn("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
             String inputLine;
             String[] goaColumns = null;
             String[] goaColumnsTemp = null;
@@ -82,9 +82,9 @@ public class ImportGOAEngine {
             	if (!(inputLine.startsWith("!"))) {
 
             		// Reports line imports at a set interval of GOA imported
-            		if (primarykeyid % LINE_IMPORT_REPORT_INTERVAL == 0) {
+            		/*if (primarykeyid % LINE_IMPORT_REPORT_INTERVAL == 0) {
             			_Log.info("Importing Line # " + primarykeyid + "...");
-            		}
+            		}*/
 
 
             		// Splits line into an array of strings based upon tab-delimited format
@@ -129,31 +129,16 @@ public class ImportGOAEngine {
             	linesRead++;
             	percentRead = (100.0 * ((double)linesRead / (double)totalLines));
             	if (percentRead >= (PERCENT_LINES_READ * (double)percentCrossedMultiplier)) {
-            		_Log.info((PERCENT_LINES_READ * (double)percentCrossedMultiplier) + "% of GOA read...");
-            		_Log.debug("Actual percent imported: " + percentRead +"%");
+            		_Log.warn((PERCENT_LINES_READ * (double)percentCrossedMultiplier) + "% of GOA read...");
+            		_Log.info("Actual percent imported: " + percentRead +"%");
             		percentCrossedMultiplier++;
             	}
 
             }
             conn.commit();
-            _Log.info("Imported " + primarykeyid + " lines from GOA file.");
-            _Log.info("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
+            _Log.warn("Imported " + (primarykeyid - 1) + " lines from GOA file.");
+            _Log.warn("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
             _success = true;
-            // notify user when import is complete
-            //JOptionPane.showMessageDialog(this, "Import Complete: " + _goaFile, "Import Complete", JOptionPane.INFORMATION_MESSAGE);
-        /*} catch(IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An I/O exception occured while trying to read the file " + _goaFile, "Error", JOptionPane.ERROR_MESSAGE);
-        } catch(SQLException sqle) {
-            JOptionPane.showMessageDialog(this, sqle.getMessage());
-            //Need to clean up connection after SQL exceptions*/
-        /*} catch(Exception e) {*/
-            /*e.printStackTrace();
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        } catch(OutOfMemoryError e) {
-        	_Log.info("Error occurred at : " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
-            e.printStackTrace();
-            _Log.info("SystemOutOfMemoryError. Message = " + e.getMessage() + "LocalizedMessage = " + e.getLocalizedMessage());*/
         }
         finally {
             try { query.close(); } catch(Exception exc) { }
@@ -179,11 +164,9 @@ public class ImportGOAEngine {
         } catch(IOException e) {
         	e.printStackTrace();
         	_Log.debug("An I/O exception occured while trying to read the file " + _goaFile + " for line counting.");
-        	//JOptionPane.showMessageDialog(this, "An I/O exception occured while trying to read the file " + _goaFile, "Error", JOptionPane.ERROR_MESSAGE);
         } catch(Exception e) {
         	e.printStackTrace();
         	_Log.debug("Error during line count");
-            //JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         return lineCounter;
     }
@@ -194,7 +177,7 @@ public class ImportGOAEngine {
     private static final int GAF20NUMOFCOLUMNS = 17;
     private static final int DATECOLUMN = 13;
     private static final int LINE_IMPORT_REPORT_INTERVAL = 5000;
-    private static final double PERCENT_LINES_READ = 10.0;
+    private static final double PERCENT_LINES_READ = 20.0;
 
 	private SessionFactory _sessionFactory;
 	private boolean _success;

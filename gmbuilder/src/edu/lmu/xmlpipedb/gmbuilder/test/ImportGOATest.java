@@ -85,7 +85,7 @@ public class ImportGOATest extends TestCase {
 		String[] goID = { "GO:0005634", "GO:0005737", "GO:0000159", "GO:0005737",
 				          "GO:0006470", "GO:0051754", "GO:0005515", "GO:0004722",
 				          "GO:0005737", "GO:0005515"};
-		String[] goReference = { "GO_REF:0000023", "GO_REF:0000023",
+		String[] dbReference = { "GO_REF:0000023", "GO_REF:0000023",
 				                 "GO_REF:0000002", "PMID:11914276",
 				                 "PMID:19605686", "PMID:16541024",
 				                 "PMID:11283351", "PMID:11038366",
@@ -98,17 +98,11 @@ public class ImportGOATest extends TestCase {
 		String[] aspect = {"C", "C", "C", "C", "P", "P", "F", "F", "C", "F" };
 		String dbObjectName = "Serine/threonine-protein phosphatase 2A 56 kDa regulatory subunit delta isoform";
 		String dbObjectSynonym = "RTS1|SCS1|YOR014W|OR26.04|2A5D_YEAST";
+		String dbObjectType = "protein";
 		String taxon = "taxon:4932";
-		Date[] date = {new Date(2009, 10, 1),
-				       new Date(2009, 10, 1),
-				       new Date(2009, 10, 1),
-				       new Date(2002, 5, 7),
-				       new Date(2009, 9, 23),
-				       new Date(2006, 5, 25),
-				       new Date(2009, 10, 1),
-				       new Date(2009, 9, 22),
-				       new Date(2009, 10, 1),
-				       new Date(2009, 10, 1)};
+		String[] date = {"2009-10-01", "2009-10-01", "2009-10-01", "2002-05-07",
+				         "2009-09-23", "2006-05-25", "2009-10-01", "2009-09-22",
+				         "2009-10-01", "2009-10-01"};
 		String[] assignedBy = {"UniProtKB", "UniProtKB", "UniProtKB", "SGD", "SGD", "SGD", "IntAct",
 				               "SGD", "UniProtKB", "IntAct" };
 		String annotationExtension = "";
@@ -125,7 +119,9 @@ public class ImportGOATest extends TestCase {
 			results = query.executeQuery();
 			results.next();
 			Assert.assertEquals(rows, results.getInt(1));
+
 			query = conn.prepareStatement("select * from goa order by primdbkey");
+			results = query.executeQuery();
 			for (int i = 0; i < rows; i++) {
 				results.next();
 				Assert.assertEquals(keys[i], results.getInt(1));
@@ -134,17 +130,18 @@ public class ImportGOATest extends TestCase {
 				Assert.assertEquals(dbObjectSymbol, results.getString(4));
 				Assert.assertEquals(qualifier[i], results.getString(5));
 				Assert.assertEquals(goID[i], results.getString(6));
-				Assert.assertEquals(goReference[i], results.getString(7));
+				Assert.assertEquals(dbReference[i], results.getString(7));
 				Assert.assertEquals(evidenceCode[i], results.getString(8));
 				Assert.assertEquals(withOrFrom[i], results.getString(9));
 				Assert.assertEquals(aspect[i], results.getString(10));
 				Assert.assertEquals(dbObjectName, results.getString(11));
 				Assert.assertEquals(dbObjectSynonym, results.getString(12));
-				Assert.assertEquals(taxon, results.getString(13));
-				Assert.assertEquals(date[i], results.getDate(14));
-				Assert.assertEquals(assignedBy[i], results.getString(15));
-				Assert.assertEquals(annotationExtension, results.getString(16));
-				Assert.assertEquals(geneProductFormID, results.getString(17));
+				Assert.assertEquals(dbObjectType, results.getString(13));
+				Assert.assertEquals(taxon, results.getString(14));
+				Assert.assertEquals(date[i], results.getString(15));
+				Assert.assertEquals(assignedBy[i], results.getString(16));
+				Assert.assertEquals(annotationExtension, results.getString(17));
+				Assert.assertEquals(geneProductFormID, results.getString(18));
 			}
 
         } catch(SQLException e) {

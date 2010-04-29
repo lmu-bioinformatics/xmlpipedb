@@ -20,14 +20,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Date;
 import java.text.DateFormat;
 import java.util.HashMap;
 
@@ -55,6 +51,7 @@ import edu.lmu.xmlpipedb.util.gui.UtilityDialogue;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 /**
+ *
  *
  * @author Don Murphy
  */
@@ -243,6 +240,10 @@ public class ImportGOAPanel extends UtilityDialogue {
         }
     }
 
+    /**
+     * When a file is selected with the filechooser, the filepath is place in the text field
+     * of the panel while the GOA file is set for import
+     */
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {
         JFileChooser fc = new JFileChooser();
         fc.setFileFilter(new GOAFilter());

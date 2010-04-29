@@ -1,25 +1,31 @@
+/**
+ * ImportGOAEngine.java
+ * Purpose: Imports the contents of a GOA tab-delimited file to a table in a PostgreSQL database
+ * Author: Don Murphy
+ * Description: The engine is used with ImportGOAPanel to import a GOA. A BufferedReader reads the
+ *     GOA in line by line, parsing each line by the tabs separating the "columns" of the file into
+ *     a String array. After any necessary format adjustments are done based upon the format
+ *     version of the GOA file, the contents of the string array set as parameters of a pre-written
+ *     SQL insert PreparedStatement. After one line has been completely added to the PreparedStatement,
+ *     it is queried to insert the data as a row in the goa table of the PostgreSQL database. This
+ *     process is repeated until the end of the GOA file is reached.
+ */
+
 package edu.lmu.xmlpipedb.gmbuilder.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-//import java.io.IOException;
-//import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.text.DateFormat;
-
-import javax.swing.JOptionPane;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,14 +36,13 @@ import org.hibernate.HibernateException;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.gui.util.ImportGOAPanel;
-//import edu.lmu.xmlpipedb.util.engines.HibernateException;
 import edu.lmu.xmlpipedb.util.gui.UtilityDialogue;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 public class ImportGOAEngine {
 
 	/**
-	 * Creates a new instance of ImportGOAENgine
+	 * Creates a new instance of ImportGOAEngine
 	 * @param hibernateCongfiguration A hibernate configuration as the configuration to import
      * the goa to the database
 	 * @throws IOException for all IO exceptions
@@ -48,6 +53,12 @@ public class ImportGOAEngine {
 		_sessionFactory = hibernateConfiguration.buildSessionFactory();
 	}
 
+
+	/**
+	 * Imports a GOA File based upon the hibernateConfiguration's database configuration
+	 * @param goaFile The GOA file to parsed and upload to the PostgreSQL database
+	 * @throws Exception
+	 */
 	public void importToSQL(File goaFile) throws Exception {
 		_goaFile = goaFile;
 		Session session = null;
@@ -146,7 +157,10 @@ public class ImportGOAEngine {
         }
 	}
 
-
+	/**
+	 * Returns the number of lines in the GOA file being imported; used for progress indications
+	 * @return The number of lines in the GOA file
+	 */
     private int getNumberOfLinesInGOA(){
     	int lineCounter = 0;
     	String inputLine = null;

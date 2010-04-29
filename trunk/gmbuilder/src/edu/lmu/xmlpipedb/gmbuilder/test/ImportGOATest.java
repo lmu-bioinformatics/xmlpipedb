@@ -1,3 +1,14 @@
+/**
+ * ImportGOATest.java
+ * Purpose: Test the ability of ImportGOAEngine to successfully and accurately import GOA
+ *     files to a prepared PostgreSQL database
+ * Author: Don Murphy
+ * Description: An PostgreSQL database named "up" is prepared with the SQL commands in
+ *     gmbuilder.sql before running this test. When run, this test attempts to import a
+ *     test GOA to the database and then check the number of rows imported and whether the
+ *     values of the table are equivalent to the values of the GOA.
+ */
+
 package edu.lmu.xmlpipedb.gmbuilder.test;
 
 import java.io.BufferedInputStream;
@@ -25,6 +36,10 @@ import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.QueryEngine;
 import edu.lmu.xmlpipedb.gmbuilder.util.ImportGOAEngine;
 
+/**
+ * Test case for ImportGOAEngine
+ * @author Don Murphy
+ */
 public class ImportGOATest extends TestCase {
 
 	/* **** class vars **** */

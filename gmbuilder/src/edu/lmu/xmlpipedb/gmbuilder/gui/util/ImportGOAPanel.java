@@ -218,8 +218,8 @@ public class ImportGOAPanel extends UtilityDialogue {
 
         if (proceedWithImport) {
         	try {
-        		ImportGOAEngine importGOAEngine = new ImportGOAEngine(_hibernateConfiguration);
-                importGOAEngine.importToSQL(_goaFile);
+        		ImportGOAEngine importGOAEngine = new ImportGOAEngine(_hibernateConfiguration, _goaFile);
+                importGOAEngine.importToSQL();
                 JOptionPane.showMessageDialog(this, "Import Complete: " + _goaFile, "Import Complete", JOptionPane.INFORMATION_MESSAGE);
         	} catch(IOException e) {
         		e.printStackTrace();

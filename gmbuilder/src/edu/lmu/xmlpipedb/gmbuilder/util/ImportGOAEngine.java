@@ -48,9 +48,10 @@ public class ImportGOAEngine {
 	 * @throws IOException for all IO exceptions
 	 * @throws HibernateException for all hibernate exceptions
 	 */
-	public ImportGOAEngine(Configuration hibernateConfiguration) throws IOException, HibernateException {
+	public ImportGOAEngine(Configuration hibernateConfiguration, File goaFile) throws IOException, HibernateException {
 		_hibernateConfiguration = hibernateConfiguration;
 		_sessionFactory = hibernateConfiguration.buildSessionFactory();
+		_goaFile = goaFile;
 	}
 
 
@@ -59,8 +60,7 @@ public class ImportGOAEngine {
 	 * @param goaFile The GOA file to parsed and upload to the PostgreSQL database
 	 * @throws Exception
 	 */
-	public void importToSQL(File goaFile) throws Exception {
-		_goaFile = goaFile;
+	public void importToSQL() throws Exception {
 		Session session = null;
         PreparedStatement query = null;
         String insert = "INSERT INTO goa VALUES "
@@ -157,11 +157,14 @@ public class ImportGOAEngine {
         }
 	}
 
+
+
+
 	/**
 	 * Returns the number of lines in the GOA file being imported; used for progress indications
 	 * @return The number of lines in the GOA file
 	 */
-    private int getNumberOfLinesInGOA(){
+    public int getNumberOfLinesInGOA() throws Exception{
     	int lineCounter = 0;
     	String inputLine = null;
 

@@ -64,8 +64,8 @@ public class ImportGOATest extends TestCase {
 			_configEng = new ConfigurationEngine("./src/edu/lmu/xmlpipedb/gmbuilder/test/hibernate.properties", "");
 		    _hibernateConfiguration = _configEng.getHibernateConfiguration();
 
-			importGOAEngine = new ImportGOAEngine(_hibernateConfiguration);
-			importGOAEngine.importToSQL(_goaFile);
+			importGOAEngine = new ImportGOAEngine(_hibernateConfiguration, _goaFile);
+			importGOAEngine.importToSQL();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -162,9 +162,11 @@ public class ImportGOATest extends TestCase {
         } catch(SQLException e) {
             System.out.print("An SQLException was thrown while running this test. A stack trace follows:\n");
             e.printStackTrace();
+            Assert.fail("An SQLException was thrown while running this test.");
         } catch(Exception e) {
         	System.out.print("An Unspecified Exception was thrown while running this test. A stack trace follows:\n");
             e.printStackTrace();
+            Assert.fail("An Unspecified Exception was thrown while running this test.");
         } finally {
             try {
                 results.close();
@@ -176,5 +178,41 @@ public class ImportGOATest extends TestCase {
         }
 	}
 
+	public void testLineCount() throws FileNotFoundException {
+		ImportGOAEngine importGOAEngine;
+		int intendedLineCount = 10;
+
+		_goaFile = new File("./src/edu/lmu/xmlpipedb/gmbuilder/test/GOA_GAF_10.goa");
+		//_goaFile = new File("./src/edu/lmu/xmlpipedb/gmbuilder/test/GOA_GAF_20.goa");
+		//_goaFile = new File("./src/edu/lmu/xmlpipedb/gmbuilder/test/GOA_bad_format.goa");
+		if( !(_goaFile.exists()) )
+			throw new FileNotFoundException( "Could not find the goa file for testing.");
+
+		try {
+			_configEng = new ConfigurationEngine("./src/edu/lmu/xmlpipedb/gmbuilder/test/hibernate.properties", "");
+		    _hibernateConfiguration = _configEng.getHibernateConfiguration();
+
+			importGOAEngine = new ImportGOAEngine(_hibernateConfiguration, _goaFile);
+			Assert.assertEquals(intendedLineCount, importGOAEngine.getNumberOfLinesInGOA());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }

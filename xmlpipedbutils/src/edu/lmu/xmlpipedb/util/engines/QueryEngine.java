@@ -2,10 +2,13 @@ package edu.lmu.xmlpipedb.util.engines;
 
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 /**
@@ -18,11 +21,13 @@ import org.hibernate.cfg.Configuration;
  */
 public class QueryEngine {
     public QueryEngine(Configuration hibernateConfiguration) throws HibernateException {
-        try{
-        	sessionFactory = hibernateConfiguration.buildSessionFactory();
-        } catch( HibernateException e ){
-        	throw e;
-        }
+    	sessionFactory = hibernateConfiguration.buildSessionFactory();
+
+        // Test the configuration by trying a transaction.
+        Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+        tx.rollback();
+        session.close();
     }
 
     /**
@@ -53,10 +58,11 @@ public class QueryEngine {
         try {
             Session s = (Session)session.get();
             session.set(null);
-            if (s != null)
+            if (s != null) {
                 s.close();
+            }
         } catch(HibernateException he) {
-            System.err.println(he.getMessage());
+            _Log.error(he);
         }
     }
 
@@ -68,6 +74,7 @@ public class QueryEngine {
      * @return The resulting java.util.Iterator referencing the results of the
      *         query.
      */
+    @SuppressWarnings("rawtypes")
     public Iterator executeHQL(String hql) {
         Session session = null;
         Query query = null;
@@ -77,14 +84,16 @@ public class QueryEngine {
             query = session.createQuery(hql);
             iter = query.iterate();
         } catch(HibernateException he) {
-            System.err.println(he.getMessage());
+            _Log.error(he);
         } catch(Exception e) {
-            System.err.println(e.getMessage());
+            _Log.error(e);
         }
 
         // closeSession();
         return iter;
     }
+
+    private static final Log _Log = LogFactory.getLog(QueryEngine.class);
 
     private static final ThreadLocal<Session> session = new ThreadLocal<Session>();
 

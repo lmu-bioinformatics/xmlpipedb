@@ -33,5 +33,6 @@
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/xom-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/xsdlib.jar"/>
+	<classpathentry kind="lib" path="lib/shag-1.2.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

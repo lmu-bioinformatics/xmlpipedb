@@ -10,8 +10,10 @@
 package edu.lmu.xmlpipedb.gmbuilder;
 
 import java.awt.Cursor;
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -21,9 +23,6 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -38,17 +37,19 @@ import org.apache.log4j.BasicConfigurator;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
-import edu.lmu.xmlpipedb.gmbuilder.gui.util.ImportGOAPanel;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.gmbuilder.resource.properties.AppResources;
+import edu.lmu.xmlpipedb.gmbuilder.util.ImportGOAEngine;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.Criterion;
 import edu.lmu.xmlpipedb.util.engines.CriterionList;
+import edu.lmu.xmlpipedb.util.engines.ImportEngine;
 import edu.lmu.xmlpipedb.util.engines.QueryEngine;
 import edu.lmu.xmlpipedb.util.engines.RuleType;
 import edu.lmu.xmlpipedb.util.engines.TallyEngine;
@@ -57,7 +58,7 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
-import edu.lmu.xmlpipedb.util.gui.ImportPanel;
+import edu.lmu.xmlpipedb.util.gui.XMLPipeDBGUIUtils;
 
 import shag.App;
 import shag.dialog.ModalDialog;
@@ -77,7 +78,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "2.0b45";
+    public static final String VERSION = "2.0b47";
 
     /**
      * Starts the application.
@@ -217,15 +218,10 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      *
      */
     private String getSpeciesNameFromString(String species) {
-
         String speciesString = "";
-
         if (species != null) {
-
             speciesString = species.toLowerCase();
-
             String[] substrings = speciesString.replaceAll(" ", "").split("\\(");
-
             if (substrings.length > 0) {
                 speciesString = substrings[0];
             }
@@ -262,7 +258,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-                if (doGoImport("generated", "Import GO XML File")) {
+                if (doGoImport("generated", "Import GO XML File") && ModalDialog.showQuestionDialog("Process GO Data?", "Some processing of the raw Gene Ontology data needs to be performed.\nThis may take a few minutes.  Proceed?")) {
                     doProcessGO();
                 }
             }
@@ -302,30 +298,36 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
              */
             public void actionPerformed(ActionEvent aevt) {
                 Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
-                if (hibernateConfiguration == null) {
+                if (hibernateConfiguration != null) {
+                    try {
+                        validateDatabaseSettings(hibernateConfiguration);
+
+                        CriterionList uniprotCriteria = new CriterionList();
+                        setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
+        
+                        CriterionList goCriteria = new CriterionList();
+                        setTallyCriterion(goCriteria, TallyType.GO);
+        
+                        getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
+                        getTallyResultsDatabase(goCriteria, hibernateConfiguration);
+        
+                        // Gather the criteria into a list so that we can display them
+                        // in a UsefulTable.
+                        /**
+                         * Columns used for displaying tally results.
+                         */
+                        final BeanColumn[] TallyColumns = { BeanColumn.create("Database Table", "table", String.class), BeanColumn.create("Database Count", "dbCount", Integer.class) };
+                        BeanTableModel btm = new BeanTableModel(TallyColumns);
+                        uniprotCriteria.addCriteria(goCriteria.getAllCriteria());
+                        btm.setData(uniprotCriteria.getAllCriteria().toArray());
+                        UsefulTable t = new UsefulTable(btm);
+                        ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
+                    } catch(HibernateException hexc) {
+                        handleErroneousHibernateConfiguration();
+                    }
+                } else {
                     handleMissingHibernateConfiguration();
-                    return;
                 }
-                CriterionList uniprotCriteria = new CriterionList();
-                setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
-
-                CriterionList goCriteria = new CriterionList();
-                setTallyCriterion(goCriteria, TallyType.GO);
-
-                getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
-                getTallyResultsDatabase(goCriteria, hibernateConfiguration);
-
-                // Gather the criteria into a list so that we can display them
-                // in a UsefulTable.
-                /**
-                 * Columns used for displaying tally results.
-                 */
-                final BeanColumn[] TallyColumns = { BeanColumn.create("Database Table", "table", String.class), BeanColumn.create("Database Count", "dbCount", Integer.class) };
-                BeanTableModel btm = new BeanTableModel(TallyColumns);
-                uniprotCriteria.addCriteria(goCriteria.getAllCriteria());
-                btm.setData(uniprotCriteria.getAllCriteria().toArray());
-                UsefulTable t = new UsefulTable(btm);
-                ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
             }
         };
 
@@ -338,25 +340,22 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 setTallyCriterion(goCriteria, TallyType.GO);
 
                 // Create a file chooser and setup the GO input stream
-                File goFile = getXmlFile("Select GO XML file");
-                if (goFile == null) {
-                    ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
-                    return;
+                File goFile = chooseXMLFile("Select GO XML file");
+                if (goFile != null) {
+                    getTallyResultsXml(goCriteria, goFile);
+    
+                    // Gather the criteria into a list so that we can display them
+                    // in a UsefulTable.
+                    /**
+                     * Columns used for displaying tally results.
+                     */
+                    final BeanColumn[] TallyColumns = { BeanColumn.create("XML Path", "table", String.class), BeanColumn.create("XML Count", "xmlCount", Integer.class), };
+    
+                    BeanTableModel btm = new BeanTableModel(TallyColumns);
+                    btm.setData(goCriteria.getAllCriteria().toArray());
+                    UsefulTable t = new UsefulTable(btm);
+                    ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
                 }
-
-                getTallyResultsXml(goCriteria, goFile);
-
-                // Gather the criteria into a list so that we can display them
-                // in a UsefulTable.
-                /**
-                 * Columns used for displaying tally results.
-                 */
-                final BeanColumn[] TallyColumns = { BeanColumn.create("XML Path", "table", String.class), BeanColumn.create("XML Count", "xmlCount", Integer.class), };
-
-                BeanTableModel btm = new BeanTableModel(TallyColumns);
-                btm.setData(goCriteria.getAllCriteria().toArray());
-                UsefulTable t = new UsefulTable(btm);
-                ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
             }
         };
 
@@ -369,24 +368,21 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
 
                 // Create a file chooser and setup the UniProt input stream
-                File uniprotFile = getXmlFile("Select UniProt XML file");
-                if (uniprotFile == null) {
-                    ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
-                    return;
+                File uniprotFile = chooseXMLFile("Select UniProt XML file");
+                if (uniprotFile != null) {
+                    getTallyResultsXml(uniprotCriteria, uniprotFile);
+    
+                    // Gather the criteria into a list so that we can display them
+                    // in a UsefulTable.
+                    /**
+                     * Columns used for displaying tally results.
+                     */
+                    final BeanColumn[] TallyColumns = { BeanColumn.create("XML Path", "table", String.class), BeanColumn.create("XML Count", "xmlCount", Integer.class), };
+                    BeanTableModel btm = new BeanTableModel(TallyColumns);
+                    btm.setData(uniprotCriteria.getAllCriteria().toArray());
+                    UsefulTable t = new UsefulTable(btm);
+                    ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
                 }
-
-                getTallyResultsXml(uniprotCriteria, uniprotFile);
-
-                // Gather the criteria into a list so that we can display them
-                // in a UsefulTable.
-                /**
-                 * Columns used for displaying tally results.
-                 */
-                final BeanColumn[] TallyColumns = { BeanColumn.create("XML Path", "table", String.class), BeanColumn.create("XML Count", "xmlCount", Integer.class), };
-                BeanTableModel btm = new BeanTableModel(TallyColumns);
-                btm.setData(uniprotCriteria.getAllCriteria().toArray());
-                UsefulTable t = new UsefulTable(btm);
-                ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
             }
         };
 
@@ -447,8 +443,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 _queryPanel.setHibernateConfiguration(createHibernateConfiguration());
             }
         } catch(Exception exc) {
-            ModalDialog.showErrorDialog("Unable to Configure Database", "Sorry, database configuration was unable to proceed.  This is most likely an error relating to file creation or modification on the system on which you are running.");
             _Log.error(exc);
+            ModalDialog.showErrorDialog("Unable to Configure Database", "Sorry, database configuration was unable to proceed.  This is most likely an error relating to file creation or modification on the system on which you are running.");
         }
     }
 
@@ -469,20 +465,13 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             rootElement.put("head", head);
             rootElement.put("tail", "</uniprot>");
             try {
-                ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration, "uniprot/entry", rootElement);
-                importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-                JDialog dialog = new JDialog();
-                importPanel.setDelegate(dialog);
-                dialog.getContentPane().add(importPanel);
-                dialog.setTitle(title);
-                dialog.setModal(true);
-                dialog.setLocationRelativeTo(this.getFrontmostWindow());
-                dialog.setSize(600, 300);
-                dialog.setVisible(true);
-            } catch(SQLException e) {
-                _Log.error(e);
-                handleErroneousHibernateConfiguration();
+                final String importTitle = "Import UniProt XML File";
+                ImportEngine importEngine = new ImportEngine(jaxbContextPath, hibernateConfiguration, "uniprot/entry", rootElement);
+                File file = chooseXMLFile(importTitle);
+                if (file != null) {
+                    XMLPipeDBGUIUtils.performImportWithProgressBar(importEngine, file,
+                        (ModalDialog.getTopDialog() != null) ? ModalDialog.getTopDialog() : getFrontmostWindow());
+                }
             } catch(HibernateException e) {
                 _Log.error(e);
                 handleErroneousHibernateConfiguration();
@@ -512,27 +501,17 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      */
     private boolean doGoImport(String jaxbContextPath, String title) {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
-
-        boolean success = false;
-
         if (hibernateConfiguration != null) {
             try {
-                ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration);
-                importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-                JDialog dialog = new JDialog();
-                importPanel.setDelegate(dialog);
-                dialog.getContentPane().add(importPanel);
-                dialog.setTitle(title);
-                dialog.setModal(true);
-                dialog.setLocationRelativeTo(this.getFrontmostWindow());
-                dialog.setSize(600, 300);
-                dialog.setVisible(true);
-
-                success = importPanel.wasImportSuccessful();
-            } catch(SQLException e) {
-                _Log.error(e);
-                handleErroneousHibernateConfiguration();
+                final String importTitle = "Import GO OBO XML File";
+                ImportEngine importEngine = new ImportEngine(jaxbContextPath, hibernateConfiguration, "", null);
+                File file = chooseXMLFile(importTitle);
+                if (file != null) {
+                    return XMLPipeDBGUIUtils.performImportWithProgressBar(importEngine, file,
+                        (ModalDialog.getTopDialog() != null) ? ModalDialog.getTopDialog() : getFrontmostWindow());
+                } else {
+                    return false;
+                }
             } catch(HibernateException e) {
                 _Log.error(e);
                 handleErroneousHibernateConfiguration();
@@ -550,7 +529,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             handleMissingHibernateConfiguration();
         }
 
-        return success;
+        // If we get here, we did not succeed.
+        return false;
     }
 
     /**
@@ -565,20 +545,83 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private void doGoAssociationImport(String title) {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         if (hibernateConfiguration != null) {
-            ImportGOAPanel importGOAPanel = new ImportGOAPanel(hibernateConfiguration);
-            importGOAPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-            JDialog dialog = new JDialog();
-            importGOAPanel.setDelegate(dialog);
-            dialog.getContentPane().add(importGOAPanel);
-            dialog.setTitle(title);
-            dialog.setModal(true);
-            dialog.setLocationRelativeTo(this.getFrontmostWindow());
-            dialog.setSize(600, 300);
-            dialog.setVisible(true);
+            try {
+                final String importTitle = "Import GOA File";
+                ImportGOAEngine importGOAEngine = new ImportGOAEngine(hibernateConfiguration);
+                File file = chooseImportFile(importTitle, new FilenameFilter() {
+                    /**
+                     * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+                     */
+                    public boolean accept(File dir, String name) {
+                        return name.endsWith("goa") || name.endsWith("goa.txt");
+                    }
+                });
+                if (file != null) {
+                    importGOAEngine.importToSQL(file);
+                }
+            } catch(HibernateException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            } catch(IOException e) {
+                _Log.error(e);
+                ModalDialog.showErrorDialog("GOA I/O Error",
+                    "<html><p>An I/O error has occured while importing the file.  Please make sure</p>" +
+                    "<p>that the file you chose exists and is readable.</p></html>");
+            } catch(SQLException e) {
+                _Log.error(e);
+                ModalDialog.showErrorDialog("Database Error",
+                    "<html><p>A database error has occured while importing the file.  Please double-check</p>" +
+                    "<p>your database server status and settings, then try again.</p></html>");
+                handleMissingHibernateConfiguration();
+            }
         } else {
             handleMissingHibernateConfiguration();
         }
+    }
+
+    /**
+     * Helper method for import dialogs.
+     */
+    private File chooseImportFile(String importTitle, FilenameFilter filenameFilter) {
+        FileDialog fileDialog = (ModalDialog.getTopDialog() != null) ?
+            new FileDialog(ModalDialog.getTopDialog(), importTitle) :
+            new FileDialog(getFrontmostWindow(), importTitle);
+        fileDialog.setFilenameFilter(filenameFilter);
+        fileDialog.setVisible(true);
+        
+        if (fileDialog.getFile() != null) {
+            return new File(fileDialog.getDirectory(), fileDialog.getFile());
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Helper method for importing/choosing XML files.
+     */
+    private File chooseXMLFile(String importTitle) {
+        final FilenameFilter xmlFilenameFilter = new FilenameFilter() {
+            /**
+             * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+             */
+            public boolean accept(File dir, String name) {
+                return name.endsWith("xml");
+            }
+        };
+        return chooseImportFile(importTitle, xmlFilenameFilter);
+    }
+
+    /**
+     * Helper method for checking on database settings.
+     */
+    private void validateDatabaseSettings(Configuration hibernateConfiguration) {
+        SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
+
+        // Test the configuration by trying a transaction.
+        Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+        tx.rollback();
+        session.close();
     }
 
     /**
@@ -596,7 +639,6 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         String mainPropertyString = null;
 
         switch (type) {
-
             case GO:
                 mainPropertyString = "Go";
                 break;
@@ -716,47 +758,21 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
     }
 
-    /**
-     * Takes a String, which is used to set the text in the File Chooser.
-     * Returns an InputStream with the file chosen or null if no file was
-     * chosen.
-     */
-    private File getXmlFile(String customText) {
-        // Create a file chooser and setup the UniProt and GO input streams
-        int returnVal; // used by FileChooser fc
-        final JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File(_lastFilePath));
-
-        // Get UniProt XML file
-        returnVal = fc.showDialog(getFrontmostWindow(), customText);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            _lastFilePath = fc.getSelectedFile().getAbsolutePath();
-            fc.setCurrentDirectory(new File(_lastFilePath));
-            return fc.getSelectedFile();
-        } else {
-            return null;
-        }
-    }
-
     private void getTallyResultsXml(CriterionList criteria, File xmlFile) {
-
         _currentCriteria = criteria;
         TallyEngine te = new TallyEngine(criteria);
         te.setDelegate(this);
-
         try {
-
             te.getXmlFileCounts(xmlFile);
-
         } catch(InvalidParameterException e) {
-            ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
             _Log.error(e);
+            ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
         } catch(XpdException e) {
+            _Log.error(e);
             ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
-            _Log.error(e);
         } catch(Exception e) {
-            ModalDialog.showErrorDialog(e.getClass().getName(), "An unexpected Exception was caught. Exception text: " + e.getMessage());
             _Log.error(e);
+            ModalDialog.showErrorDialog(e.getClass().getName(), "An unexpected Exception was caught. Exception text: " + e.getMessage());
         }
     }
 
@@ -773,19 +789,19 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
              */
             te.getDbCounts(new QueryEngine(hibernateConfiguration));
         } catch(InvalidParameterException e) {
-            ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
             _Log.error(e);
+            ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
         } catch(XpdException e) {
-            ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
             _Log.error(e);
+            ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
         } catch(HibernateException e) {
             // TODO Well, strictly speaking, this command should never have
             // been selectable in the first place, if there is no valid
             // Hibernate configuration.
             ModalDialog.showErrorDialog("Problem with Hibernate", "A Hibernate exception was caught. If you have not configured your Hibernate properties, Do so now! Exception text: " + e.getMessage());
         } catch(Exception e) {
-            ModalDialog.showErrorDialog(e.getClass().getName(), "An unexpected Exception was caught. Exception text: " + e.getMessage());
             _Log.error(e);
+            ModalDialog.showErrorDialog(e.getClass().getName(), "An unexpected Exception was caught. Exception text: " + e.getMessage());
         }
     }
 
@@ -824,7 +840,6 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
         _Log.info("Getting DB column " + column);
         setTallyCriterion(_currentCriteria, column);
-
     }
 
     /**
@@ -834,48 +849,47 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      */
     private void doTallies() {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
-        if (hibernateConfiguration == null) {
+        if (hibernateConfiguration != null) {
+            try {
+                validateDatabaseSettings(hibernateConfiguration);
+
+                // Just getting the criterion
+                CriterionList uniprotCriteria = new CriterionList();
+                setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
+
+                CriterionList goCriteria = new CriterionList();
+                setTallyCriterion(goCriteria, TallyType.GO);
+
+                // Create a file chooser and setup the UniProt and GO input streams
+                File uniprotFile = chooseXMLFile("Select UniProt XML file");
+                if (uniprotFile != null) {
+                    File goFile = chooseXMLFile("Select GO XML file");
+                    if (goFile != null) {
+                        getTallyResultsXml(uniprotCriteria, uniprotFile);
+                        getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
+
+                        getTallyResultsXml(goCriteria, goFile);
+                        getTallyResultsDatabase(goCriteria, hibernateConfiguration);
+
+                        // Gather the criteria into a list so that we can display them
+                        // in a UsefulTable.
+                        BeanTableModel btm = new BeanTableModel(TALLY_COLUMNS);
+                        List<Criterion> criteria = new ArrayList<Criterion>();
+
+                        criteria.addAll(uniprotCriteria.getAllCriteria());
+                        criteria.addAll(goCriteria.getAllCriteria());
+                        btm.setData(criteria.toArray());
+                        UsefulTable t = new UsefulTable(btm);
+                        ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
+                    }
+                }
+            } catch(HibernateException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            }
+        } else {
             handleMissingHibernateConfiguration();
-            return;
         }
-
-        // Just getting the criterion
-
-        CriterionList uniprotCriteria = new CriterionList();
-        setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
-
-        CriterionList goCriteria = new CriterionList();
-        setTallyCriterion(goCriteria, TallyType.GO);
-
-        // Create a file chooser and setup the UniProt and GO input streams
-        File uniprotFile = getXmlFile("Select UniProt XML file");
-        if (uniprotFile == null) {
-            ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
-            return;
-        }
-
-        File goFile = getXmlFile("Select GO XML file");
-        if (goFile == null) {
-            ModalDialog.showWarningDialog("No File Chosen", "No file chosen. Command aborted.");
-            return;
-        }
-
-        getTallyResultsXml(uniprotCriteria, uniprotFile);
-        getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
-
-        getTallyResultsXml(goCriteria, goFile);
-        getTallyResultsDatabase(goCriteria, hibernateConfiguration);
-
-        // Gather the criteria into a list so that we can display them
-        // in a UsefulTable.
-        BeanTableModel btm = new BeanTableModel(TALLY_COLUMNS);
-        List<Criterion> criteria = new ArrayList<Criterion>();
-
-        criteria.addAll(uniprotCriteria.getAllCriteria());
-        criteria.addAll(goCriteria.getAllCriteria());
-        btm.setData(criteria.toArray());
-        UsefulTable t = new UsefulTable(btm);
-        ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
     }
 
     // TODO Work-in-progress: reset is not yet completely implemented.
@@ -959,31 +973,33 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      * be built once and just read directly later.
      */
     private void doProcessGO() {
-        if (ModalDialog.showQuestionDialog("Process GO Data?", "Some processing of the raw Gene Ontology data needs to be performed.\nThis may take a few hours.  Proceed?")) {
+        Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
+        if (hibernateConfiguration != null) {
             try {
-                SessionFactory sessionFactory = getCurrentHibernateConfiguration().buildSessionFactory();
+                SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
+
+                // Test the configuration by trying a transaction.
                 Session session = sessionFactory.openSession();
-                (new ExportGoData(session.connection())).populateGeneOntologyStage(getCurrentHibernateConfiguration());
+                Transaction tx = session.beginTransaction();
+                tx.rollback();
+                session.close();
+
+                // OK, go.
+                session = sessionFactory.openSession();
+                (new ExportGoData(session.connection())).populateGeneOntologyStage(hibernateConfiguration);
                 session.close();
                 ModalDialog.showInformationDialog("GO Processing Complete", "GO processing completed successfully.");
-            } catch(IOException e) {
-                ModalDialog.showErrorDialog("I/O error.");
+            } catch(HibernateException e) {
                 _Log.error(e);
-            } catch(Exception e) {
-                ModalDialog.showErrorDialog("Unexpected error.");
+                handleErroneousHibernateConfiguration();
+            } catch(SQLException e) {
                 _Log.error(e);
+                handleErroneousHibernateConfiguration();
             }
+        } else {
+            handleMissingHibernateConfiguration();
         }
     }
-
-/*    private void doProcessGOAnnotations() {
-    	try {
-    	} catch(IOException e) {
-
-    	} catch(Exception e){
-
-    	}
-    }*/
 
     /**
      * Exports the content of the current database to a GenMAPP database file.
@@ -991,49 +1007,35 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      * native Access Jet engine.
      */
     private void doExportToGenMAPP() {
-        try {
-            getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-            Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
-            if (hibernateConfiguration != null) {
+        Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
+        if (hibernateConfiguration != null) {
+            try {
+                validateDatabaseSettings(hibernateConfiguration);
+
                 /*
                  * ExportToGenMAPP is initialized
                  */
                 ExportToGenMAPP.init(hibernateConfiguration);
                 getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 new ExportWizard(this.getFrontmostWindow());
-                ExportToGenMAPP.cleanup();
-            } else {
-                handleMissingHibernateConfiguration();
+            } catch(HibernateException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            } catch(Exception e) {
+                _Log.error(e);
+                ModalDialog.showErrorDialog("Unexpected Export Error",
+                    "An unexpected error has occurred during export.\n" +
+                    "Please consult the log for technical details.");
+            } finally {
+                try { ExportToGenMAPP.cleanup(); } catch(SQLException e) { /* ignored */ }
             }
-
-        } catch(HibernateException e) {
-            ModalDialog.showErrorDialog("HIBERNATE error.");
-            _Log.error(e);
-        } catch(SAXException e) {
-            ModalDialog.showErrorDialog("SAX error.");
-            _Log.error(e);
-        } catch(JAXBException e) {
-            ModalDialog.showErrorDialog("JAXB error.");
-            _Log.error(e);
-        } catch(SQLException e) {
-            ModalDialog.showErrorDialog("SQL error.");
-            _Log.error(e);
-        } catch(IOException e) {
-            ModalDialog.showErrorDialog("I/O error.");
-            _Log.error(e);
-        } catch(ClassNotFoundException e) {
-            ModalDialog.showErrorDialog("Database driver error.");
-            _Log.error(e);
-        } catch(Exception e) {
-            ModalDialog.showErrorDialog(e.toString());
-            _Log.error(e);
-        } finally {
-            try {
-                ExportToGenMAPP.cleanup();
-            } catch(SQLException ignored) {
-            }
+        } else {
+            handleMissingHibernateConfiguration();
         }
+        
+        getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
 
     /**
@@ -1052,7 +1054,18 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private void handleErroneousHibernateConfiguration() {
         // FIXME Get text strings from an English resources file: i.e. i18n
         ModalDialog.showErrorDialog("Database Connection Problem",
-            "<html><p>GenMAPP Builder is unable to connect to the database.</p><br/><p>The most likely problem is either a database server that is not running or an erroneous configuration setting.</p><p>If your database server is confirmed to be available, double-check the database server, port, and name.</p><br/><p>The configuration dialog will now open so that you can verify your settings.</p><p>Meanwhile, please check on whether your database server is running.</p><br/><p>If all settings check out and your database server is running, you can check</p><p>the error log for additional [technical] details.</p></html>");
+            "<html><p>GenMAPP Builder is unable to connect to the database.</p><br/>" +
+
+            "<p>The most likely problem is either a database server that is not running</p>" +
+            "<p>or an erroneous configuration setting.  If your database server is confirmed</p>" +
+            "<p>to be available, double-check the database server address, port, username,</p>" + 
+            "<p>and password.</p><br/>" +
+
+            "<p>The configuration dialog will now open so that you can verify your settings.</p>" +
+            "<p>Meanwhile, please check on whether your database server is running.</p><br/>" +
+
+            "<p>If all settings check out and your database server is running, advanced users</p>" +
+            "<p>can check the error log for additional technical details.</p></html>");
         doConfigureDatabase();
     }
 

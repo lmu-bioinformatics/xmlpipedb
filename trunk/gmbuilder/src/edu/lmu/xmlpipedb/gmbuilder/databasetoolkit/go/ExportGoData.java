@@ -48,7 +48,7 @@ public class ExportGoData {
      * @throws IOException
      *             I/O error
      */
-    public ExportGoData(Connection connection) throws IOException {
+    public ExportGoData(Connection connection) {
         orderNo = 1;
         this.connection = connection;
         godb = new Go();

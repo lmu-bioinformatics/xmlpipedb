@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.HashMap;
 
@@ -36,8 +37,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ProgressMonitorInputStream;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.bind.JAXBException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
+import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.util.engines.ImportEngine;
 import edu.lmu.xmlpipedb.util.resources.AppResources;
@@ -54,8 +60,13 @@ public class ImportPanel extends UtilityDialogue {
      *            The hibernate configuration to save to
      * @param jaxbContextPath
      *            The context path for the jaxb
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws JAXBException 
+     * @throws HibernateException 
      */
-    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration) {
+    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration)
+      throws SQLException, HibernateException, JAXBException, SAXException, IOException {
         this(jaxbContextPath, hibernateConfiguration, "", null);
     }
 
@@ -73,16 +84,22 @@ public class ImportPanel extends UtilityDialogue {
      *            Map<String, String> containing a "head" and a "tail". This is
      *            used to surround the extracted record for processing The
      *            "head" must have the complete beginning tag (inclusive all
-     *            namespace delcarations, attributes, etc.), e.g.: <bookstore
+     *            namespace declarations, attributes, etc.), e.g.: <bookstore
      *            xlsns:http://mybookstore.org/bookstore> The "tail" need only
      *            have the correct closing tag, e.g.: </bookstore>
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws JAXBException 
+     * @throws HibernateException 
      */
-    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration, String entryElement, HashMap<String, String> rootElementName) {
+    public ImportPanel(String jaxbContextPath, Configuration hibernateConfiguration, String entryElement, HashMap<String, String> rootElementName)
+      throws SQLException, HibernateException, JAXBException, SAXException, IOException {
         _jaxbContextPath = jaxbContextPath;
         _success = false;
         _hibernateConfiguration = hibernateConfiguration;
         _entryElement = entryElement;
         _rootElementName = rootElementName;
+        importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration, _entryElement, _rootElementName);
         createComponents();
         createActions();
         layoutComponents();
@@ -92,7 +109,7 @@ public class ImportPanel extends UtilityDialogue {
         return _success;
     }
 
-    /** 
+    /**
      * Create all swing components
      */
     private void createComponents() {
@@ -108,7 +125,7 @@ public class ImportPanel extends UtilityDialogue {
         _progressBar = new JProgressBar();
     }
 
-    /** 
+    /**
      * Create actions for the panel
      */
     private void createActions() {
@@ -140,7 +157,7 @@ public class ImportPanel extends UtilityDialogue {
 
     }
 
-    /** 
+    /**
      * Layout the swing components
      */
     private void layoutComponents() {
@@ -167,12 +184,10 @@ public class ImportPanel extends UtilityDialogue {
         southBox.add(importBox);
 
         this.add(southBox, BorderLayout.SOUTH);
-
         this.add(_xmlScrollArea, BorderLayout.CENTER);
-
     }
 
-    /** 
+    /**
      * The preview action when the button is pushed
      */
     private void previewButtonActionPerformed(ActionEvent evt) {
@@ -192,7 +207,7 @@ public class ImportPanel extends UtilityDialogue {
         }
     }
 
-    /** 
+    /**
      * When something is typed in the text field the buttons are enabled.
      */
     private void TextFieldPathKeyTyped(java.awt.event.KeyEvent evt) {
@@ -200,10 +215,10 @@ public class ImportPanel extends UtilityDialogue {
         _importButton.setEnabled(true);
     }
 
-    /** 
+    /**
      * Import the opened file
      */
-    private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void importButtonActionPerformed(ActionEvent evt) {
         boolean proceedWithImport = (_xmlFile != null);
         if (!proceedWithImport) {
             if (_textFieldPath.getText().length() > 0) {
@@ -216,27 +231,20 @@ public class ImportPanel extends UtilityDialogue {
             try {
                 // does the progress monitor popup
                 InputStream in = new BufferedInputStream(new ProgressMonitorInputStream(this, "Reading " + _xmlFile, new FileInputStream(_xmlFile)));
-                ImportEngine importEngine = new ImportEngine(_jaxbContextPath, _hibernateConfiguration, _entryElement, _rootElementName);
-                System.out.println("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
+                _Log.info("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
                 importEngine.loadToDB(in);
-                System.out.println("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
+                _Log.info("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
                 _success = true;
                 // notify user when import is complete
                 JOptionPane.showMessageDialog(this, "Import Complete: " + _xmlFile, "Import Complete", JOptionPane.INFORMATION_MESSAGE);
             } catch(IOException e) {
-                e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "An I/O exception occured while trying to read the file " + _xmlFile, "Error", JOptionPane.ERROR_MESSAGE);
+                _Log.error(e);
             } catch(Exception e) {
-                e.printStackTrace();
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                _Log.error(e);
             } catch(OutOfMemoryError e) {
-                System.out.println("Error occurred at : " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
-                e.printStackTrace();
-                System.out.print("SystemOutOfMemoryError. Message = " + e.getMessage() + "LocalizedMessage = " + e.getLocalizedMessage());
-            } finally {
-                // System.out.println("Import Finished at: " +
-                // DateFormat.getTimeInstance(DateFormat.LONG).format(
-                // System.currentTimeMillis()) );
+                _Log.error("Error occurred at : " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()), e);
             }
         } else {
             JOptionPane.showMessageDialog(this, "Please Open a Valid XML File", "Missing or Invalid File", JOptionPane.ERROR_MESSAGE);
@@ -318,6 +326,13 @@ public class ImportPanel extends UtilityDialogue {
             return "";
         }
     }
+
+    /**
+     * The ImportPanel log.
+     */
+    private static final Log _Log = LogFactory.getLog(ImportPanel.class);
+
+    private ImportEngine importEngine;
 
     private boolean _success;
     private String _jaxbContextPath;

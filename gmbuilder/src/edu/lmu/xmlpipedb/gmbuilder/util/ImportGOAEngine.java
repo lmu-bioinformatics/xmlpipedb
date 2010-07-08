@@ -13,31 +13,23 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Date;
 import java.text.DateFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.HibernateException;
-
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
-import edu.lmu.xmlpipedb.gmbuilder.gui.util.ImportGOAPanel;
-import edu.lmu.xmlpipedb.util.gui.UtilityDialogue;
-import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 public class ImportGOAEngine {
 
@@ -48,19 +40,22 @@ public class ImportGOAEngine {
 	 * @throws IOException for all IO exceptions
 	 * @throws HibernateException for all hibernate exceptions
 	 */
-	public ImportGOAEngine(Configuration hibernateConfiguration, File goaFile) throws IOException, HibernateException {
-		_hibernateConfiguration = hibernateConfiguration;
+	public ImportGOAEngine(Configuration hibernateConfiguration) throws HibernateException {
 		_sessionFactory = hibernateConfiguration.buildSessionFactory();
-		_goaFile = goaFile;
-	}
 
+        // Test the configuration by trying a transaction.
+        Session session = _sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+        tx.rollback();
+        session.close();
+	}
 
 	/**
 	 * Imports a GOA File based upon the hibernateConfiguration's database configuration
 	 * @param goaFile The GOA file to parsed and upload to the PostgreSQL database
 	 * @throws Exception
 	 */
-	public void importToSQL() throws Exception {
+	public void importToSQL(File goaFile) throws IOException, SQLException {
 		Session session = null;
         PreparedStatement query = null;
         String insert = "INSERT INTO goa VALUES "
@@ -72,32 +67,22 @@ public class ImportGOAEngine {
             Connection conn = session.connection();
 
             // Creates BufferedReader for selected GOA file
-        	BufferedReader in = new BufferedReader(new FileReader(_goaFile));
+        	BufferedReader in = new BufferedReader(new FileReader(goaFile));
 
         	_Log.warn("Import Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
             String inputLine;
             String[] goaColumns = null;
             String[] goaColumnsTemp = null;
-            Date tempdate = new Date(0000-00-00);
             int primarykeyid = 1;
             int linesRead = 0;
-            int totalLines = getNumberOfLinesInGOA();
+            int totalLines = getNumberOfLinesInGOA(goaFile);
             int percentCrossedMultiplier = 1;
             double percentRead = 0.0;
-
-
             query = conn.prepareStatement(insert);
             while ((inputLine = in.readLine()) != null) {
 
             	// Prevents tag at beginning of GAF 2.0 from being imported
-            	if (!(inputLine.startsWith("!"))) {
-
-            		// Reports line imports at a set interval of GOA imported
-            		/*if (primarykeyid % LINE_IMPORT_REPORT_INTERVAL == 0) {
-            			_Log.info("Importing Line # " + primarykeyid + "...");
-            		}*/
-
-
+            	if (!inputLine.startsWith("!")) {
             		// Splits line into an array of strings based upon tab-delimited format
             		goaColumns = inputLine.split("\t");
 
@@ -120,7 +105,7 @@ public class ImportGOAEngine {
             			query.setInt(1, primarykeyid);
             			for (int k = 0; k < GAF20NUMOFCOLUMNS; k++){
             				if (k == DATECOLUMN) {
-            					query.setDate(k+2, tempdate.valueOf(goaColumns[k].substring(0,4) + "-" + goaColumns[k].substring(4,6) + "-" + goaColumns[k].substring(6,8)));
+            					query.setDate(k+2, Date.valueOf(goaColumns[k].substring(0,4) + "-" + goaColumns[k].substring(4,6) + "-" + goaColumns[k].substring(6,8)));
             				} else {
             					query.setString(k+2, goaColumns[k]);
             				}
@@ -149,55 +134,36 @@ public class ImportGOAEngine {
             conn.commit();
             _Log.warn("Imported " + (primarykeyid - 1) + " lines from GOA file.");
             _Log.warn("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
-            _success = true;
-        }
-        finally {
+        } finally {
             try { query.close(); } catch(Exception exc) { }
             try { session.close(); } catch(Exception exc) { }
         }
 	}
 
-
-
-
 	/**
 	 * Returns the number of lines in the GOA file being imported; used for progress indications
 	 * @return The number of lines in the GOA file
 	 */
-    public int getNumberOfLinesInGOA() throws Exception{
-    	int lineCounter = 0;
-    	String inputLine = null;
+	public int getNumberOfLinesInGOA(File goaFile) throws IOException {
+	    int lineCounter = 0;
 
-    	try {
-    		// Creates BufferedReader for selected GOA file
-            BufferedReader in = new BufferedReader(new FileReader(_goaFile));
+	    // Creates BufferedReader for selected GOA file
+	    BufferedReader in = new BufferedReader(new FileReader(goaFile));
 
-            while ((inputLine = in.readLine()) != null) {
-            	lineCounter++;
-            }
+	    while (in.readLine() != null) {
+	        lineCounter++;
+	    }
 
-            return lineCounter;
-
-        } catch(IOException e) {
-        	e.printStackTrace();
-        	_Log.debug("An I/O exception occured while trying to read the file " + _goaFile + " for line counting.");
-        } catch(Exception e) {
-        	e.printStackTrace();
-        	_Log.debug("Error during line count");
-        }
-        return lineCounter;
-    }
+	    return lineCounter;
+	}
 
     private static final Log _Log = LogFactory.getLog(ImportGOAEngine.class);
 
     private static final int GAF10NUMOFCOLUMNS = 15;
     private static final int GAF20NUMOFCOLUMNS = 17;
     private static final int DATECOLUMN = 13;
-    private static final int LINE_IMPORT_REPORT_INTERVAL = 5000;
     private static final double PERCENT_LINES_READ = 20.0;
 
 	private SessionFactory _sessionFactory;
-	private boolean _success;
-    private Configuration _hibernateConfiguration;
-    private File _goaFile;
+
 }

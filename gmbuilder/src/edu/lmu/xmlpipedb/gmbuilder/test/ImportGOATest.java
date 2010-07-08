@@ -11,30 +11,23 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.test;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
-
-import javax.xml.bind.JAXBException;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
-import org.xml.sax.SAXException;
 
+import edu.lmu.xmlpipedb.gmbuilder.util.ImportGOAEngine;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.QueryEngine;
-import edu.lmu.xmlpipedb.gmbuilder.util.ImportGOAEngine;
 
 /**
  * Test case for ImportGOAEngine
@@ -64,18 +57,12 @@ public class ImportGOATest extends TestCase {
 			_configEng = new ConfigurationEngine("./src/edu/lmu/xmlpipedb/gmbuilder/test/hibernate.properties", "");
 		    _hibernateConfiguration = _configEng.getHibernateConfiguration();
 
-			importGOAEngine = new ImportGOAEngine(_hibernateConfiguration, _goaFile);
-			importGOAEngine.importToSQL();
+			importGOAEngine = new ImportGOAEngine(_hibernateConfiguration);
+			importGOAEngine.importToSQL(_goaFile);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -192,18 +179,12 @@ public class ImportGOATest extends TestCase {
 			_configEng = new ConfigurationEngine("./src/edu/lmu/xmlpipedb/gmbuilder/test/hibernate.properties", "");
 		    _hibernateConfiguration = _configEng.getHibernateConfiguration();
 
-			importGOAEngine = new ImportGOAEngine(_hibernateConfiguration, _goaFile);
-			Assert.assertEquals(intendedLineCount, importGOAEngine.getNumberOfLinesInGOA());
+			importGOAEngine = new ImportGOAEngine(_hibernateConfiguration);
+			Assert.assertEquals(intendedLineCount, importGOAEngine.getNumberOfLinesInGOA(_goaFile));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {

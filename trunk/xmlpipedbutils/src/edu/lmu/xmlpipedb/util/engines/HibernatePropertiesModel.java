@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -14,16 +17,18 @@ public class HibernatePropertiesModel {
      * 
      * @return Set
      */
-    public Set getCategories() {
-        HashMap<String, String> cats = new HashMap<String, String>();
-        Set keys = _properties.keySet();
-        Iterator iter = keys.iterator();
+    public Set<String> getCategories() {
+        Map<String, String> cats = new HashMap<String, String>();
+        Set<String> keys = _properties.keySet();
+        Iterator<String> iter = keys.iterator();
+
         // store the categories as the key to a hashmap with no value
         while (iter.hasNext()) {
-            String key = (String)iter.next();
+            String key = iter.next();
             HibernateProperty hp = _properties.get(key);
             cats.put(hp.getCategory(), "");
         }
+
         // get the keyset, which is just the keys (categories)
         return cats.keySet();
     }
@@ -35,28 +40,23 @@ public class HibernatePropertiesModel {
      * @param category
      * @return
      */
-    @SuppressWarnings("unchecked")
     public String[] getTypes(String category) {
-        HashMap types = new HashMap();
-        Set keys = _properties.keySet();
-        Iterator iter = keys.iterator();
+        Set<String> types = new HashSet<String>();
+        Set<String> keys = _properties.keySet();
+        Iterator<String> iter = keys.iterator();
         while (iter.hasNext()) {
-            String key = (String)iter.next();
+            String key = iter.next();
             HibernateProperty hp = _properties.get(key);
             if (hp.getCategory().equals(category)){
-            	// put the type in both the key and the value
-            	// key, because we need each key to be unique
-            	// value, because we can get the values as a Collection,
-            	//   which is needed to load up the ArrayList, below.
-                types.put(hp.getType(), hp.getType());
+                types.add(hp.getType());
             }
         }
 
         // ### sort the list ###
         // create an ArrayList, l
-        ArrayList l = new ArrayList();
+        List<String> l = new ArrayList<String>();
         // add all the types to it
-        l.addAll(types.values());
+        l.addAll(types);
         // use the static sort method in Collections to 
         //sort the list alphabetically 
         Collections.sort(l);
@@ -83,11 +83,11 @@ public class HibernatePropertiesModel {
         // set selectedType to null so null will return if no match
     	String selectedType = null;
     	// get a Set and Iterator
-        Set keys = _properties.keySet();
-        Iterator iter = keys.iterator();
+        Set<String> keys = _properties.keySet();
+        Iterator<String> iter = keys.iterator();
         while (iter.hasNext()) {
         	// get the key and the HibernateProperty for that key
-            String key = (String)iter.next();
+            String key = iter.next();
             HibernateProperty hp = _properties.get(key);
             // if the hp has the category we want and is marked as saved
             // then set its type to selectedType and exit the loop
@@ -106,16 +106,16 @@ public class HibernatePropertiesModel {
      * @param type
      * @return Enumeration
      */
-    public Enumeration getPropertyNames(String category, String type) {
+    public Enumeration<String> getPropertyNames(String category, String type) {
     	// use the generic <String> to specify the type of objects the
     	// vector will hold
         Vector<String> props = new Vector<String>();
         // get a Set and then its iterator
-        Set keys = _properties.keySet();
-        Iterator iter = keys.iterator();
+        Set<String> keys = _properties.keySet();
+        Iterator<String> iter = keys.iterator();
         while (iter.hasNext()) {
         	// get the key and its HibernateProperty object
-            String key = (String)iter.next();
+            String key = iter.next();
             HibernateProperty hp = _properties.get(key);
             // if the category and type of the hp match the params passed in
             // add the property name to the Vector
@@ -132,8 +132,8 @@ public class HibernatePropertiesModel {
      * 
      * @return Iterator
      */
-    public Iterator getProperties() {
-        Set keys = _properties.keySet();
+    public Iterator<String> getProperties() {
+        Set<String> keys = _properties.keySet();
         return keys.iterator();
     }
 
@@ -146,16 +146,16 @@ public class HibernatePropertiesModel {
      * @param type
      * @return ArrayList
      */
-    public ArrayList getProperties(String category, String type) {
+    public List<HibernateProperty> getProperties(String category, String type) {
     	// use the <HibernateProperty> to specify the type of objects this
     	// ArrayList will hold
-        ArrayList<HibernateProperty> props = new ArrayList<HibernateProperty>();
+        List<HibernateProperty> props = new ArrayList<HibernateProperty>();
         // get a Set and its Iterator
-        Set keys = _properties.keySet();
-        Iterator iter = keys.iterator();
+        Set<String> keys = _properties.keySet();
+        Iterator<String> iter = keys.iterator();
         while (iter.hasNext()) {
         	// get a key and its HibernateProperty
-            String key = (String)iter.next();
+            String key = iter.next();
             HibernateProperty hp = _properties.get(key);
             // if the category and type match, add the hp object 
             // to the ArrayList

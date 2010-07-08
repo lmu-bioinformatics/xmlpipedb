@@ -35,7 +35,6 @@
     <target name="clean" description="Remove build and dist directories">
         <delete dir="${bin.dir}" />
         <delete dir="${dist.dir}" />
-    <!--	<delete file="hibernate.properties"/> -->
     </target>
 	
     <target name="init">
@@ -46,7 +45,6 @@
             <fileset dir="${basedir}">
             	<include name="readme.txt"/>
             </fileset>
-        	 <fileset dir="${conf.dir}" includes="**/hibernate.properties" />
     	</copy>
     	
         <tstamp />

@@ -36,6 +36,7 @@ import org.hibernate.cfg.Configuration;
 import shag.dialog.ModalDialog;
 
 import edu.lmu.xmlpipedb.util.engines.QueryEngine;
+import edu.lmu.xmlpipedb.util.resources.AppResources;
 
 /**
  * This panel displays a text area for the user to input an HQL or SQL query and
@@ -196,20 +197,8 @@ public class HQLPanel extends JPanel {
      * @param e
      */
     private void reportException(Exception e) {
-        // FIXME Get text strings from an English resources file: i.e. i18n
-        ModalDialog.showErrorDialog("Database Connection Problem",
-            "<html><p>The query engine is unable to connect to the database.</p><br/>" +
-
-            "<p>The most likely problem is either a database server that is not running</p>" +
-            "<p>or an erroneous configuration setting.  If your database server is confirmed</p>" +
-            "<p>to be available, double-check the database server address, port, username,</p>" + 
-            "<p>and password.</p><br/>" +
-
-            "<p>The configuration dialog will now open so that you can verify your settings.</p>" +
-            "<p>Meanwhile, please check on whether your database server is running.</p><br/>" +
-
-            "<p>If all settings check out and your database server is running, advanced users</p>" +
-            "<p>can check the error log for additional technical details.</p></html>");
+        ModalDialog.showErrorDialog(AppResources.messageString("error.baddbconfig.title"),
+            AppResources.messageString("error.baddbconfig.message"));
     }
 
     /**

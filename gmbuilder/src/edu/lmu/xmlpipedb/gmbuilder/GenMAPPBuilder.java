@@ -78,7 +78,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "2.0b47";
+    public static final String VERSION = "2.0b48";
 
     /**
      * Starts the application.
@@ -437,6 +437,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private void doConfigureDatabase() {
         try {
             ConfigurationPanel configPanel = new ConfigurationPanel();
+            configPanel.setCurrentPlatform("PostgreSQL");
             if (ModalDialog.showOKDialog("Configure Database", configPanel)) {
                 // Update components that rely on the configuration.
                 configPanel.saveConfiguration();
@@ -1042,9 +1043,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      * Displays a message reporting a non-existent database configuration.
      */
     private void handleMissingHibernateConfiguration() {
-        // FIXME Get text strings from an English resources file: i.e. i18n
-        ModalDialog.showInformationDialog("No Database Configuration Found",
-            "<html><p>No database configuration has been found.</p><br/><p>This is normal if you are starting GenMAPP Builder for the first time,</p><p>and may otherwise happen if the <tt>hibernate.properties</tt> file in the</p><p>GenMAPP Builder folder has been deleted or corrupted.</p><br/><p>The configuration dialog will now open so that proper setup can take place.</p></html>");
+        ModalDialog.showInformationDialog(AppResources.messageString("error.nodbconfig.title"),
+            AppResources.messageString("error.nodbconfig.message"));
         doConfigureDatabase();
     }
 
@@ -1052,20 +1052,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      * Displays a message reporting an erroneous database configuration.
      */
     private void handleErroneousHibernateConfiguration() {
-        // FIXME Get text strings from an English resources file: i.e. i18n
-        ModalDialog.showErrorDialog("Database Connection Problem",
-            "<html><p>GenMAPP Builder is unable to connect to the database.</p><br/>" +
-
-            "<p>The most likely problem is either a database server that is not running</p>" +
-            "<p>or an erroneous configuration setting.  If your database server is confirmed</p>" +
-            "<p>to be available, double-check the database server address, port, username,</p>" + 
-            "<p>and password.</p><br/>" +
-
-            "<p>The configuration dialog will now open so that you can verify your settings.</p>" +
-            "<p>Meanwhile, please check on whether your database server is running.</p><br/>" +
-
-            "<p>If all settings check out and your database server is running, advanced users</p>" +
-            "<p>can check the error log for additional technical details.</p></html>");
+        ModalDialog.showErrorDialog(AppResources.messageString("error.baddbconfig.title"),
+            AppResources.messageString("error.baddbconfig.message"));
         doConfigureDatabase();
     }
 

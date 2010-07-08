@@ -3,7 +3,7 @@
 	<property name="component.jarfilename" value="xpdutils" />
     <property name="demo.jarfilename" value="xpdutils-demo" />
     <property name="mainclass" value="edu.lmu.xmlpipedb.util.demo.XMLPipeDBUtils" />
-	<property name="lib.list" value="lib/antlr.jar lib/asm.jar sample/lib/bookdb.jar lib/${component.jarfilename}.jar lib/cglib.jar lib/commons-beanutils-core-1.7.0.jar lib/commons-collections.jar lib/commons-digester-1.8.jar lib/commons-logging-1.1.jar lib/dom.jar lib/dom4j.jar lib/ehcache-0.9.jar lib/hibernate3.jar lib/hyperjaxb2.jar lib/jaxb-api-2.1.2.jar lib/jax-qname.jar lib/jaxb-impl-2.1.2.jar lib/jaxb-libs.jar lib/jaxb-xjc-2.1.2.jar lib/jaxb1-impl.jar lib/jaxp-api.jar lib/jsr173_1.0_api.jar lib/jta.jar lib/namespace.jar lib/postgresql-8.0-313.jdbc3.jar lib/relaxngDatatype.jar lib/sax.jar lib/xalan.jar lib/xercesImpl.jar lib/xom-1.1.jar lib/xsdlib.jar" />
+	<property name="lib.list" value="lib/antlr.jar lib/asm.jar sample/lib/bookdb.jar lib/${component.jarfilename}.jar lib/cglib.jar lib/commons-beanutils-core-1.7.0.jar lib/commons-collections.jar lib/commons-digester-1.8.jar lib/commons-logging-1.1.jar lib/dom.jar lib/dom4j.jar lib/ehcache-0.9.jar lib/hibernate3.jar lib/hyperjaxb2.jar lib/jaxb-api-2.1.2.jar lib/jax-qname.jar lib/jaxb-impl-2.1.2.jar lib/jaxb-libs.jar lib/jaxb-xjc-2.1.2.jar lib/jaxb1-impl.jar lib/jaxp-api.jar lib/jsr173_1.0_api.jar lib/jta.jar lib/namespace.jar lib/postgresql-8.0-313.jdbc3.jar lib/relaxngDatatype.jar lib/sax.jar lib/xalan.jar lib/xercesImpl.jar lib/xom-1.1.jar lib/xsdlib.jar lib/shag-1.2.7.jar" />
     <property name="resources" value="edu/lmu/xmlpipedb/util/resources" />
     <property name="project.title" value="GUI to XML Pipe DB" />
     <property name="src.dir" value="src" />

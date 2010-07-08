@@ -80,11 +80,10 @@ public class TallyEngine {
         try {
             query = conn.prepareStatement(crit.getQuery());
             results = query.executeQuery();
-
-            results.next();
-            queryResult = results.getString(column);
-            // retMap.put(crit.getDigesterPath(), crit);
-
+            if (results.next()) {
+                queryResult = results.getString(column);
+                // retMap.put(crit.getDigesterPath(), crit);
+            }
         } catch(SQLException sqle) {
             // TODO: Log exception
             // came from HQLPanel -- probably not needed here

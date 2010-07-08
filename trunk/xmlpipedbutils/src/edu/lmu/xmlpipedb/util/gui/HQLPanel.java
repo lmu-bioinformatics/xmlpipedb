@@ -30,7 +30,10 @@ import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
+
+import shag.dialog.ModalDialog;
 
 import edu.lmu.xmlpipedb.util.engines.QueryEngine;
 
@@ -54,9 +57,6 @@ public class HQLPanel extends JPanel {
     public HQLPanel() {
         initComponents();
         setLayout(new BorderLayout());
-
-        //_queryTextArea.setText("from generated.BookType");
-
         add(_buttonPanel, BorderLayout.EAST);
         add(_split, BorderLayout.CENTER);
     }
@@ -196,7 +196,20 @@ public class HQLPanel extends JPanel {
      * @param e
      */
     private void reportException(Exception e) {
-        JOptionPane.showMessageDialog(this, e.getMessage());
+        // FIXME Get text strings from an English resources file: i.e. i18n
+        ModalDialog.showErrorDialog("Database Connection Problem",
+            "<html><p>The query engine is unable to connect to the database.</p><br/>" +
+
+            "<p>The most likely problem is either a database server that is not running</p>" +
+            "<p>or an erroneous configuration setting.  If your database server is confirmed</p>" +
+            "<p>to be available, double-check the database server address, port, username,</p>" + 
+            "<p>and password.</p><br/>" +
+
+            "<p>The configuration dialog will now open so that you can verify your settings.</p>" +
+            "<p>Meanwhile, please check on whether your database server is running.</p><br/>" +
+
+            "<p>If all settings check out and your database server is running, advanced users</p>" +
+            "<p>can check the error log for additional technical details.</p></html>");
     }
 
     /**
@@ -240,7 +253,8 @@ public class HQLPanel extends JPanel {
         	//Instantiate the query engine and execute the query
         	QueryEngine qe = new QueryEngine(_hibernateConfiguration);
             
-        	Iterator iter = qe.executeHQL(_queryTextArea.getText().trim());
+        	@SuppressWarnings("rawtypes")
+            Iterator iter = qe.executeHQL(_queryTextArea.getText().trim());
             final LinkedList<Object> data = new LinkedList<Object>();
             while (iter.hasNext()) {
                 data.add(iter.next());
@@ -256,7 +270,7 @@ public class HQLPanel extends JPanel {
                 }
             };
             new Thread(thread).start();
-        } catch(Exception e) {
+        } catch(HibernateException e) {
             reportException(e);
         }
     }
@@ -318,6 +332,7 @@ public class HQLPanel extends JPanel {
      *            The list of objects to we are populating onto the table.
      */
     private void populateTable(LinkedList<Object> list) {
+        @SuppressWarnings("rawtypes")
         Map map = null;
         Vector<Object> data = null;
 
@@ -330,7 +345,7 @@ public class HQLPanel extends JPanel {
                 data = new Vector<Object>();
 
                 // ...and add it's value to our table.
-                for (Object o : map.values()) {
+                for (Object o: map.values()) {
                     data.addElement(o);
                 }
             } catch(Exception e) {

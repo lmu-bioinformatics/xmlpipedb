@@ -77,7 +77,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "2.0b44";
+    public static final String VERSION = "2.0b45";
 
     /**
      * Starts the application.
@@ -105,11 +105,11 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         // greater flexibility and control over our logging
         // Set up logging. next line just uses basic logging
         BasicConfigurator.configure();
-        _Log.warn("\n\n\n***** GenMapp Builder Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
+        _Log.info("***** GenMAPP Builder started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
 
         Configuration hc = createHibernateConfiguration();
         if (hc == null) {
-            doConfigureDatabase();
+            handleMissingHibernateConfiguration();
         } else {
             _queryPanel.setHibernateConfiguration(hc);
         }
@@ -303,7 +303,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             public void actionPerformed(ActionEvent aevt) {
                 Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
                 if (hibernateConfiguration == null) {
-                    showConfigurationError();
+                    handleMissingHibernateConfiguration();
                     return;
                 }
                 CriterionList uniprotCriteria = new CriterionList();
@@ -441,20 +441,11 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private void doConfigureDatabase() {
         try {
             ConfigurationPanel configPanel = new ConfigurationPanel();
-            configPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-            JDialog dialog = new JDialog();
-            configPanel.setDelegate(dialog);
-            dialog.getContentPane().add(configPanel);
-            dialog.setTitle("Configure Database");
-            dialog.setModal(true);
-            dialog.setLocationRelativeTo(this.getFrontmostWindow());
-            dialog.setSize(600, 300);
-
-            dialog.setVisible(true);
-
-            // Update components that rely on the configuration.
-            _queryPanel.setHibernateConfiguration(createHibernateConfiguration());
+            if (ModalDialog.showOKDialog("Configure Database", configPanel)) {
+                // Update components that rely on the configuration.
+                configPanel.saveConfiguration();
+                _queryPanel.setHibernateConfiguration(createHibernateConfiguration());
+            }
         } catch(Exception exc) {
             ModalDialog.showErrorDialog("Unable to Configure Database", "Sorry, database configuration was unable to proceed.  This is most likely an error relating to file creation or modification on the system on which you are running.");
             _Log.error(exc);
@@ -477,21 +468,36 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             String head = "<uniprot xmlns=\"http://uniprot.org/uniprot\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd\">";
             rootElement.put("head", head);
             rootElement.put("tail", "</uniprot>");
-            ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration, "uniprot/entry", rootElement);
+            try {
+                ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration, "uniprot/entry", rootElement);
+                importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-            importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-            JDialog dialog = new JDialog();
-            importPanel.setDelegate(dialog);
-            dialog.getContentPane().add(importPanel);
-            dialog.setTitle(title);
-            dialog.setModal(true);
-            dialog.setLocationRelativeTo(this.getFrontmostWindow());
-            dialog.setSize(600, 300);
-            dialog.setVisible(true);
-
+                JDialog dialog = new JDialog();
+                importPanel.setDelegate(dialog);
+                dialog.getContentPane().add(importPanel);
+                dialog.setTitle(title);
+                dialog.setModal(true);
+                dialog.setLocationRelativeTo(this.getFrontmostWindow());
+                dialog.setSize(600, 300);
+                dialog.setVisible(true);
+            } catch(SQLException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            } catch(HibernateException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            } catch(JAXBException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            } catch(SAXException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            } catch(IOException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            }
         } else {
-            showConfigurationError();
+            handleMissingHibernateConfiguration();
         }
     }
 
@@ -510,22 +516,38 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         boolean success = false;
 
         if (hibernateConfiguration != null) {
-            ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration);
-            importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            try {
+                ImportPanel importPanel = new ImportPanel(jaxbContextPath, hibernateConfiguration);
+                importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-            JDialog dialog = new JDialog();
-            importPanel.setDelegate(dialog);
-            dialog.getContentPane().add(importPanel);
-            dialog.setTitle(title);
-            dialog.setModal(true);
-            dialog.setLocationRelativeTo(this.getFrontmostWindow());
-            dialog.setSize(600, 300);
-            dialog.setVisible(true);
+                JDialog dialog = new JDialog();
+                importPanel.setDelegate(dialog);
+                dialog.getContentPane().add(importPanel);
+                dialog.setTitle(title);
+                dialog.setModal(true);
+                dialog.setLocationRelativeTo(this.getFrontmostWindow());
+                dialog.setSize(600, 300);
+                dialog.setVisible(true);
 
-            success = importPanel.wasImportSuccessful();
-
+                success = importPanel.wasImportSuccessful();
+            } catch(SQLException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            } catch(HibernateException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            } catch(JAXBException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            } catch(SAXException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            } catch(IOException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            }
         } else {
-            showConfigurationError();
+            handleMissingHibernateConfiguration();
         }
 
         return success;
@@ -541,9 +563,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      *            import)
      */
     private void doGoAssociationImport(String title) {
-//      ModalDialog.showInformationDialog("New Feature in Progress", "The ability to import GOA files into the relational database is currently in progress.");
-    	Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
-    	if (hibernateConfiguration != null) {
+        Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
+        if (hibernateConfiguration != null) {
             ImportGOAPanel importGOAPanel = new ImportGOAPanel(hibernateConfiguration);
             importGOAPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -555,11 +576,10 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             dialog.setLocationRelativeTo(this.getFrontmostWindow());
             dialog.setSize(600, 300);
             dialog.setVisible(true);
-    	} else {
-    		showConfigurationError();
-    	}
+        } else {
+            handleMissingHibernateConfiguration();
+        }
     }
-
 
     /**
      * Builds the criteria HashMap with the proper data to all the TallyEngine
@@ -571,7 +591,6 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      *            The type of tallys to grab from the properties file.
      */
     private void setTallyCriterion(CriterionList criteria, TallyType type) {
-
         // We need to grab the correct strings to access
         // the resource file
         String mainPropertyString = null;
@@ -816,7 +835,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private void doTallies() {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         if (hibernateConfiguration == null) {
-            showConfigurationError();
+            handleMissingHibernateConfiguration();
             return;
         }
 
@@ -985,7 +1004,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 new ExportWizard(this.getFrontmostWindow());
                 ExportToGenMAPP.cleanup();
             } else {
-                showConfigurationError();
+                handleMissingHibernateConfiguration();
             }
 
         } catch(HibernateException e) {
@@ -1018,11 +1037,23 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     }
 
     /**
-     * Displays a message reporting a problem with database configuration.
+     * Displays a message reporting a non-existent database configuration.
      */
-    private void showConfigurationError() {
+    private void handleMissingHibernateConfiguration() {
         // FIXME Get text strings from an English resources file: i.e. i18n
-        ModalDialog.showErrorDialog("No Configuration Defined", "No configuration was defined. Please set the database configuration.");
+        ModalDialog.showInformationDialog("No Database Configuration Found",
+            "<html><p>No database configuration has been found.</p><br/><p>This is normal if you are starting GenMAPP Builder for the first time,</p><p>and may otherwise happen if the <tt>hibernate.properties</tt> file in the</p><p>GenMAPP Builder folder has been deleted or corrupted.</p><br/><p>The configuration dialog will now open so that proper setup can take place.</p></html>");
+        doConfigureDatabase();
+    }
+
+    /**
+     * Displays a message reporting an erroneous database configuration.
+     */
+    private void handleErroneousHibernateConfiguration() {
+        // FIXME Get text strings from an English resources file: i.e. i18n
+        ModalDialog.showErrorDialog("Database Connection Problem",
+            "<html><p>GenMAPP Builder is unable to connect to the database.</p><br/><p>The most likely problem is either a database server that is not running or an erroneous configuration setting.</p><p>If your database server is confirmed to be available, double-check the database server, port, and name.</p><br/><p>The configuration dialog will now open so that you can verify your settings.</p><p>Meanwhile, please check on whether your database server is running.</p><br/><p>If all settings check out and your database server is running, you can check</p><p>the error log for additional [technical] details.</p></html>");
+        doConfigureDatabase();
     }
 
     /**
@@ -1042,6 +1073,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         } catch(Exception exc) {
             // This may be a normal occurrence (particularly when starting up
             // for the first time), so we don't do anything in this case.
+            // Thus, we report this via DEBUG level only.
+            _Log.debug(exc);
         }
 
         return hibernateConfiguration;

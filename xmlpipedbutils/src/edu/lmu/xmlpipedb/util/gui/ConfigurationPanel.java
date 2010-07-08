@@ -13,18 +13,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
@@ -50,12 +47,9 @@ import edu.lmu.xmlpipedb.util.resources.AppResources;
  * @author J. Nicholas
  * 
  */
-public class ConfigurationPanel extends UtilityDialogue implements ActionListener, ItemListener {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -3486506045107182287L;
+public class ConfigurationPanel extends JPanel implements ActionListener, ItemListener {
 
+    private static final long serialVersionUID = -3486506045107182287L;
     
     /**
      * Creates an instance of the ConfigurationPanel, which in turn creates an
@@ -65,9 +59,6 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
      * @throws FileNotFoundException
      */
     public ConfigurationPanel() throws CouldNotLoadPropertiesException, FileNotFoundException {
-    	
-    	setDelegate(null);
-    	
         try {
         	// create an instance of the config engine
             _configEngine = new ConfigurationEngine();
@@ -87,9 +78,6 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
         createComponents();
         // layout the components
         layoutComponents();
-        // start the action listener for the buttons (save, cancel, etc.), but
-        // not for the radio buttons
-        startListeningToUI();
     }
 
     /**
@@ -102,20 +90,9 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
      * @throws NoHibernatePropertiesException
      */
     public Configuration getHibernateConfiguration() throws NoHibernatePropertiesException {
-        Configuration config = null;
-
-        try {
         	// pass through method that calls the _configEngine to get a 
         	// hibernate Configuration object
-            config = _configEngine.getHibernateConfiguration();
-        } catch(NoHibernatePropertiesException e) {
-        	// in the event of an exception, display a message to the user, then
-        	// throw the exception to the caller
-            JOptionPane.showMessageDialog(this, e.getMessage());
-            throw e;
-        }
-
-        return config;
+            return _configEngine.getHibernateConfiguration();
     }
 
     /**
@@ -129,29 +106,13 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
      * @return void
      */
     private void layoutComponents() {
-        this.setLayout(new BorderLayout());
-        this.add(_topBox, BorderLayout.NORTH);
+        setLayout(new BorderLayout());
+        add(_topBox, BorderLayout.NORTH);
 
         // add fields
-        this.add(new JScrollPane(_centerPanel,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        
-        Box buttonBox = Box.createHorizontalBox();
-        buttonBox.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
-        buttonBox.add(Box.createHorizontalGlue());
-        //buttonBox.add(_defaultButton);
-        //buttonBox.add(Box.createHorizontalStrut(5));
-        //buttonBox.add(_revertButton);
-       // buttonBox.add(Box.createHorizontalStrut(5));
-        buttonBox.add(Box.createHorizontalStrut(5));
-        buttonBox.add(_okButton);
-        buttonBox.add(Box.createHorizontalStrut(10));
-        buttonBox.add(_cancelButton);
-              
-        add(buttonBox, BorderLayout.SOUTH);
-
-        this.validate();
+        add(new JScrollPane(_centerPanel,
+			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
     }
 
     /**
@@ -182,9 +143,6 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
         // adds entries for the selected type to the _centerPanel
         getFields((String)_typeCombo.getSelectedItem());
 
-        _okButton = new JButton(AppResources.messageString("config_ok"));
-        _cancelButton = new JButton(AppResources.messageString("config_cancel"));
-        
         // *** these buttons may be enabled, but some changes need to be made
         // to the methods that support them ***
         
@@ -232,8 +190,10 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
         // strCat is a temporary var to store the category being worked with
         String strCat = null;
         // catSet is the Set of categories
+        @SuppressWarnings("rawtypes")
         Set catSet = _model.getCategories();
         // the catIter will be used to iterate over the categories
+        @SuppressWarnings("rawtypes")
         Iterator catIter = catSet.iterator();
         // bg is the buttonGroup the will contain the radio buttons
         // the buttonGroup provides single select functionality, which
@@ -328,9 +288,11 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
      * @return void
      */
     private void getFields(String type) {
-    	// get the properties for the currentcategory and the type passed in
-        ArrayList propsArray = _model.getProperties(_model.getCurrentCategory(), type);
+        // get the properties for the currentcategory and the type passed in
+        @SuppressWarnings("rawtypes")
+        List propsArray = _model.getProperties(_model.getCurrentCategory(), type);
         // create an iterator for these props
+        @SuppressWarnings("rawtypes")
         Iterator props = propsArray.iterator();
 
         // initialize the checkbox and textfield arrays to the size of the
@@ -340,48 +302,48 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
         // i is required to access the correct element of the control array
         int i = 0;
         while (props.hasNext()) {
-        	// for each item:
-        	// - get a HibernateProperties object from the properties array
-        	// - set the name to the lable of the checkbox
-        	// - if the field is a password field, then initialize the field in
-        	//   the textfield array as a password field otherwise initialize it
-        	//   as  textfield - in either case use the property's value
-        	// - create a document listener for each textfield, that checks
-        	//   the check box if the text is changed.
-        	// - set the checkbox as selected the property is marked "saved"
-        	// - add the components to the _centerPanel
-        	// - increment i for the next iteration
+            // for each item:
+            // - get a HibernateProperties object from the properties array
+            // - set the name to the lable of the checkbox
+            // - if the field is a password field, then initialize the field in
+            // the textfield array as a password field otherwise initialize it
+            // as textfield - in either case use the property's value
+            // - create a document listener for each textfield, that checks
+            // the check box if the text is changed.
+            // - set the checkbox as selected the property is marked "saved"
+            // - add the components to the _centerPanel
+            // - increment i for the next iteration
             HibernateProperty hp = (HibernateProperty)props.next();
 
-            //Babak - Changed the implementation to use the JCheckBox's text label instead of a seperate
-            //JN - thank you, Babak
-            _propSelected[i] = new JCheckBox( hp.getName() );
-            
+            // Babak - Changed the implementation to use the JCheckBox's text
+            // label instead of a seperate
+            // JN - thank you, Babak
+            _propSelected[i] = new JCheckBox(hp.getName());
+
             // check if the field is a password field
-            if (hp.getName().indexOf("password") != -1)
+            if (hp.getName().indexOf("password") != -1) {
                 _propValue[i] = new JPasswordField(hp.getValue(), 30);
-            else
+            } else {
                 _propValue[i] = new JTextField(hp.getValue(), 30);
-            
-            final JCheckBox thisCheckBox =_propSelected[i]; 
-            _propValue[i].getDocument().addDocumentListener(
-            		new DocumentListener(){
+            }
 
-						public void insertUpdate(DocumentEvent e) {
-							thisCheckBox.setSelected(true);
-						}
+            final JCheckBox thisCheckBox = _propSelected[i];
+            _propValue[i].getDocument().addDocumentListener(new DocumentListener() {
 
-						public void removeUpdate(DocumentEvent e) {
-							thisCheckBox.setSelected(true);
-						}
+                public void insertUpdate(DocumentEvent e) {
+                    thisCheckBox.setSelected(true);
+                }
 
-						public void changedUpdate(DocumentEvent e) {
-							thisCheckBox.setSelected(true);
-						}
-            			
-            		}
-            );
-            
+                public void removeUpdate(DocumentEvent e) {
+                    thisCheckBox.setSelected(true);
+                }
+
+                public void changedUpdate(DocumentEvent e) {
+                    thisCheckBox.setSelected(true);
+                }
+
+            });
+
             if (hp.isSaved()) {
                 _propSelected[i].setSelected(true);
             }
@@ -391,7 +353,7 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
 
             i++;
         }
-    } // end createConfigPanel
+    }
 
     // #### gridbag helper methods ####
     private void setPromptConstraints(GridBagConstraints gbc) {
@@ -428,24 +390,13 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
     }
 
     /**
-     * Adds listeners to components of interest.
-     */
-    private void startListeningToUI() {
-        // FIXME Dondi - This is a very fragile binding...must redesign...
-    	_okButton.addActionListener(this);
-        _cancelButton.addActionListener(this);
-        //_revertButton.addActionListener(this);
-        //_defaultButton.addActionListener(this);
-    }
-
-    /**
      * Iterates through the current set of controls and populates a 
      * HibernatePropertiesModel that is passed to the ConfigurationEnging 
      * to save the properties.
      * 
      * @return void
      */
-    private void saveAction() {
+    public void saveConfiguration() {
         // get currently selected type
         String type = (String)_typeCombo.getSelectedItem();
         //String logging = "";
@@ -455,6 +406,7 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
         // Add all the other saved properties to the saveModel, except the
         // properties of this category, which will be overwritten.
         HibernatePropertiesModel saveModel = new HibernatePropertiesModel();
+        @SuppressWarnings("rawtypes")
         Iterator modelIter = _model.getProperties();
         while (modelIter.hasNext()) {
             HibernateProperty hp = _model.getProperty((String)modelIter.next());
@@ -505,33 +457,18 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent aevt) {
-        if (aevt.getSource() == _okButton) {
-        	// do save
-            saveAction();
-//          make the main panel invisible
-            this.setVisible(false);
-            this.validate();
-            this.finish();
-            
-        } else if (aevt.getSource() == _cancelButton) {
-        	// make the main panel invisible
-            this.setVisible(false);
-            this.validate();
-            this.cancel();
-        
-        } else { // this is a radio button click
-        	// update the currentCategory
-            _model.setCurrentCategory( aevt.getActionCommand() );
-            // remove all components from the _centerPanel
-            _centerPanel.removeAll();
-            // create the combobox
-            getComboBox(null);
-            // create the fields for the selected type
-            getFields( (String)_typeCombo.getSelectedItem());
-            // update the display
-            this.validate();
-            this.repaint();
-        }
+        // this is a radio button click
+        // update the currentCategory
+        _model.setCurrentCategory( aevt.getActionCommand() );
+        // remove all components from the _centerPanel
+        _centerPanel.removeAll();
+        // create the combobox
+        getComboBox(null);
+        // create the fields for the selected type
+        getFields( (String)_typeCombo.getSelectedItem());
+        // update the display
+        this.validate();
+        this.repaint();
     }
 
     // ### DEFINE VARS ###
@@ -541,7 +478,6 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
     private JCheckBox[] _propSelected;
     private JTextField[] _propValue;
     private JRadioButton _categoryRB;
-    private JButton _okButton, _cancelButton/*, _revertButton, _defaultButton*/;
     private JComboBox _typeCombo;
 
     //private Box _centerBox;
@@ -558,4 +494,4 @@ public class ConfigurationPanel extends UtilityDialogue implements ActionListene
     private GridBagConstraints _comboGBC;
     private GridBagConstraints _panelGBC;
 
-} // end class ImportPanel
+}

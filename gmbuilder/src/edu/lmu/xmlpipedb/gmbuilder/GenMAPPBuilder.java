@@ -62,7 +62,6 @@ import edu.lmu.xmlpipedb.util.gui.XMLPipeDBGUIUtils;
 
 import shag.App;
 import shag.dialog.ModalDialog;
-import shag.menu.WindowMenu;
 import shag.table.BeanColumn;
 import shag.table.BeanTableModel;
 import shag.table.UsefulTable;
@@ -78,7 +77,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "2.0b48";
+    public static final String VERSION = "2.0b49";
 
     /**
      * Starts the application.
@@ -181,17 +180,15 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         JMenu tallyMenu = new JMenu("Tallies");
         tallyMenu.add(_xmlTallyAction);
         tallyMenu.add(_oboTallyAction);
-        tallyMenu.add(_importedDataTallyAction);
-        tallyMenu.add(_gdbTallyAction);
         tallyMenu.addSeparator();
+        tallyMenu.add(_importedDataTallyAction);
+//        tallyMenu.add(_gdbTallyAction);
         tallyMenu.add(_runTalliesAction);
         mb.add(tallyMenu);
 
         // JMenu dbMenu = new JMenu("DB Actions");
         // dbMenu.add(_doResetDbAction);
         // mb.add(dbMenu);
-
-        mb.add(new WindowMenu(this));
 
         if (!PlatformIdentifier.isMac()) {
             JMenu helpMenu = new JMenu("Help");
@@ -235,7 +232,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      *
      */
     private void createActions() {
-        _configureDBAction = new AbstractAction("Configure Database...") {
+        _configureDBAction = new AbstractAction(AppResources.messageString("configure.database.command") + "...") {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
@@ -244,36 +241,37 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             }
         };
 
-        _importUniprotAction = new AbstractAction("Import UniProtDB XML File...") {
+        _importUniprotAction = new AbstractAction(AppResources.messageString("import.uniprot.command") + "...") {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-                doUniprotImport("org.uniprot.uniprot", "Import UniProtDB XML File");
+                doUniprotImport("org.uniprot.uniprot");
             }
         };
 
-        _importGOAction = new AbstractAction("Import GO XML File...") {
+        _importGOAction = new AbstractAction(AppResources.messageString("import.go.command") + "...") {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-                if (doGoImport("generated", "Import GO XML File") && ModalDialog.showQuestionDialog("Process GO Data?", "Some processing of the raw Gene Ontology data needs to be performed.\nThis may take a few minutes.  Proceed?")) {
+                if (doGoImport("generated") && ModalDialog.showQuestionDialog(AppResources.messageString("process.go.command") + "?",
+                    AppResources.messageString("process.go.confirmation"))) {
                     doProcessGO();
                 }
             }
         };
 
-        _importGOAssociationAction = new AbstractAction("Import GOA File...") {
+        _importGOAssociationAction = new AbstractAction(AppResources.messageString("import.goa.command") + "...") {
         	/**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
         	public void actionPerformed(ActionEvent aevt) {
-        		doGoAssociationImport("Import GOA File"); // Purpose of first string
+        		doGoAssociationImport();
         	}
         };
 
-        _runTalliesAction = new AbstractAction("Run XML and Database Tallies for UniProt and GO (The Full Monty)") {
+        _runTalliesAction = new AbstractAction(AppResources.messageString("tally.monty.command") + "...") {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
@@ -282,17 +280,16 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             }
         };
 
-        _gdbTallyAction = new AbstractAction("Run Tallies for Data Exported to GenMAPP Database") {
+        _gdbTallyAction = new AbstractAction(AppResources.messageString("tally.gdb.command") + "...") {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
                 ModalDialog.showErrorDialog("Function not yet implemented.");
-                // doTallies();
             }
         };
 
-        _importedDataTallyAction = new AbstractAction("Run Tallies for Data Imported into Database") {
+        _importedDataTallyAction = new AbstractAction(AppResources.messageString("tally.db.command")) {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
@@ -316,12 +313,15 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                         /**
                          * Columns used for displaying tally results.
                          */
-                        final BeanColumn[] TallyColumns = { BeanColumn.create("Database Table", "table", String.class), BeanColumn.create("Database Count", "dbCount", Integer.class) };
+                        final BeanColumn[] TallyColumns = {
+                            BeanColumn.create(AppResources.messageString("tally.table.column"), "table", String.class),
+                            BeanColumn.create(AppResources.messageString("tally.count.column"), "dbCount", Integer.class)
+                        };
                         BeanTableModel btm = new BeanTableModel(TallyColumns);
                         uniprotCriteria.addCriteria(goCriteria.getAllCriteria());
                         btm.setData(uniprotCriteria.getAllCriteria().toArray());
                         UsefulTable t = new UsefulTable(btm);
-                        ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
+                        ModalDialog.showPlainDialog(AppResources.messageString("tally.title"), new JScrollPane(t));
                     } catch(HibernateException hexc) {
                         handleErroneousHibernateConfiguration();
                     }
@@ -331,62 +331,25 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             }
         };
 
-        _oboTallyAction = new AbstractAction("Run Tallies for GO XML File") {
+        _oboTallyAction = new AbstractAction(AppResources.messageString("tally.go.command") + "...") {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-                CriterionList goCriteria = new CriterionList();
-                setTallyCriterion(goCriteria, TallyType.GO);
-
-                // Create a file chooser and setup the GO input stream
-                File goFile = chooseXMLFile("Select GO XML file");
-                if (goFile != null) {
-                    getTallyResultsXml(goCriteria, goFile);
-    
-                    // Gather the criteria into a list so that we can display them
-                    // in a UsefulTable.
-                    /**
-                     * Columns used for displaying tally results.
-                     */
-                    final BeanColumn[] TallyColumns = { BeanColumn.create("XML Path", "table", String.class), BeanColumn.create("XML Count", "xmlCount", Integer.class), };
-    
-                    BeanTableModel btm = new BeanTableModel(TallyColumns);
-                    btm.setData(goCriteria.getAllCriteria().toArray());
-                    UsefulTable t = new UsefulTable(btm);
-                    ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
-                }
+                doTallyResultsXml(TallyType.GO, "tally.go.title");
             }
         };
 
-        _xmlTallyAction = new AbstractAction("Run Tallies for UniProt XML File") {
+        _xmlTallyAction = new AbstractAction(AppResources.messageString("tally.uniprot.command") + "...") {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
             public void actionPerformed(ActionEvent aevt) {
-                CriterionList uniprotCriteria = new CriterionList();
-                setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
-
-                // Create a file chooser and setup the UniProt input stream
-                File uniprotFile = chooseXMLFile("Select UniProt XML file");
-                if (uniprotFile != null) {
-                    getTallyResultsXml(uniprotCriteria, uniprotFile);
-    
-                    // Gather the criteria into a list so that we can display them
-                    // in a UsefulTable.
-                    /**
-                     * Columns used for displaying tally results.
-                     */
-                    final BeanColumn[] TallyColumns = { BeanColumn.create("XML Path", "table", String.class), BeanColumn.create("XML Count", "xmlCount", Integer.class), };
-                    BeanTableModel btm = new BeanTableModel(TallyColumns);
-                    btm.setData(uniprotCriteria.getAllCriteria().toArray());
-                    UsefulTable t = new UsefulTable(btm);
-                    ModalDialog.showPlainDialog("Tally Results", new JScrollPane(t));
-                }
+                doTallyResultsXml(TallyType.UNIPROT, "tally.uniprot.title");
             }
         };
 
-        _processGOAction = new AbstractAction("Process GO Data...") {
+        _processGOAction = new AbstractAction(AppResources.messageString("process.go.command")) {
             public void actionPerformed(ActionEvent aevt) {
                 doProcessGO();
             }
@@ -409,7 +372,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         // }
         // };
 
-        _exportToGenMAPPAction = new AbstractAction("Export to GenMAPP...") {
+        _exportToGenMAPPAction = new AbstractAction(AppResources.messageString("export.command") + "...") {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
@@ -419,7 +382,6 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                         doExportToGenMAPP();
                     }
                 });
-
             }
         };
     }
@@ -438,14 +400,15 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         try {
             ConfigurationPanel configPanel = new ConfigurationPanel();
             configPanel.setCurrentPlatform("PostgreSQL");
-            if (ModalDialog.showOKDialog("Configure Database", configPanel)) {
+            if (ModalDialog.showOKDialog(AppResources.messageString("configure.database.command"), configPanel)) {
                 // Update components that rely on the configuration.
                 configPanel.saveConfiguration();
                 _queryPanel.setHibernateConfiguration(createHibernateConfiguration());
             }
         } catch(Exception exc) {
             _Log.error(exc);
-            ModalDialog.showErrorDialog("Unable to Configure Database", "Sorry, database configuration was unable to proceed.  This is most likely an error relating to file creation or modification on the system on which you are running.");
+            ModalDialog.showErrorDialog(AppResources.messageString("error.cannotconfig.title"),
+                AppResources.messageString("error.cannotconfig.message"));
         }
     }
 
@@ -458,7 +421,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      *            The title of the dialog (helps prompt the user on what file to
      *            import)
      */
-    private void doUniprotImport(String jaxbContextPath, String title) {
+    private void doUniprotImport(String jaxbContextPath) {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         if (hibernateConfiguration != null) {
             HashMap<String, String> rootElement = new HashMap<String, String>(5);
@@ -466,7 +429,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             rootElement.put("head", head);
             rootElement.put("tail", "</uniprot>");
             try {
-                final String importTitle = "Import UniProt XML File";
+                String importTitle = AppResources.messageString("import.uniprot.command");
                 ImportEngine importEngine = new ImportEngine(jaxbContextPath, hibernateConfiguration, "uniprot/entry", rootElement);
                 File file = chooseXMLFile(importTitle);
                 if (file != null) {
@@ -500,11 +463,11 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      *            The title of the dialog (helps prompt the user on what file to
      *            import)
      */
-    private boolean doGoImport(String jaxbContextPath, String title) {
+    private boolean doGoImport(String jaxbContextPath) {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         if (hibernateConfiguration != null) {
             try {
-                final String importTitle = "Import GO OBO XML File";
+                String importTitle = AppResources.messageString("import.go.command");
                 ImportEngine importEngine = new ImportEngine(jaxbContextPath, hibernateConfiguration, "", null);
                 File file = chooseXMLFile(importTitle);
                 if (file != null) {
@@ -543,12 +506,16 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      *            The title of the dialog (helps prompt the user on what file to
      *            import)
      */
-    private void doGoAssociationImport(String title) {
+    private void doGoAssociationImport() {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
+        boolean preFlight = true;
         if (hibernateConfiguration != null) {
             try {
-                final String importTitle = "Import GOA File";
+                String importTitle = AppResources.messageString("import.goa.command");
                 ImportGOAEngine importGOAEngine = new ImportGOAEngine(hibernateConfiguration);
+                
+                // From this point, database errors should *not* be based on settings.
+                preFlight = false;
                 File file = chooseImportFile(importTitle, new FilenameFilter() {
                     /**
                      * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
@@ -565,15 +532,16 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 handleErroneousHibernateConfiguration();
             } catch(IOException e) {
                 _Log.error(e);
-                ModalDialog.showErrorDialog("GOA I/O Error",
-                    "<html><p>An I/O error has occured while importing the file.  Please make sure</p>" +
-                    "<p>that the file you chose exists and is readable.</p></html>");
+                ModalDialog.showErrorDialog(AppResources.messageString("error.goa.title"),
+                    AppResources.messageString("error.goa.message"));
             } catch(SQLException e) {
                 _Log.error(e);
-                ModalDialog.showErrorDialog("Database Error",
-                    "<html><p>A database error has occured while importing the file.  Please double-check</p>" +
-                    "<p>your database server status and settings, then try again.</p></html>");
-                handleMissingHibernateConfiguration();
+                ModalDialog.showErrorDialog(
+                    AppResources.messageString(preFlight ? "error.baddbconfig.title" : "error.db.title"),
+                    AppResources.messageString(preFlight ? "error.baddbconfig.message" : "error.db.message"));
+                if (preFlight) {
+                    handleMissingHibernateConfiguration();
+                }
             }
         } else {
             handleMissingHibernateConfiguration();
@@ -756,9 +724,37 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         }
 
         criteria.setDigesterPath(subStrings[0]);
-
     }
 
+    /**
+     * Helper method for doing XML file-based tally results.
+     */
+    private void doTallyResultsXml(TallyType tallyType, String titleKey) { 
+        CriterionList criteria = new CriterionList();
+        setTallyCriterion(criteria, tallyType);
+
+        // Create a file chooser and setup the file input stream.
+        File xmlFile = chooseXMLFile(AppResources.messageString(titleKey));
+        if (xmlFile != null) {
+            getTallyResultsXml(criteria, xmlFile);
+
+            // Gather the criteria into a list so that we can display them
+            // in a UsefulTable.
+            /**
+             * Columns used for displaying tally results.
+             */
+            final BeanColumn[] TallyColumns = {
+                BeanColumn.create(AppResources.messageString("tally.xml.path.column"), "table", String.class),
+                BeanColumn.create(AppResources.messageString("tally.xml.count.column"), "xmlCount", Integer.class)
+            };
+
+            BeanTableModel btm = new BeanTableModel(TallyColumns);
+            btm.setData(criteria.getAllCriteria().toArray());
+            UsefulTable t = new UsefulTable(btm);
+            ModalDialog.showPlainDialog(AppResources.messageString("tally.title"), new JScrollPane(t));
+        }
+    }
+    
     private void getTallyResultsXml(CriterionList criteria, File xmlFile) {
         _currentCriteria = criteria;
         TallyEngine te = new TallyEngine(criteria);
@@ -778,7 +774,6 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     }
 
     private void getTallyResultsDatabase(CriterionList criteria, Configuration hibernateConfiguration) {
-
         _currentCriteria = criteria;
         TallyEngine te = new TallyEngine(criteria);
         te.setDelegate(this);
@@ -796,10 +791,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             _Log.error(e);
             ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
         } catch(HibernateException e) {
-            // TODO Well, strictly speaking, this command should never have
-            // been selectable in the first place, if there is no valid
-            // Hibernate configuration.
-            ModalDialog.showErrorDialog("Problem with Hibernate", "A Hibernate exception was caught. If you have not configured your Hibernate properties, Do so now! Exception text: " + e.getMessage());
+            handleErroneousHibernateConfiguration();
         } catch(Exception e) {
             _Log.error(e);
             ModalDialog.showErrorDialog(e.getClass().getName(), "An unexpected Exception was caught. Exception text: " + e.getMessage());
@@ -966,7 +958,12 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Columns used for displaying tally results.
      */
-    private static final BeanColumn[] TALLY_COLUMNS = { BeanColumn.create("XML Path", "table", String.class), BeanColumn.create("XML Count", "xmlCount", Integer.class), BeanColumn.create("Database Table", "table", String.class), BeanColumn.create("Database Count", "dbCount", Integer.class) };
+    private static final BeanColumn[] TALLY_COLUMNS = {
+        BeanColumn.create(AppResources.messageString("tally.xml.path.column"), "table", String.class),
+        BeanColumn.create(AppResources.messageString("tally.xml.count.column"), "xmlCount", Integer.class),
+        BeanColumn.create(AppResources.messageString("tally.table.column"), "table", String.class),
+        BeanColumn.create(AppResources.messageString("tally.count.column"), "dbCount", Integer.class)
+    };
 
     /**
      * Processes the current GO data into staging and cached tables. These
@@ -1150,6 +1147,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private Action _xmlTallyAction;
     private Action _oboTallyAction;
     private Action _importedDataTallyAction;
+    @SuppressWarnings("unused") // Not yet implemented.
     private Action _gdbTallyAction;
 
     /**

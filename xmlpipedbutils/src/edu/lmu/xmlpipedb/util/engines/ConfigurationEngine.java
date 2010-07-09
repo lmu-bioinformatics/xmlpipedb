@@ -73,7 +73,6 @@ public class ConfigurationEngine {
             // if the properties could not be loaded, throw an exception
             throw e;
         }
-
     }
 
     /**

@@ -233,6 +233,14 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
             BorderFactory.createLoweredBevelBorder(),
             BorderFactory.createEmptyBorder(LayoutConstants.BORDER, LayoutConstants.BORDER << 1,
                 LayoutConstants.BORDER, LayoutConstants.BORDER << 1)));
+        
+        // Read-write: if there are any settings in the original model, put
+        // them in the custom interface.  Then, have the custom interface put
+        // *its* preferences back in the model, since it may have values that
+        // are not in the model.
+        currentCustomComponent.readSettings(_model);
+        currentCustomComponent.writeSettings(_model);
+
         databaseSelectionPanel.add(currentCustomComponent, BorderLayout.CENTER);
         databaseSelectionPanel.validate();
         databaseSelectionPanel.repaint();
@@ -457,17 +465,11 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
         // Prepare a new model object, which will be used to save the properties.
         HibernatePropertiesModel saveModel = new HibernatePropertiesModel();
         
-        // Hand the properties to the custom panel first --- the advanced
-        // section overrides, because it has greater flexibility.
-        if (currentCustomComponent != null) {
-            currentCustomComponent.writeSettings(saveModel);
-        }
-        
         // Add all the other saved properties to the saveModel, except the
         // properties of this category, which will be overwritten.
         Iterator<String> modelIter = _model.getProperties();
         while (modelIter.hasNext()) {
-            HibernateProperty hp = _model.getProperty((String)modelIter.next());
+            HibernateProperty hp = _model.getProperty(modelIter.next());
             // if it is this category, don't add it no matter what
             if (hp.getCategory().equals(_model.getCurrentCategory())) {
                 continue;
@@ -488,9 +490,18 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
             }
         }
 
-        // save the current type and category
-        saveModel.setCurrentType(type);
-        saveModel.setCurrentCategory(_model.getCurrentCategory());
+        // The custom panel then writes *its* properties.  Easier for the
+        // novices since that's what they see; advanced users should fill in
+        // the custom panel then use the advanced UI to set only what the
+        // custom panel does not cover.
+        if (currentCustomComponent != null) {
+            currentCustomComponent.writeSettings(saveModel);
+        }
+        
+        // save the current type and category --- also overridden by the
+        // custom component
+        saveModel.setCurrentType((String)databaseCB.getSelectedItem());
+        saveModel.setCurrentCategory("Platforms");
 
         // save the properties in the model
         _configEngine.saveProperties(saveModel);

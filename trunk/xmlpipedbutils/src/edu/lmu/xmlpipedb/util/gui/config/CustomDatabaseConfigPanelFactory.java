@@ -29,6 +29,11 @@ public class CustomDatabaseConfigPanelFactory {
         NO_CUSTOM_PANEL = new DatabaseConfigPanel() {
 
             @Override
+            public void readSettings(HibernatePropertiesModel hibernatePropertiesModel) {
+                
+            }
+
+            @Override
             public void writeSettings(HibernatePropertiesModel hibernatePropertiesModel) {
                 // No-op.
             }

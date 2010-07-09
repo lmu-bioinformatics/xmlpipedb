@@ -174,7 +174,7 @@ public class HibernatePropertiesModel {
      * @param hp - HibernateProperty object
      */
     public void add(HibernateProperty hp) {
-    	//Add the property with the fully qualified name as the key
+    	// Add the property with the fully qualified name as the key
         _properties.put(hp.getFullyQualifiedName(), hp);
     }
 
@@ -229,7 +229,6 @@ public class HibernatePropertiesModel {
         this.currentType = currentType;
     }
 
-    //### DEFINE VARS ###
     private HashMap<String, HibernateProperty> _properties = new HashMap<String, HibernateProperty>();
     private String currentType = null;
     private String currentCategory = null;

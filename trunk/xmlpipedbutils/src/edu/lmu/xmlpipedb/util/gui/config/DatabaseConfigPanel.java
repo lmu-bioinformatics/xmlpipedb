@@ -12,6 +12,16 @@ import edu.lmu.xmlpipedb.util.engines.HibernatePropertiesModel;
  */
 public abstract class DatabaseConfigPanel extends JPanel {
 
+    /**
+     * Places the information in the given properties model into the panel's
+     * user interface.
+     */
+    public abstract void readSettings(HibernatePropertiesModel hibernatePropertiesModel);
+    
+    /**
+     * Transfers the panel's user interface information to the given properties
+     * model.
+     */
     public abstract void writeSettings(HibernatePropertiesModel hibernatePropertiesModel);
     
 }

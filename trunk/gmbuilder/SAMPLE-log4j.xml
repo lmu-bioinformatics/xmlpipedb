@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
-<!-- Extremely basic Log4J configuration...likely requires tweaking. -->
+<!--
+  This is a sample Log4J configuration file for use when working with or
+  on GenMAPP Builder.  Copy this to src/ or test/, edit as needed, and
+  rename to log4j.xml.
+  
+  As-is, this configuration file reports INFO messages with DEBUG level
+  for edu.lmu.xmlpipedb.gmbuilder and edul.lmu.xmlpipedb.util classes.
+-->
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
     <appender name="console"
@@ -25,7 +32,11 @@
        <appender-ref ref="console"/>
    </appender>
 
-    <category name="edu.lmu">
+    <category name="edu.lmu.xmlpipedb.gmbuilder">
+        <priority value="DEBUG" />
+    </category>
+
+    <category name="edu.lmu.xmlpipedb.util">
         <priority value="DEBUG" />
     </category>
 

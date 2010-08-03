@@ -251,9 +251,15 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
      * 
      * @return Box - contains radio buttons for each category
      */
-    private Box getTopBox() {
-        // create the box that will be returned
-        Box topBox = new Box(BoxLayout.X_AXIS);
+    private JPanel getTopBox() {
+        // Create the overall panel.
+        JPanel result = new JPanel(new BorderLayout(0, LayoutConstants.SPACE));
+        result.add(new JLabel(AppResources.messageString("config.advanced.instructions")), BorderLayout.CENTER);
+        
+        // Create the radio button container and its contents.
+        Box radioButtonBox = new Box(BoxLayout.X_AXIS);
+        result.add(radioButtonBox, BorderLayout.SOUTH);
+        
         // strCat is a temporary var to store the category being worked with
         String strCat = null;
         // catSet is the Set of categories
@@ -280,7 +286,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
             // add the button to the button group
             bg.add(categoryRB);
             // add the button to the local topBox
-            topBox.add(categoryRB);
+            radioButtonBox.add(categoryRB);
             // The last selected category is, well, selected.
             categoryRB.setSelected(true);
         }
@@ -293,7 +299,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
             _model.setCurrentCategory(strCat);
         }
 
-        return topBox;
+        return result;
     }
 
     /**
@@ -554,7 +560,7 @@ public class ConfigurationPanel extends JPanel implements ActionListener, ItemLi
 
     // private Box _centerBox;
     private JPanel _centerPanel;
-    private Box _topBox;
+    private JPanel _topBox;
     private ConfigurationEngine _configEngine;
 
     // gridbag vars

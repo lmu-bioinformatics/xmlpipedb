@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -99,7 +98,7 @@ public class ImportEngine {
      * @throws IOException
      * @throws HibernateException
      */
-    public ImportEngine(String jaxbContextPath, Configuration hibernateConfiguration, String entryElement, HashMap<String, String> rootElementName) throws JAXBException, SAXException, IOException, HibernateException {
+    public ImportEngine(String jaxbContextPath, Configuration hibernateConfiguration, String entryElement, Map<String, String> rootElementName) throws JAXBException, SAXException, IOException, HibernateException {
         this(jaxbContextPath, hibernateConfiguration);
         _rootElementName = rootElementName; // e.g. Name = "bookstore";
         _entryElement = entryElement; // e.g. "bookstore/book"

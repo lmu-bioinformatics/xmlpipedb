@@ -43,7 +43,7 @@ public class XMLPipeDBGUIUtils {
         performWithProgressBar(importer,
             AppResources.messageString("import.title"),
             AppResources.messageString("import.message")
-                .replaceAll("\\$FILE", xmlFile.toString()));
+                .replaceAll("\\$FILE", xmlFile.toString().replaceAll("\\\\", "\\\\\\\\")));
         
         // When we get here, the Importer will be finished, and we can return
         // its results.
@@ -151,7 +151,7 @@ public class XMLPipeDBGUIUtils {
                 // Notify user when import is complete.
                 ModalDialog.showInformationDialog(AppResources.messageString("import.complete.title"),
                     AppResources.messageString("import.complete.message")
-                        .replaceAll("\\$FILE", xmlFile.toString())
+                        .replaceAll("\\$FILE", xmlFile.toString().replaceAll("\\\\", "\\\\\\\\"))
                         .replaceAll("\\$MINUTES", String.format("%.2f", (endTime - startTime) / 1000.0 / 60.0)));
             } else if (exc != null) {
                 ModalDialog.showErrorDialog(AppResources.messageString("error.import.unknown.title"),

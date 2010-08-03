@@ -465,7 +465,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private boolean doXMLImport(String importTitle, String jaxbContextPath,
       Configuration hibernateConfiguration, String entryElement, Map<String, String> rootElementName) {
         try {
-            ImportEngine importEngine = new ImportEngine(jaxbContextPath, hibernateConfiguration, "", rootElementName);
+            ImportEngine importEngine = new ImportEngine(jaxbContextPath, hibernateConfiguration, entryElement, rootElementName);
             File file = chooseXMLFile(importTitle);
             if (file != null) {
                 return XMLPipeDBGUIUtils.performImportWithProgressBar(importEngine, file);
@@ -520,7 +520,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                     XMLPipeDBGUIUtils.performWithProgressBar(new GOAImporter(importGOAEngine, file),
                         AppResources.messageString("import.goa.progress.title"),
                         AppResources.messageString("import.goa.progress.message")
-                            .replaceAll("\\$FILE", file.toString()));
+                            .replaceAll("\\$FILE", file.toString().replaceAll("\\\\", "\\\\\\\\")));
                 }
             } catch(HibernateException hexc) {
                 _Log.error(hexc);
@@ -577,7 +577,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                     // Notify user when importing is complete.
                     ModalDialog.showInformationDialog(AppResources.messageString("import.goa.complete.title"),
                         AppResources.messageString("import.goa.complete.message")
-                            .replaceAll("\\$FILE", goaFile.toString())
+                            .replaceAll("\\$FILE", goaFile.toString().replaceAll("\\\\", "\\\\\\\\"))
                             .replaceAll("\\$MINUTES", String.format("%.2f", (endTime - startTime) / 1000.0 / 60.0)));
                 } else if (exc != null) {
                     // We differentiate between SQLExceptions and others.

@@ -38,28 +38,12 @@ public class XMLPipeDBGUIUtils {
      * whether or not the import was successful.
      */
     public static boolean performImportWithProgressBar(ImportEngine importEngine, File xmlFile) {
-        // Create the Swing worker.
+        // Perform the import task.
         Importer importer = new Importer(importEngine, xmlFile);
-
-        // Set up the blocking UI.
-        ModalDialog dialog = ModalDialog.createCustomDialog(AppResources.messageString("import.title"),
-            new ActionCommand[0], false);
-
-        // Build the dialog panel.
-        JProgressBar progressBar = new JProgressBar();
-        progressBar.setIndeterminate(true);
-        JPanel messagePanel = new JPanel(new BorderLayout(0, LayoutConstants.SPACE));
-        messagePanel.add(progressBar, BorderLayout.NORTH);
-
-        // If the message string has a $FILE placeholder, it is replaced.
-        messagePanel.add(new JLabel(AppResources.messageString("import.message")
-            .replaceAll("\\$FILE", xmlFile.toString())), BorderLayout.SOUTH);
-        dialog.setComponent(messagePanel);
-        importer.addPropertyChangeListener(new SwingWorkerDialogWaiter(dialog));
-        importer.execute();
-
-        // The dialog will be visible until the Importer is done.
-        dialog.setVisible(true);
+        performWithProgressBar(importer,
+            AppResources.messageString("import.title"),
+            AppResources.messageString("import.message")
+                .replaceAll("\\$FILE", xmlFile.toString()));
         
         // When we get here, the Importer will be finished, and we can return
         // its results.
@@ -73,7 +57,29 @@ public class XMLPipeDBGUIUtils {
             return false;
         }
     }
-    
+
+    /**
+     * Helper method for bracketing any lengthy task with a progress dialog.
+     */
+    public static void performWithProgressBar(@SuppressWarnings("rawtypes") SwingWorker swingWorker,
+      String progressTitle, String progressMessage) {
+        // Set up the blocking UI.
+        ModalDialog dialog = ModalDialog.createCustomDialog(progressTitle, new ActionCommand[0], false);
+
+        // Build the dialog panel.
+        JProgressBar progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
+        JPanel messagePanel = new JPanel(new BorderLayout(0, LayoutConstants.SPACE));
+        messagePanel.add(progressBar, BorderLayout.NORTH);
+        messagePanel.add(new JLabel(progressMessage), BorderLayout.SOUTH);
+        dialog.setComponent(messagePanel);
+        swingWorker.addPropertyChangeListener(new SwingWorkerDialogWaiter(dialog));
+        swingWorker.execute();
+
+        // The dialog will be visible until GO processing is done.
+        dialog.setVisible(true);
+    }
+
     /**
      * Listener that monitors SwingWorker progress.
      */

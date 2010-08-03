@@ -9,7 +9,6 @@
 
 package edu.lmu.xmlpipedb.gmbuilder;
 
-import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
@@ -31,8 +30,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -66,11 +63,8 @@ import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.XMLPipeDBGUIUtils;
-import edu.lmu.xmlpipedb.util.gui.XMLPipeDBGUIUtils.SwingWorkerDialogWaiter;
 
 import shag.App;
-import shag.LayoutConstants;
-import shag.dialog.ActionCommand;
 import shag.dialog.ModalDialog;
 import shag.table.BeanColumn;
 import shag.table.BeanTableModel;
@@ -507,14 +501,12 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      */
     private void doGoAssociationImport() {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
-        boolean preFlight = true;
         if (hibernateConfiguration != null) {
             try {
                 String importTitle = AppResources.messageString("import.goa.command");
                 ImportGOAEngine importGOAEngine = new ImportGOAEngine(hibernateConfiguration);
                 
-                // From this point, database errors should *not* be based on settings.
-                preFlight = false;
+                // Pick the file.
                 File file = chooseImportFile(importTitle, new FilenameFilter() {
                     /**
                      * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
@@ -524,26 +516,87 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                     }
                 });
                 if (file != null) {
-                    importGOAEngine.importToSQL(file);
+                    // Perform the task.
+                    XMLPipeDBGUIUtils.performWithProgressBar(new GOAImporter(importGOAEngine, file),
+                        AppResources.messageString("import.goa.progress.title"),
+                        AppResources.messageString("import.goa.progress.message")
+                            .replaceAll("\\$FILE", file.toString()));
                 }
-            } catch(HibernateException e) {
-                _Log.error(e);
+            } catch(HibernateException hexc) {
+                _Log.error(hexc);
                 handleErroneousHibernateConfiguration();
-            } catch(IOException e) {
-                _Log.error(e);
-                ModalDialog.showErrorDialog(AppResources.messageString("error.goa.title"),
-                    AppResources.messageString("error.goa.message"));
-            } catch(SQLException e) {
-                _Log.error(e);
-                ModalDialog.showErrorDialog(
-                    AppResources.messageString(preFlight ? "error.baddbconfig.title" : "error.db.title"),
-                    AppResources.messageString(preFlight ? "error.baddbconfig.message" : "error.db.message"));
-                if (preFlight) {
-                    handleMissingHibernateConfiguration();
-                }
             }
         } else {
             handleMissingHibernateConfiguration();
+        }
+    }
+
+    /**
+     * Worker class for doing the actual GOA importing.
+     */
+    private class GOAImporter extends SwingWorker<Boolean, Object> {
+
+        private ImportGOAEngine importGoaEngine;
+        private File goaFile;
+        private long startTime, endTime;
+        private Exception exc;
+
+        public GOAImporter(ImportGOAEngine importGoaEngine, File goaFile) {
+            this.importGoaEngine = importGoaEngine;
+            this.goaFile = goaFile;
+            exc = null;
+        }
+        
+        /**
+         * @see javax.swing.SwingWorker#doInBackground()
+         */
+        @Override
+        public Boolean doInBackground() {
+            try {
+                startTime = System.currentTimeMillis();
+                _Log.info("Importing Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(startTime));
+                importGoaEngine.importToSQL(goaFile);
+                endTime = System.currentTimeMillis();
+                _Log.info("Importing Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(endTime));
+                return true;
+            } catch(IOException ioexc) {
+                exc = ioexc;
+                _Log.error("I/O exception", ioexc);
+                return false;
+            } catch(SQLException sqlexc) {
+                exc = sqlexc;
+                _Log.error("SQL exception", sqlexc);
+                return false;
+            }
+        }
+
+        @Override
+        protected void done() {
+            try {
+                if (get() && exc == null) {
+                    // Notify user when importing is complete.
+                    ModalDialog.showInformationDialog(AppResources.messageString("import.goa.complete.title"),
+                        AppResources.messageString("import.goa.complete.message")
+                            .replaceAll("\\$FILE", goaFile.toString())
+                            .replaceAll("\\$MINUTES", String.format("%.2f", (endTime - startTime) / 1000.0 / 60.0)));
+                } else if (exc != null) {
+                    // We differentiate between SQLExceptions and others.
+                    if (exc instanceof SQLException) {
+                        ModalDialog.showErrorDialog(AppResources.messageString("error.db.title"),
+                            AppResources.messageString("error.db.message")
+                                .replaceAll("\\$MESSAGE", exc.getMessage()));
+                    } else {
+                        ModalDialog.showErrorDialog(AppResources.messageString("error.goa.title"),
+                            AppResources.messageString("error.goa.message"));
+                    }
+                }
+            } catch(InterruptedException e) {
+                // Extremely unlikely exception, so we just log.
+                _Log.error(e);
+            } catch(ExecutionException e) {
+                // Extremely unlikely exception, so we just log.
+                _Log.error(e);
+            }
         }
     }
 
@@ -972,26 +1025,10 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private void doProcessGO() {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         if (hibernateConfiguration != null) {
-            // Create the Swing worker.
-            GOProcessor goProcessor = new GOProcessor(hibernateConfiguration);
-
-            // Set up the blocking UI.
-            ModalDialog dialog = ModalDialog.createCustomDialog(AppResources.messageString("process.go.progress.title"),
-                new ActionCommand[0], false);
-
-            // Build the dialog panel.
-            JProgressBar progressBar = new JProgressBar();
-            progressBar.setIndeterminate(true);
-            JPanel messagePanel = new JPanel(new BorderLayout(0, LayoutConstants.SPACE));
-            messagePanel.add(progressBar, BorderLayout.NORTH);
-            messagePanel.add(new JLabel(AppResources.messageString("process.go.progress.message")),
-                BorderLayout.SOUTH);
-            dialog.setComponent(messagePanel);
-            goProcessor.addPropertyChangeListener(new SwingWorkerDialogWaiter(dialog));
-            goProcessor.execute();
-
-            // The dialog will be visible until GO processing is done.
-            dialog.setVisible(true);
+            // Perform the task.
+            XMLPipeDBGUIUtils.performWithProgressBar(new GOProcessor(hibernateConfiguration),
+                AppResources.messageString("process.go.progress.title"),
+                AppResources.messageString("process.go.progress.message"));
         } else {
             handleMissingHibernateConfiguration();
         }
@@ -1076,11 +1113,11 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                         AppResources.messageString("process.go.complete.message")
                             .replaceAll("\\$MINUTES", String.format("%.2f", (endTime - startTime) / 1000.0 / 60.0)));
                 } else if (exc != null) {
-                    // We relay specifics for SQLExceptions, but assume bad configurations for
-                    // other exceptions.
+                    // We assume bad configurations for non-SQLExceptions.
                     if (exc instanceof SQLException) {
                         ModalDialog.showErrorDialog(AppResources.messageString("error.db.title"),
-                            AppResources.messageString("error.db.message"));
+                            AppResources.messageString("error.db.message")
+                                .replaceAll("\\$MESSAGE", exc.getMessage()));
                     } else {
                         handleErroneousHibernateConfiguration();
                     }

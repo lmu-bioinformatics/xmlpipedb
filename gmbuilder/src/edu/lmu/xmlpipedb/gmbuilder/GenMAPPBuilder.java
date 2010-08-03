@@ -9,17 +9,21 @@
 
 package edu.lmu.xmlpipedb.gmbuilder;
 
+import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -27,8 +31,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.logging.Log;
@@ -59,8 +66,11 @@ import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.XMLPipeDBGUIUtils;
+import edu.lmu.xmlpipedb.util.gui.XMLPipeDBGUIUtils.SwingWorkerDialogWaiter;
 
 import shag.App;
+import shag.LayoutConstants;
+import shag.dialog.ActionCommand;
 import shag.dialog.ModalDialog;
 import shag.table.BeanColumn;
 import shag.table.BeanTableModel;
@@ -77,7 +87,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "2.0b49";
+    public static final String VERSION = "2.0b50";
 
     /**
      * Starts the application.
@@ -424,31 +434,12 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private void doUniprotImport(String jaxbContextPath) {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         if (hibernateConfiguration != null) {
-            HashMap<String, String> rootElement = new HashMap<String, String>(5);
+            Map<String, String> rootElement = new HashMap<String, String>(5);
             String head = "<uniprot xmlns=\"http://uniprot.org/uniprot\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd\">";
             rootElement.put("head", head);
             rootElement.put("tail", "</uniprot>");
-            try {
-                String importTitle = AppResources.messageString("import.uniprot.command");
-                ImportEngine importEngine = new ImportEngine(jaxbContextPath, hibernateConfiguration, "uniprot/entry", rootElement);
-                File file = chooseXMLFile(importTitle);
-                if (file != null) {
-                    XMLPipeDBGUIUtils.performImportWithProgressBar(importEngine, file,
-                        (ModalDialog.getTopDialog() != null) ? ModalDialog.getTopDialog() : getFrontmostWindow());
-                }
-            } catch(HibernateException e) {
-                _Log.error(e);
-                handleErroneousHibernateConfiguration();
-            } catch(JAXBException e) {
-                _Log.error(e);
-                handleErroneousHibernateConfiguration();
-            } catch(SAXException e) {
-                _Log.error(e);
-                handleErroneousHibernateConfiguration();
-            } catch(IOException e) {
-                _Log.error(e);
-                handleErroneousHibernateConfiguration();
-            }
+            doXMLImport(AppResources.messageString("import.uniprot.command"),
+                jaxbContextPath, hibernateConfiguration, "uniprot/entry", rootElement);
         } else {
             handleMissingHibernateConfiguration();
         }
@@ -466,31 +457,39 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private boolean doGoImport(String jaxbContextPath) {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         if (hibernateConfiguration != null) {
-            try {
-                String importTitle = AppResources.messageString("import.go.command");
-                ImportEngine importEngine = new ImportEngine(jaxbContextPath, hibernateConfiguration, "", null);
-                File file = chooseXMLFile(importTitle);
-                if (file != null) {
-                    return XMLPipeDBGUIUtils.performImportWithProgressBar(importEngine, file,
-                        (ModalDialog.getTopDialog() != null) ? ModalDialog.getTopDialog() : getFrontmostWindow());
-                } else {
-                    return false;
-                }
-            } catch(HibernateException e) {
-                _Log.error(e);
-                handleErroneousHibernateConfiguration();
-            } catch(JAXBException e) {
-                _Log.error(e);
-                handleErroneousHibernateConfiguration();
-            } catch(SAXException e) {
-                _Log.error(e);
-                handleErroneousHibernateConfiguration();
-            } catch(IOException e) {
-                _Log.error(e);
-                handleErroneousHibernateConfiguration();
-            }
+            return doXMLImport(AppResources.messageString("import.go.command"),
+                jaxbContextPath, hibernateConfiguration, "", null);
         } else {
             handleMissingHibernateConfiguration();
+            return false;
+        }
+    }
+
+    /**
+     * Helper method for XML-based imports.
+     */
+    private boolean doXMLImport(String importTitle, String jaxbContextPath,
+      Configuration hibernateConfiguration, String entryElement, Map<String, String> rootElementName) {
+        try {
+            ImportEngine importEngine = new ImportEngine(jaxbContextPath, hibernateConfiguration, "", rootElementName);
+            File file = chooseXMLFile(importTitle);
+            if (file != null) {
+                return XMLPipeDBGUIUtils.performImportWithProgressBar(importEngine, file);
+            } else {
+                return false;
+            }
+        } catch(HibernateException e) {
+            _Log.error(e);
+            handleErroneousHibernateConfiguration();
+        } catch(JAXBException e) {
+            _Log.error(e);
+            handleErroneousHibernateConfiguration();
+        } catch(SAXException e) {
+            _Log.error(e);
+            handleErroneousHibernateConfiguration();
+        } catch(IOException e) {
+            _Log.error(e);
+            handleErroneousHibernateConfiguration();
         }
 
         // If we get here, we did not succeed.
@@ -973,29 +972,126 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private void doProcessGO() {
         Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
         if (hibernateConfiguration != null) {
+            // Create the Swing worker.
+            GOProcessor goProcessor = new GOProcessor(hibernateConfiguration);
+
+            // Set up the blocking UI.
+            ModalDialog dialog = ModalDialog.createCustomDialog(AppResources.messageString("process.go.progress.title"),
+                new ActionCommand[0], false);
+
+            // Build the dialog panel.
+            JProgressBar progressBar = new JProgressBar();
+            progressBar.setIndeterminate(true);
+            JPanel messagePanel = new JPanel(new BorderLayout(0, LayoutConstants.SPACE));
+            messagePanel.add(progressBar, BorderLayout.NORTH);
+            messagePanel.add(new JLabel(AppResources.messageString("process.go.progress.message")),
+                BorderLayout.SOUTH);
+            dialog.setComponent(messagePanel);
+            goProcessor.addPropertyChangeListener(new SwingWorkerDialogWaiter(dialog));
+            goProcessor.execute();
+
+            // The dialog will be visible until GO processing is done.
+            dialog.setVisible(true);
+        } else {
+            handleMissingHibernateConfiguration();
+        }
+    }
+
+    /**
+     * Worker class for doing the actual GO processing.
+     */
+    private class GOProcessor extends SwingWorker<Boolean, Object> {
+
+        private Configuration hibernateConfiguration;
+        private long startTime, endTime;
+        private Exception exc;
+
+        public GOProcessor(Configuration hibernateConfiguration) {
+            this.hibernateConfiguration = hibernateConfiguration;
+            exc = null;
+        }
+        
+        /**
+         * @see javax.swing.SwingWorker#doInBackground()
+         */
+        @Override
+        public Boolean doInBackground() {
+            Session session = null;
             try {
                 SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
 
-                // Test the configuration by trying a transaction.
-                Session session = sessionFactory.openSession();
+                // Test the configuration by trying a transaction.  While we're at it, we also
+                // check if processing has already been done by checking for the presence of the
+                // GeneOntologyStage table.
+                session = sessionFactory.openSession();
                 Transaction tx = session.beginTransaction();
+                // An exception here means that the table does not exist, in which case we proceed
+                // without question.  If we *don't* get an exception, we confirm that the user
+                // really wants to do this.
+                try {
+                    ResultSet rs = session.connection().createStatement().executeQuery("select count(*) from geneontologystage");
+                    // No exception means it's there: check for rows then ask for confirmation
+                    // if there are none.
+                    if (rs.next()) {
+                        if ((rs.getInt(1) > 0) && !ModalDialog.showQuestionDialog(AppResources.messageString("process.go.repeat.title"),
+                          AppResources.messageString("process.go.repeat.message"))) {
+                            tx.rollback();
+                            return false;
+                        }
+                    }
+                } catch(SQLException sqlexc) {
+                    // No-op: this is expected the first time around.
+                }
                 tx.rollback();
                 session.close();
 
                 // OK, go.
+                startTime = System.currentTimeMillis();
+                _Log.info("Processing Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(startTime));
                 session = sessionFactory.openSession();
                 (new ExportGoData(session.connection())).populateGeneOntologyStage(hibernateConfiguration);
-                session.close();
-                ModalDialog.showInformationDialog("GO Processing Complete", "GO processing completed successfully.");
-            } catch(HibernateException e) {
-                _Log.error(e);
-                handleErroneousHibernateConfiguration();
-            } catch(SQLException e) {
-                _Log.error(e);
-                handleErroneousHibernateConfiguration();
+                endTime = System.currentTimeMillis();
+                _Log.info("Processing Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(endTime));
+                
+                return true;
+            } catch(HibernateException hexc) {
+                exc = hexc;
+                _Log.error(hexc);
+                return false;
+            } catch(SQLException sqlexc) {
+                exc = sqlexc;
+                _Log.error(sqlexc);
+                return false;
+            } finally {
+                try { session.close(); } catch(Exception exc) { /* No-op: just clean-up. */ }
             }
-        } else {
-            handleMissingHibernateConfiguration();
+        }
+
+        @Override
+        protected void done() {
+            try {
+                if (get() && exc == null) {
+                    // Notify user when processing is complete.
+                    ModalDialog.showInformationDialog(AppResources.messageString("process.go.complete.title"),
+                        AppResources.messageString("process.go.complete.message")
+                            .replaceAll("\\$MINUTES", String.format("%.2f", (endTime - startTime) / 1000.0 / 60.0)));
+                } else if (exc != null) {
+                    // We relay specifics for SQLExceptions, but assume bad configurations for
+                    // other exceptions.
+                    if (exc instanceof SQLException) {
+                        ModalDialog.showErrorDialog(AppResources.messageString("error.db.title"),
+                            AppResources.messageString("error.db.message"));
+                    } else {
+                        handleErroneousHibernateConfiguration();
+                    }
+                }
+            } catch(InterruptedException e) {
+                // Extremely unlikely exception, so we just log.
+                _Log.error(e);
+            } catch(ExecutionException e) {
+                // Extremely unlikely exception, so we just log.
+                _Log.error(e);
+            }
         }
     }
 

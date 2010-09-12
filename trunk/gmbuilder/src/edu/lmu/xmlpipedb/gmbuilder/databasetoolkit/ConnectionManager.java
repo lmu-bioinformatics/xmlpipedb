@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cfg.Configuration;
@@ -322,16 +323,15 @@ public class ConnectionManager {
 
 		StringBuffer databaseConnectionString;
 
-		// Life is a little different when playing on a Vista machine
-		/*String osName = System.getProperty("os.name");
-		if(osName.equals("Windows Vista")) {
+		// Life is a little different when playing on Windows 7.
+		if (SystemUtils.IS_OS_WINDOWS_7) {
 	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=");
 	      databaseConnectionString.append(databaseFile);
-		} else {*/
+		} else {
 	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
 	      databaseConnectionString.append(databaseFile);
 	      databaseConnectionString.append(";DriverID=22;READONLY=false}");
-		//}
+		}
 
 	    return DriverManager.getConnection(databaseConnectionString.toString(), "", "");
 	}

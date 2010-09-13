@@ -71,15 +71,14 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
      */
     @Override
     public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws SQLException, InvalidParameterException {
-    	/*
-    	 * This method is only called (and therefore this bit 'o logic is only
-    	 * invoked) when the species specific class has not overridden this
-    	 * method. These values may (or may not) be a good default.
-    	 */
-    	List<String> comparisonList = new ArrayList<String>(2);
-    	comparisonList.add("ordered locus");
-    	comparisonList.add("ORF");
-    	
+        /*
+         * This method is only called (and therefore this bit 'o logic is only
+         * invoked) when the species specific class has not overridden this
+         * method.
+         */
+        List<String> comparisonList = new ArrayList<String>(1);
+        comparisonList.add("ordered locus");
+
         return systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "OrderedLocusNames", comparisonList);
     }
 
@@ -125,15 +124,15 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
             // names appear.
             while (result.next()) {
                 String type = result.getString("type");
-                // if ("ordered locus".equals(type) || "ORF".equals(type)) {
                 if (comparisonList.contains(type)) {
-                    // We want this name to appear in the OrderedLocusNames
-                    // system table.
+                    // We want this name to appear in the system table indicated
+                    // by the substituteTable variable.
                     for (String id : result.getString("value").split("/")) {
                     	
-                    	// Only add the ids that do no match the filter
-                    	if(!id.matches(filter))
-                    		tableManager.submit(substituteTable, QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
+                    	// Only add the ids that do not match the filter
+                    	if (!id.matches(filter)) {
+                            tableManager.submit(substituteTable, QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
+                    	}
                     }
                 }
             }
@@ -178,60 +177,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
      */
     @Override
     public TableManager getSpeciesSpecificRelationshipTable(String relationshipTable, TableManager uniprotTableManager, TableManager systemTableManager, TableManager tableManager) throws SQLException {
-    	
     	tableManager = speciesSpecificRelationshipTableHelper(relationshipTable, uniprotTableManager, systemTableManager, tableManager, "OrderedLocusNames", "Bridge", "S");
-    	
-/*        SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
-        if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable1)) {
-            PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT id " + "FROM dbreferencetype " + "WHERE type = ? and " + "entrytype_dbreference_hjid = ?");
-            ps.setString(1, stp.systemTable2);
-            ResultSet result;
-            for (Row row : systemTableManager.getRows()) {
-                if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals("OrderedLocusNames")) {
-                    ps.setString(2, row.getValue("UID"));
-                    result = ps.executeQuery();
-                    while (result.next()) {
-                        tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", row.getValue("ID") }, { "Related", result.getString("id") },
-                        // TODO This is hard-coded. Fix it.
-                        { "Bridge", "S" } });
-                    }
-                }
-            }
-            ps.close();
-        } else if (getSpeciesSpecificSystemTables().containsKey(stp.systemTable2) && !stp.systemTable1.equals("UniProt")) {
-            PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT entrytype_dbreference_hjid, id " + "FROM dbreferencetype where type = ?");
-            ps.setString(1, stp.systemTable1);
-            ResultSet result = ps.executeQuery();
-
-            while (result.next()) {
-                String primary = result.getString("id");
-                String related = result.getString("entrytype_dbreference_hjid");
-
-                for (Row row : systemTableManager.getRows()) {
-                    if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals("OrderedLocusNames") && row.getValue("UID").equals(related)) {
-                        for (String id : row.getValue("ID").split("/")) {
-                            tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", primary }, { "Related", id },
-                            // TODO This is hard-coded. Fix it.
-                            { "Bridge", "S" } });
-                        }
-                    }
-                }
-            }
-            ps.close();
-        } else {
-            for (Row row1 : systemTableManager.getRows()) {
-                if (row1.getValue(TableManager.TABLE_NAME_COLUMN).equals("OrderedLocusNames")) {
-                    for (Row row2 : uniprotTableManager.getRows()) {
-                        if (row2.getValue("UID").equals(row1.getValue("UID"))) {
-                            tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "\"Primary\"", row2.getValue("ID") }, { "Related", row1.getValue("ID") },
-                            //TODO This is hard-coded.  Fix it. 
-                            { "Bridge", "S" } });
-                        }
-                    }
-                }
-            }
-        }*/
-
         return tableManager;
     }
 
@@ -242,8 +188,8 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
      *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
      */
     public TableManager speciesSpecificRelationshipTableHelper(String relationshipTable, TableManager uniprotTableManager, TableManager systemTableManager, TableManager tableManager, String criteria, String finalColumnName, String finalColumnValue) throws SQLException {
-        		//Separate the String relationshipTable into two parts based on the dash ("-") in the String
-		// Store the two parts as systemTable1 and systemTable2 in the SystemTablePair object
+        // Separate the String relationshipTable into two parts based on the dash ("-") in the String
+        // Store the two parts as systemTable1 and systemTable2 in the SystemTablePair object
         SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
 
 		// Get a Map, which in the case of E.coli only contains one entry (for Blattner) as a "proper" system table
@@ -387,7 +333,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
     }
 
     
-	/* (non-Javadoc)
+	/**
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificSystemCode(java.util.List, java.util.Map)
 	 */
 	@Override
@@ -443,8 +389,6 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 	
 	public static String getSpeciesNameXML(InputStream inputStream) {
 		return null;
-		
 	}
-	
 	
 }

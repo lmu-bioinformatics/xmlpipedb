@@ -74,61 +74,6 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	}
 
 	/**
-	 * It seems that getRelationsTableManagerCustomizations is not needed for A.thaliana
-	 * based on feedback from Kam.
-	 * 
-	 * This method will normalize the systemTables input, then pass the 
-	 * normalized values to the Super class's method of the same name. This 
-	 * elminates redundant logic in parent and child classes and ensures  
-	 * that species not needing extra processing can choose to not override
-	 * this method secure in the knowledge that their results will be 
-	 * correct.
-	 * 
-	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getRelationsTableManagerCustomizations(java.lang.String,
-	 *      java.lang.String, java.util.Map,
-	 *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager)
-	 */
-/*	@Override
-	public TableManager getRelationsTableManagerCustomizations(
-			String systemTable1, String systemTable2,
-			Map<String, String> templateDefinedSystemToSystemCode,
-			TableManager tableManager) {
-		
-		
-// ### create some local vars and set them
-		String systemCode = null;
-		String relatedCode = null;
- !!!!  
- * !!!!
- * Check here for use of OrderedLocusNames -- s/n/b used 
- * !!!!
- * !!!!
- * 
- 
-//		 if SystemTable1 is NOT SPECIES_TABLE, then use it :: if SystemTable1 IS the SPECIES_TABLE, call it OrderedLocusNames
-		if( !systemTable1.equals(SPECIES_TABLE) ){
-			systemCode = systemTable1;
-		} else {
-			systemCode = "OrderedLocusNames";
-		}
-		
-//		 If SystemTable2 is NOT SPECIES_TABLE, then use it :: if SystemTable2 IS the SPECIES_TABLE, call it OrderedLocusNames
-		if( !systemTable2.equals(SPECIES_TABLE) ){
-			relatedCode = systemTable2;
-		} else {
-			relatedCode = "OrderedLocusNames";
-		}
-// ### local vars finished
-		
-		// Call the super class's method, now that SPECIES_TABLE specific normalization
-		// has been done
-		tableManager = super.getRelationsTableManagerCustomizations(systemCode, relatedCode, templateDefinedSystemToSystemCode, tableManager);
-
-		
-		return tableManager;
-	}*/
-
-	/**
 	 * Add 2 SPECIES_TABLE specific items to the tableManager, then call the
 	 * super class to add the items all species will need.
 	 * 

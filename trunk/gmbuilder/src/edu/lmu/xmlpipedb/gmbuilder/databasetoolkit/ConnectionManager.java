@@ -334,7 +334,7 @@ public class ConnectionManager {
 	      databaseConnectionString.append(";DriverID=22;READONLY=false}");
 		}
 
-		_Log.debug("Using database connection string: " + databaseConnectionString.toString());
+		_Log.info("Using database connection string: " + databaseConnectionString.toString());
 	    return DriverManager.getConnection(databaseConnectionString.toString(), "", "");
 	}
 

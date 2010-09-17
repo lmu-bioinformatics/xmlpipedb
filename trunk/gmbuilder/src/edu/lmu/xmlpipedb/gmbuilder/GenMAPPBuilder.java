@@ -81,7 +81,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "2.0b51";
+    public static final String VERSION = "2.0b52";
 
     /**
      * Starts the application.
@@ -305,13 +305,13 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
                         CriterionList uniprotCriteria = new CriterionList();
                         setTallyCriterion(uniprotCriteria, TallyType.UNIPROT);
-        
+
                         CriterionList goCriteria = new CriterionList();
                         setTallyCriterion(goCriteria, TallyType.GO);
-        
+
                         getTallyResultsDatabase(uniprotCriteria, hibernateConfiguration);
                         getTallyResultsDatabase(goCriteria, hibernateConfiguration);
-        
+
                         // Gather the criteria into a list so that we can display them
                         // in a UsefulTable.
                         /**
@@ -505,7 +505,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             try {
                 String importTitle = AppResources.messageString("import.goa.command");
                 ImportGOAEngine importGOAEngine = new ImportGOAEngine(hibernateConfiguration);
-                
+
                 // Pick the file.
                 File file = chooseImportFile(importTitle, new FilenameFilter() {
                     /**
@@ -546,7 +546,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             this.goaFile = goaFile;
             exc = null;
         }
-        
+
         /**
          * @see javax.swing.SwingWorker#doInBackground()
          */
@@ -609,7 +609,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             new FileDialog(getFrontmostWindow(), importTitle);
         fileDialog.setFilenameFilter(filenameFilter);
         fileDialog.setVisible(true);
-        
+
         if (fileDialog.getFile() != null) {
             return new File(fileDialog.getDirectory(), fileDialog.getFile());
         } else {
@@ -781,7 +781,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Helper method for doing XML file-based tally results.
      */
-    private void doTallyResultsXml(TallyType tallyType, String titleKey) { 
+    private void doTallyResultsXml(TallyType tallyType, String titleKey) {
         CriterionList criteria = new CriterionList();
         setTallyCriterion(criteria, tallyType);
 
@@ -806,7 +806,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             ModalDialog.showPlainDialog(AppResources.messageString("tally.title"), new JScrollPane(t));
         }
     }
-    
+
     private void getTallyResultsXml(CriterionList criteria, File xmlFile) {
         _currentCriteria = criteria;
         TallyEngine te = new TallyEngine(criteria);
@@ -1047,7 +1047,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             this.hibernateConfiguration = hibernateConfiguration;
             exc = null;
         }
-        
+
         /**
          * @see javax.swing.SwingWorker#doInBackground()
          */
@@ -1089,7 +1089,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 (new ExportGoData(session.connection())).populateGeneOntologyStage(hibernateConfiguration);
                 endTime = System.currentTimeMillis();
                 _Log.info("Processing Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(endTime));
-                
+
                 return true;
             } catch(HibernateException hexc) {
                 exc = hexc;
@@ -1165,7 +1165,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         } else {
             handleMissingHibernateConfiguration();
         }
-        
+
         getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
 

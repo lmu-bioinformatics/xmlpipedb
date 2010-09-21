@@ -327,7 +327,8 @@ public class ConnectionManager {
 		if (SystemUtils.IS_OS_WINDOWS_7) {
 	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=");
 	      databaseConnectionString.append(databaseFile);
-	      databaseConnectionString.append("}");
+	      databaseConnectionString.append(";DriverID=22;READONLY=false}");
+//	      databaseConnectionString.append("}");
 		} else {
 	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
 	      databaseConnectionString.append(databaseFile);

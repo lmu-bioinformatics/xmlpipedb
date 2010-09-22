@@ -328,7 +328,7 @@ public class ConnectionManager {
 	      databaseConnectionString = new StringBuffer("jdbc:odbc:DRIVER=Microsoft Access Driver (*.mdb, *.accdb);DBQ=");
 	      databaseConnectionString.append(databaseFile.replaceFirst(":\\", ":\\\\"));
 //	      databaseConnectionString.append(";DriverID=22;READONLY=false}");
-//	      databaseConnectionString.append("}");
+	      databaseConnectionString.append(";");
 		} else {
 	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
 	      databaseConnectionString.append(databaseFile);

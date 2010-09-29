@@ -81,7 +81,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "2.0b57";
+    public static final String VERSION = "2.0b58";
 
     /**
      * Starts the application.
@@ -1141,6 +1141,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
+        
         if (hibernateConfiguration != null) {
             try {
                 validateDatabaseSettings(hibernateConfiguration);

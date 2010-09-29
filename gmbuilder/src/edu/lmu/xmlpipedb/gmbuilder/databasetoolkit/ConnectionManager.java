@@ -323,18 +323,14 @@ public class ConnectionManager {
 
 		StringBuffer databaseConnectionString;
 
-		// Life is a little different when playing on Windows 7.
-		if (SystemUtils.IS_OS_WINDOWS_7) {
-	      databaseConnectionString = new StringBuffer("jdbc:odbc:DRIVER=Microsoft Access Driver (*.mdb, *.accdb);DBQ=");
-	      databaseConnectionString.append(databaseFile.replaceFirst(":\\\\", ":\\\\\\\\"));
-//	      databaseConnectionString.append(";DriverID=22;READONLY=false}");
-	      databaseConnectionString.append(";");
-		} else {
-	      databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
-	      databaseConnectionString.append(databaseFile);
-	      databaseConnectionString.append(";DriverID=22;READONLY=false}");
-		}
+		//TODO Insert testing for version of Java environment (32- or 64-bit)
+	    databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
+	    databaseConnectionString.append(databaseFile);
+	    databaseConnectionString.append(";DriverID=22;READONLY=false}");
 
+	    // Connection will not be possible from 64-bit Java environment.
+	    // If both 32- and 64-bit Java environments are installed, gmbuilder-32bit.bat must be used.
+		_Log.info("Attempting connection from " + System.getProperty("sun.arch.data.model") + "-bit version of Java...");
 		_Log.info("Using database connection string: " + databaseConnectionString.toString());
 	    return DriverManager.getConnection(databaseConnectionString.toString(), "", "");
 	}

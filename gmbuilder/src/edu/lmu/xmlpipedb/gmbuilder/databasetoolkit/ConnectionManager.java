@@ -330,7 +330,6 @@ public class ConnectionManager {
 
 	    // Connection will not be possible from 64-bit Java environment.
 	    // If both 32- and 64-bit Java environments are installed, gmbuilder-32bit.bat must be used.
-		_Log.info("Attempting connection from " + System.getProperty("sun.arch.data.model") + "-bit version of Java...");
 		_Log.info("Using database connection string: " + databaseConnectionString.toString());
 	    return DriverManager.getConnection(databaseConnectionString.toString(), "", "");
 	}

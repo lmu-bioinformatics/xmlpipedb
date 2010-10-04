@@ -81,7 +81,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "2.0b58";
+    public static final String VERSION = "2.0b59";
 
     /**
      * Starts the application.
@@ -1140,6 +1140,9 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     private void doExportToGenMAPP() {
         getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
+
+        // Tests version of Java being used; if 64-bit version is being used, prevents
+        // export and returns error.
         if (System.getProperty("sun.arch.data.model").equals("64")) {
         	ModalDialog.showErrorDialog("Java Driver Compatibility Error",
         			"GenMAPP Builder is unable to export to an GenMAPP database while\n"
@@ -1150,9 +1153,9 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         			+ "If you do have a 32-bit Java environment installed, relaunch GenMAPP\n"
         			+ "Builder using the gmbuilder-32bit.bat file.");
         } else {
-        
+
             Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
-        
+
             if (hibernateConfiguration != null) {
                 try {
                     validateDatabaseSettings(hibernateConfiguration);
@@ -1178,7 +1181,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 handleMissingHibernateConfiguration();
             }
         }
-        
+
         getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
 

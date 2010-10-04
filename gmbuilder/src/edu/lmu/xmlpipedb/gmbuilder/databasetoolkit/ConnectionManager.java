@@ -323,7 +323,6 @@ public class ConnectionManager {
 
 		StringBuffer databaseConnectionString;
 
-		//TODO Insert testing for version of Java environment (32- or 64-bit)
 	    databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
 	    databaseConnectionString.append(databaseFile);
 	    databaseConnectionString.append(";DriverID=22;READONLY=false}");

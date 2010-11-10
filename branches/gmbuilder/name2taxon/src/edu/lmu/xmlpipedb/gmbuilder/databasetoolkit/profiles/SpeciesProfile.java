@@ -3,10 +3,10 @@
  * Author: Joey J. Barrett
  * Program: gmBuilder
  * Description: An instance of a subclass of SpeciesProfile
- * is an object which defines species specific customizations.  
- * SpeciesProfile outlines the required functions 
+ * is an object which defines species specific customizations.
+ * SpeciesProfile outlines the required functions
  * for any subclass of this class.
- *     
+ *
  * Revision History:
  * 20060620: Initial Revision.
  * *****************************************************/
@@ -28,17 +28,18 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
  *  be extended by data source, for example UniProt or TIGR. That class
  *  must then be extended by species,if any species specific processing
  *  needs to occur.
- * 
+ *
  * @author Joey J. Barrett Class: SpeciesProfile
  * @author Jeffrey Nicholas
  */
 public abstract class SpeciesProfile extends Profile {
 
 	private String customizedName = null;
+	private int taxonID;
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param name
 	 * @param description
 	 */
@@ -47,8 +48,21 @@ public abstract class SpeciesProfile extends Profile {
 	}
 
 	/**
+	 * Alternate constructor using name, taxonID, and description
+	 *
+	 * @param name
+	 * @param taxonID
+	 * @param description
+	 */
+
+	public SpeciesProfile(String name, int taxonID, String description) {
+		super(name, description);
+		this.taxonID = taxonID;
+	}
+
+	/**
 	 * Returns a customized species name. Customizable in the export wizard.
-	 * 
+	 *
 	 * @param speciesCustomizedName
 	 */
 	public void setCustomizedName(String speciesCustomizedName) {
@@ -57,7 +71,7 @@ public abstract class SpeciesProfile extends Profile {
 
 	/**
 	 * Returns the species name.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getSpeciesName() {
@@ -69,7 +83,7 @@ public abstract class SpeciesProfile extends Profile {
 
 	/**
 	 * Returns the species specific system tables.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract Map<String, SystemType> getSpeciesSpecificSystemTables();
@@ -77,7 +91,7 @@ public abstract class SpeciesProfile extends Profile {
 	/**
 	 * Returns a table manager with the species specific relations table
 	 * customizations.
-	 * 
+	 *
 	 * @param systemTable1
 	 * @param systemTable2
 	 * @param templateDefinedSystemToSystemCode
@@ -92,7 +106,7 @@ public abstract class SpeciesProfile extends Profile {
 
 	/**
 	 * Returns a TableManager with the systems table species specific changes.
-	 * 
+	 *
 	 * @param tableManager
 	 * @param dbProfile
 	 *            TODO
@@ -104,12 +118,12 @@ public abstract class SpeciesProfile extends Profile {
 
 	/**
 	 * Returns a TableManager with the species specific system tables.
-	 * 
+	 *
 	 * @param tableManager
 	 * @param primarySystemTableManager
 	 * @param version
 	 * @return
-	 * @throws InvalidParameterException 
+	 * @throws InvalidParameterException
 	 * @throws Exception
 	 */
 	public abstract TableManager getSystemTableManagerCustomizations(
@@ -119,20 +133,20 @@ public abstract class SpeciesProfile extends Profile {
 	/**
 	 * Returns a TableManager with the species specific primary table(s).
 	 * This is needed, since data for some species is not normalized. This
-	 * method allows for overriding the behavior of the data source 
+	 * method allows for overriding the behavior of the data source
 	 * DatabaseProfile's (i.e. UniProtDatabaseProfile)
 	 * getPrimarySystemTableManger method.
-	 * @param version 
-	 * 
+	 * @param version
+	 *
 	 * @return
 	 * @throws SQLException
 	 */
 	public abstract TableManager getPrimarySystemTableManagerCustomizations(Date version)
 			throws SQLException;
-	
+
 	/**
 	 * Returns a TableManager with a species specific relationship table added.
-	 * 
+	 *
 	 * @param relationshipTable
 	 * @param uniprotTableManager
 	 * @param blattnerTableManager
@@ -146,10 +160,10 @@ public abstract class SpeciesProfile extends Profile {
 			TableManager blattnerTableManager, TableManager tableManager)
 			throws SQLException;
 //FIXME: In this class it should not take a blattnerTableManager or a uniprotTableManager, since that is not generic
-	
+
 	/**
 	 * Returns the species specific system code.
-	 * 
+	 *
 	 * @param systemCodes
 	 * @param templateDefinedSystemToSystemCode
 	 * @return
@@ -157,7 +171,7 @@ public abstract class SpeciesProfile extends Profile {
 	public abstract List<String> getSpeciesSpecificSystemCode(
 			List<String> systemCodes,
 			Map<String, String> templateDefinedSystemToSystemCode);
-	
+
 	/**
 	 * Returns any other species-specific tables that fit neither the mold of
 	 * a standard system table, the primary system table, or any other prior
@@ -165,6 +179,18 @@ public abstract class SpeciesProfile extends Profile {
 	 */
 	public List<TableManager> getSpeciesSpecificCustomTables(Date version) throws SQLException {
 	    return new ArrayList<TableManager>();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return taxonID + " " + this.getName();
+	}
+	
+	public int getTaxon() {
+		return taxonID;
 	}
 
 }

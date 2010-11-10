@@ -99,15 +99,18 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 		// Get the species(s) contained in the database.
 		PreparedStatement ps = connection
-				.prepareStatement("select distinct(value) from organismnametype");
+//				.prepareStatement("select distinct(value) from organismnametype");
+		        .prepareStatement("select distinct(id) from dbreferencetype where type = 'NCBI Taxonomy'");
 		ResultSet result = ps.executeQuery();
+		
 		while (result.next()) {
 
-			String speciesName = result.getString("value");
+			int speciesTaxon = result.getInt("id");
 			boolean speciesProfileFound = false;
+			
 			// Add the species found to the available species profiles.
 			for (SpeciesProfile speciesProfile : speciesProfilesAvailable) {
-				if (speciesName.equals(speciesProfile.getName())) {
+				if (speciesTaxon == speciesProfile.getTaxon()) {
 					speciesProfilesFound.add(speciesProfile);
 					speciesProfileFound = true;
 					break;
@@ -117,7 +120,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			if (!speciesProfileFound) {
 				speciesProfilesFound
 						.add(new UniProtSpeciesProfile(
-								speciesName,
+								speciesTaxon,
 								"This profile defines the requirements for "
 										+ "a custom species profile within a UniProt database."));
 			}

@@ -45,7 +45,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 	private List<String> produceLastRelationshipTables = new ArrayList<String>();
 
 	/**
-	 * Constuctor.
+	 * Constructor.
 	 */
 	public UniProtDatabaseProfile() {
 
@@ -64,7 +64,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						new MycobacteriumTuberculosisUniProtSpeciesProfile(),
 						new PseudomonasAeruginosaUniProtSpeciesProfile(), 
 						new StaphylococcusAureusMRSA252UniProtSpeciesProfile(),
-						new MycobacteriumSmegmatisUniProtSpeciesProfile() });
+						new MycobacteriumSmegmatisUniProtSpeciesProfile(),
+						new HelicobacterPyloriUniProtSpeciesProfile()});
 	}
 
 	/*

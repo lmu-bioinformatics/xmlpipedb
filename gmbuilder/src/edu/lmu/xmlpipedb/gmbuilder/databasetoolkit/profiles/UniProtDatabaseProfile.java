@@ -65,7 +65,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						new PseudomonasAeruginosaUniProtSpeciesProfile(), 
 						new StaphylococcusAureusMRSA252UniProtSpeciesProfile(),
 						new MycobacteriumSmegmatisUniProtSpeciesProfile(),
-						new HelicobacterPyloriUniProtSpeciesProfile()});
+						new HelicobacterPyloriUniProtSpeciesProfile(),
+						new SalmonellaTyphimuriumUniProtSpeciesProfile()});
 	}
 
 	/*

@@ -21,7 +21,7 @@ public class SalmonellaTyphimuriumUniProtSpeciesProfile extends
 
 	    tableManager.submit("Systems", QueryType.update, new String[][] {
 	        { "SystemCode", "N" },
-	        { "Link", "(TODO: to be determined by QA)" }
+	        { "Link", "http://cmr.jcvi.org/cgi-bin/CMR/shared/AnnotationSearch.cgi?search_type=nt_locus&match_type=exact&search_string=~" }
 	    });
 
 	    return tableManager;

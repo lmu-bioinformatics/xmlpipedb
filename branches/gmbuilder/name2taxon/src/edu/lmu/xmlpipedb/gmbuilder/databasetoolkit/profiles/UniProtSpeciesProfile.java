@@ -62,7 +62,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 	public UniProtSpeciesProfile(String name, int taxonID, String description){
 		super(name, taxonID, description);
 	}
-	
+
 	/**
 	 * Creates a custom species profile for a UniProt centric database,
 	 * including the taxonID in addition to the description but excluding
@@ -134,10 +134,22 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
             throw new InvalidParameterException("comparisonList may not be null. Ensure you are passing a valid ArrayList<String>, even if it is empty.");
     	}
 
-        PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " +
+/*        PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " +
             "FROM genenametype INNER JOIN entrytype_genetype " +
             "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
-            "WHERE entrytype_gene_hjid = ?");
+            "WHERE entrytype_gene_hjid = ?");*/
+    	PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, genenametype.type " +
+    			"FROM genenametype INNER JOIN entrytype_genetype " +
+    				"ON (genenametype.entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
+    				"INNER JOIN entrytype " +
+    				"ON (entrytype_genetype.entrytype_gene_hjid = entrytype.hjid) " +
+    				"INNER JOIN organismtype " +
+    				"ON (entrytype.organism = organismtype.hjid) " +
+    				"INNER join dbreferencetype " +
+    				"ON (organismtype.hjid = dbreferencetype.organismtype_dbreference_hjid)" +
+    			"WHERE entrytype_gene_hjid = ? " +
+    				"AND dbreferencetype.type LIKE '%NCBI Taxonomy%'" +
+    				"AND dbreferencetype.id = '" + this.getTaxon() + "'");
         ResultSet result;
 
         for (Row row : primarySystemTableManager.getRows()) {

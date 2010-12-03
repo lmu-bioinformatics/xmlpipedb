@@ -68,14 +68,14 @@ public class ExportGoData {
      * @throws IOException
      * @throws JAXBException
      */
-    public void export(char chosenAspect) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
+    public void export(char chosenAspect, int taxon) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
         String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(3, "GeneOntology export - creating tables...");
         godb.createTables(connection);
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(10, "GeneOntology export - populating tables...");
-        populateGoTables(chosenAspect);
+        populateGoTables(chosenAspect, taxon);
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(40, "GeneOntology export - flushing tables...");
         godb.updateSystemsTable(connection, Date, "T");
@@ -213,10 +213,10 @@ public class ExportGoData {
      * @throws IOException
      * @throws JAXBException
      */
-    private void populateGoTables(char chosenAspect) throws SQLException, HibernateException, SAXException, IOException, JAXBException {
+    private void populateGoTables(char chosenAspect, int taxon) throws SQLException, HibernateException, SAXException, IOException, JAXBException {
         _Log.info("Populating UniProt-GO table...");
         //populateUniprotGoTable(goaFile);
-        populateUniprotGoTableFromSQL(chosenAspect);
+        populateUniprotGoTableFromSQL(chosenAspect, taxon);
         _Log.info("Populating GeneOntology table...");
         populateGeneOntology();
         _Log.info("Populating GeneOntologyTree...");
@@ -382,9 +382,10 @@ public class ExportGoData {
      * @throws SQLException
      */
 
-    private void populateUniprotGoTableFromSQL(char chosenAspect) throws SQLException {
+    private void populateUniprotGoTableFromSQL(char chosenAspect, int taxon) throws SQLException {
     	HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
-    	String uniProtAndGOIDSQL = "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%'";
+    	String uniProtAndGOIDSQL = "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%' and taxon = 'taxon:" + taxon + "'";
+
     	PreparedStatement uniProtAndGOIDPS = null;
     	_Log.info("creating: " + GOTable.UniProt_Go);
 

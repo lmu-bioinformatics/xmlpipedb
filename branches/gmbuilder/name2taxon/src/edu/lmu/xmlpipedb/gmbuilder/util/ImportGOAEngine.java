@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 
@@ -60,6 +61,7 @@ public class ImportGOAEngine {
         PreparedStatement query = null;
         String insert = "INSERT INTO goa VALUES "
         	+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String getEntryCount = "SELECT COUNT(primdbkey) FROM goa;";
 
         try {
     		// Establishes connection to PostgreSQL database
@@ -73,7 +75,16 @@ public class ImportGOAEngine {
             String inputLine;
             String[] goaColumns = null;
             String[] goaColumnsTemp = null;
-            int primarykeyid = 1;
+
+            query = conn.prepareStatement(getEntryCount);
+            ResultSet tempResult = query.executeQuery();
+            tempResult.next();
+            int prevKeyCount = tempResult.getInt(1);
+
+            // Initial primarykeyid must be set to equal the count of
+            // current entries in goa table + 1
+            // I.E. select count(primdbkey) for goa; (+1)
+            int primarykeyid = prevKeyCount + 1;
             int linesRead = 0;
             int totalLines = getNumberOfLinesInGOA(goaFile);
             int percentCrossedMultiplier = 1;
@@ -132,7 +143,7 @@ public class ImportGOAEngine {
 
             }
             conn.commit();
-            _Log.warn("Imported " + (primarykeyid - 1) + " lines from GOA file.");
+            _Log.warn("Imported " + (primarykeyid - (prevKeyCount + 1)) + " lines from GOA file.");
             _Log.warn("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
         } finally {
             try { query.close(); } catch(Exception exc) { }

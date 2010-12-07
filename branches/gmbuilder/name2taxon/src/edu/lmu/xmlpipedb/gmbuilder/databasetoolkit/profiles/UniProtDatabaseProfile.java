@@ -62,7 +62,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						new VibrioCholeraeUniprotSpeciesProfile(),
 						new SaccharomycesCerevisiaeUniProtSpeciesProfile(),
 						new MycobacteriumTuberculosisUniProtSpeciesProfile(),
-						new PseudomonasAeruginosaUniProtSpeciesProfile(), 
+						new PseudomonasAeruginosaUniProtSpeciesProfile(),
 						new StaphylococcusAureusMRSA252UniProtSpeciesProfile() });
 	}
 
@@ -102,12 +102,12 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 //				.prepareStatement("select distinct(value) from organismnametype");
 		        .prepareStatement("select distinct(id) from dbreferencetype where type = 'NCBI Taxonomy'");
 		ResultSet result = ps.executeQuery();
-		
+
 		while (result.next()) {
 
 			int speciesTaxon = result.getInt("id");
 			boolean speciesProfileFound = false;
-			
+
 			// Add the species found to the available species profiles.
 			for (SpeciesProfile speciesProfile : speciesProfilesAvailable) {
 				if (speciesTaxon == speciesProfile.getTaxon()) {
@@ -326,7 +326,14 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		}
 
 		int recordCounter = 0;
-		String accessionSQL = "SELECT entrytype_accession_hjid, hjvalue FROM entrytype_accession WHERE entrytype_accession_hjindex = 0";
+		//String accessionSQL = "SELECT entrytype_accession_hjid, hjvalue FROM entrytype_accession WHERE entrytype_accession_hjindex = 0";
+		String accessionSQL = "SELECT entrytype_accession.entrytype_accession_hjid, entrytype_accession.hjvalue " +
+			"FROM entrytype_accession " + "INNER JOIN entrytype ON (entrytype_accession.entrytype_accession_hjid = entrytype.hjid) " +
+			"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
+			"INNER JOIN dbreferencetype ON (organismtype.hjid = dbreferencetype.organismtype_dbreference_hjid) " +
+			"WHERE entrytype_accession_hjindex = 0 " +
+			"AND dbreferencetype.type LIKE '%NCBI Taxonomy%' " +
+			"AND dbreferencetype.id = '" + speciesProfile.getTaxon() + "'";
 		String nameSQL = "SELECT hjvalue FROM entrytype_name WHERE entrytype_name_hjid = ?";
 		String geneSQL = "SELECT value, type FROM genenametype INNER JOIN entrytype_genetype ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) WHERE entrytype_gene_hjid = ?";
 

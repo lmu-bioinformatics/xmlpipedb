@@ -650,7 +650,9 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 								"AND dbreferencetype.id = ?) as species_entry INNER JOIN dbreferencetype ON (dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid) INNER JOIN entrytype_accession " +
 								"ON (entrytype_dbreference_hjid = entrytype_accession_hjid) " +
 								"WHERE type = ?");
-				ps.setString(1, stp.systemTable2);
+				ps.setString(1, "" + speciesProfile.getTaxon());
+				ps.setString(2, stp.systemTable2);
+
 				ResultSet result = ps.executeQuery();
 
 				String primary = "";
@@ -684,16 +686,32 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				PreparedStatement ps = ConnectionManager
 						.getRelationalDBConnection()
 						.prepareStatement(
-								"SELECT dbref1.id as id1, "
+								/*"SELECT dbref1.id as id1, "
 										+ "dbref2.id as id2 "
 										+ "FROM dbreferencetype as dbref1 "
 										+ "INNER JOIN dbreferencetype as dbref2 "
 										+ "USING (entrytype_dbreference_hjid) "
 										+ "WHERE dbref1.type <> dbref2.type "
 										+ "AND dbref1.type = ? "
-										+ "AND dbref2.type = ?");
+										+ "AND dbref2.type = ?");*/
+								"SELECT id1, id2 from (" +
+								"SELECT dbref1.id AS id1, dbref2.id AS id2, dbref1.entrytype_dbreference_hjid AS dbrefhjid " +
+								"FROM dbreferencetype AS dbref1 " +
+								"INNER JOIN dbreferencetype AS dbref2 " +
+								"USING (entrytype_dbreference_hjid) " +
+								"WHERE dbref1.type <> dbref2.type " +
+								"AND dbref1.type = ? " +
+								"AND dbref2.type = ?) AS dbrefcomp " +
+								"INNER JOIN ( " +
+								"SELECT entrytype.hjid " +
+								"FROM entrytype " +
+								"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
+								"INNER JOIN dbreferencetype ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
+								"WHERE dbreferencetype.type = 'NCBI Taxonomy' " +
+								"AND id = ?) AS species_entry ON (dbrefcomp.dbrefhjid = species_entry.hjid)");
 				ps.setString(1, stp.systemTable1);
 				ps.setString(2, stp.systemTable2);
+				ps.setString(3, "" + speciesProfile.getTaxon());
 				ResultSet result = ps.executeQuery();
 				while (result.next()) {
 					String primary = GenMAPPBuilderUtilities

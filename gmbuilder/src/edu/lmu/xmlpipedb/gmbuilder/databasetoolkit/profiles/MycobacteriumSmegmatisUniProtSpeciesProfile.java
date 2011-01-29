@@ -18,7 +18,7 @@ public class MycobacteriumSmegmatisUniProtSpeciesProfile extends UniProtSpeciesP
 
 	    tableManager.submit("Systems", QueryType.update, new String[][] {
 	        { "SystemCode", "N" },
-	        { "Link", "http://cmr.jcvi.org/cgi-bin/CMR/shared/GenePage.cgi?locus=~" }
+	        { "Link", "http://mycobrowser.epfl.ch/smegmasearch.php?gene+name=~" }
 	    });
 
 	    return tableManager;

@@ -27,7 +27,8 @@ public class MycobacteriumTuberculosisUniProtSpeciesProfile extends UniProtSpeci
         });
 
         tableManager.submit("Systems", QueryType.update, new String[][] {
-            { "SystemCode", "N" }, { "Link", "http://www.genome.jp/dbget-bin/www_bget?mtu+~" }
+            //{ "SystemCode", "N" }, { "Link", "http://www.genome.jp/dbget-bin/www_bget?mtu+~" }
+            { "SystemCode", "N" }, { "Link", "http://tuberculist.epfl.ch/quicksearch.php?gene+name=~" }
         });
 
         return tableManager;

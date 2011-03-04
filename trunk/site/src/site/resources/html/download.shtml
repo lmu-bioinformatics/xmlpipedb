@@ -67,6 +67,57 @@ coli</i> K12</a></h4>
     </li>
 </ul>
 
+<h4><a id="h.pylori">GenMAPP Gene Database for <i>Helicobacter
+pylori</i> str. 26695</a></h4>
+<ul>
+    <li><a class="external"
+        href="http://sourceforge.net/projects/xmlpipedb/files/H.%20pylori%2026695%20Gene%20Database/H.%20pylori%2020101130">Release
+    20101130</a></li>
+    <li>Read Me (501K PDF, revision 20101130)
+    <ul>
+        <li><a href="docs/ReadMe_Hp-Std_External_20101130.pdf">Direct
+        from this site</a></li>
+        <li><a class="external"
+            href="http://sourceforge.net/projects/xmlpipedb/files/H.%20pylori%2026695%20Gene%20Database/H.%20pylori%2020101130/ReadMe_Hp-Std_External_20101130.pdf/download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
+</ul>
+
+<h4><a id="m.smegmatis">GenMAPP Gene Database for <i>Mycobacterium
+    smegmatis</i> ATCC 700084/mc(2)155</a></h4>
+<ul>
+    <li><a class="external"
+        href="http://sourceforge.net/projects/xmlpipedb/files/M.%20smegmatis%20Gene%20Database/M.%20smegmatis%2020110128">Release
+    20110128</a></li>
+    <li>Read Me (248K PDF, revision 20110128)
+    <ul>
+        <li><a href="docs/ReadMe_Ms-Std_External_20110128.pdf">Direct
+        from this site</a></li>
+        <li><a class="external"
+            href="http://sourceforge.net/projects/xmlpipedb/files/M.%20smegmatis%20Gene%20Database/M.%20smegmatis%2020110128/ReadMe_Ms-Std_External_20110128.pdf/download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
+</ul>
+
+<h4><a id="m.tuberculosis">GenMAPP Gene Database for <i>Mycobacterium
+    tuberculosis</i> ATCC 25618/H37Rv</a></h4>
+<ul>
+    <li><a class="external"
+        href="http://sourceforge.net/projects/xmlpipedb/files/M.%20tuberculosis%20H37Rv%20Gene%20Database/M.%20tuberculosis%2020110303">Release
+    20110303</a></li>
+    <li>Read Me (230K PDF, revision 20110303)
+    <ul>
+        <li><a href="docs/ReadMe_Mt-Std_External_20110303.pdf">Direct
+        from this site</a></li>
+        <li><a class="external"
+            href="http://sourceforge.net/projects/xmlpipedb/files/M.%20tuberculosis%20H37Rv%20Gene%20Database/M.%20tuberculosis%2020110303/ReadMe_Mt-Std_External_20110303.pdf/download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
+</ul>
+
 <h4><a id="p.falciparum">GenMAPP Gene Database for <i>Plasmodium
 falciparum</i> (isolate 3D7)</a></h4>
 <ul>
@@ -101,6 +152,23 @@ aeruginosa</i> str. PAO1</a></h4>
     </li>
 </ul>
 
+<h4><a id="s.typhimurium">GenMAPP Gene Database for <i>Salmonella
+typhimurium</i> ATCC 700720/SGSC1412/LT2</a></h4>
+<ul>
+    <li><a class="external"
+        href="http://sourceforge.net/projects/xmlpipedb/files/S.%20typhimurium%20ATCC%20700720%2C%20SGSC1412%2C%20LT2%20Gene%20Database/S.%20typhimurium%2020101130">Release
+    20101130</a></li>
+    <li>Read Me (250K PDF, revision 20101130)
+    <ul>
+        <li><a href="docs/ReadMe_St-Std_External_20101130.pdf">Direct
+        from this site</a></li>
+        <li><a class="external"
+            href="http://sourceforge.net/projects/xmlpipedb/files/S.%20typhimurium%20ATCC%20700720%2C%20SGSC1412%2C%20LT2%20Gene%20Database/S.%20typhimurium%2020101130/ReadMe_St-Std_External_20101130.pdf/download">SourceForge
+        mirror</a></li>
+    </ul>
+    </li>
+</ul>        
+
 <h4><a id="s.aureus">GenMAPP Gene Database for <i>Staphylococcus
 aureus</i> (strain MRSA252)</a></h4>
 <ul>
@@ -122,14 +190,14 @@ aureus</i> (strain MRSA252)</a></h4>
     cholerae</i> O1 biovar El Tor str. N16961 Gene Database</a></h4>
 <ul>
     <li><a class="external"
-        href="http://sourceforge.net/projects/xmlpipedb/files/V.%20cholerae%20Gene%20Database/V.%20cholerae%2020090622">Release
-    20090622</a></li>
-    <li>Read Me (264K PDF, revision 20090622)
+        href="http://sourceforge.net/projects/xmlpipedb/files/V.%20cholerae%20Gene%20Database/V.%20cholerae%2020101022">Release
+    20101022</a></li>
+    <li>Read Me (246K PDF, revision 20101022)
     <ul>
-        <li><a href="docs/ReadMe_Vc-Std_External_20090622.pdf">Direct
+        <li><a href="docs/ReadMe_Vc-Std_External_20101022.pdf">Direct
         from this site</a></li>
         <li><a class="external"
-            href="http://sourceforge.net/projects/xmlpipedb/files/V.%20cholerae%20Gene%20Database/V.%20cholerae%2020090622/ReadMe_Vc-Std_External_20090622.pdf/download">SourceForge
+            href="http://sourceforge.net/projects/xmlpipedb/files/V.%20cholerae%20Gene%20Database/V.%20cholerae%2020101022/ReadMe_Vc-Std_External_20101022.pdf/download">SourceForge
         mirror</a></li>
     </ul>
     </li>

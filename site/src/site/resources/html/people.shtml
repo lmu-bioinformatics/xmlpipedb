@@ -29,7 +29,8 @@ Computer Science</p>
 <p class="dataline">Don Murphy, spring-fall 2010 (<i>Saccharomyces cerevisiae</i>, GenMAPP Builder, GO Slim)</p>
 <p class="dataline">Jeffrey Nicholas, Masters thesis 2007 (<i>Arabidopsis thaliana</i>, GenMAPP Builder, xmlpipedbutils)</p>
 <p class="dataline">Bernadette Pak, spring 2010 (<i>Saccharomyces cerevisiae</i>)</p>
-<p class="dataline">Kelly Parks, spring 2010 (<i>Staphylococcus aureus</i>)</p>
+<p class="dataline">Kevin Paiz-Ramirez, fall 2010 (<i>Mycobacterium tuberculosis</i>)</p>
+<p class="dataline">Kelly Parks, spring-fall 2010, spring 2011 (<i>Staphylococcus aureus</i>)</p>
 <p class="dataline">Derek Smith, spring 2009 (GenMAPP Builder, xmlpipedbutils)</p>
 <p class="dataline">Chad Villaflores, spring 2009 (<i>Escherischia coli K12</i>)</p>
 
@@ -160,8 +161,9 @@ project</a>.</p>
 
 <div class="contributorBlock">We would like to thank the <a
     class="external" href="http://www.genmapp.org">GenMAPP.org</a>
-Development Group, especially Bruce R. Conklin, Steven C. Lawlor, and
-Scott W. Doniger. We also wish to thank the LMU Departments of Biology
+Development Group, especially Bruce R. Conklin, Steven C. Lawlor,
+Scott W. Doniger, and Kristina Hanspers.
+We also wish to thank the LMU Departments of Biology
 and Electrical Engineering &amp; Computer Science for giving us the
 opportunity to team-teach bioinformatics at LMU, as well as the <a
     href="http://cse.lmu.edu">Seaver College of Science &amp;

@@ -60,20 +60,21 @@ public class PlasmodiumFalciparumUniProtSpeciesProfile extends UniProtSpeciesPro
     public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws SQLException, InvalidParameterException {
         // Start with the default OrderedLocusNames behavior.
         TableManager result = super.getSystemTableManagerCustomizations(tableManager, primarySystemTableManager, version);
-        
+    // disabled pattern match to just look for type = 'ORF'
         // Next, we add IDs from the other gene/name tags, but ONLY if they match
         // the pattern PF[A-Z][0-9]{4}[a-z].
-        final String pfID = "PF[A-Z][0-9][0-9][0-9][0-9][a-z]";
-        final String pfID2 = "PF[0-9][0-9]_[0-9][0-9][0-9][0-9]";
-        final String pfID3 = "MAL[0-9]*P1.[0-9]*";
+        //final String pfID = "PF[A-Z][0-9][0-9][0-9][0-9][a-z]";
+        //final String pfID2 = "PF[0-9][0-9]_[0-9][0-9][0-9][0-9]";
+        //final String pfID3 = "MAL[0-9]*P1.[0-9]*";
         String sqlQuery = "select d.entrytype_gene_hjid as hjid, c.value " +
             "from genenametype c inner join entrytype_genetype d " +
             "on (c.entrytype_genetype_name_hjid = d.hjid) " +
-            "where (c.value similar to ? " +
-            "or c.value similar to ? " +
-            "or c.value similar to ?) " +
-            "and type <> 'ordered locus names' " +
-            "and type <> 'ORF' " +
+            //"where (c.value similar to ? " +
+            "where c.type = 'ORF'" +
+            //"or c.value similar to ? " +
+            //"or c.value similar to ?) " +
+            //"and type <> 'ordered locus names' " +
+            //"and type <> 'ORF' " +
             "group by d.entrytype_gene_hjid, c.value";
 
         String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);
@@ -83,16 +84,51 @@ public class PlasmodiumFalciparumUniProtSpeciesProfile extends UniProtSpeciesPro
         try {
             // Query, iterate, add to table manager.
             ps = c.prepareStatement(sqlQuery);
-            ps.setString(1, pfID);
-            ps.setString(2, pfID2);
-            ps.setString(3, pfID3);
+            //ps.setString(1, pfID);
+            //ps.setString(2, pfID2);
+            //ps.setString(3, pfID3);
             rs = ps.executeQuery();
+        // old code prior to processing id's with '_'    
+            //while (rs.next()) {
+            //    String hjid = Long.valueOf(rs.getLong("hjid")).toString();
+            //    String id = rs.getString("value");
+            //    _Log.debug("Processing raw ID: " + id + " for surrogate " + hjid);
+            //    tableManager.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+            //}
+            
             while (rs.next()) {
                 String hjid = Long.valueOf(rs.getLong("hjid")).toString();
+
+                // capture unmodified value in string variable id
+                // We want to remove the '_' here but also add id's with the '_'
                 String id = rs.getString("value");
-                _Log.debug("Processing raw ID: " + id + " for surrogate " + hjid);
-                tableManager.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                
+                // condition if id matched pattern which indicates it contains a '_'
+                if (id.matches("PFA_.*")) {
+                String[] substrings = id.split("/");
+                String new_id = null;
+                String old_id = id;
+                for (int i = 0; i < substrings.length; i++) {
+
+                    new_id = substrings[i].replace("_", "");
+
+                    _Log.debug("Remove '_' from " + id + " to create: " + new_id + " for surrogate " + hjid);
+                    result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                    
+                    _Log.debug("Keep '_' from " + id + " to create: " + old_id + " for surrogate " + hjid);
+                    result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", old_id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                }
+                }
+                // otherwise process as normal
+                    else {
+                    _Log.debug("Processing raw ID: " + id + " for surrogate " + hjid);
+                    tableManager.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                }
             }
+            
+            
+            
+            
         } catch(SQLException sqlexc) {
             logSQLException(sqlexc, sqlQuery);
         }

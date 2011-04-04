@@ -1,0 +1,3 @@
+java -jar ..\lib\schemaSpy_4.1.1.jar -dp ..\lib\postgresql-8.1-405.jdbc3.jar -t pgsql -u postgres -p 599yay -host localhost:5432 -db godb -s public -o ..\dist\SchemaSpy\GODB
+java -jar ..\lib\schemaSpy_4.1.1.jar -dp ..\lib\postgresql-8.1-405.jdbc3.jar -t pgsql -u postgres -p 599yay -host localhost:5432 -db uniprotdb -s public -o ..\dist\SchemaSpy\UniProtDB
+java -jar ..\lib\schemaSpy_4.1.1.jar -dp ..\lib\postgresql-8.1-405.jdbc3.jar -t pgsql -u postgres -p 599yay -host localhost:5432 -db schema_spy -s public -o ..\dist\SchemaSpy\GMBuilder 

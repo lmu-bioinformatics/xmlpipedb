@@ -6,7 +6,7 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType
 public class StaphylococcusAureusMRSA252UniProtSpeciesProfile extends
 		UniProtSpeciesProfile {
 	public StaphylococcusAureusMRSA252UniProtSpeciesProfile (){
-		super("Staphylococcus aureus (strain MRSA252)", "This profile customizes the GenMAPP Builder export for Staphylococcus Aureus MRSA 252 data loaded from a UniProt XML file");
+		super("Staphylococcus aureus (strain MRSA252)", 282458, "This profile customizes the GenMAPP Builder export for Staphylococcus Aureus MRSA 252 data loaded from a UniProt XML file");
 	}
 
 	@Override

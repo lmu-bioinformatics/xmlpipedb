@@ -45,7 +45,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 	private List<String> produceLastRelationshipTables = new ArrayList<String>();
 
 	/**
-	 * Constructor.
+	 * Constuctor.
 	 */
 	public UniProtDatabaseProfile() {
 
@@ -102,15 +102,18 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 		// Get the species(s) contained in the database.
 		PreparedStatement ps = connection
-				.prepareStatement("select distinct(value) from organismnametype");
+//				.prepareStatement("select distinct(value) from organismnametype");
+		        .prepareStatement("select distinct(id) from dbreferencetype where type = 'NCBI Taxonomy'");
 		ResultSet result = ps.executeQuery();
+
 		while (result.next()) {
 
-			String speciesName = result.getString("value");
+			int speciesTaxon = result.getInt("id");
 			boolean speciesProfileFound = false;
+
 			// Add the species found to the available species profiles.
 			for (SpeciesProfile speciesProfile : speciesProfilesAvailable) {
-				if (speciesName.equals(speciesProfile.getName())) {
+				if (speciesTaxon == speciesProfile.getTaxon()) {
 					speciesProfilesFound.add(speciesProfile);
 					speciesProfileFound = true;
 					break;
@@ -120,7 +123,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			if (!speciesProfileFound) {
 				speciesProfilesFound
 						.add(new UniProtSpeciesProfile(
-								speciesName,
+								speciesTaxon,
 								"This profile defines the requirements for "
 										+ "a custom species profile within a UniProt database."));
 			}
@@ -326,7 +329,14 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		}
 
 		int recordCounter = 0;
-		String accessionSQL = "SELECT entrytype_accession_hjid, hjvalue FROM entrytype_accession WHERE entrytype_accession_hjindex = 0";
+		//String accessionSQL = "SELECT entrytype_accession_hjid, hjvalue FROM entrytype_accession WHERE entrytype_accession_hjindex = 0";
+		String accessionSQL = "SELECT entrytype_accession.entrytype_accession_hjid, entrytype_accession.hjvalue " +
+			"FROM entrytype_accession " + "INNER JOIN entrytype ON (entrytype_accession.entrytype_accession_hjid = entrytype.hjid) " +
+			"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
+			"INNER JOIN dbreferencetype ON (organismtype.hjid = dbreferencetype.organismtype_dbreference_hjid) " +
+			"WHERE entrytype_accession_hjindex = 0 " +
+			"AND dbreferencetype.type LIKE '%NCBI Taxonomy%' " +
+			"AND dbreferencetype.id = ?";
 		String nameSQL = "SELECT hjvalue FROM entrytype_name WHERE entrytype_name_hjid = ?";
 		String geneSQL = "SELECT value, type FROM genenametype INNER JOIN entrytype_genetype ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) WHERE entrytype_gene_hjid = ?";
 
@@ -350,6 +360,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				new String[] { "UID" });
 		PreparedStatement ps = ConnectionManager.getRelationalDBConnection()
 				.prepareStatement(accessionSQL);
+		ps.setString(1, "" + speciesProfile.getTaxon());
 		ResultSet result = ps.executeQuery();
 
 		// Step 1 - populate the TableManager with records from the
@@ -528,10 +539,19 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 								+ " is not in the list of DatabaseSpecificSystemTables or SpeciesSpecificSystemTables.");
 				ps = ConnectionManager.getRelationalDBConnection()
 						.prepareStatement(
-								"SELECT DISTINCT(id) "
+/*								"SELECT DISTINCT(id) "
 										+ "FROM dbreferencetype "
-										+ "WHERE type = ?");
-				ps.setString(1, systemTable.getKey());
+										+ "WHERE type = ?");*/
+								"SELECT distinct id FROM dbreferencetype " +
+								"INNER JOIN (" +
+								"SELECT entrytype.hjid FROM entrytype " +
+								"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
+								"INNER JOIN dbreferencetype ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
+								"WHERE dbreferencetype.type = 'NCBI Taxonomy' " +
+								"and id = ?) as species_entry on dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid " +
+								"where type = ?");
+				ps.setString(1, "" + speciesProfile.getTaxon());
+				ps.setString(2, systemTable.getKey());
 				result = ps.executeQuery();
 
 				while (result.next()) {
@@ -621,11 +641,21 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				PreparedStatement ps = ConnectionManager
 						.getRelationalDBConnection()
 						.prepareStatement(
-								"SELECT hjvalue, id "
+								/*"SELECT hjvalue, id "
 										+ "FROM dbreferencetype INNER JOIN entrytype_accession "
 										+ "ON (entrytype_dbreference_hjid = entrytype_accession_hjid) "
-										+ "WHERE type = ?");
-				ps.setString(1, stp.systemTable2);
+										+ "WHERE type = ?");*/
+								"SELECT hjvalue, dbreferencetype.id " +
+								"FROM (SELECT entrytype.hjid FROM entrytype " +
+								"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
+								"INNER JOIN dbreferencetype ON (organismtype.hjid = dbreferencetype.organismtype_dbreference_hjid) " +
+								"WHERE dbreferencetype.type LIKE '%NCBI Taxonomy%' " +
+								"AND dbreferencetype.id = ?) as species_entry INNER JOIN dbreferencetype ON (dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid) INNER JOIN entrytype_accession " +
+								"ON (entrytype_dbreference_hjid = entrytype_accession_hjid) " +
+								"WHERE type = ?");
+				ps.setString(1, "" + speciesProfile.getTaxon());
+				ps.setString(2, stp.systemTable2);
+
 				ResultSet result = ps.executeQuery();
 
 				String primary = "";
@@ -659,16 +689,32 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				PreparedStatement ps = ConnectionManager
 						.getRelationalDBConnection()
 						.prepareStatement(
-								"SELECT dbref1.id as id1, "
+								/*"SELECT dbref1.id as id1, "
 										+ "dbref2.id as id2 "
 										+ "FROM dbreferencetype as dbref1 "
 										+ "INNER JOIN dbreferencetype as dbref2 "
 										+ "USING (entrytype_dbreference_hjid) "
 										+ "WHERE dbref1.type <> dbref2.type "
 										+ "AND dbref1.type = ? "
-										+ "AND dbref2.type = ?");
+										+ "AND dbref2.type = ?");*/
+								"SELECT id1, id2 from (" +
+								"SELECT dbref1.id AS id1, dbref2.id AS id2, dbref1.entrytype_dbreference_hjid AS dbrefhjid " +
+								"FROM dbreferencetype AS dbref1 " +
+								"INNER JOIN dbreferencetype AS dbref2 " +
+								"USING (entrytype_dbreference_hjid) " +
+								"WHERE dbref1.type <> dbref2.type " +
+								"AND dbref1.type = ? " +
+								"AND dbref2.type = ?) AS dbrefcomp " +
+								"INNER JOIN ( " +
+								"SELECT entrytype.hjid " +
+								"FROM entrytype " +
+								"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
+								"INNER JOIN dbreferencetype ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
+								"WHERE dbreferencetype.type = 'NCBI Taxonomy' " +
+								"AND id = ?) AS species_entry ON (dbrefcomp.dbrefhjid = species_entry.hjid)");
 				ps.setString(1, stp.systemTable1);
 				ps.setString(2, stp.systemTable2);
+				ps.setString(3, "" + speciesProfile.getTaxon());
 				ResultSet result = ps.executeQuery();
 				while (result.next()) {
 					String primary = GenMAPPBuilderUtilities

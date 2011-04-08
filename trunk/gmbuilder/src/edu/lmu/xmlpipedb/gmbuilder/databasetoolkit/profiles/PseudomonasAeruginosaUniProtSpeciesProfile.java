@@ -7,7 +7,7 @@ public class PseudomonasAeruginosaUniProtSpeciesProfile extends
 		UniProtSpeciesProfile {
 
 	public PseudomonasAeruginosaUniProtSpeciesProfile() {
-	    super("Pseudomonas aeruginosa",
+	    super("Pseudomonas aeruginosa", 287,
 	       "This profile customizes the GenMAPP Builder export for Pseudomonas aeruginosa data loaded from a UniProt XML file.");
 	}
 

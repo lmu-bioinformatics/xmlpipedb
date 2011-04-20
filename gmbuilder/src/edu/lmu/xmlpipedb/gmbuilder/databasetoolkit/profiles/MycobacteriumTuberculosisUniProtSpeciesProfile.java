@@ -15,8 +15,8 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 public class MycobacteriumTuberculosisUniProtSpeciesProfile extends UniProtSpeciesProfile {
 
     public MycobacteriumTuberculosisUniProtSpeciesProfile() {
-        super("Mycobacterium tuberculosis",
-            "This profile customizes the GenMAPP Builder export for Genus species data loaded from a UniProt XML file.");
+        super("Mycobacterium tuberculosis", 1773,
+              "This profile customizes the GenMAPP Builder export for Mycobacterium Tuberculosis data loaded from a UniProt XML file.");
     }
 
     @Override
@@ -44,7 +44,7 @@ public class MycobacteriumTuberculosisUniProtSpeciesProfile extends UniProtSpeci
         PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " +
             "FROM genenametype INNER JOIN entrytype_genetype " +
             "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
-            "WHERE (type = 'ordered locus' or type = 'ORF') and (value like 'Rv%'and not value = 'Rv3346/55c') and entrytype_gene_hjid = ?");
+            "WHERE type = 'ordered locus' and value like 'Rv%' and entrytype_gene_hjid = ?");
         ResultSet result;
 
         for (Row row : primarySystemTableManager.getRows()) {

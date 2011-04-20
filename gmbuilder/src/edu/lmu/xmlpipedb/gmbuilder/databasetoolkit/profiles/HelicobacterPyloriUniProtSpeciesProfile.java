@@ -18,7 +18,7 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 public class HelicobacterPyloriUniProtSpeciesProfile extends UniProtSpeciesProfile {
 	
 	public HelicobacterPyloriUniProtSpeciesProfile() {
-	    super("Helicobacter pylori",
+	    super("Helicobacter pylori", 210, 
 	       "This profile customizes the GenMAPP Builder export for Genus species data loaded from a UniProt XML file.");
 	}
 	

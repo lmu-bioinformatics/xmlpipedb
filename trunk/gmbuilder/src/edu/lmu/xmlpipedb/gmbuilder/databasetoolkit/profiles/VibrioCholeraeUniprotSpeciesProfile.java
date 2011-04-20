@@ -23,7 +23,7 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 public class VibrioCholeraeUniprotSpeciesProfile extends UniProtSpeciesProfile {
 
     public VibrioCholeraeUniprotSpeciesProfile() {
-        super("Vibrio cholerae", "This profile defines the requirements for " + "a Vibrio cholerae species within a UniProt database.");
+        super("Vibrio cholerae", 666, "This profile defines the requirements for " + "a Vibrio cholerae species within a UniProt database.");
     }
 
     /**

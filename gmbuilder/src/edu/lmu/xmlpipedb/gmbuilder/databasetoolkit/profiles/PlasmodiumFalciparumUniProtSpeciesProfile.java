@@ -30,7 +30,7 @@ public class PlasmodiumFalciparumUniProtSpeciesProfile extends UniProtSpeciesPro
      * the code needs a better way to map a species to a species profile. 
      */
     public PlasmodiumFalciparumUniProtSpeciesProfile() {
-        super("Plasmodium falciparum", "This profile defines the requirements for "
+        super("Plasmodium falciparum", 36329, "This profile defines the requirements for "
                 + "a Plasmodium falciparum species within a UniProt database.");
     }
 

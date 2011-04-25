@@ -49,7 +49,7 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	 * an Arabidopsis thaliana species within a UniProt database.
 	 */
 	public ArabidopsisThalianaUniProtSpeciesProfile() {
-		super("Arabidopsis thaliana", "This profile defines the requirements for "
+		super("Arabidopsis thaliana", 3702, "This profile defines the requirements for "
 				+ "an Arabidopsis thaliana species within a UniProt database.");
 	}
 

@@ -7,7 +7,7 @@ public class SalmonellaTyphimuriumUniProtSpeciesProfile extends
 		UniProtSpeciesProfile {
 
 	public SalmonellaTyphimuriumUniProtSpeciesProfile() {
-	    super("Salmonella typhimurium",
+	    super("Salmonella typhimurium", 90371, 
 	       "This profile customizes the GenMAPP Builder export for Salmonella typhimurium data loaded from a UniProt XML file.");
 	}
 

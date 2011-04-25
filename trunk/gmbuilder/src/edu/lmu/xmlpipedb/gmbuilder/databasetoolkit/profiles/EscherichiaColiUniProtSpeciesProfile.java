@@ -176,7 +176,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	 * an Escherichia Coli species within a UniProt database.
 	 */
 	public EscherichiaColiUniProtSpeciesProfile() {
-		super("Escherichia coli (strain K12)", "This profile defines the requirements for "
+		super("Escherichia coli (strain K12)", 83333, "This profile defines the requirements for "
 				+ "an Escherichia Coli species within a UniProt database.");
 	}
 

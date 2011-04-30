@@ -27,7 +27,6 @@ public class MycobacteriumTuberculosisUniProtSpeciesProfile extends UniProtSpeci
         });
 
         tableManager.submit("Systems", QueryType.update, new String[][] {
-            //{ "SystemCode", "N" }, { "Link", "http://www.genome.jp/dbget-bin/www_bget?mtu+~" }
             { "SystemCode", "N" }, { "Link", "http://tuberculist.epfl.ch/quicksearch.php?gene+name=~" }
         });
 
@@ -39,8 +38,7 @@ public class MycobacteriumTuberculosisUniProtSpeciesProfile extends UniProtSpeci
      */
     @Override
     public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws SQLException, InvalidParameterException {
-        // Build the base query; we only use "ordered locus" and we only want
-        // IDs that begin with "Rv."
+        // Build the base query; we use 'ordered locus' and 'ORF' and ids that begin with "Rv."
         PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " +
             "FROM genenametype INNER JOIN entrytype_genetype " +
             "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
@@ -51,8 +49,7 @@ public class MycobacteriumTuberculosisUniProtSpeciesProfile extends UniProtSpeci
             ps.setInt(1, Integer.parseInt(row.getValue("UID")));
             result = ps.executeQuery();
 
-            // We actually want to keep the case where multiple ordered locus
-            // names appear.
+            // We actually want to keep the case where multiple names appear.
             while (result.next()) {
                 // We want this name to appear in the OrderedLocusNames
                 // system table.

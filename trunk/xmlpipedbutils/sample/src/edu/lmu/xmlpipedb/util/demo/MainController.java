@@ -6,6 +6,7 @@ package edu.lmu.xmlpipedb.util.demo;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -14,16 +15,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.FilenameFilter;
 import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -40,14 +38,16 @@ import edu.lmu.xmlpipedb.util.demo.resources.AppResources;
 import edu.lmu.xmlpipedb.util.engines.ConfigurationEngine;
 import edu.lmu.xmlpipedb.util.engines.Criterion;
 import edu.lmu.xmlpipedb.util.engines.CriterionList;
+import edu.lmu.xmlpipedb.util.engines.ImportEngine;
 import edu.lmu.xmlpipedb.util.engines.QueryEngine;
+import edu.lmu.xmlpipedb.util.engines.RuleType;
 import edu.lmu.xmlpipedb.util.engines.TallyEngine;
 import edu.lmu.xmlpipedb.util.exceptions.CouldNotLoadPropertiesException;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
-import edu.lmu.xmlpipedb.util.gui.ImportPanel;
+import edu.lmu.xmlpipedb.util.gui.XMLPipeDBGUIUtils;
 
 /**
  * @author J. Nicholas
@@ -138,6 +138,15 @@ public class MainController implements ActionListener {
         menuTools.setMnemonic(KeyEvent.VK_T);
         menuBar.add(menuTools);
 
+        // Set up menu item.
+        menuItem = new JMenuItem(AppResources.messageString("menu_tools_config"));
+        menuItem.setMnemonic(KeyEvent.VK_C);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, accelMask));
+        menuItem.setActionCommand("config_platform");
+        menuItem.addActionListener(this);
+        menuTools.add(menuItem);
+        menuTools.addSeparator();
+        
         // Set up the import menu item.
         menuItem = new JMenuItem(AppResources.messageString("menu_tools_import"));
         menuItem.setMnemonic(KeyEvent.VK_I);
@@ -161,20 +170,13 @@ public class MainController implements ActionListener {
         // menuBar.add(menuConfig);
 
         // Set up menu item.
-        menuItem = new JMenuItem(AppResources.messageString("menu_tools_config"));
-        menuItem.setMnemonic(KeyEvent.VK_C);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, accelMask));
-        menuItem.setActionCommand("config_platform");
-        menuItem.addActionListener(this);
-        menuTools.add(menuItem);
-        
-        // Set up menu item.
         menuItem = new JMenuItem(AppResources.messageString("menu_tools_tally"));
         menuItem.setMnemonic(KeyEvent.VK_T);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, accelMask));
         menuItem.setActionCommand("tally");
         menuItem.addActionListener(this);
         menuTools.add(menuItem);
+        menuTools.addSeparator();
 
         // Set up the last menu item.
         menuItem = new JMenuItem(AppResources.messageString("menu_tools_quit"));
@@ -189,21 +191,32 @@ public class MainController implements ActionListener {
 
     // React to menu selections.
     public void actionPerformed(ActionEvent e) {
+        // Save the configuration if necessary.
+        if (_configPanel != null) {
+            _configPanel.saveConfiguration();
+        }
+
         if ("import".equals(e.getActionCommand())) { // new
             _queryPanel = null;
             _configPanel = null;
             Configuration hibernateConfiguration = getHibernateConfig();
-            HashMap<String,String> rootElement = new HashMap<String,String>(1);
-            rootElement.put("rootname", "bookstore");
+            Map<String,String> rootElement = new HashMap<String,String>(1);
+            rootElement.put("head", "<bookstore>");
+            rootElement.put("tail", "</bookstore>");
             if (hibernateConfiguration != null) {
-                _importPanel = new ImportPanel(AppResources
-						.optionString("jaxbContextPath"),
-						hibernateConfiguration, "bookstore/book", rootElement );
-                _importPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                _initialFrame.setContentPane(_importPanel);
+                try {
+                    ImportEngine importEngine = new ImportEngine(AppResources
+                            .optionString("jaxbContextPath"), hibernateConfiguration,
+                            "bookstore/book", rootElement);
+                    File file = chooseXMLFile(AppResources.messageString("choose_book_xml"));
+                    if (file != null) {
+                        XMLPipeDBGUIUtils.performImportWithProgressBar(importEngine, file);
+                    }
+                } catch(Exception exception) {
+                    JOptionPane.showMessageDialog(_initialFrame, exception.getMessage());
+                }
             }
         } else if ("query".equals(e.getActionCommand())) { // new
-            _importPanel = null;
             _configPanel = null;
             Configuration hibernateConfiguration = getHibernateConfig();
             if (hibernateConfiguration != null) {
@@ -212,11 +225,9 @@ public class MainController implements ActionListener {
                 _initialFrame.setContentPane(_queryPanel);
             }
         } else if ("config_platform".equals(e.getActionCommand())) {
-            _importPanel = null;
             _queryPanel = null;
             doConfigPanel();
         } else if ("tally".equals(e.getActionCommand())) {
-            _importPanel = null;
             _queryPanel = null;
             _configPanel = null;
             doGetTallies();
@@ -226,87 +237,94 @@ public class MainController implements ActionListener {
         _initialFrame.validate();
     }
 
+    /**
+     * Helper method for import dialogs.
+     */
+    private File chooseImportFile(String importTitle, FilenameFilter filenameFilter) {
+        FileDialog fileDialog = new FileDialog(_initialFrame, importTitle);
+        fileDialog.setFilenameFilter(filenameFilter);
+        fileDialog.setVisible(true);
+
+        if (fileDialog.getFile() != null) {
+            return new File(fileDialog.getDirectory(), fileDialog.getFile());
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Helper method for importing/choosing XML files.
+     */
+    private File chooseXMLFile(String importTitle) {
+        final FilenameFilter xmlFilenameFilter = new FilenameFilter() {
+            /**
+             * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+             */
+            public boolean accept(File dir, String name) {
+                return name.endsWith("xml");
+            }
+        };
+        return chooseImportFile(importTitle, xmlFilenameFilter);
+    }
+
     private void doGetTallies() {
     	CriterionList criteria = new CriterionList();
-    	String element = null;
-    	String table = null;
-    	element = AppResources.optionString("ElementLevel1");
-    	table = AppResources.optionString("TableLevel1");
-    	try{
-			if(!element.equals("") && element != null)
-				criteria.addCriteria(new Criterion("", element, table));
-	    	element = AppResources.optionString("ElementLevel2");
-	    	table = AppResources.optionString("TableLevel2");
-	    	if(!element.equals("") && element != null)
-	    		criteria.addCriteria(new Criterion("", element, table));
-			element = AppResources.optionString("ElementLevel3");
-			table = AppResources.optionString("TableLevel3");
-			if(!element.equals("") && element != null)
-				criteria.addCriteria(new Criterion("", element, table));
-			element = AppResources.optionString("ElementLevel4");
-			table = AppResources.optionString("TableLevel4");
-			if(!element.equals("") && element != null)
-				criteria.addCriteria(new Criterion("", element, table));
-    	} catch(InvalidParameterException e){
-    		//TODO: Send exception to log file
+        try {
+        	Criterion criterion = new Criterion("",
+        	        AppResources.optionString("bookElement"),
+        	        AppResources.optionString("bookTable"));
+        	criterion.setRuleType(RuleType.ENDOFRECORD);
+        	criteria.addCriteria(criterion);
+    	
+        	criterion = new Criterion("",
+                    AppResources.optionString("authorElement"),
+                    AppResources.optionString("authorTable"));
+            criterion.setRuleType(RuleType.ENDOFRECORD);
+            criteria.addCriteria(criterion);
+    	} catch(InvalidParameterException e) {
+    	    JOptionPane.showMessageDialog(_initialFrame, e.getMessage());
     	}
-//		Create a file chooser and setup the input stream
-		InputStream is = null;
-		final JFileChooser fc = new JFileChooser();
-		fc.setCurrentDirectory(new File("."));
-		int returnVal = fc.showOpenDialog(this._initialFrame);
-		
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-    		try {
-    			is = new FileInputStream(fc.getSelectedFile());
-    		} catch (FileNotFoundException e1) {
-    			// TODO Auto-generated catch block
-    			e1.printStackTrace();
-    		}
-        } else {
-        	JOptionPane.showMessageDialog(null, "No file choosen. Command aborted.");
+    	
+    	// Determine the file.
+        File f = chooseXMLFile(AppResources.messageString("choose_tally_xml"));
+        if (f == null) {
+        	JOptionPane.showMessageDialog(null, "No file chosen.  Command aborted.");
         	return;
         }
         
 		TallyEngine te = new TallyEngine(criteria);
+        try {
+            te.getXmlFileCounts(f);
+            /*
+             * Here I am explicitly catching the HibernateException, which is a
+             * pretty clear indication that the configuration was not done.
+             * 
+             * TODO: Add an isConfigured() method to the ConfigurationEngine.
+             * This could be checked before getting the config. Or could be used
+             * to disable menus before the config is done.
+             */
+            te.getDbCounts(new QueryEngine(getHibernateConfig()));
+        } catch(InvalidParameterException e) {
+            JOptionPane.showMessageDialog(this._initialFrame, e.getMessage());
+        } catch(XpdException e) {
+            JOptionPane.showMessageDialog(this._initialFrame, e.getMessage());
+        } catch(HibernateException e) {
+            JOptionPane.showMessageDialog(this._initialFrame,
+                    "A Hibernate exception was caught. If you have not configured your hibernate properties, Do so now! Exception text: " +
+                    e.getMessage());
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(this._initialFrame,
+                    "An unexpected Exception was caught. Exception text: " +
+                    e.getMessage());
+        }
 		
-		try {
-			te.getXmlFileCounts(is);
-			/*
-			 * Here I am explicitly catching the HibernateException, which is a
-			 * pretty clear indication that the configuration was not done.
-			 * 
-			 * TODO: Add an isConfigured() method to the ConfigurationEngine.
-			 * This could be checked before getting the config. Or could be used
-			 * to disable menus before the config is done.
-			 */
-			te.getDbCounts( new QueryEngine( getHibernateConfig() )) ;
-		} catch (InvalidParameterException e) {
-			JOptionPane.showMessageDialog(this._initialFrame, e.getMessage());
-		} catch (XpdException e) {
-			JOptionPane.showMessageDialog(this._initialFrame, e.getMessage());
-		} catch (HibernateException e){
-			JOptionPane
-					.showMessageDialog(
-							this._initialFrame,
-							"A Hibernate exception was caught. If you have not configured your hibernate properties, Do so now! Exception text: "
-									+ e.getMessage());
-		} catch (Exception e){
-			JOptionPane.showMessageDialog(this._initialFrame,
-					"An unexpected Exception was caught. Exception text: "
-							+ e.getMessage());
-		}
-		
-		String display = "Path: \t XML Count   \t||   Table: \t DB Count";
-		
-		Set set = criteria.keySet();
-		Iterator iter = set.iterator();
-		while(iter.hasNext()){
-			ArrayList<Criterion> critBucket = criteria.getBucket((String)iter.next());
-			for(Criterion crit : critBucket) {
-				display += "\n" + crit.getDigesterPath() + ": \t " + crit.getXmlCount() + "   \t||   " +  crit.getTable() + ": \t " + crit.getDbCount();
-			}
-		}
+		String display = "Path: \t XML Count   \t||   DB Count";
+        for (String key: criteria.keySet()) {
+            List<Criterion> critBucket = criteria.getBucket(key);
+            for (Criterion crit : critBucket) {
+                display += "\n" + crit.getDigesterPath() + ": \t " + crit.getXmlCount() + "   \t||   " + crit.getDbCount();
+            }
+        }
 		JOptionPane.showMessageDialog(null, display);
 	}
 
@@ -323,11 +341,11 @@ public class MainController implements ActionListener {
 
         try {
             _configPanel = new ConfigurationPanel();
-        } catch(FileNotFoundException e1) {
-            // a proper handling of this exeption is left to the implementor
-            e1.printStackTrace();
-        } catch( CouldNotLoadPropertiesException e ){
-        	e.printStackTrace();
+            _configPanel.setCurrentPlatform("PostgreSQL");
+        } catch(FileNotFoundException fnfexc) {
+            JOptionPane.showMessageDialog(this._initialFrame, fnfexc.getMessage());
+        } catch(CouldNotLoadPropertiesException cnlpexc) {
+            JOptionPane.showMessageDialog(this._initialFrame, cnlpexc.getMessage());
         }
         
         _configPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -335,7 +353,6 @@ public class MainController implements ActionListener {
     }
 
     JFrame _initialFrame;
-    ImportPanel _importPanel;
     ConfigurationPanel _configPanel;
     HQLPanel _queryPanel;
 }

@@ -53,7 +53,7 @@
     </target>
 
     <target name="compile-utils" depends="init">
-        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path"  executable="C:\jdk1.6.0_11\bin\javac.exe"  />
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path"/>
 
         <!-- Copy resource files, since they are needed at runtime. -->
         <copy todir="${build.dir}">
@@ -62,7 +62,7 @@
     </target>
     
     <target name="compile-demo" depends="compile-utils">
-        <javac srcdir="${src.demo.dir}" destdir="${build.dir}" classpathref="lib.path"   executable="C:\jdk1.6.0_11\bin\javac.exe"/>
+        <javac srcdir="${src.demo.dir}" destdir="${build.dir}" classpathref="lib.path"/>
 
         <!-- Copy resource files, since they are needed at runtime. -->
         <copy todir="${build.dir}">
@@ -73,7 +73,7 @@
     <target name="compile" depends="compile-utils">
     </target>
 
-    <target name="jar" depends="compile" description="Makes the utility and demo JAR files.">
+    <target name="jar" depends="compile,compile-demo" description="Makes the utility and demo JAR files.">
         <!-- Copy other libraries and the run scripts (.bat and .sh files) -->
         <copy todir="${dist.dir}/lib">
             <fileset dir="${lib.dir}/" includes="**/*.jar,**/*.properties" />
@@ -119,5 +119,5 @@
         <java classname="${mainclass}" fork="true" failonerror="false" classpathref="run.path" />
     </target>
 
-    <target name="all" depends="clean, javadoc, jar" description="Initializes, Compiles, makes Jar and creates JavaDocs" />
+    <target name="all" depends="clean,javadoc,jar" description="Initializes, Compiles, makes Jar and creates JavaDocs" />
 </project>

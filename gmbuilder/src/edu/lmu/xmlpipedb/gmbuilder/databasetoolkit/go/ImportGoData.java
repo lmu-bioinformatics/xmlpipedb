@@ -59,7 +59,6 @@ public class ImportGoData {
         namespace = new HashMap<String, String>();
         goCount = new HashMap<String, Integer>();
         duplicates = new HashMap<String, Boolean>();
-//        createNamespaceMappings();
     }
 
     /**

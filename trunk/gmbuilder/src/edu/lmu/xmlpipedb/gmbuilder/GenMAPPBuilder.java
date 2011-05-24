@@ -186,13 +186,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         tallyMenu.add(_oboTallyAction);
         tallyMenu.addSeparator();
         tallyMenu.add(_importedDataTallyAction);
-//        tallyMenu.add(_gdbTallyAction);
         tallyMenu.add(_runTalliesAction);
         mb.add(tallyMenu);
-
-        // JMenu dbMenu = new JMenu("DB Actions");
-        // dbMenu.add(_doResetDbAction);
-        // mb.add(dbMenu);
 
         if (!PlatformIdentifier.isMac()) {
             JMenu helpMenu = new JMenu("Help");
@@ -674,7 +669,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
         setTallyCriterion(criteria, mainPropertyString);
 
-        // A species criteiron must be using a different rule
+        // A species criterion must be using a different rule
         List<Criterion> speciesCrit = criteria.getBucket(AppResources.optionString("species_element_level").trim());
         if (speciesCrit != null) {
             speciesCrit.get(0).setRuleType(RuleType.FINDBODY);

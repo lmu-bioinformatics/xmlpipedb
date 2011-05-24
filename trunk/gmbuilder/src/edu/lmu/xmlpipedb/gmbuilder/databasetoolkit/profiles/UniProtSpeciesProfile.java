@@ -134,10 +134,6 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
             throw new InvalidParameterException("comparisonList may not be null. Ensure you are passing a valid ArrayList<String>, even if it is empty.");
     	}
 
-/*        PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " +
-            "FROM genenametype INNER JOIN entrytype_genetype " +
-            "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
-            "WHERE entrytype_gene_hjid = ?");*/
     	PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, genenametype.type " +
     			"FROM genenametype INNER JOIN entrytype_genetype " +
     				"ON (genenametype.entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +

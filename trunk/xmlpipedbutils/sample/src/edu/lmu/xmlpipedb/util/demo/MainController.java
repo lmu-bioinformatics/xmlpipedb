@@ -141,7 +141,7 @@ public class MainController implements ActionListener {
         // Set up menu item.
         menuItem = new JMenuItem(AppResources.messageString("menu_tools_config"));
         menuItem.setMnemonic(KeyEvent.VK_C);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, accelMask));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, accelMask));
         menuItem.setActionCommand("config_platform");
         menuItem.addActionListener(this);
         menuTools.add(menuItem);

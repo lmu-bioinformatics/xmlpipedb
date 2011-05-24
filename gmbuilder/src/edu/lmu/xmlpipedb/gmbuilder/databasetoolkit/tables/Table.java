@@ -156,13 +156,6 @@ public class Table {
     public void export(Connection exportConnection) throws SQLException {
         // First Create any objects requiring creation
     	if (tableAttributes != null) {
-//            Set<String> tableNames = new HashSet<String>();
-//            for (Row row : tableManager.getRows()) {
-//                if (row.getValue(TableManager.QUERY_TYPE_COLUMN).equals(QueryType.insert.name())) {
-//                    tableNames.add(row.getValue(TableManager.TABLE_NAME_COLUMN));
-//                }
-//            }
-            // Create the submitted tables.
         	
             for (String tableName : tableManager.getTableNames()) {
             	_Log.info("Create Table in GDB. Table Name: [" + tableName + "]" );
@@ -349,8 +342,6 @@ public class Table {
                 forLoopPasses++;
             } catch( SQLException e ){
             	StringBuffer errText = new StringBuffer("An SQLException occurred while writing to the database. ");
-            	//errText.append(" sqlStatement getSQL: " + sqlStatement.getSQL());
-            	//errText.append(" sqlStatement getValues: " + sqlStatement.getValues());
             	errText.append(" Error Code: " + e.getErrorCode());
             	errText.append(" Message: " + e.getMessage());
             	_Log.error(errText);

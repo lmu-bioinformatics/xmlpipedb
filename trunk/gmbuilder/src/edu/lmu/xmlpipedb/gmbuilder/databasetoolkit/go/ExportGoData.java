@@ -229,12 +229,6 @@ public class ExportGoData {
 //        dropGOStage();
     }
 
-//    private void dropGOStage() throws SQLException {
-//        PreparedStatement ps = connection.prepareStatement("drop table " + GOTable.GeneOntologyStage);
-//        ps.executeUpdate();
-//        ps.close();
-//    }
-
     private QueryHolder getUniProtIDs(String sql, String id) throws SQLException {
         QueryHolder qh = new QueryHolder();
         qh.ps = connection.prepareStatement(sql);
@@ -405,11 +399,6 @@ public class ExportGoData {
     		while (uniProtAndGOIDRS.next()) {
 
     			String uniProtID = uniProtAndGOIDRS.getString("db_object_id");
-    			/*if (uniProtID.startsWith("UniProtKB:")) {
-    				uniProtID = uniProtID.substring(10);
-    			} else if (uniProtID.startsWith("UniProt:")) {
-    				uniProtID = uniProtID.substring(8);
-    			}*/
     			uniProtID = uniProtID.trim();
 
     			String goID = uniProtAndGOIDRS.getString("go_id");
@@ -467,7 +456,6 @@ public class ExportGoData {
      * @throws SQLException
      */
     private void populateGeneOntology() throws SQLException {
-//        String sql = "select * from " + GOTable.GeneOntologyStage + " where Id in (select DISTINCT(Related) from " + GOTable.UniProt_Go + ") order by Id";
         String relatedIDSQL = "select distinct(Related) from " + GOTable.UniProt_Go + " order by Related";
         String stageSQL = "select * from " + GOTable.GeneOntologyStage + " where Id = ? order by Id";
         PreparedStatement relatedPS = null;
@@ -510,16 +498,7 @@ public class ExportGoData {
             ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sql);
             ps.setString(1, id);
             processIDs(ps);
-//            ResultSet results = ps.executeQuery();
-//            while (results.next()) {
-//                String[] values = getGoValues(results);
-//                String key = id + "," + values[PARENT_COL];
-//                if (!duplicates.containsKey(key)) {
-//                    duplicates.put(key, true);
-//                    godb.insert(connection, GOTable.GeneOntology, values);
-//                    insertParents(values[PARENT_COL]);
-//                }
-//            }
+
         } catch(SQLException sqlexc) {
             throw sqlexc;
         } catch(Exception exc) {

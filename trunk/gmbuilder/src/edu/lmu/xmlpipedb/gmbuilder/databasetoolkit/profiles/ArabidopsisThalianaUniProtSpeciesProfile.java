@@ -148,10 +148,6 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
             int i = 0;
             // step 5 - put the tair ids into the tablemanager
             for (; result.next(); i++) {
-                // tableManager.submit(substituteTable, QueryType.insert, new
-                // String[][] { { "ID", id }, { "Species", "|" +
-                // getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID",
-                // row.getValue("UID") } });
                 _Log.debug("getSystemTableManagerCustomizations(): TAIR ID" + result.getString("id"));
                 _Log.debug("Row #: [" + i + "]");
                 tableManager.submit(SPECIES_TABLE, QueryType.insert, new String[][] { { "ID", result.getString("id") }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday } });
@@ -319,16 +315,10 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 
 		String proteinSQL = 
 		" create temporary table temp_protein AS " +
-//		" SELECT a.hjid, b.value " +
-//		" FROM entrytype a INNER JOIN proteinnametype b ON (a.protein = b.proteintype_name_hjid) " + 
-//		" WHERE b.proteintype_name_hjindex = 0; ";
 		"select entrytype.hjid, evidencedstringtype.value from entrytype inner join proteintype on(entrytype.protein = proteintype.hjid) inner join proteinnamegrouprecommendednametype on (proteintype.recommendedname = proteinnamegrouprecommendednametype.hjid) inner join evidencedstringtype on (proteinnamegrouprecommendednametype.fullname = evidencedstringtype.hjid) order by evidencedstringtype.value;";
 
 		String commentSQL = 
 		" create temporary table temp_comment AS " +
-//		" SELECT entrytype_comment_hjid as hjid, text " + 
-//		" FROM commenttype INNER JOIN entrytype_comment ON (entrytype_comment_hjchildid = hjid) " + 
-//		" WHERE type = 'function'; ";
 		"select entrytype_comment_hjid as hjid, value as text from commenttype inner join entrytype_comment on (entrytype_comment_hjchildid = commenttype.hjid) inner join evidencedstringtype on (text = evidencedstringtype.hjid) where type = 'function'";
 
 		String createTableSQL = 

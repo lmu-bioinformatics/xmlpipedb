@@ -165,6 +165,7 @@ public class ImportGOA {
         _Log.info("Getting second-pass table managers");
         // No species specific processing
         _Log.info("Start ()");
+        
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
         ExportWizard.updateExportProgress(67, "Preparing tables - Second pass Relationship tables...");
         TableManager[] secondPass = selectedDatabaseProfile.getSecondPassTableManagers();
@@ -177,6 +178,7 @@ public class ImportGOA {
         ExportWizard.updateExportProgress(68, "Preparing table - OriginalRowCounts table...");
         _Log.info("Getting row counts table manager");
         _Log.info("Start selectedDatabaseProfile.getRowCountsTableManager()");
+        
         //No species specific processing
         TableManager rowCounts = selectedDatabaseProfile.getRowCountsTableManager();
         _Log.info("Exporting row counts tables");

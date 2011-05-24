@@ -102,7 +102,6 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 		// Get the species(s) contained in the database.
 		PreparedStatement ps = connection
-//				.prepareStatement("select distinct(value) from organismnametype");
 		        .prepareStatement("select distinct(id) from dbreferencetype where type = 'NCBI Taxonomy'");
 		ResultSet result = ps.executeQuery();
 
@@ -256,9 +255,6 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		 * all entries. Additional processing is done below.
 		 */
 		for (Entry<String, SystemType> systemTable : systemTables.entrySet()) {
-			// if
-			// (!speciesProfile.getSpeciesSpecificSystemTables().containsKey(systemTable.getKey()))
-			// {
 			_Log.debug("Adding system table for " + systemTable.getKey());
 			if (templateDefinedSystemToSystemCode.get(systemTable.getKey()) == null) {
 				_Log.warn("No system code found for " + systemTable.getKey());
@@ -329,7 +325,6 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		}
 
 		int recordCounter = 0;
-		//String accessionSQL = "SELECT entrytype_accession_hjid, hjvalue FROM entrytype_accession WHERE entrytype_accession_hjindex = 0";
 		String accessionSQL = "SELECT entrytype_accession.entrytype_accession_hjid, entrytype_accession.hjvalue " +
 			"FROM entrytype_accession " + "INNER JOIN entrytype ON (entrytype_accession.entrytype_accession_hjid = entrytype.hjid) " +
 			"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
@@ -340,17 +335,6 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		String nameSQL = "SELECT hjvalue FROM entrytype_name WHERE entrytype_name_hjid = ?";
 		String geneSQL = "SELECT value, type FROM genenametype INNER JOIN entrytype_genetype ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) WHERE entrytype_gene_hjid = ?";
 
-		/*
-		 * JN 2/16/2007 -- For A. thaliana to work, I've removed the "NOT NULL"
-		 * constraint on the GeneName field. This may not be appropriate for
-		 * other Species and therefore may need to change later. -- let's keep
-		 * an eye on it.
-		 */
-		// tableManager = new TableManager(new String[][] { { "ID",
-		// "VARCHAR(50) NOT NULL" }, { "EntryName", "VARCHAR(50) NOT NULL" }, {
-		// "GeneName", "VARCHAR(50) NOT NULL" }, { "ProteinName", "MEMO" }, {
-		// "Function", "MEMO" }, { "Species", "MEMO" }, { "\"Date\"", "DATE" },
-		// { "Remarks", "MEMO" } }, new String[] { "UID" });
 		tableManager = new TableManager(new String[][] {
 				{ "ID", "VARCHAR(50) NOT NULL" },
 				{ "EntryName", "VARCHAR(50) NOT NULL" },
@@ -425,9 +409,6 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				geneName = typeToValue.get("synonym");
 				geneNameType = "synonym";
 			}
-			// typeToValue.get("primary") != null ? typeToValue.get("primary") :
-			// typeToValue.get("ordered locus") != null ?
-			// typeToValue.get("ordered locus") : typeToValue.get("synonym");
 			_Log.debug("Type: [" + geneNameType + "] GeneName: [" + geneName
 					+ "]");
 			tableManager.submit("UniProt", QueryType.insert, new String[][] {
@@ -523,25 +504,16 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			 * since the species specific tables are already included in the Map
 			 * returned by getDatabaseSpecificSystemTables()
 			 */
-			_Log
-					.info("getSystemTableManager(): for loop: systemTable.getKey() = "
+			_Log.info("getSystemTableManager(): for loop: systemTable.getKey() = "
 							+ systemTable.getKey());
 			if ((!getDatabaseSpecificSystemTables().containsKey(
 					systemTable.getKey()))
-			/*
-			 * &&(!speciesProfile.getSpeciesSpecificSystemTables().containsKey(
-			 * systemTable.getKey()))
-			 */
-			) {
-				_Log
-						.info("getSystemTableManager(): for loop: "
+				) {
+				_Log.info("getSystemTableManager(): for loop: "
 								+ systemTable.getKey()
 								+ " is not in the list of DatabaseSpecificSystemTables or SpeciesSpecificSystemTables.");
 				ps = ConnectionManager.getRelationalDBConnection()
 						.prepareStatement(
-/*								"SELECT DISTINCT(id) "
-										+ "FROM dbreferencetype "
-										+ "WHERE type = ?");*/
 								"SELECT distinct id FROM dbreferencetype " +
 								"INNER JOIN (" +
 								"SELECT entrytype.hjid FROM entrytype " +
@@ -641,10 +613,6 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				PreparedStatement ps = ConnectionManager
 						.getRelationalDBConnection()
 						.prepareStatement(
-								/*"SELECT hjvalue, id "
-										+ "FROM dbreferencetype INNER JOIN entrytype_accession "
-										+ "ON (entrytype_dbreference_hjid = entrytype_accession_hjid) "
-										+ "WHERE type = ?");*/
 								"SELECT hjvalue, dbreferencetype.id " +
 								"FROM (SELECT entrytype.hjid FROM entrytype " +
 								"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
@@ -689,14 +657,6 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				PreparedStatement ps = ConnectionManager
 						.getRelationalDBConnection()
 						.prepareStatement(
-								/*"SELECT dbref1.id as id1, "
-										+ "dbref2.id as id2 "
-										+ "FROM dbreferencetype as dbref1 "
-										+ "INNER JOIN dbreferencetype as dbref2 "
-										+ "USING (entrytype_dbreference_hjid) "
-										+ "WHERE dbref1.type <> dbref2.type "
-										+ "AND dbref1.type = ? "
-										+ "AND dbref2.type = ?");*/
 								"SELECT id1, id2 from (" +
 								"SELECT dbref1.id AS id1, dbref2.id AS id2, dbref1.entrytype_dbreference_hjid AS dbrefhjid " +
 								"FROM dbreferencetype AS dbref1 " +

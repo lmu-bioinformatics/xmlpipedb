@@ -25,6 +25,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JComboBox;
+// RB - I imported JList here
+import javax.swing.JList;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,6 +37,10 @@ import javax.swing.SpringLayout;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListDataListener;
+// RB - I added this line to provide for the 
+// event types needed. Need to make specific.
+import javax.swing.event.*;
 
 import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
@@ -56,7 +62,11 @@ public class ExportPanel1 extends JPanel {
     private JTextField ownerTextField;
     private JFormattedTextField versionFormattedTextField;
     private JTextField modSystemTextField;
-    private JComboBox speciesComboBox;
+    // disabled JComboBox
+    // private JComboBox speciesComboBox;
+    // RB - created private JList to be added
+    // to the JPanel
+    private JList speciesCheckList;
     private JTextArea speciesDescriptionTextArea;
     private JTextField speciesCustomizeTextField;
     private JFormattedTextField modifyFormattedTextField;
@@ -83,7 +93,7 @@ public class ExportPanel1 extends JPanel {
         titlePanel.add(new JSeparator(), BorderLayout.SOUTH);
 
         // This initializes all the fields and puts them in a panel for display
-        JPanel contentPanel = getContentPanel();
+        JPanel contentPanel = getContentPanel(); // method from below
         contentPanel.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
 
         setLayout(new BorderLayout());
@@ -100,6 +110,9 @@ public class ExportPanel1 extends JPanel {
      * (normally there is only one, I think --JN) will become the basis for 
      * all the export work about to be done.
      */
+    // RB - prob rename this to something more descriptive. It is a method to 
+    // populate Database ComboBox with all available database profiles of
+    // which there is only one - UniProt
     private void init() {
         for (DatabaseProfile profile : ExportToGenMAPP.getAvailableDatabaseProfiles()) {
             profileComboBox.addItem(profile);
@@ -138,14 +151,34 @@ public class ExportPanel1 extends JPanel {
         modSystemTextField = new JTextField(10);
         modSystemTextField.setEditable(false);
 
+        // RB - This species JComboBox is to be replaced by a JList speciesCheckList
+        // disabling this code for the interim.
+        
         // Species | JComboBox | speciesFound | JLabel | Description
         // | JTextField | customizable name
-        speciesComboBox = new JComboBox();
-        speciesComboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                speciesProfileSelected(speciesComboBox.getSelectedItem());
-            }
-        });
+        //speciesComboBox = new JComboBox();
+        //speciesComboBox.addActionListener(new ActionListener() {
+        //    public void actionPerformed(ActionEvent arg0) {
+        //        speciesProfileSelected(speciesComboBox.getSelectedItem());
+        //    }
+        //});
+        
+        // RB - get data to populate the JList speciesCheckList
+        // data is in speciesProfilesFound which is an instanced ArrayList<SpeciesProfile>
+        
+        // RB - commenting out new code because I seem to be confused about the abstract class use.
+        
+        // SpeciesListModel speciesListModel = new SpeciesListModel();
+        // speciesCheckList = new JList(speciesListModel);
+        // register listeners
+        // speciesCheckList.addListSelectionListener(new ListSelectionListener() {
+            // Handle list selection
+        	// public void valueChanged(ListSelectionEvent e) {
+        		// get selected indices
+            //     int[] indices = speciesCheckList.getSelectedIndices();
+            // }
+        // });
+        
         speciesDescriptionTextArea = new JTextArea(3, 15);
         speciesDescriptionTextArea.setLineWrap(true);
         speciesDescriptionTextArea.setWrapStyleWord(true);
@@ -172,7 +205,10 @@ public class ExportPanel1 extends JPanel {
         leftPanel.add(new JLabel("MODSystem:"));
         leftPanel.add(modSystemTextField);
         leftPanel.add(new JLabel("Species:"));
-        leftPanel.add(speciesComboBox);
+        // RB - disable adding of the speciesComboBox to the JPanel
+        // leftPanel.add(speciesComboBox);
+        // RB - adding the JList speciesChecklist to JPanel
+        leftPanel.add(speciesCheckList);
         leftPanel.add(new JLabel("Customize Name:"));
         leftPanel.add(speciesCustomizeTextField);
         leftPanel.add(new JLabel("Modify (MM/dd/yyyy):"));
@@ -220,10 +256,13 @@ public class ExportPanel1 extends JPanel {
 
             //This is populating the list of items in the speciesProfile combobox
             // based on what database was selected.
-            speciesComboBox.removeAllItems();
-            for (SpeciesProfile speciesProfile : selectedProfile.getSpeciesProfilesFound()) {
-                speciesComboBox.addItem(speciesProfile);
-            }
+            
+            // RB disabled since we are swapping out speciesComboBox for speciesCheckList
+            
+            //speciesComboBox.removeAllItems();
+            //for (SpeciesProfile speciesProfile : selectedProfile.getSpeciesProfilesFound()) {
+            //    speciesComboBox.addItem(speciesProfile);
+            //}
         }
     }
 
@@ -234,18 +273,21 @@ public class ExportPanel1 extends JPanel {
      * 
      * @param selectedItem
      */
-    protected void speciesProfileSelected(Object selectedItem) {
-        if (selectedItem instanceof SpeciesProfile) {
-            SpeciesProfile selectedProfile = (SpeciesProfile)selectedItem;
+    
+    // RB disable method for rewrite using JList speciesCheckList
+    
+    // protected void speciesProfileSelected(Object selectedItem) {
+    //    if (selectedItem instanceof SpeciesProfile) {
+    //        SpeciesProfile selectedProfile = (SpeciesProfile)selectedItem;
 
-            DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
-            databaseProfile.setSelectedSpeciesProfile(selectedProfile);
-            ExportToGenMAPP.setDatabaseProfile(databaseProfile);
+    //        DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
+    //        databaseProfile.setSelectedSpeciesProfile(selectedProfile);
+    //        ExportToGenMAPP.setDatabaseProfile(databaseProfile);
 
-            speciesDescriptionTextArea.setText(selectedProfile.getDescription());
-            speciesCustomizeTextField.setText(selectedProfile.getName());
-        }
-    }
+    //        speciesDescriptionTextArea.setText(selectedProfile.getDescription());
+    //        speciesCustomizeTextField.setText(selectedProfile.getName());
+    //    }
+    // }
 
     /**
      * Checks the required fields for the panel.
@@ -276,6 +318,9 @@ public class ExportPanel1 extends JPanel {
         databaseProfile.setVersion(new SimpleDateFormat("MM/dd/yyyy").parse(versionFormattedTextField.getText()));
         databaseProfile.setMODSystem(modSystemTextField.getText());
         // set the species name
+        
+        // RB - not sure if setSpeciesName needs to be modified??
+        
         databaseProfile.setSpeciesName(speciesCustomizeTextField.getText());
         databaseProfile.setModify(new SimpleDateFormat("MM/dd/yyyy").parse(modifyFormattedTextField.getText()));
         databaseProfile.setNotes(notesTextArea.getText());
@@ -289,5 +334,34 @@ public class ExportPanel1 extends JPanel {
      */
     protected void addDocumentListener(DocumentListener documentListener) {
         ownerTextField.getDocument().addDocumentListener(documentListener);
+    }
+
+    // RB - add nested class here.
+    // Need this class to provide full control over the JList.
+    private class AbstractListModel implements javax.swing.ListModel {
+
+		@Override
+		public void addListDataListener(ListDataListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Object getElementAt(int index) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public int getSize() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public void removeListDataListener(ListDataListener l) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 }

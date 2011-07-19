@@ -24,12 +24,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+// Dondi - Use the Source > Organize Imports command to generate these automatically.
+// You can even specify, in the preferences, your preferred order.
+import javax.swing.AbstractListModel;
 import javax.swing.JComboBox;
-// RB - I imported JList here
-import javax.swing.JList;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -37,10 +40,8 @@ import javax.swing.SpringLayout;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListDataListener;
-// RB - I added this line to provide for the 
-// event types needed. Need to make specific.
-import javax.swing.event.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
@@ -168,17 +169,18 @@ public class ExportPanel1 extends JPanel {
         
         // RB - commenting out new code because I seem to be confused about the abstract class use.
         
-        // SpeciesListModel speciesListModel = new SpeciesListModel();
-        // speciesCheckList = new JList(speciesListModel);
+        SpeciesListModel speciesListModel = new SpeciesListModel();
+        speciesCheckList = new JList(speciesListModel);
+        speciesCheckList.setVisibleRowCount(5); // Dondi - This guides the scroll pane and layout manager.
         // register listeners
-        // speciesCheckList.addListSelectionListener(new ListSelectionListener() {
+        speciesCheckList.addListSelectionListener(new ListSelectionListener() {
             // Handle list selection
-        	// public void valueChanged(ListSelectionEvent e) {
+        	public void valueChanged(ListSelectionEvent e) {
         		// get selected indices
-            //     int[] indices = speciesCheckList.getSelectedIndices();
-            // }
-        // });
-        
+                int[] indices = speciesCheckList.getSelectedIndices();
+            }
+        });
+
         speciesDescriptionTextArea = new JTextArea(3, 15);
         speciesDescriptionTextArea.setLineWrap(true);
         speciesDescriptionTextArea.setWrapStyleWord(true);
@@ -195,6 +197,11 @@ public class ExportPanel1 extends JPanel {
         notesTextArea = new JTextArea("Exported by " + App.get().getAppName() + " " + GenMAPPBuilder.VERSION, 2, 40);
         notesTextArea.setBorder(new EtchedBorder());
 
+        // Dondi - Useful link for figuring out how SpringLayout works:
+        //    http://download.oracle.com/javase/tutorial/uiswing/layout/spring.html
+        //
+        // (cosmetic note: since the list occupies more than one line, you'll want to
+        //  find a way to top-align its corresponding "Species:" label)
         JPanel leftPanel = new JPanel(new SpringLayout());
         leftPanel.add(new JLabel("Profile:"));
         leftPanel.add(profileComboBox);
@@ -208,7 +215,7 @@ public class ExportPanel1 extends JPanel {
         // RB - disable adding of the speciesComboBox to the JPanel
         // leftPanel.add(speciesComboBox);
         // RB - adding the JList speciesChecklist to JPanel
-        leftPanel.add(speciesCheckList);
+        leftPanel.add(new JScrollPane(speciesCheckList));
         leftPanel.add(new JLabel("Customize Name:"));
         leftPanel.add(speciesCustomizeTextField);
         leftPanel.add(new JLabel("Modify (MM/dd/yyyy):"));
@@ -263,6 +270,11 @@ public class ExportPanel1 extends JPanel {
             //for (SpeciesProfile speciesProfile : selectedProfile.getSpeciesProfilesFound()) {
             //    speciesComboBox.addItem(speciesProfile);
             //}
+            
+            // Dondi - Note how, with the list model properly coded, all of the above becomes
+            // this single [nested] statement.
+            ((SpeciesListModel)speciesCheckList.getModel())
+                .setSpeciesProfiles(selectedProfile.getSpeciesProfilesFound());
         }
     }
 
@@ -338,30 +350,33 @@ public class ExportPanel1 extends JPanel {
 
     // RB - add nested class here.
     // Need this class to provide full control over the JList.
-    private class AbstractListModel implements javax.swing.ListModel {
+    
+    // Dondi - You were fairly close here.  I think your misunderstanding was that you were
+    // supposed to *extend* AbstractListModel, not redefine it.  Note how AbstractListModel
+    // takes care of the listener stuff for you --- you only need to add on the specific
+    // mechanism for supplying the list's data.  Plus, when the array of species profiles
+    // changes, you need to inform your listeners via fireContentsChanged.
+    private class SpeciesListModel extends AbstractListModel {
 
-		@Override
-		public void addListDataListener(ListDataListener arg0) {
-			// TODO Auto-generated method stub
-			
-		}
+        // The source of the list.
+        private SpeciesProfile[] speciesProfiles;
 
-		@Override
+        public void setSpeciesProfiles(SpeciesProfile[] speciesProfiles) {
+            this.speciesProfiles = speciesProfiles;
+            
+            // Update listeners.
+            fireContentsChanged(this, 0, getSize());
+        }
+
+        @Override
 		public Object getElementAt(int index) {
-			// TODO Auto-generated method stub
-			return null;
+			return speciesProfiles[index];
 		}
 
 		@Override
 		public int getSize() {
-			// TODO Auto-generated method stub
-			return 0;
+		    return (speciesProfiles != null) ? speciesProfiles.length : 0;
 		}
 
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			// TODO Auto-generated method stub
-			
-		}
     }
 }

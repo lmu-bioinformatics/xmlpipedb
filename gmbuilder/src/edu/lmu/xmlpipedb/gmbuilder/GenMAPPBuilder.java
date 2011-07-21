@@ -1138,7 +1138,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
         // Tests version of Java being used; if 64-bit version is being used, prevents
         // export and returns error.
-        if (System.getProperty("sun.arch.data.model").equals("64")) {
+        if ("64".equals(System.getProperty("sun.arch.data.model"))) {
         	ModalDialog.showErrorDialog("Java Driver Compatibility Error",
         			"GenMAPP Builder is unable to export to an GenMAPP database while\n"
         			+ "running in a 64-bit Java environment. You will need to restart GenMAPP\n"

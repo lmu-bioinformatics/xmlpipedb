@@ -63,8 +63,6 @@ public class ExportPanel1 extends JPanel {
     private JTextField ownerTextField;
     private JFormattedTextField versionFormattedTextField;
     private JTextField modSystemTextField;
-    // disabled JComboBox
-    // private JComboBox speciesComboBox;
     // RB - created private JList to be added
     // to the JPanel
     private JList speciesCheckList;
@@ -152,26 +150,16 @@ public class ExportPanel1 extends JPanel {
         modSystemTextField = new JTextField(10);
         modSystemTextField.setEditable(false);
 
-        // RB - This species JComboBox is to be replaced by a JList speciesCheckList
-        // disabling this code for the interim.
-        
-        // Species | JComboBox | speciesFound | JLabel | Description
-        // | JTextField | customizable name
-        //speciesComboBox = new JComboBox();
-        //speciesComboBox.addActionListener(new ActionListener() {
-        //    public void actionPerformed(ActionEvent arg0) {
-        //        speciesProfileSelected(speciesComboBox.getSelectedItem());
-        //    }
-        //});
-        
         // RB - get data to populate the JList speciesCheckList
-        // data is in speciesProfilesFound which is an instanced ArrayList<SpeciesProfile>
-        
-        // RB - commenting out new code because I seem to be confused about the abstract class use.
+        // data is in speciesProfilesFound which is an instanced
+        // ArrayList<SpeciesProfile>
         
         SpeciesListModel speciesListModel = new SpeciesListModel();
         speciesCheckList = new JList(speciesListModel);
-        speciesCheckList.setVisibleRowCount(5); // Dondi - This guides the scroll pane and layout manager.
+        
+        speciesCheckList.setVisibleRowCount(5); // Dondi - This guides the scroll
+        // pane and layout manager.
+
         // register listeners
         speciesCheckList.addListSelectionListener(new ListSelectionListener() {
             // Handle list selection
@@ -184,7 +172,7 @@ public class ExportPanel1 extends JPanel {
         speciesDescriptionTextArea = new JTextArea(3, 15);
         speciesDescriptionTextArea.setLineWrap(true);
         speciesDescriptionTextArea.setWrapStyleWord(true);
-        speciesDescriptionTextArea.setEditable(false);
+        speciesDescriptionTextArea.setEditable(true); // RB - true to discover size on panel
         speciesDescriptionTextArea.setBackground(new Color(238, 238, 238));
 
         speciesCustomizeTextField = new JTextField(10);
@@ -250,7 +238,7 @@ public class ExportPanel1 extends JPanel {
     }
 
     /**
-     * Adjusts the dynamic content when a database profile is selected.
+     * Adjusts the dynamic content of speciesCheckBox when a database profile is selected.
      * 
      * @param selectedItem
      */
@@ -261,15 +249,10 @@ public class ExportPanel1 extends JPanel {
             profileDescriptionTextArea.setText(selectedProfile.getDescription());
             modSystemTextField.setText(selectedProfile.getMODSystem());
 
-            //This is populating the list of items in the speciesProfile combobox
-            // based on what database was selected.
-            
-            // RB disabled since we are swapping out speciesComboBox for speciesCheckList
-            
-            //speciesComboBox.removeAllItems();
-            //for (SpeciesProfile speciesProfile : selectedProfile.getSpeciesProfilesFound()) {
-            //    speciesComboBox.addItem(speciesProfile);
-            //}
+            // RB - want to clear the JList before it is appended. Not sure if
+            // this is the correct place for it. Needed to prevent duplicate entries in
+            // the JList when you close and reopen the export wizard.
+            //((SpeciesListModel)speciesCheckList.getModel()).clearSpeciesProfiles();
             
             // Dondi - Note how, with the list model properly coded, all of the above becomes
             // this single [nested] statement.
@@ -288,18 +271,23 @@ public class ExportPanel1 extends JPanel {
     
     // RB disable method for rewrite using JList speciesCheckList
     
-    // protected void speciesProfileSelected(Object selectedItem) {
-    //    if (selectedItem instanceof SpeciesProfile) {
-    //        SpeciesProfile selectedProfile = (SpeciesProfile)selectedItem;
+    protected void speciesProfileSelected(Object selectedItem) {
+       if (selectedItem instanceof SpeciesProfile) {
+            
+           // would like to discuss this method line for line. I have ideas but need to
+    	   // confirm my understanding of what is happening here. 
+    	   
+    	   DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
+                       
+            // databaseProfile.setSelectedSpeciesProfile(selectedProfile);
+            ExportToGenMAPP.setDatabaseProfile(databaseProfile);
 
-    //        DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
-    //        databaseProfile.setSelectedSpeciesProfile(selectedProfile);
-    //        ExportToGenMAPP.setDatabaseProfile(databaseProfile);
-
-    //        speciesDescriptionTextArea.setText(selectedProfile.getDescription());
-    //        speciesCustomizeTextField.setText(selectedProfile.getName());
-    //    }
-    // }
+            //speciesDescriptionTextArea.setText(selectedProfile.getDescription());
+            //speciesCustomizeTextField.setText(selectedProfile.getName());
+        
+                        
+       }
+    }
 
     /**
      * Checks the required fields for the panel.
@@ -360,7 +348,7 @@ public class ExportPanel1 extends JPanel {
 
         // The source of the list.
         private SpeciesProfile[] speciesProfiles;
-
+        
         public void setSpeciesProfiles(SpeciesProfile[] speciesProfiles) {
             this.speciesProfiles = speciesProfiles;
             
@@ -368,6 +356,14 @@ public class ExportPanel1 extends JPanel {
             fireContentsChanged(this, 0, getSize());
         }
 
+        // RB - added a clear method to clear the JList and attempted to use in line 252
+        public void clearSpeciesProfiles (SpeciesProfile[] speciesProfiles) {
+        	this.speciesProfiles = null;
+        	
+        	// update listeners.
+        	fireContentsChanged(this, 0, getSize());
+        }
+        
         @Override
 		public Object getElementAt(int index) {
 			return speciesProfiles[index];

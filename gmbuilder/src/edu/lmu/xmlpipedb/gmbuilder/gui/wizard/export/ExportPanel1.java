@@ -161,19 +161,41 @@ public class ExportPanel1 extends JPanel {
         // pane and layout manager.
 
         // register listeners
+        // Dondi - Note how the listSelectionListener variable defined here really is only used
+        // once (i.e., in the addListSelectionListener call).  In this case, I'd skip the variable
+        // declaration entirely and just initialize the ListSelectionListener inline.
+        //
+        // (that is: speciesCheckList.addListSelectionListener(new ListSelectionListener() {
+        //   ........
+        // });
         ListSelectionListener listSelectionListener = new ListSelectionListener() {
             // Handle list selection
         	public void valueChanged(ListSelectionEvent listSelectionEvent) {
-        		
+        		// Dondi - I don't think you need to worry about this.  I suggest taking out the
+        	    // whole conditional about whether the value is adjusting to see if it makes any
+        	    // difference.  If not, we can leave it out.
         		boolean adjust = listSelectionEvent.getValueIsAdjusting();
         		
         		if ( !adjust ) {
+        		    // Dondi - Alternatively, you can go straight to speciesCheckList.
         			JList list = (JList)listSelectionEvent.getSource();
         			int[] selections = list.getSelectedIndices();
         			Object selectedValues[] = list.getSelectedValues();
         			String speciesText = "Selected Species info: ";
+        			
+        			// Dondi - Suggestion: get the hang of iteration-style for loops.  With that
+        			// style, you would not need the indices at all:
+        			//
+        			// for (Object selection: list.getSelectedValues()) {
+        			//     .......
+        			// }
         			for ( int i = 0, n = selections.length; i < n; i++ ) {
+        			    // Dondi - I don't see the reason for this condition (i == 0).  Especially
+        			    // since this is what's causing only one selected species to be mentioned
+        			    // in your message area!
         				if ( i == 0 ) {
+        				    // Dondi - Use StringBuilder when incrementally building a string.
+        				    // (e.g., stringBuilder.append(selection.toString()))
         					speciesText += selectedValues [i].toString();
         					// speciesDescriptionTextArea += selectedValues [i].toString();
         				}

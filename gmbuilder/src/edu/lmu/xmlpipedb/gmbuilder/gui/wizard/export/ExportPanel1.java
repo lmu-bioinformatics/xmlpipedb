@@ -47,6 +47,7 @@ import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.UniProtSpeciesProfile;
 import edu.lmu.xmlpipedb.gmbuilder.gui.util.SpringUtilities;
 
 import shag.App;
@@ -312,6 +313,9 @@ public class ExportPanel1 extends JPanel {
                        
             // databaseProfile.setSelectedSpeciesProfile(selectedProfile);
             ExportToGenMAPP.setDatabaseProfile(databaseProfile);
+
+            // Dondi - sample class comparison for Rich
+            System.out.println(selectedItem.getClass() == UniProtSpeciesProfile.class);
 
             //speciesDescriptionTextArea.setText(selectedProfile.getDescription());
             //speciesCustomizeTextField.setText(selectedProfile.getName());

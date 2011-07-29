@@ -161,13 +161,30 @@ public class ExportPanel1 extends JPanel {
         // pane and layout manager.
 
         // register listeners
-        speciesCheckList.addListSelectionListener(new ListSelectionListener() {
+        ListSelectionListener listSelectionListener = new ListSelectionListener() {
             // Handle list selection
-        	public void valueChanged(ListSelectionEvent e) {
+        	public void valueChanged(ListSelectionEvent listSelectionEvent) {
+        		
+        		boolean adjust = listSelectionEvent.getValueIsAdjusting();
+        		
+        		if ( !adjust ) {
+        			JList list = (JList)listSelectionEvent.getSource();
+        			int[] selections = list.getSelectedIndices();
+        			Object selectedValues[] = list.getSelectedValues();
+        			String speciesText = "Selected Species info: ";
+        			for ( int i = 0, n = selections.length; i < n; i++ ) {
+        				if ( i == 0 ) {
+        					speciesText += selectedValues [i].toString();
+        					// speciesDescriptionTextArea += selectedValues [i].toString();
+        				}
+        			}
+        			speciesDescriptionTextArea.setText(speciesText);
+        		}
         		// get selected indices
-                int[] indices = speciesCheckList.getSelectedIndices();
+                // int[] indices = speciesCheckList.getSelectedIndices();
             }
-        });
+        };
+        speciesCheckList.addListSelectionListener(listSelectionListener);
 
         speciesDescriptionTextArea = new JTextArea(3, 15);
         speciesDescriptionTextArea.setLineWrap(true);
@@ -249,11 +266,6 @@ public class ExportPanel1 extends JPanel {
             profileDescriptionTextArea.setText(selectedProfile.getDescription());
             modSystemTextField.setText(selectedProfile.getMODSystem());
 
-            // RB - want to clear the JList before it is appended. Not sure if
-            // this is the correct place for it. Needed to prevent duplicate entries in
-            // the JList when you close and reopen the export wizard.
-            //((SpeciesListModel)speciesCheckList.getModel()).clearSpeciesProfiles();
-            
             // Dondi - Note how, with the list model properly coded, all of the above becomes
             // this single [nested] statement.
             ((SpeciesListModel)speciesCheckList.getModel())
@@ -273,9 +285,6 @@ public class ExportPanel1 extends JPanel {
     
     protected void speciesProfileSelected(Object selectedItem) {
        if (selectedItem instanceof SpeciesProfile) {
-            
-           // would like to discuss this method line for line. I have ideas but need to
-    	   // confirm my understanding of what is happening here. 
     	   
     	   DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
                        
@@ -356,14 +365,6 @@ public class ExportPanel1 extends JPanel {
             fireContentsChanged(this, 0, getSize());
         }
 
-        // RB - added a clear method to clear the JList and attempted to use in line 252
-        public void clearSpeciesProfiles (SpeciesProfile[] speciesProfiles) {
-        	this.speciesProfiles = null;
-        	
-        	// update listeners.
-        	fireContentsChanged(this, 0, getSize());
-        }
-        
         @Override
 		public Object getElementAt(int index) {
 			return speciesProfiles[index];

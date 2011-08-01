@@ -20,7 +20,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.StringBuilder; // RB - added for StringBuilder
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -164,62 +163,12 @@ public class ExportPanel1 extends JPanel {
 
 
         // register listeners
-        // Dondi - Note how the listSelectionListener variable defined here really is only used
-        // once (i.e., in the addListSelectionListener call).  In this case, I'd skip the variable
-        // declaration entirely and just initialize the ListSelectionListener inline.
-        //
-        // (that is: speciesCheckList.addListSelectionListener(new ListSelectionListener() {
-        //   ........
-        // });
-//      ListSelectionListener listSelectionListener = new ListSelectionListener() {
-//      RB - OK, had done that previously but for some reason broke out the variable this time.
         speciesCheckList.addListSelectionListener (new ListSelectionListener() {
             // Handle list selection
         	public void valueChanged(ListSelectionEvent listSelectionEvent) {
-        		// Dondi - I don't think you need to worry about this.  I suggest taking out the
-        	    // whole conditional about whether the value is adjusting to see if it makes any
-        	    // difference.  If not, we can leave it out.
-//      		boolean adjust = listSelectionEvent.getValueIsAdjusting();
-//		RB - per discussion, pulled this out as unneeded variable along with the if conditional        		
-//        		if ( !adjust ) {
-        		    // Dondi - Alternatively, you can go straight to speciesCheckList.
-        			JList list = (JList)listSelectionEvent.getSource();
-        			int[] selections = list.getSelectedIndices();
-        			Object selectedValues[] = list.getSelectedValues();
-        			String speciesText = "Selected Species info: ";
-        			
-        			// Dondi - Suggestion: get the hang of iteration-style for loops.  With that
-        			// style, you would not need the indices at all:
-        			//
-        			// for (Object selection: list.getSelectedValues()) {
-        			//     .......
-        			// }
-// RB - tried the iteration style loop but didn't get the proper text strings from line 208.        			
-        			
-//        		}
-        			for ( int i = 0, n = selections.length; i < n; i++ ) {
-//        			for ( Object selection: list.getSelectedValues() ) {
-        			    // Dondi - I don't see the reason for this condition (i == 0).  Especially
-        			    // since this is what's causing only one selected species to be mentioned
-        			    // in your message area!
-//        				if ( i == 0 ) {
-// RB - you are right this was blowing the multiple species going into speciesDescriptionTextArea
-// also added newline and spacing to text formatting
-        				    // Dondi - Use StringBuilder when incrementally building a string.
-        				    // (e.g., stringBuilder.append(selection.toString()))
-        					speciesText += "\n" + selectedValues [i].toString();
-//        					speciesText += "\n" + selectedValues.toString();
-//        					StringBuilder stringBuilder.append( selection.toString() );
-//        					speciesDescriptionTextArea += selectedValues [i].toString();
-//        				}
-        			}
-        			speciesDescriptionTextArea.setText(speciesText);
-        		
-        		// get selected indices
-                // int[] indices = speciesCheckList.getSelectedIndices();
+        	    handleSpeciesProfileSelection(listSelectionEvent);
             }
         });
-//      speciesCheckList.addListSelectionListener(listSelectionListener);
 
         speciesDescriptionTextArea = new JTextArea(3, 15);
         speciesDescriptionTextArea.setLineWrap(true);
@@ -318,82 +267,79 @@ public class ExportPanel1 extends JPanel {
     
     // RB disable method for rewrite using JList speciesCheckList
     
-    protected void speciesProfileSelected(Object selectedItem) {
-       if (selectedItem instanceof SpeciesProfile) {
-    	   
-    	   DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
+    // Dondi - You might not have remembered that one of the things you needed to do with
+    // this method was to change the parameters.  The prior version took the selected item,
+    // which, in our case, no longer applies.  Instead, I'm sending in the entire event.
+    // This change also merited a renaming of the method. 
+    protected void handleSpeciesProfileSelection(ListSelectionEvent listSelectionEvent) {
+        DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
+
+        // RB - GROUND ZERO - This is the line to modify for a collection!!!!
+        // databaseProfile.setSelectedSpeciesProfile(selectedProfile);
+
+        ExportToGenMAPP.setDatabaseProfile(databaseProfile);
+
+        // Dondi - Alternatively, you can go straight to speciesCheckList.
+        JList list = (JList)listSelectionEvent.getSource();
+
+        // Dondi - Suggestion: get the hang of iteration-style for loops.  With that
+        // style, you would not need the indices at all:
+        //
+        // for (Object selection: list.getSelectedValues()) {
+        //     .......
+        // }
+        // RB - tried the iteration style loop but didn't get the proper text strings from line 208.
+        StringBuilder speciesTextBuilder = new StringBuilder("Selected Species info: ");
+        for (Object selection: list.getSelectedValues()) {
+            // Dondi - Use StringBuilder when incrementally building a string.
+            // (e.g., stringBuilder.append(selection.toString()))
+            speciesTextBuilder.append("\n").append(selection);
+
+//          StringBuilder stringBuilder.append( selection.toString() );
+            // Dondi - The line above, from your prior commit, is, I think,
+            // instructive in triaging some of the roots of your recent coding struggles.
+            // Fundamentally, I see in this line the need to improve your understanding of how
+            // syntax (what you write) relates to semantics (what you want the code to do).
+            //
+            // When facing a compile error, first try to break down what that line is trying to say.
+            // Overall, the line implies a variable declaration: there is a class at the beginning
+            // (StringBuilder) followed by what seems to be a variable name (stringBuilder).
+            // However, that *isn't* a variable name --- it's an expression, as noted by the
+            // method call to append.  Thus, just stepping back and looking at the line like
+            // that, the skill to hone here is to realize that this statement does not match
+            // any typical programming language construct at all.  You can then work from there.
+            // For instance, since the append method call is what fundamentally messes up the
+            // statement, you may then realize that this line should be closer to:
+            //
+            //     StringBuilder stringBuilder;
+            //
+            // That would now be syntactically valid.  Then, having seen this, you would probably
+            // realize that you need to assign a value to stringBuilder.  For objects, this is
+            // frequently a constructor.  So you may then go:
+            //
+            //     StringBuilder stringBuilder = new StringBuilder();
+            //
+            // Finally, you know that you want to call the append method.  Now you're golden ---
+            // you have the object you want, and so you can now call append:
+            //
+            //     StringBuilder stringBuilder = new StringBuilder();
+            //     stringBuilder.append(selection.toString());
+            //
+            // Now, this is not necessarily the final code that comes out, but I hope it illustrates
+            // how taking things really slowly, especially in a language for which you are still on
+            // a learning curve, is crucial in not getting lost.  And, the starting point of pretty
+            // much any coding is the syntax.  So, my advice is to sit back, take it slow, and always
+            // start with the syntax.  Be very sure that what is written makes syntactic sense first
+            // and foremost.  After that, you can worry about whether it's doing what you want.
 
             // Dondi - sample class comparison for Rich
-            System.out.println(selectedItem.getClass() == UniProtSpeciesProfile.class);
-
-                     
-// RB - GROUND ZERO - This is the line to modify for a collection!!!!
-    	   // databaseProfile.setSelectedSpeciesProfile(selectedProfile);
-    	   
-            ExportToGenMAPP.setDatabaseProfile(databaseProfile);
-
-            // Dondi - sample class comparison for Rich
-            System.out.println(selectedItem.getClass() == UniProtSpeciesProfile.class);
-
-            //speciesDescriptionTextArea.setText(selectedProfile.getDescription());
-
-/* RB commented out to allow compile without error            
-            speciesCheckList.addListSelectionListener (new ListSelectionListener() {
-                // Handle list selection
-            	public void valueChanged(ListSelectionEvent listSelectionEvent) {
-            		// Dondi - I don't think you need to worry about this.  I suggest taking out the
-            	    // whole conditional about whether the value is adjusting to see if it makes any
-            	    // difference.  If not, we can leave it out.
-//          		boolean adjust = listSelectionEvent.getValueIsAdjusting();
-//    		RB - per discussion, pulled this out as unneeded variable along with the if conditional        		
-//            		if ( !adjust ) {
-            		    // Dondi - Alternatively, you can go straight to speciesCheckList.
-            			JList list = (JList)listSelectionEvent.getSource();
-            			int[] selections = list.getSelectedIndices();
-            			Object selectedValues[] = list.getSelectedValues();
-            			String speciesText = "Selected Species info: ";
-            			
-            			// Dondi - Suggestion: get the hang of iteration-style for loops.  With that
-            			// style, you would not need the indices at all:
-            			//
-            			// for (Object selection: list.getSelectedValues()) {
-            			//     .......
-            			// }
-    // RB - tried the iteration style loop but didn't get the proper text strings from line 208.        			
-            			
-//            		}
-            			for ( int i = 0, n = selections.length; i < n; i++ ) {
-//            			for ( Object selection: list.getSelectedValues() ) {
-            			    // Dondi - I don't see the reason for this condition (i == 0).  Especially
-            			    // since this is what's causing only one selected species to be mentioned
-            			    // in your message area!
-//            				if ( i == 0 ) {
-    // RB - you are right this was blowing the multiple species going into speciesDescriptionTextArea
-    // also added newline and spacing to text formatting
-            				    // Dondi - Use StringBuilder when incrementally building a string.
-            				    // (e.g., stringBuilder.append(selection.toString()))
-            					speciesText += "\n" + selectedValues [i].toString();
-//            					speciesText += "\n" + selectedValues.toString();
-//            					StringBuilder stringBuilder.append( selection.toString() );
-//            					speciesDescriptionTextArea += selectedValues [i].toString();
-//            				}
-            			}
-            			speciesDescriptionTextArea.setText(speciesText);
-            		
-            		// get selected indices
-                    // int[] indices = speciesCheckList.getSelectedIndices();
-                }
-            });
-//          speciesCheckList.addListSelectionListener(listSelectionListener);
-*/            
+            System.out.println(selection.getClass() == UniProtSpeciesProfile.class);
+		}
+		speciesDescriptionTextArea.setText(speciesTextBuilder.toString());
             
-// RB - should kill the speciesCustomizeTextField all together
-            //speciesCustomizeTextField.setText(selectedProfile.getName());
-        
-                        
-       }
+		// RB - should kill the speciesCustomizeTextField all together
+        //speciesCustomizeTextField.setText(selectedProfile.getName());
     }
-
 
     /**
      * Checks the required fields for the panel.

@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 // Dondi - Use the Source > Organize Imports command to generate these automatically.
@@ -70,6 +71,8 @@ public class ExportPanel1 extends JPanel {
     private JFormattedTextField modifyFormattedTextField;
     private JTextArea notesTextArea;
 
+    // RB - Do we want to add logging here?
+    
     /**
      * Constructor.
      */
@@ -268,81 +271,40 @@ public class ExportPanel1 extends JPanel {
 
         JList list = (JList)listSelectionEvent.getSource();
         StringBuilder speciesTextBuilder = new StringBuilder("Selected Species info: ");
+		ArrayList<Object> selectedSpecies = new ArrayList<Object>();
         for (Object selection: list.getSelectedValues()) {
-            // Dondi - I inserted the comment below since this class comparison usage is quite
-            // atypical.  In such cases, a comment is called for.
 
-            // A direct class comparison is required here (as opposed to instanceof) because
-            // we are looking specifically for instances of UniProtSpeciesProfile, and not
-            // any of its subclasses.
+            // A direct class comparison is required here (as opposed to instanceof)
+        	// because we are looking specifically for instances of UniProtSpeciesProfile, 
+        	// and not any of its subclasses.
             
-            // Dondi - As it turned out, there was no need to designate a speciesProfileType
-            // variable at all.  It is ultimately used only once.  So, its value is inlined
-            // right into the append call.  The if/else block is replaced by the conditional
-            // expression in order to facilitate this inlining.
-            //
-            // As you get the hang of finding patterns like this in the code, go ahead and
-            // change them also even if not related to your main thread of work (make sure
-            // to test your changes of course).
         	speciesTextBuilder.append("\n")
         	    .append(selection)
         	    .append((selection.getClass() == UniProtSpeciesProfile.class) ?
                     ", Generic Profile." : ", Custom Profile.");
+        	selectedSpecies.add(selection);
 		}
 		speciesDescriptionTextArea.setText(speciesTextBuilder.toString());
-            
-// RB - discuss with Dr. Dahlquist, should eliminate this single 
-// name field since we now multi-select species profiles.
+
+		System.out.println(selectedSpecies); // RB - why does this print twice?
+
+		
+// RB - keep this field since tables are populated with this info. 
+// Need to determine how the tables are populated, then adjust to allow
+// for population of the correct species name out of those selected.
 		
         // speciesCustomizeTextField.setText(selectedProfile.getName());
 		
         DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
 
-// RB - ***** GROUND ZERO ***** - This is the line to modify for a collection
-// of species profiles!!!!
-        // databaseProfile.setSelectedSpeciesProfile(selectedProfile);
+// RB - Need to rework setSelectedSpeciesProfile method to process
+// species Object Collections.
+        databaseProfile.setSelectedSpeciesProfile(selectedSpecies);
 
         ExportToGenMAPP.setDatabaseProfile(databaseProfile);
 
     }
 
-// StringBuilder stringBuilder.append( selection.toString() );
-   //
-   // Dondi - The line above, from your prior commit, is, I think,
-   // instructive in triaging some of the roots of your recent coding struggles.
-   // Fundamentally, I see in this line the need to improve your understanding of how
-   // syntax (what you write) relates to semantics (what you want the code to do).
-   //
-   // When facing a compile error, first try to break down what that line is trying to say.
-   // Overall, the line implies a variable declaration: there is a class at the beginning
-   // (StringBuilder) followed by what seems to be a variable name (stringBuilder).
-   // However, that *isn't* a variable name --- it's an expression, as noted by the
-   // method call to append.  Thus, just stepping back and looking at the line like
-   // that, the skill to hone here is to realize that this statement does not match
-   // any typical programming language construct at all.  You can then work from there.
-   // For instance, since the append method call is what fundamentally messes up the
-   // statement, you may then realize that this line should be closer to:
-   //
-   //     StringBuilder stringBuilder;
-   //
-   // That would now be syntactically valid.  Then, having seen this, you would probably
-   // realize that you need to assign a value to stringBuilder.  For objects, this is
-   // frequently a constructor.  So you may then go:
-   //
-   //     StringBuilder stringBuilder = new StringBuilder();
-   //
-   // Finally, you know that you want to call the append method.  Now you're golden ---
-   // you have the object you want, and so you can now call append:
-   //
-   //     StringBuilder stringBuilder = new StringBuilder();
-   //     stringBuilder.append(selection.toString());
-   //
-   // Now, this is not necessarily the final code that comes out, but I hope it illustrates
-   // how taking things really slowly, especially in a language for which you are still on
-   // a learning curve, is crucial in not getting lost.  And, the starting point of pretty
-   // much any coding is the syntax.  So, my advice is to sit back, take it slow, and always
-   // start with the syntax.  Be very sure that what is written makes syntactic sense first
-   // and foremost.  After that, you can worry about whether it's doing what you want.
 
     /**
      * Checks the required fields for the panel.

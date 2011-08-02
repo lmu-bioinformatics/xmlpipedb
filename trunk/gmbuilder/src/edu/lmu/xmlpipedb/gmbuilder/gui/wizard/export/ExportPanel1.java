@@ -269,18 +269,25 @@ public class ExportPanel1 extends JPanel {
         JList list = (JList)listSelectionEvent.getSource();
         StringBuilder speciesTextBuilder = new StringBuilder("Selected Species info: ");
         for (Object selection: list.getSelectedValues()) {
-        	String profileType;
-            if ( selection.getClass()== UniProtSpeciesProfile.class ) {
-            	profileType = ", Generic Profile.";
-            }
-            else {
-            	profileType = ", Custom Profile.";
-           	// Dondi - sample class comparison for Rich
-            // System.out.println(selection.getClass() == UniProtSpeciesProfile.class);            
-            }
-        	speciesTextBuilder.append("\n").append(selection).append(profileType);
+            // Dondi - I inserted the comment below since this class comparison usage is quite
+            // atypical.  In such cases, a comment is called for.
 
-
+            // A direct class comparison is required here (as opposed to instanceof) because
+            // we are looking specifically for instances of UniProtSpeciesProfile, and not
+            // any of its subclasses.
+            
+            // Dondi - As it turned out, there was no need to designate a speciesProfileType
+            // variable at all.  It is ultimately used only once.  So, its value is inlined
+            // right into the append call.  The if/else block is replaced by the conditional
+            // expression in order to facilitate this inlining.
+            //
+            // As you get the hang of finding patterns like this in the code, go ahead and
+            // change them also even if not related to your main thread of work (make sure
+            // to test your changes of course).
+        	speciesTextBuilder.append("\n")
+        	    .append(selection)
+        	    .append((selection.getClass() == UniProtSpeciesProfile.class) ?
+                    ", Generic Profile." : ", Custom Profile.");
 		}
 		speciesDescriptionTextArea.setText(speciesTextBuilder.toString());
             
@@ -343,7 +350,8 @@ public class ExportPanel1 extends JPanel {
      * @return
      */
     protected boolean isAllInformationEntered() {
-        return ownerTextField.getText().equals("") ? false : true;
+        // Dondi - Another example of an expression that could use some tightening up.
+        return !"".equals(ownerTextField.getText());
     }
 
     /**
@@ -368,7 +376,7 @@ public class ExportPanel1 extends JPanel {
         // set the species name
         
         // RB - not sure if setSpeciesName needs to be modified??
-        
+        // Dondi - not sure either; will need to follow how this string is used
         databaseProfile.setSpeciesName(speciesCustomizeTextField.getText());
         databaseProfile.setModify(new SimpleDateFormat("MM/dd/yyyy").parse(modifyFormattedTextField.getText()));
         databaseProfile.setNotes(notesTextArea.getText());

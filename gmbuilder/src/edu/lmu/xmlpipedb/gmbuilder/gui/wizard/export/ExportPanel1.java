@@ -23,10 +23,10 @@ import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
-// Dondi - Use the Source > Organize Imports command to generate these automatically.
-// You can even specify, in the preferences, your preferred order.
 import javax.swing.AbstractListModel;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -72,6 +72,7 @@ public class ExportPanel1 extends JPanel {
     private JTextArea notesTextArea;
 
     // RB - Do we want to add logging here?
+    // Dondi - Logging is never a bad idea  :)
     
     /**
      * Constructor.
@@ -284,10 +285,26 @@ public class ExportPanel1 extends JPanel {
                     ", Generic Profile." : ", Custom Profile.");
         	selectedSpecies.add(selection);
 		}
+        // Dondi - Remember I suggested that you look at the Collections or Arrays classes?
+        // Compare the above code (from lines 274-286 in this version) to this:
+        List<? extends SpeciesProfile> selectedSpeciesProfiles = Arrays.asList((SpeciesProfile[])list.getSelectedValues());
+        for (SpeciesProfile speciesProfile: selectedSpeciesProfiles) {
+
+            // A direct class comparison is required here (as opposed to instanceof)
+            // because we are looking specifically for instances of UniProtSpeciesProfile, 
+            // and not any of its subclasses.
+            
+            speciesTextBuilder.append("\n")
+                .append(speciesProfile)
+                .append((speciesProfile.getClass() == UniProtSpeciesProfile.class) ?
+                    ", Generic Profile." : ", Custom Profile.");
+        }
+        
 		speciesDescriptionTextArea.setText(speciesTextBuilder.toString());
 
 		System.out.println(selectedSpecies); // RB - why does this print twice?
-
+		// Dondi - The valueChanged event fires for both selections and deselections.
+		//   i.e., the event fires more often than you might be thinking.
 		
 // RB - keep this field since tables are populated with this info. 
 // Need to determine how the tables are populated, then adjust to allow

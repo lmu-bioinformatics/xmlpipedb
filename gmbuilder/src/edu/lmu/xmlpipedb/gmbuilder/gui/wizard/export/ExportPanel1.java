@@ -44,6 +44,9 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import edu.lmu.xmlpipedb.gmbuilder.GenMAPPBuilder;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
@@ -73,6 +76,7 @@ public class ExportPanel1 extends JPanel {
 
     // RB - Do we want to add logging here?
     // Dondi - Logging is never a bad idea  :)
+    private static final Log _Log = LogFactory.getLog(ExportPanel1.class);
     
     /**
      * Constructor.
@@ -272,7 +276,7 @@ public class ExportPanel1 extends JPanel {
 
         JList list = (JList)listSelectionEvent.getSource();
         StringBuilder speciesTextBuilder = new StringBuilder("Selected Species info: ");
-		ArrayList<Object> selectedSpecies = new ArrayList<Object>();
+		List<Object> selectedSpecies = new ArrayList<Object>();
         for (Object selection: list.getSelectedValues()) {
 
             // A direct class comparison is required here (as opposed to instanceof)
@@ -287,7 +291,10 @@ public class ExportPanel1 extends JPanel {
 		}
         // Dondi - Remember I suggested that you look at the Collections or Arrays classes?
         // Compare the above code (from lines 274-286 in this version) to this:
-        List<? extends SpeciesProfile> selectedSpeciesProfiles = Arrays.asList((SpeciesProfile[])list.getSelectedValues());
+/*      // List<? extends SpeciesProfile> selectedSpeciesProfiles = 
+                Arrays.asList((SpeciesProfile[])list.getSelectedValues());
+           List<? extends SpeciesProfile> selectedSpeciesProfiles = 
+				(List<? extends SpeciesProfile>)Arrays.asList(list.getSelectedValues());
         for (SpeciesProfile speciesProfile: selectedSpeciesProfiles) {
 
             // A direct class comparison is required here (as opposed to instanceof)
@@ -299,7 +306,7 @@ public class ExportPanel1 extends JPanel {
                 .append((speciesProfile.getClass() == UniProtSpeciesProfile.class) ?
                     ", Generic Profile." : ", Custom Profile.");
         }
-        
+*/       
 		speciesDescriptionTextArea.setText(speciesTextBuilder.toString());
 
 		System.out.println(selectedSpecies); // RB - why does this print twice?
@@ -316,7 +323,8 @@ public class ExportPanel1 extends JPanel {
 
 // RB - Need to rework setSelectedSpeciesProfile method to process
 // species Object Collections.
-        databaseProfile.setSelectedSpeciesProfile(selectedSpecies);
+      //databaseProfile.setSelectedSpeciesProfile(selectedSpecies);
+        databaseProfile.setSelectedSpeciesProfile((SpeciesProfile)selectedSpecies.get(0));
 
         ExportToGenMAPP.setDatabaseProfile(databaseProfile);
 

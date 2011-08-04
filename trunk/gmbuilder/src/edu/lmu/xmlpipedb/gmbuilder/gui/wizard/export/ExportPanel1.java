@@ -321,9 +321,9 @@ public class ExportPanel1 extends JPanel {
 		
         DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
 
-// RB - Need to rework setSelectedSpeciesProfile method to process
-// species Object Collections.
-      //databaseProfile.setSelectedSpeciesProfile(selectedSpecies);
+// RB - Created setSelectedSpeciesProfiles method to process
+// species profiles as Object Collections.
+        // databaseProfile.setSelectedSpeciesProfiles(selectedSpecies);
         databaseProfile.setSelectedSpeciesProfile((SpeciesProfile)selectedSpecies.get(0));
 
         ExportToGenMAPP.setDatabaseProfile(databaseProfile);

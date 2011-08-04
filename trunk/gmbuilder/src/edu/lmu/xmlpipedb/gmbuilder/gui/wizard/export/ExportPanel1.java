@@ -275,7 +275,7 @@ public class ExportPanel1 extends JPanel {
     protected void handleSpeciesProfileSelection(ListSelectionEvent listSelectionEvent) {
 
         JList list = (JList)listSelectionEvent.getSource();
-        StringBuilder speciesTextBuilder = new StringBuilder("Selected Species info: ");
+        StringBuilder speciesTextBuilder = new StringBuilder("Info for selected species: ");
 		List<Object> selectedSpecies = new ArrayList<Object>();
         for (Object selection: list.getSelectedValues()) {
 
@@ -286,7 +286,7 @@ public class ExportPanel1 extends JPanel {
         	speciesTextBuilder.append("\n")
         	    .append(selection)
         	    .append((selection.getClass() == UniProtSpeciesProfile.class) ?
-                    ", Generic Profile." : ", Custom Profile.");
+                    ", generic profile." : ", custom profile.");
         	selectedSpecies.add(selection);
 		}
         // Dondi - Remember I suggested that you look at the Collections or Arrays classes?

@@ -54,7 +54,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		// profile name out and access it later.
 		super("org.uniprot.uniprot.Uniprot",
 				"This profile defines the requirements "
-						+ "for any UniProt centric gene database.",
+						+ "for any UniProt-centric Gene Database.",
 				new SpeciesProfile[] {
 						new EscherichiaColiUniProtSpeciesProfile(),
 						new ArabidopsisThalianaUniProtSpeciesProfile(),
@@ -105,6 +105,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		        .prepareStatement("select distinct(id) from dbreferencetype where type = 'NCBI Taxonomy'");
 		ResultSet result = ps.executeQuery();
 
+		speciesProfilesFound.clear();
 		while (result.next()) {
 
 			int speciesTaxon = result.getInt("id");

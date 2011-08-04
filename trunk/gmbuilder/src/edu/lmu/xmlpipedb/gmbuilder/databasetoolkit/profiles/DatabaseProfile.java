@@ -70,7 +70,7 @@ public abstract class DatabaseProfile extends Profile {
     protected Date version;
     protected String modSystem;
     protected SpeciesProfile speciesProfile;
-    protected List<Object> speciesProfiles; // RB - added for List of SpeciesProfiles
+    protected List<SpeciesProfile> speciesProfiles; // RB - added for List of SpeciesProfiles
     protected Date modify;
     protected DisplayOrderPreset displayOrderPreset;
     protected String displayOrder;
@@ -354,7 +354,7 @@ public abstract class DatabaseProfile extends Profile {
      *
      * @param selectedProfiles
      */
-    public List<Object> getSelectedSpeciesProfiles() {
+    public List<SpeciesProfile> getSelectedSpeciesProfiles() {
         return speciesProfiles;
     }    
     
@@ -373,7 +373,7 @@ public abstract class DatabaseProfile extends Profile {
      * 
      * @param selectedProfiles
      */
-    public void setSelectedSpeciesProfiles(List<Object> selectedProfiles) {
+    public void setSelectedSpeciesProfiles(List<SpeciesProfile> selectedProfiles) {
         this.speciesProfiles = selectedProfiles;
     }
         

@@ -23,7 +23,6 @@ import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -147,7 +146,11 @@ public class ExportPanel1 extends JPanel {
         profileDescriptionTextArea.setBackground(new Color(238, 238, 238));
 
         // Owner | JTextField | empty
+        JLabel ownerLabel = new JLabel("Owner:");
         ownerTextField = new JTextField(10);
+        String ownerToolTipText = "Enter the name of the person or group building this Gene Database.";
+        ownerLabel.setToolTipText(ownerToolTipText);
+        ownerTextField.setToolTipText(ownerToolTipText);
 
         // Version | Calendar | set to today
         versionFormattedTextField = new JFormattedTextField(new SimpleDateFormat("MM/dd/yyyy"));
@@ -177,6 +180,9 @@ public class ExportPanel1 extends JPanel {
         speciesDescriptionTextArea.setWrapStyleWord(true);
         speciesDescriptionTextArea.setEditable(true); // RB - true to discover size on panel
         speciesDescriptionTextArea.setBackground(new Color(238, 238, 238));
+        Font textAreaDefaultFont = speciesDescriptionTextArea.getFont();
+        speciesDescriptionTextArea.setFont(new Font(textAreaDefaultFont.getName(),
+                textAreaDefaultFont.getStyle(), textAreaDefaultFont.getSize() * 8 / 10));
 
         speciesCustomizeTextField = new JTextField(10);
 
@@ -196,7 +202,7 @@ public class ExportPanel1 extends JPanel {
         JPanel leftPanel = new JPanel(new SpringLayout());
         leftPanel.add(new JLabel("Profile:"));
         leftPanel.add(profileComboBox);
-        leftPanel.add(new JLabel("Owner:"));
+        leftPanel.add(ownerLabel);
         leftPanel.add(ownerTextField);
         leftPanel.add(new JLabel("Version (MM/dd/yyyy):"));
         leftPanel.add(versionFormattedTextField);
@@ -204,8 +210,8 @@ public class ExportPanel1 extends JPanel {
         leftPanel.add(modSystemTextField);
         leftPanel.add(new JLabel("Species:"));
         leftPanel.add(new JScrollPane(speciesCheckList));
-        leftPanel.add(new JLabel("Customize Name:"));
-        leftPanel.add(speciesCustomizeTextField);
+//        leftPanel.add(new JLabel("Customize Name:"));
+//        leftPanel.add(speciesCustomizeTextField);
         leftPanel.add(new JLabel("Modify (MM/dd/yyyy):"));
         leftPanel.add(modifyFormattedTextField);
 
@@ -275,8 +281,9 @@ public class ExportPanel1 extends JPanel {
     protected void handleSpeciesProfileSelection(ListSelectionEvent listSelectionEvent) {
 
         JList list = (JList)listSelectionEvent.getSource();
-        StringBuilder speciesTextBuilder = new StringBuilder("Info for selected species: ");
-		List<Object> selectedSpecies = new ArrayList<Object>();
+        StringBuilder speciesTextBuilder = new StringBuilder(list.getSelectedValues().length > 0 ?
+                "Info for selected species: " : "(no species selected)");
+		List<SpeciesProfile> selectedSpecies = new ArrayList<SpeciesProfile>();
         for (Object selection: list.getSelectedValues()) {
 
             // A direct class comparison is required here (as opposed to instanceof)
@@ -287,7 +294,7 @@ public class ExportPanel1 extends JPanel {
         	    .append(selection)
         	    .append((selection.getClass() == UniProtSpeciesProfile.class) ?
                     ", generic profile." : ", custom profile.");
-        	selectedSpecies.add(selection);
+        	selectedSpecies.add((SpeciesProfile)selection);
 		}
         // Dondi - Remember I suggested that you look at the Collections or Arrays classes?
         // Compare the above code (from lines 274-286 in this version) to this:
@@ -309,7 +316,7 @@ public class ExportPanel1 extends JPanel {
 */       
 		speciesDescriptionTextArea.setText(speciesTextBuilder.toString());
 
-		System.out.println(selectedSpecies); // RB - why does this print twice?
+		_Log.debug(selectedSpecies); // RB - why does this print twice?
 		// Dondi - The valueChanged event fires for both selections and deselections.
 		//   i.e., the event fires more often than you might be thinking.
 		
@@ -324,7 +331,9 @@ public class ExportPanel1 extends JPanel {
 // RB - Created setSelectedSpeciesProfiles method to process
 // species profiles as Object Collections.
         // databaseProfile.setSelectedSpeciesProfiles(selectedSpecies);
-        databaseProfile.setSelectedSpeciesProfile((SpeciesProfile)selectedSpecies.get(0));
+        if (!selectedSpecies.isEmpty()) {
+            databaseProfile.setSelectedSpeciesProfile(selectedSpecies.get(0));
+        }
 
         ExportToGenMAPP.setDatabaseProfile(databaseProfile);
 

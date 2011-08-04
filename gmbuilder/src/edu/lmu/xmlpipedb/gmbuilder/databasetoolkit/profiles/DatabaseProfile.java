@@ -70,6 +70,7 @@ public abstract class DatabaseProfile extends Profile {
     protected Date version;
     protected String modSystem;
     protected SpeciesProfile speciesProfile;
+    protected List<Object> speciesProfiles; // RB - added for List of SpeciesProfiles
     protected Date modify;
     protected DisplayOrderPreset displayOrderPreset;
     protected String displayOrder;
@@ -347,7 +348,16 @@ public abstract class DatabaseProfile extends Profile {
     public SpeciesProfile getSelectedSpeciesProfile() {
         return speciesProfile;
     }
-
+    
+    /**
+     * Returns the multi-selected species profiles chosen in the export wizard.
+     *
+     * @param selectedProfiles
+     */
+    public List<Object> getSelectedSpeciesProfiles() {
+        return speciesProfiles;
+    }    
+    
     /**
      * Sets the selected species profile chosen in the export wizard.
      *
@@ -357,6 +367,16 @@ public abstract class DatabaseProfile extends Profile {
         this.speciesProfile = selectedProfile;
     }
 
+    /**
+     * Sets the collection of selected species profiles in the export
+     * wizard.
+     * 
+     * @param selectedProfiles
+     */
+    public void setSelectedSpeciesProfiles(List<Object> selectedProfiles) {
+        this.speciesProfiles = selectedProfiles;
+    }
+        
     /**
      * Sets the owner string for the Gene Database to be exported.
      *

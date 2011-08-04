@@ -181,14 +181,14 @@ public abstract class SpeciesProfile extends Profile {
 	    return new ArrayList<TableManager>();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		return taxonID + " " + this.getName();
+	    return new StringBuilder("Taxon ID ")
+	            .append(taxonID)
+	            .append(", ")
+	            .append(this.getName()).toString();
 	}
-	
+
 	public int getTaxon() {
 		return taxonID;
 	}

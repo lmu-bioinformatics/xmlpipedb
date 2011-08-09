@@ -31,6 +31,7 @@ import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import generated.impl.IdImpl;
 import generated.impl.IsAImpl;
 import generated.impl.NameImpl;
@@ -48,7 +49,8 @@ public class ExportGoData {
      * @throws IOException
      *             I/O error
      */
-    public ExportGoData(Connection connection) {
+
+	public ExportGoData(Connection connection) {
         orderNo = 1;
         this.connection = connection;
         godb = new Go();
@@ -82,6 +84,30 @@ public class ExportGoData {
         _Log.info("done!");
     }
 
+    /**
+     * Staring point for exporting go data to genMAPP with multiple species
+     *
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     * @throws HibernateException
+     * @throws SAXException
+     * @throws IOException
+     * @throws JAXBException
+     */
+    public void exportMultipleSpecies(char chosenAspect, List<Integer> taxonIds) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
+        String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
+//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+//        ExportWizard.updateExportProgress(3, "GeneOntology export - creating tables...");
+        godb.createTables(connection);
+//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+//        ExportWizard.updateExportProgress(10, "GeneOntology export - populating tables...");
+        populateGoTablesMultipleSpecies(chosenAspect, taxonIds);
+//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
+//        ExportWizard.updateExportProgress(40, "GeneOntology export - flushing tables...");
+        godb.updateSystemsTable(connection, Date, "T");
+        _Log.info("done!");
+    }
+    
     /**
      * Create a staging database of the entire GeneOntology, including all
      * species
@@ -229,6 +255,31 @@ public class ExportGoData {
 //        dropGOStage();
     }
 
+    /**
+     * Populate genMAPP's GO tables with multiple species
+     *
+     * @throws SQLException
+     * @throws HibernateException
+     * @throws SAXException
+     * @throws IOException
+     * @throws JAXBException
+     */
+    private void populateGoTablesMultipleSpecies(char chosenAspect, List<Integer> taxonIds) throws SQLException, HibernateException, SAXException, IOException, JAXBException {
+        _Log.info("Populating UniProt-GO table...");
+        //populateUniprotGoTable(goaFile);
+        populateUniprotGoTableFromSQLMultipleSpecies(chosenAspect, taxonIds);
+        _Log.info("Populating GeneOntology table...");
+        populateGeneOntology();
+        _Log.info("Populating GeneOntologyTree...");
+        populateGeneOntologyTree();
+        _Log.info("Populating GeneOntologyCount...");
+        populateGeneOntologyCount();
+        _Log.info("Populating UniProt-GO count...");
+        populateUniProtGoCount();
+//        _Log.info("Dropping GO stage...");
+//        dropGOStage();
+    }
+    
     private QueryHolder getUniProtIDs(String sql, String id) throws SQLException {
         QueryHolder qh = new QueryHolder();
         qh.ps = connection.prepareStatement(sql);
@@ -451,6 +502,102 @@ public class ExportGoData {
     }
 
     /**
+     * Populates GenMAPP's UniProt-GeneOnotlogy table for multiple species, 
+     * using a GOA table from a PostgreSQL database instead of a GOA file
+     *
+     * @throws SQLException
+     */
+
+    private void populateUniprotGoTableFromSQLMultipleSpecies(char chosenAspect, List<Integer> taxonIds) throws SQLException {
+    	HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
+    	// String uniProtAndGOIDSQL = "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%' and taxon = 'taxon:" + taxonIds + "'";
+        StringBuilder baseQueryBuilder = 
+        	new StringBuilder( "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%'" );
+        boolean first = true;
+        for (int taxon: ExportToGenMAPP.getTaxonIds()) {
+            baseQueryBuilder.append(first ? " and (" : " or ");
+            baseQueryBuilder
+                .append("taxon = 'taxon:")
+                .append(taxon).append("'");
+            first = false;
+        }
+        baseQueryBuilder.append(")");
+    	
+    	PreparedStatement uniProtAndGOIDPS = null;
+    	_Log.info("creating: " + GOTable.UniProt_Go);
+
+    	if (chosenAspect != 'A') {
+    		if (chosenAspect == 'C') {
+    			// uniProtAndGOIDSQL = uniProtAndGOIDSQL + " and aspect = 'C'";
+    			baseQueryBuilder = baseQueryBuilder.append(" and aspect = 'C'");
+    		} else if (chosenAspect == 'F') {
+    			// uniProtAndGOIDSQL = uniProtAndGOIDSQL + " and aspect = 'F'";
+    			baseQueryBuilder = baseQueryBuilder.append(" and aspect = 'F'");
+    		} else if (chosenAspect == 'P') {
+    			// uniProtAndGOIDSQL = uniProtAndGOIDSQL + " and aspect = 'P'";
+    			baseQueryBuilder = baseQueryBuilder.append(" and aspect = 'P'");
+    		}
+    	}
+
+    	try {
+    		// uniProtAndGOIDPS = ConnectionManager.getRelationalDBConnection().prepareStatement(uniProtAndGOIDSQL);
+    		uniProtAndGOIDPS = ConnectionManager.getRelationalDBConnection().prepareStatement(baseQueryBuilder.toString());
+    		ResultSet uniProtAndGOIDRS = uniProtAndGOIDPS.executeQuery();
+    		while (uniProtAndGOIDRS.next()) {
+
+    			String uniProtID = uniProtAndGOIDRS.getString("db_object_id");
+    			uniProtID = uniProtID.trim();
+
+    			String goID = uniProtAndGOIDRS.getString("go_id");
+    			if (goID.startsWith("GO:")) {
+    				goID = goID.substring(3);
+    			}
+    			goID = goID.trim();
+
+    			String evidenceCode = uniProtAndGOIDRS.getString("evidence_code");
+    			evidenceCode = evidenceCode.trim();
+
+    			String withOrFrom = uniProtAndGOIDRS.getString("with_or_from");
+    			if (withOrFrom.startsWith("GO:")) {
+    				withOrFrom = withOrFrom.substring(3);
+    			}
+    			withOrFrom = withOrFrom.trim();
+
+    			String key = uniProtID + "," + goID;
+    			if (!unique.containsKey(key)) {
+    				unique.put(key, true);
+                    String[] values = new String[] { uniProtID, goID, "" };
+                    if ((godb != null) && (connection != null)) {
+                        godb.insert(connection, GOTable.UniProt_Go, values);
+                    } else {
+                        _Log.debug("UniProt-GO pair: " + uniProtID + ", " + goID);
+                    }
+    			}
+
+    			if (evidenceCode == "IC") {
+    				key = uniProtID + "," + withOrFrom;
+        			if (!unique.containsKey(key)) {
+        				unique.put(key, true);
+                        String[] values = new String[] { uniProtID, withOrFrom, "" };
+                        if ((godb != null) && (connection != null)) {
+                            godb.insert(connection, GOTable.UniProt_Go, values);
+                        } else {
+                            _Log.debug("UniProt-GO pair: " + uniProtID + ", " + goID);
+                        }
+        			}
+    			}
+
+    		}
+        } catch(SQLException sqlexc) {
+            throw sqlexc;
+        } catch(Exception exc) {
+            _Log.error(exc);
+        } finally {
+        	try { uniProtAndGOIDPS.close(); } catch(Exception exc) { _Log.error(exc); }
+        }
+    }
+    
+    /**
      * Populates genMAPP's GeneOntology table based on a user selected species
      *
      * @throws SQLException
@@ -623,7 +770,7 @@ public class ExportGoData {
             }
         }
     }
-
+    
     /**
      * Log object for ExportGoData.
      */

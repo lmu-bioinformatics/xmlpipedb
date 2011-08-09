@@ -115,9 +115,8 @@ public class ExportPanel1 extends JPanel {
      * (normally there is only one, I think --JN) will become the basis for 
      * all the export work about to be done.
      */
-    // RB - prob rename this to something more descriptive. It is a method to 
-    // populate Database ComboBox with all available database profiles of
-    // which there is only one - UniProt
+    // RB - Initialization method to populate Database ComboBox with all 
+    // available database profiles of which there is only one - UniProt
     private void init() {
         for (DatabaseProfile profile : ExportToGenMAPP.getAvailableDatabaseProfiles()) {
             profileComboBox.addItem(profile);

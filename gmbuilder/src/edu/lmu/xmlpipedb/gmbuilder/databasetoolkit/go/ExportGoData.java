@@ -31,7 +31,7 @@ import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
 import generated.impl.IdImpl;
 import generated.impl.IsAImpl;
 import generated.impl.NameImpl;
@@ -70,7 +70,7 @@ public class ExportGoData {
      * @throws IOException
      * @throws JAXBException
      */
-    public void export(char chosenAspect, int taxon) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
+/*    public void export(char chosenAspect, int taxon) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
         String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(3, "GeneOntology export - creating tables...");
@@ -83,7 +83,7 @@ public class ExportGoData {
         godb.updateSystemsTable(connection, Date, "T");
         _Log.info("done!");
     }
-
+*/
     /**
      * Staring point for exporting go data to genMAPP with multiple species
      *
@@ -94,14 +94,14 @@ public class ExportGoData {
      * @throws IOException
      * @throws JAXBException
      */
-    public void exportMultipleSpecies(char chosenAspect, List<Integer> taxonIds) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
+    public void export(char chosenAspect, List<Integer> taxonIds) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
         String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(3, "GeneOntology export - creating tables...");
         godb.createTables(connection);
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(10, "GeneOntology export - populating tables...");
-        populateGoTablesMultipleSpecies(chosenAspect, taxonIds);
+        populateGoTables(chosenAspect, taxonIds);
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(40, "GeneOntology export - flushing tables...");
         godb.updateSystemsTable(connection, Date, "T");
@@ -230,6 +230,7 @@ public class ExportGoData {
         namespace.put("cellular_component", "C");
     }
 
+
     /**
      * Populate genMAPP's GO tables
      *
@@ -239,6 +240,7 @@ public class ExportGoData {
      * @throws IOException
      * @throws JAXBException
      */
+    /*    
     private void populateGoTables(char chosenAspect, int taxon) throws SQLException, HibernateException, SAXException, IOException, JAXBException {
         _Log.info("Populating UniProt-GO table...");
         //populateUniprotGoTable(goaFile);
@@ -254,9 +256,9 @@ public class ExportGoData {
 //        _Log.info("Dropping GO stage...");
 //        dropGOStage();
     }
-
+*/
     /**
-     * Populate genMAPP's GO tables with multiple species
+     * Populate genMAPP's GO tables with multiple species data
      *
      * @throws SQLException
      * @throws HibernateException
@@ -264,10 +266,10 @@ public class ExportGoData {
      * @throws IOException
      * @throws JAXBException
      */
-    private void populateGoTablesMultipleSpecies(char chosenAspect, List<Integer> taxonIds) throws SQLException, HibernateException, SAXException, IOException, JAXBException {
+    private void populateGoTables(char chosenAspect, List<Integer> taxonIds) throws SQLException, HibernateException, SAXException, IOException, JAXBException {
         _Log.info("Populating UniProt-GO table...");
         //populateUniprotGoTable(goaFile);
-        populateUniprotGoTableFromSQLMultipleSpecies(chosenAspect, taxonIds);
+        populateUniprotGoTableFromSQL(chosenAspect, taxonIds);
         _Log.info("Populating GeneOntology table...");
         populateGeneOntology();
         _Log.info("Populating GeneOntologyTree...");
@@ -426,7 +428,7 @@ public class ExportGoData {
      *
      * @throws SQLException
      */
-
+/*
     private void populateUniprotGoTableFromSQL(char chosenAspect, int taxon) throws SQLException {
     	HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
     	String uniProtAndGOIDSQL = "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%' and taxon = 'taxon:" + taxon + "'";
@@ -500,7 +502,7 @@ public class ExportGoData {
         	try { uniProtAndGOIDPS.close(); } catch(Exception exc) { _Log.error(exc); }
         }
     }
-
+*/
     /**
      * Populates GenMAPP's UniProt-GeneOnotlogy table for multiple species, 
      * using a GOA table from a PostgreSQL database instead of a GOA file
@@ -508,13 +510,13 @@ public class ExportGoData {
      * @throws SQLException
      */
 
-    private void populateUniprotGoTableFromSQLMultipleSpecies(char chosenAspect, List<Integer> taxonIds) throws SQLException {
+    private void populateUniprotGoTableFromSQL(char chosenAspect, List<Integer> taxonIds) throws SQLException {
     	HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
     	// String uniProtAndGOIDSQL = "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%' and taxon = 'taxon:" + taxonIds + "'";
         StringBuilder baseQueryBuilder = 
         	new StringBuilder( "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%'" );
         boolean first = true;
-        for (int taxon: ExportToGenMAPP.getTaxonIds()) {
+        for ( int taxon: DatabaseProfile.getTaxonIds() ) {
             baseQueryBuilder.append(first ? " and (" : " or ");
             baseQueryBuilder
                 .append("taxon = 'taxon:")

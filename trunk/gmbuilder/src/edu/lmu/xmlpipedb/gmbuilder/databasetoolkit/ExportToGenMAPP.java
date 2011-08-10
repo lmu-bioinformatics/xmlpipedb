@@ -13,7 +13,6 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -26,7 +25,6 @@ import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export.ExportWizard;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
@@ -41,7 +39,7 @@ public class ExportToGenMAPP {
 	 * without passing a reference to the ExportToGenMapp class
 	 *
 	 * The array of DatabaseProfiles called availableDatabaseProfiles holds all
-	 * the available database profiles. This accomodates the possibility of
+	 * the available database profiles. This accommodates the possibility of
 	 * supporting more than just UniProt, for example TIGR could be in the list,
 	 * too.
 	 *
@@ -52,8 +50,6 @@ public class ExportToGenMAPP {
 	// selected... goes into an ExportProperties object
     private static DatabaseProfile[] availableDatabaseProfiles;
     private static DatabaseProfile selectedDatabaseProfile;
-    // private static List<SpeciesProfile> selectedSpeciesProfiles;
-    private static List<Integer> taxonIds = new ArrayList<Integer>();
 
     private static final Log _Log = LogFactory.getLog(ExportToGenMAPP.class);
 
@@ -108,9 +104,9 @@ public class ExportToGenMAPP {
     public static void export() throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException, InvalidParameterException {
     	_Log.warn("Export Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
     	ExportWizard.updateExportProgress(1, "Starting GeneOntology export...");
-    	//(new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getChosenAspect(), selectedDatabaseProfile.getSelectedSpeciesProfile().getTaxon());
+    	// (new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getChosenAspect(), selectedDatabaseProfile.getSelectedSpeciesProfile().getTaxon());
     	// RB - the second argument needs to be a List of taxon ids, not a single taxon id
-    	(new ExportGoData(selectedDatabaseProfile.getExportConnection())).exportMultipleSpecies(selectedDatabaseProfile.getChosenAspect(), getTaxonIds());
+    	(new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getChosenAspect(), selectedDatabaseProfile.getTaxonIds());
  	
         ExportWizard.updateExportProgress(50, "Finished GeneOntology export...");
         ExportWizard.updateExportProgress(51, "Starting first pass table creation...");
@@ -199,26 +195,4 @@ public class ExportToGenMAPP {
     public static void cleanup() throws SQLException {
         ConnectionManager.closeAll();
     }
-
-	/**
-	 * @param taxonIds the taxonIds to set
-	 */
-	public static void setTaxonIds(List<Integer> taxonIds) {
-		ExportToGenMAPP.taxonIds = taxonIds;
-	}
-
-	/**
-	 * @return the taxonIds
-	 */
-	public static List<Integer> getTaxonIds() {
-		return taxonIds;
-	}
-	
-	public static void taxonsFromSpeciesList( List<SpeciesProfile> selectedSpecies ) {
-		List<Integer> taxons = new ArrayList<Integer>();
-		for ( SpeciesProfile species: selectedSpecies ) {
-			taxons.add( species.getTaxon());
-		}
-		setTaxonIds(taxons);
-	}
 }

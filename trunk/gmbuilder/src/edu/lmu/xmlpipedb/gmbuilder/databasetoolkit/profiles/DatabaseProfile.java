@@ -49,8 +49,13 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
  * @author Jeffrey Nicholas
  */
 public abstract class DatabaseProfile extends Profile {
-    // Static Variables -- these are used in the ExportWizard GUI
-    public static enum DisplayOrderPreset {
+    // Static Variables
+    
+	// RB - added to hold species taxon ids
+	private static List<Integer> taxonIds = new ArrayList<Integer>();
+	
+	// these are used in the EportWizard GUI
+	public static enum DisplayOrderPreset {
         alphabetical
     };
 
@@ -70,7 +75,7 @@ public abstract class DatabaseProfile extends Profile {
     protected Date version;
     protected String modSystem;
     protected SpeciesProfile speciesProfile;
-    protected List<SpeciesProfile> speciesProfiles; // RB - added for List of SpeciesProfiles
+    protected List<SpeciesProfile> selectedSpeciesProfiles; // RB - added for List of SpeciesProfiles
     protected Date modify;
     protected DisplayOrderPreset displayOrderPreset;
     protected String displayOrder;
@@ -355,7 +360,7 @@ public abstract class DatabaseProfile extends Profile {
      * @param selectedProfiles
      */
     public List<SpeciesProfile> getSelectedSpeciesProfiles() {
-        return speciesProfiles;
+        return selectedSpeciesProfiles;
     }    
     
     /**
@@ -374,10 +379,36 @@ public abstract class DatabaseProfile extends Profile {
      * @param selectedProfiles
      */
     public void setSelectedSpeciesProfiles(List<SpeciesProfile> selectedProfiles) {
-        this.speciesProfiles = selectedProfiles;
+        this.selectedSpeciesProfiles = selectedProfiles;
     }
         
     /**
+	 * @param taxonIds the taxonIds to set
+	 */
+	public static void setTaxonIds(List<Integer> taxonIds) {
+		DatabaseProfile.taxonIds = taxonIds;
+	}
+
+	/**
+	 * @return the taxonIds
+	 */
+	public static List<Integer> getTaxonIds() {
+		return taxonIds;
+	}
+
+	public static List<Integer> taxonsFromSelectedSpeciesList( List<SpeciesProfile> selectedSpecies ) {
+		List<Integer> taxons = new ArrayList<Integer>();
+		for ( SpeciesProfile species: selectedSpecies ) {
+			taxons.add( species.getTaxon() );
+		}
+		return taxons;
+	}
+	
+	
+	
+	
+	
+	/**
      * Sets the owner string for the Gene Database to be exported.
      *
      * @param owner

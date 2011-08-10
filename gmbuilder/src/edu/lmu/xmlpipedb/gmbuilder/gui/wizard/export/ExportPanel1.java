@@ -333,6 +333,9 @@ public class ExportPanel1 extends JPanel {
         if (!selectedSpecies.isEmpty()) {
             databaseProfile.setSelectedSpeciesProfile(selectedSpecies.get(0));
             //databaseProfile.setSelectedSpeciesProfiles(selectedSpecies);
+            
+            // RB - converts List<SpeciesProfile> to List<Integer> and setTaxonIds.
+            databaseProfile.setTaxonIds(databaseProfile.taxonsFromSelectedSpeciesList(selectedSpecies));
         }
 
         ExportToGenMAPP.setDatabaseProfile(databaseProfile);

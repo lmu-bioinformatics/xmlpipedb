@@ -31,7 +31,6 @@ import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
 import generated.impl.IdImpl;
 import generated.impl.IsAImpl;
 import generated.impl.NameImpl;
@@ -516,7 +515,10 @@ public class ExportGoData {
         StringBuilder baseQueryBuilder = 
         	new StringBuilder( "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%'" );
         boolean first = true;
-        for ( int taxon: DatabaseProfile.getTaxonIds() ) {
+        
+        // Dondi - Not sure why you were accessing DatabaseProfile.getTaxonIds() here when
+        // taxonIds is already passed as a parameter.
+        for ( int taxon: taxonIds ) {
             baseQueryBuilder.append(first ? " and (" : " or ");
             baseQueryBuilder
                 .append("taxon = 'taxon:")

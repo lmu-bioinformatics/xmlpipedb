@@ -335,7 +335,7 @@ public class ExportPanel1 extends JPanel {
             //databaseProfile.setSelectedSpeciesProfiles(selectedSpecies);
             
             // RB - converts List<SpeciesProfile> to List<Integer> and setTaxonIds.
-            databaseProfile.setTaxonIds(databaseProfile.taxonsFromSelectedSpeciesList(selectedSpecies));
+            databaseProfile.setTaxonIds(DatabaseProfile.taxonsFromSelectedSpeciesList(selectedSpecies));
         }
 
         ExportToGenMAPP.setDatabaseProfile(databaseProfile);

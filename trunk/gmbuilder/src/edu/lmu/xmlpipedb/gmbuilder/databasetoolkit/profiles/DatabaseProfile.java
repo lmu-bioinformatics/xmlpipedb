@@ -52,7 +52,8 @@ public abstract class DatabaseProfile extends Profile {
     // Static Variables
     
 	// RB - added to hold species taxon ids
-	private static List<Integer> taxonIds = new ArrayList<Integer>();
+    // Dondi - Why was this static?
+	private List<Integer> taxonIds = new ArrayList<Integer>();
 	
 	// these are used in the EportWizard GUI
 	public static enum DisplayOrderPreset {
@@ -385,14 +386,14 @@ public abstract class DatabaseProfile extends Profile {
     /**
 	 * @param taxonIds the taxonIds to set
 	 */
-	public static void setTaxonIds(List<Integer> taxonIds) {
-		DatabaseProfile.taxonIds = taxonIds;
+	public void setTaxonIds(List<Integer> taxonIds) {
+		this.taxonIds = taxonIds;
 	}
 
 	/**
 	 * @return the taxonIds
 	 */
-	public static List<Integer> getTaxonIds() {
+	public List<Integer> getTaxonIds() {
 		return taxonIds;
 	}
 

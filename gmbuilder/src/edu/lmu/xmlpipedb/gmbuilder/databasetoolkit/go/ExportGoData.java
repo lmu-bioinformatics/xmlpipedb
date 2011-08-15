@@ -518,6 +518,7 @@ public class ExportGoData {
         
         // Dondi - Not sure why you were accessing DatabaseProfile.getTaxonIds() here when
         // taxonIds is already passed as a parameter.
+        // RB - Duh, yes I lost track.
         for ( int taxon: taxonIds ) {
             baseQueryBuilder.append(first ? " and (" : " or ");
             baseQueryBuilder

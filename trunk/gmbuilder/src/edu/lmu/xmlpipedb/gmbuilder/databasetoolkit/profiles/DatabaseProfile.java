@@ -52,7 +52,7 @@ public abstract class DatabaseProfile extends Profile {
     // Static Variables
     
 	// RB - added to hold species taxon ids
-    // Dondi - Why was this static?
+    // Dondi - Why was this static? - wasn't supposed to be, typed in error
 	private List<Integer> taxonIds = new ArrayList<Integer>();
 	
 	// these are used in the EportWizard GUI
@@ -614,7 +614,23 @@ public abstract class DatabaseProfile extends Profile {
      */
     public TableManager getInfoTableManager() {
         TableManager tableManager = new TableManager(null, new String[] {});
-        tableManager.submit("Info", QueryType.insert, new String[][] { { "Owner", owner }, { "Version", new SimpleDateFormat("yyyyMMdd").format(version) }, { "MODSystem", modSystem }, { "Species", speciesProfile.getSpeciesName() }, { "Modify", new SimpleDateFormat("yyyyMMdd").format(modify) }, { "DisplayOrder", displayOrder }, { "Notes", notes } });
+        // tableManager.submit("Info", QueryType.insert, new String[][] { { "Owner", owner }, { "Version", new SimpleDateFormat("yyyyMMdd").format(version) }, { "MODSystem", modSystem }, { "Species", speciesProfile.getSpeciesName() }, { "Modify", new SimpleDateFormat("yyyyMMdd").format(modify) }, { "DisplayOrder", displayOrder }, { "Notes", notes } });
+        
+        StringBuilder baseStringArg = 
+        	new StringBuilder( " \"Info\", QueryType.insert, new String[][] { { \"\"Owner\", owner }, { \"Version\", new SimpleDateFormat(\"yyyyMMdd\").format(version) }, { \"MODSystem\", modSystem }, ");
+                
+        for ( SpeciesProfile specie: selectedSpeciesProfiles ) {
+            baseStringArg
+                .append( "{ \"Species\" , " )
+                .append(specie.getSpeciesName()).append("}, ");
+        }
+        baseStringArg.append(" { \"Modify\", new SimpleDateFormat(\"yyyyMMdd\").format(modify) }, { \"DisplayOrder\", displayOrder }, { \"Notes\", notes } })");
+        
+        // RB - trying to concatenate the submit arguments as a StringBuilder item but have type problem.
+        // How would you suggest supplying the argument in a way that works? Am I way off base here?
+        tableManager.submit(baseStringArg);
+        
+        
         return tableManager;
     }
 

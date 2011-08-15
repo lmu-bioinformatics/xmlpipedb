@@ -106,7 +106,7 @@ public class ExportToGenMAPP {
     	ExportWizard.updateExportProgress(1, "Starting GeneOntology export...");
     	// (new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getChosenAspect(), selectedDatabaseProfile.getSelectedSpeciesProfile().getTaxon());
     	// RB - the second argument needs to be a List of taxon ids, not a single taxon id
-    	(new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getChosenAspect(), selectedDatabaseProfile.getTaxonIds());
+    	(new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getChosenAspects(), selectedDatabaseProfile.getTaxonIds());
  	
         ExportWizard.updateExportProgress(50, "Finished GeneOntology export...");
         ExportWizard.updateExportProgress(51, "Starting first pass table creation...");

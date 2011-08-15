@@ -39,7 +39,6 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -76,7 +75,21 @@ public class ExportPanel1 extends JPanel {
     // RB - Do we want to add logging here?
     // Dondi - Logging is never a bad idea  :)
     private static final Log _Log = LogFactory.getLog(ExportPanel1.class);
+
+    /**
+     * Getter for "descriptor" access.
+     */
+    protected JTextField getOwnerTextField() {
+        return ownerTextField;
+    }
     
+    /**
+     * Getter for "descriptor" access.
+     */
+    protected JList getSpeciesCheckList() {
+        return speciesCheckList;
+    }
+
     /**
      * Constructor.
      */
@@ -339,7 +352,6 @@ public class ExportPanel1 extends JPanel {
         }
 
         ExportToGenMAPP.setDatabaseProfile(databaseProfile);
-
     }
 
 
@@ -349,8 +361,8 @@ public class ExportPanel1 extends JPanel {
      * @return
      */
     protected boolean isAllInformationEntered() {
-        // Dondi - Another example of an expression that could use some tightening up.
-        return !"".equals(ownerTextField.getText());
+        return !"".equals(ownerTextField.getText()) &&             // Owner field cannot be blank.
+                (speciesCheckList.getSelectedValues().length > 0); // At least one species selected.
     }
 
     /**
@@ -383,43 +395,33 @@ public class ExportPanel1 extends JPanel {
     }
 
     /**
-     * Adds a document listener.
-     * 
-     * @param documentListener
-     */
-    protected void addDocumentListener(DocumentListener documentListener) {
-        ownerTextField.getDocument().addDocumentListener(documentListener);
-    }
-
-    /**
      * Extend AbstractListModel by adding the mechanisms to supply the list's data.
      * Also, when the array of species profiles changes, listeners are informed
      * by fireContentsChanged.
      * 
      * @author rbrous
-     *
      */
     private class SpeciesListModel extends AbstractListModel {
 
         // The source of the list.
         private SpeciesProfile[] speciesProfiles;
-        
+
         public void setSpeciesProfiles(SpeciesProfile[] speciesProfiles) {
             this.speciesProfiles = speciesProfiles;
-            
+
             // Update listeners.
             fireContentsChanged(this, 0, getSize());
         }
 
         @Override
-		public Object getElementAt(int index) {
-			return speciesProfiles[index];
-		}
+        public Object getElementAt(int index) {
+            return speciesProfiles[index];
+        }
 
-		@Override
-		public int getSize() {
-		    return (speciesProfiles != null) ? speciesProfiles.length : 0;
-		}
+        @Override
+        public int getSize() {
+            return (speciesProfiles != null) ? speciesProfiles.length : 0;
+        }
 
     }
 }

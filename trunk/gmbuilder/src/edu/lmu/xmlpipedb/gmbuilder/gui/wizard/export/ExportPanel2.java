@@ -14,28 +14,31 @@ package edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ButtonGroup;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ExportToGenMAPP;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.GOAspect;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 
 
@@ -46,34 +49,23 @@ import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 public class ExportPanel2 extends JPanel {
 
 	private static final long serialVersionUID = -2257129989592002163L;
-	private JFileChooser chooser = new JFileChooser(".");
 
-	private JRadioButton genmappRadioButton;
-	private JRadioButton otherRadioButton;
+	private ExportPanel2Descriptor descriptor;
 
-	private File genmappDatabaseFile = new File("");
-	private JTextField genmappDatabaseTextField;
+	private File genmappDatabaseFile = null;
 	private JButton chooseGenMAPPDatabaseButton;
-	private JLabel chooseGenMAPPDatabaseLabel;
+	private JLabel genmappDatabaseFileLabel;
 
-	private JLabel otherDatabaseSettings;
-
-	private JRadioButton allAspectRadioButton;
-	private JRadioButton onlyFAspectRadioButton;
-	private JRadioButton onlyCAspectRadioButton;
-	private JRadioButton onlyPAspectRadioButton;
-
-	private File goAssociationsFile = new File("");
-	private JTextField goAssocationsTextField;
-
-	private char chosenAspect;
+	private JCheckBox onlyFAspectCheckBox;
+	private JCheckBox onlyCAspectCheckBox;
+	private JCheckBox onlyPAspectCheckBox;
 
 	/**
 	 * Constructor.
 	 */
-	protected ExportPanel2() {
-
+	protected ExportPanel2(ExportPanel2Descriptor descriptor) {
         super();
+        this.descriptor = descriptor;
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BorderLayout());
@@ -94,8 +86,7 @@ public class ExportPanel2 extends JPanel {
 
         setLayout(new BorderLayout());
         add(titlePanel, BorderLayout.NORTH);
-        add(contentPanel, BorderLayout.WEST);
-
+        add(contentPanel, BorderLayout.CENTER);
     }
 
     /**
@@ -104,130 +95,59 @@ public class ExportPanel2 extends JPanel {
      */
     private JPanel getContentPanel() {
 
-    	JPanel genmappPanel = new JPanel();
-    	genmappDatabaseTextField = new JTextField(15);
-    	genmappDatabaseTextField.setEditable(false);
-	    Action chooseGenMAPPDatabaseAction = new AbstractAction("Specify File...") {
+    	JPanel genmappFilePanel = new JPanel();
+    	genmappFilePanel.setBorder(BorderFactory.createCompoundBorder(
+    	    BorderFactory.createTitledBorder("GenMAPP Database File"),
+    	    BorderFactory.createEmptyBorder(10, 5, 10, 5)
+    	));
+	    Action chooseGenMAPPDatabaseAction = new AbstractAction("Save GenMAPP Database File As...") {
 			private static final long serialVersionUID = 3215450361259127899L;
 
-	        public void actionPerformed(ActionEvent e) {
+	        public void actionPerformed(ActionEvent actionEvent) {
 	            chooseGenMAPPDatabase();
 	        }
 	    };
 	    chooseGenMAPPDatabaseButton = new JButton(chooseGenMAPPDatabaseAction);
-	    chooseGenMAPPDatabaseLabel = new JLabel("Create GenMAPP Database:");
-    	genmappPanel.add(chooseGenMAPPDatabaseLabel);
-    	genmappPanel.add(genmappDatabaseTextField);
-    	genmappPanel.add(chooseGenMAPPDatabaseButton);
+	    genmappDatabaseFileLabel = new JLabel();
+	    genmappFilePanel.add(chooseGenMAPPDatabaseButton);
+    	genmappFilePanel.add(genmappDatabaseFileLabel);
 
-    	JPanel otherPanel = new JPanel();
-    	otherDatabaseSettings = new JLabel("Choose other database settings here:");
-    	otherPanel.add(otherDatabaseSettings);
+    	onlyFAspectCheckBox = new JCheckBox("Export Molecular Function (F) Terms");
+    	onlyCAspectCheckBox = new JCheckBox("Export Cellular Component (C) Terms");
+    	onlyPAspectCheckBox = new JCheckBox("Export Biological Process (P) Terms");
+    	
+    	ChangeListener changeListener = new ChangeListener() {
 
+            @Override
+            public void stateChanged(ChangeEvent changeEvent) {
+                descriptor.setNextButton();
+            }
+    	    
+    	};
+    	onlyFAspectCheckBox.addChangeListener(changeListener);
+        onlyCAspectCheckBox.addChangeListener(changeListener);
+        onlyPAspectCheckBox.addChangeListener(changeListener);
 
-    	JPanel goPanel = new JPanel();
-    	goAssocationsTextField = new JTextField(15);
-    	goAssocationsTextField.setEditable(false);
-	    Action chooseGOAssociationsAction = new AbstractAction("Choose File...") {
-			private static final long serialVersionUID = 3215450361259127899L;
+    	JPanel goaAspectPanel = new JPanel();
+    	goaAspectPanel.setLayout(new BoxLayout(goaAspectPanel, BoxLayout.Y_AXIS));
+        goaAspectPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder("Gene Ontology Terms"),
+            BorderFactory.createEmptyBorder(0, 5, 5, 5)
+        ));
+    	goaAspectPanel.add(onlyFAspectCheckBox);
+    	goaAspectPanel.add(onlyCAspectCheckBox);
+    	goaAspectPanel.add(onlyPAspectCheckBox);
+    	goaAspectPanel.add(Box.createVerticalStrut(10));
+    	goaAspectPanel.add(new JButton(new AbstractAction("Export All Terms") {
+    	    public void actionPerformed(ActionEvent actionEvent) {
+    	        onlyFAspectCheckBox.setSelected(true);
+                onlyCAspectCheckBox.setSelected(true);
+                onlyPAspectCheckBox.setSelected(true);
+    	    }
+    	}));
 
-	        public void actionPerformed(ActionEvent e) {
-	            chooseGOAssociationFile();
-	        }
-	    };
-	    JButton chooseGoAssociationsFile = new JButton(chooseGOAssociationsAction);
-	    goPanel.add(new JLabel("GeneOntology Associations File:"));
-	    goPanel.add(goAssocationsTextField);
-	    goPanel.add(chooseGoAssociationsFile);
-
-
-    	genmappRadioButton = new JRadioButton();
-    	genmappRadioButton.setText("GenMAPP Gene Database File");
-    	genmappRadioButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				genmappRadioButtonSelected();
-			}
-
-    	});
-
-    	otherRadioButton = new JRadioButton();
-    	otherRadioButton.setText("Other Relational Database");
-    	otherRadioButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				otherRadioButtonSelected();
-			}
-
-    	});
-    	//TODO Implement optional database connection settings.
-    	//Don't allow this selection until implemented.
-    	otherRadioButton.setEnabled(false);
-
-    	ButtonGroup buttonGroup = new ButtonGroup();
-    	buttonGroup.add(genmappRadioButton);
-    	buttonGroup.add(otherRadioButton);
-
-    	allAspectRadioButton = new JRadioButton();
-    	allAspectRadioButton.setText("Full Database");
-    	allAspectRadioButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				allAspectRadioButtonSelected();
-			}
-
-    	});
-
-    	onlyFAspectRadioButton = new JRadioButton();
-    	onlyFAspectRadioButton.setText("Molecular Function (F_only) Database");
-    	onlyFAspectRadioButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				onlyFAspectRadioButtonSelected();
-			}
-
-    	});
-
-    	onlyCAspectRadioButton = new JRadioButton();
-    	onlyCAspectRadioButton.setText("Cellular Component (C_only) Database");
-    	onlyCAspectRadioButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				onlyCAspectRadioButtonSelected();
-			}
-
-    	});
-
-    	onlyPAspectRadioButton = new JRadioButton();
-    	onlyPAspectRadioButton.setText("Biological Process (P_only) Database");
-    	onlyPAspectRadioButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				onlyPAspectRadioButtonSelected();
-			}
-
-    	});
-
-    	ButtonGroup aspectButtonGroup = new ButtonGroup();
-    	aspectButtonGroup.add(allAspectRadioButton);
-    	aspectButtonGroup.add(onlyFAspectRadioButton);
-    	aspectButtonGroup.add(onlyCAspectRadioButton);
-    	aspectButtonGroup.add(onlyPAspectRadioButton);
-
-    	JPanel goaAspectPanel = new JPanel(new GridLayout(4,1));
-    	goaAspectPanel.add(allAspectRadioButton);
-    	goaAspectPanel.add(onlyFAspectRadioButton);
-    	goaAspectPanel.add(onlyCAspectRadioButton);
-    	goaAspectPanel.add(onlyPAspectRadioButton);
-
-    	JPanel centerPanel = new JPanel(new GridLayout(0,1));
-    	centerPanel.add(genmappRadioButton);
-    	centerPanel.add(genmappPanel);
-    	centerPanel.add(otherRadioButton);
-    	centerPanel.add(otherPanel);
-
-    	JPanel contentPanel = new JPanel(new BorderLayout());
-    	contentPanel.add(centerPanel, BorderLayout.CENTER);
+    	JPanel contentPanel = new JPanel(new BorderLayout(0, 5));
+    	contentPanel.add(genmappFilePanel, BorderLayout.NORTH);
     	contentPanel.add(goaAspectPanel, BorderLayout.SOUTH);
 
         return contentPanel;
@@ -238,22 +158,16 @@ public class ExportPanel2 extends JPanel {
 	 */
 	protected void displayAvailableInformation() {
 
-		genmappDatabaseFile = new File("");
-		genmappDatabaseTextField.setText("");
-		goAssociationsFile = new File("");
-		goAssocationsTextField.setText("");
+		genmappDatabaseFile = null;
+		genmappDatabaseFileLabel.setText("");
 
-		genmappRadioButton.setSelected(true);
-		otherRadioButton.setSelected(false);
-
-		allAspectRadioButton.setSelected(true);
-		onlyFAspectRadioButton.setSelected(false);
-		onlyCAspectRadioButton.setSelected(false);
-		onlyPAspectRadioButton.setSelected(false);
+		onlyFAspectCheckBox.setSelected(true);
+		onlyCAspectCheckBox.setSelected(true);
+		onlyPAspectCheckBox.setSelected(true);
 
 		DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
 
-		if(databaseProfile.getGenMAPPDatabase() != null) {
+		if (databaseProfile.getGenMAPPDatabase() != null) {
 			// DEV NOTE: JN 7/15/2006 -- I changed the next line from receiving the file directly
 			// to receiving a string and converting it to a file.
 			// I've been cleaning up the use of File references, by changing them
@@ -261,79 +175,9 @@ public class ExportPanel2 extends JPanel {
 			// DatabaseProfile and ConnectionManager. I figure this is far enough
 			// for the present.
 			genmappDatabaseFile = new File(databaseProfile.getGenMAPPDatabase());
-			genmappDatabaseTextField.setText(genmappDatabaseFile.getName());
-			genmappDatabaseTextField.setEnabled(true);
-			chooseGenMAPPDatabaseButton.setEnabled(true);
-			chooseGenMAPPDatabaseLabel.setEnabled(true);
-			genmappRadioButton.setSelected(true);
+			genmappDatabaseFileLabel.setText(genmappDatabaseFile.getName());
 		}
 
-		if(databaseProfile.getAssociationsFile() != null) {
-			goAssociationsFile = databaseProfile.getAssociationsFile();
-			goAssocationsTextField.setText(goAssociationsFile.getName());
-		}
-	}
-
-	/**
-	 * Adds a document listener where required.
-	 * @param documentListener
-	 */
-	protected void addDocumentListener(DocumentListener documentListener) {
-		genmappDatabaseTextField.getDocument().addDocumentListener(documentListener);
-		goAssocationsTextField.getDocument().addDocumentListener(documentListener);
-	}
-
-	/**
-	 * Sets dynamic content based on a button
-	 * selection.
-	 */
-	protected void otherRadioButtonSelected() {
-		genmappDatabaseTextField.setEnabled(false);
-		chooseGenMAPPDatabaseButton.setEnabled(false);
-		chooseGenMAPPDatabaseLabel.setEnabled(false);
-		otherDatabaseSettings.setEnabled(true);
-	}
-
-	/**
-	 * Sets dynamic content based on a button
-	 * selection.
-	 */
-	protected void genmappRadioButtonSelected() {
-		genmappDatabaseTextField.setEnabled(true);
-		chooseGenMAPPDatabaseButton.setEnabled(true);
-		chooseGenMAPPDatabaseLabel.setEnabled(true);
-		otherDatabaseSettings.setEnabled(false);
-	}
-
-	/**
-	 * Sets aspect type to be exported to all.
-	 */
-	protected void allAspectRadioButtonSelected() {
-		chosenAspect = 'A';
-	}
-
-	/**
-	 * Sets aspect type to be exported to molecular
-	 * function, or F.
-	 */
-	protected void onlyFAspectRadioButtonSelected() {
-		chosenAspect = 'F';
-	}
-
-	/**
-	 * Sets aspect type to be exported to cellular
-	 * component, or C.
-	 */
-	protected void onlyCAspectRadioButtonSelected() {
-		chosenAspect = 'C';
-	}
-
-	/**
-	 * Sets aspect type to be exported to biological
-	 * process, or P.
-	 */
-	protected void onlyPAspectRadioButtonSelected() {
-		chosenAspect = 'P';
 	}
 
 	/**
@@ -343,36 +187,18 @@ public class ExportPanel2 extends JPanel {
 	protected void chooseGenMAPPDatabase() {
 
 		String defaultFileName = GenMAPPBuilderUtilities.getDefaultGDBFilename(ExportToGenMAPP.getDatabaseProfile().getSelectedSpeciesProfile().getSpeciesName(), new Date());
-		File exportFolder = new File("./export/");
-		if( !exportFolder.exists() );
-			exportFolder.mkdir();
-		chooser = new JFileChooser("./export");
+		JFileChooser chooser = new JFileChooser();
 		File defaultFile = new File(defaultFileName);
         chooser.setSelectedFile(defaultFile);
         if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             genmappDatabaseFile = chooser.getSelectedFile();
-            if (genmappDatabaseFile == null) {
-                genmappDatabaseFile = new File("");
-            } else if(!genmappDatabaseFile.getName().endsWith(".gdb")) {
+            if ((genmappDatabaseFile != null) && (!genmappDatabaseFile.getName().endsWith(".gdb"))) {
                 genmappDatabaseFile = new File(genmappDatabaseFile.getAbsoluteFile() + ".gdb");
             }
-            genmappDatabaseTextField.setText(genmappDatabaseFile.getName());
+            genmappDatabaseFileLabel.setText(genmappDatabaseFile.getName());
         }
-	}
+        descriptor.setNextButton();
 
-	/**
-	 * Displays a file chooser for selecting
-	 * the GeneOntology associations file.
-	 */
-	protected void chooseGOAssociationFile() {
-		chooser = new JFileChooser(".");
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            goAssociationsFile = chooser.getSelectedFile();
-            if (goAssociationsFile == null) {
-                goAssociationsFile = new File("");
-            }
-            goAssocationsTextField.setText(goAssociationsFile.getName());
-        }
 	}
 
 	/**
@@ -381,17 +207,29 @@ public class ExportPanel2 extends JPanel {
      * @return
      */
     protected boolean isAllInformationEntered() {
-        if ("".equals(genmappDatabaseFile.getName()) /*|| "".equals(goAssociationsFile.getName())*/ ) {
-            return false;
-        }
-        return true;
+        return (genmappDatabaseFile != null) &&            // A file must be chosen.
+                (onlyCAspectCheckBox.isSelected() ||
+                        onlyFAspectCheckBox.isSelected() ||
+                        onlyPAspectCheckBox.isSelected()); // At least one aspect must be included.
     }
 
 	/**
 	 * Submits all information collected on the panel.
 	 */
 	protected void submitInformationEntered() {
-		DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
+	    // Build the list of chosen aspects.  With just 3 checkboxes, we go ahead and inline.
+	    List<DatabaseProfile.GOAspect> aspects = new ArrayList<DatabaseProfile.GOAspect>();
+	    if (onlyCAspectCheckBox.isSelected()) {
+	        aspects.add(GOAspect.Component);
+	    }
+	    if (onlyFAspectCheckBox.isSelected()) {
+	        aspects.add(GOAspect.Function);
+	    }
+	    if (onlyPAspectCheckBox.isSelected()) {
+	        aspects.add(GOAspect.Process);
+	    }
+
+	    DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
 		/* JN 7/15/2006 -- I eliminated most (many?) of the uses of File in the
 		 * DatabaseProfile and ConnectionManager classes. The following line
 		 * now needs to pass a String, not a File (like it used to).
@@ -399,7 +237,8 @@ public class ExportPanel2 extends JPanel {
 		databaseProfile.setDatabaseProperties(
 				genmappDatabaseFile.getAbsolutePath(),
 				null,
-				chosenAspect);
+				aspects);
 		ExportToGenMAPP.setDatabaseProfile(databaseProfile);
 	}
+	
 }

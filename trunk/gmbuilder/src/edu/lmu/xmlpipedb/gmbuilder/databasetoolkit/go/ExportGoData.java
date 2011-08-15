@@ -31,6 +31,7 @@ import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
 import generated.impl.IdImpl;
 import generated.impl.IsAImpl;
 import generated.impl.NameImpl;
@@ -93,14 +94,14 @@ public class ExportGoData {
      * @throws IOException
      * @throws JAXBException
      */
-    public void export(char chosenAspect, List<Integer> taxonIds) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
+    public void export(List<DatabaseProfile.GOAspect> chosenAspects, List<Integer> taxonIds) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
         String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(3, "GeneOntology export - creating tables...");
         godb.createTables(connection);
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(10, "GeneOntology export - populating tables...");
-        populateGoTables(chosenAspect, taxonIds);
+        populateGoTables(chosenAspects, taxonIds);
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(40, "GeneOntology export - flushing tables...");
         godb.updateSystemsTable(connection, Date, "T");
@@ -265,10 +266,10 @@ public class ExportGoData {
      * @throws IOException
      * @throws JAXBException
      */
-    private void populateGoTables(char chosenAspect, List<Integer> taxonIds) throws SQLException, HibernateException, SAXException, IOException, JAXBException {
+    private void populateGoTables(List<DatabaseProfile.GOAspect> chosenAspects, List<Integer> taxonIds) throws SQLException, HibernateException, SAXException, IOException, JAXBException {
         _Log.info("Populating UniProt-GO table...");
         //populateUniprotGoTable(goaFile);
-        populateUniprotGoTableFromSQL(chosenAspect, taxonIds);
+        populateUniprotGoTableFromSQL(chosenAspects, taxonIds);
         _Log.info("Populating GeneOntology table...");
         populateGeneOntology();
         _Log.info("Populating GeneOntologyTree...");
@@ -509,7 +510,7 @@ public class ExportGoData {
      * @throws SQLException
      */
 
-    private void populateUniprotGoTableFromSQL(char chosenAspect, List<Integer> taxonIds) throws SQLException {
+    private void populateUniprotGoTableFromSQL(List<DatabaseProfile.GOAspect> chosenAspects, List<Integer> taxonIds) throws SQLException {
     	HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
     	// String uniProtAndGOIDSQL = "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%' and taxon = 'taxon:" + taxonIds + "'";
         StringBuilder baseQueryBuilder = 
@@ -531,17 +532,17 @@ public class ExportGoData {
     	PreparedStatement uniProtAndGOIDPS = null;
     	_Log.info("creating: " + GOTable.UniProt_Go);
 
-    	if (chosenAspect != 'A') {
-    		if (chosenAspect == 'C') {
-    			// uniProtAndGOIDSQL = uniProtAndGOIDSQL + " and aspect = 'C'";
-    			baseQueryBuilder = baseQueryBuilder.append(" and aspect = 'C'");
-    		} else if (chosenAspect == 'F') {
-    			// uniProtAndGOIDSQL = uniProtAndGOIDSQL + " and aspect = 'F'";
-    			baseQueryBuilder = baseQueryBuilder.append(" and aspect = 'F'");
-    		} else if (chosenAspect == 'P') {
-    			// uniProtAndGOIDSQL = uniProtAndGOIDSQL + " and aspect = 'P'";
-    			baseQueryBuilder = baseQueryBuilder.append(" and aspect = 'P'");
-    		}
+    	if (chosenAspects.size() < 3) { // Not all aspects were chosen.
+    	    first = true;
+            for (DatabaseProfile.GOAspect aspect: chosenAspects) {
+                baseQueryBuilder.append(first ? " and (" : " or ");
+                baseQueryBuilder
+                    .append("aspect = '")
+                    .append(aspect.name().charAt(0)) // The aspect code is the enum's first character.
+                    .append("'");
+                first = false;
+            }
+            baseQueryBuilder.append(")");
     	}
 
     	try {
@@ -786,8 +787,6 @@ public class ExportGoData {
     private static final int PARENT_COL = 4 - 1;
     private static final int ID_COL 	= 1 - 1;
 
-    @SuppressWarnings("unused")
-    private char chosenAspect;
     private int orderNo;
     private Connection connection;
     private Go godb;

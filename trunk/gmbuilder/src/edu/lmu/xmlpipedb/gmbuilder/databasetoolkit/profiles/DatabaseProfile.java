@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -613,24 +614,38 @@ public abstract class DatabaseProfile extends Profile {
      * @throws Exception
      */
     public TableManager getInfoTableManager() {
-        TableManager tableManager = new TableManager(null, new String[] {});
-        // tableManager.submit("Info", QueryType.insert, new String[][] { { "Owner", owner }, { "Version", new SimpleDateFormat("yyyyMMdd").format(version) }, { "MODSystem", modSystem }, { "Species", speciesProfile.getSpeciesName() }, { "Modify", new SimpleDateFormat("yyyyMMdd").format(modify) }, { "DisplayOrder", displayOrder }, { "Notes", notes } });
-        
-        StringBuilder baseStringArg = 
-        	new StringBuilder( " \"Info\", QueryType.insert, new String[][] { { \"\"Owner\", owner }, { \"Version\", new SimpleDateFormat(\"yyyyMMdd\").format(version) }, { \"MODSystem\", modSystem }, ");
-                
-        for ( SpeciesProfile specie: selectedSpeciesProfiles ) {
-            baseStringArg
-                .append( "{ \"Species\" , " )
-                .append(specie.getSpeciesName()).append("}, ");
+        // Concatenate the selected species into a single compound name.
+        StringBuilder speciesStringBuilder = new StringBuilder();
+        boolean firstSpecies = true;
+        for (SpeciesProfile speciesProfile: selectedSpeciesProfiles) {
+            speciesStringBuilder
+                .append(firstSpecies ? "" : "|")
+                .append(speciesProfile.getSpeciesName());
+            firstSpecies = false;
         }
-        baseStringArg.append(" { \"Modify\", new SimpleDateFormat(\"yyyyMMdd\").format(modify) }, { \"DisplayOrder\", displayOrder }, { \"Notes\", notes } })");
-        
-        // RB - trying to concatenate the submit arguments as a StringBuilder item but have type problem.
-        // How would you suggest supplying the argument in a way that works? Am I way off base here?
-        tableManager.submit(baseStringArg);
-        
-        
+
+        // Dondi - Rich, compare this block of code to the original, to see how the change
+        // was implemented.  Note also how, when in doubt, some judicious code reformatting
+        // (line breaks, indenting) helps to clarify the structure of the code.
+        //
+        // There was also an unnecessary recreation of the same object (the date format),
+        // which I addressed by creating just once and storing in a final local variable.
+        final DateFormat infoDateFormat = new SimpleDateFormat("yyyyMMdd");
+        TableManager tableManager = new TableManager(null, new String[] {});
+        tableManager.submit(
+            "Info",
+            QueryType.insert,
+            new String[][] {
+                { "Owner", owner },
+                { "Version", infoDateFormat.format(version) },
+                { "MODSystem", modSystem },
+                { "Species", speciesStringBuilder.toString() },
+                { "Modify", infoDateFormat.format(modify) },
+                { "DisplayOrder", displayOrder },
+                { "Notes", notes }
+            }
+        );
+
         return tableManager;
     }
 

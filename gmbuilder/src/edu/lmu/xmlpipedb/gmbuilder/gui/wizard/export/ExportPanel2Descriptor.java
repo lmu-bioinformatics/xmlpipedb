@@ -12,16 +12,13 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export;
 
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import com.nexes.wizard.WizardPanelDescriptor;
 
 /**
  * @author Joey J. Barrett
  * Class: ExportPanel2Descriptor
  */
-public class ExportPanel2Descriptor extends WizardPanelDescriptor implements DocumentListener {
+public class ExportPanel2Descriptor extends WizardPanelDescriptor {
 
     public static final String IDENTIFIER = "EXPORT_PANEL2";
 
@@ -31,9 +28,7 @@ public class ExportPanel2Descriptor extends WizardPanelDescriptor implements Doc
      * Constructor
      */
     public ExportPanel2Descriptor() {
-        panel2 = new ExportPanel2();
-        panel2.addDocumentListener(this);
-
+        panel2 = new ExportPanel2(this);
         setPanelDescriptorIdentifier(IDENTIFIER);
         setPanelComponent(panel2);
     }
@@ -70,32 +65,8 @@ public class ExportPanel2Descriptor extends WizardPanelDescriptor implements Doc
     /**
      * Sets the next button accordingly.
      */
-    private void setNextButton() {
-
-        if (panel2.isAllInformationEntered())
-           getWizard().setNextFinishButtonEnabled(true);
-        else
-           getWizard().setNextFinishButtonEnabled(false);
+    protected void setNextButton() {
+        getWizard().setNextFinishButtonEnabled(panel2.isAllInformationEntered());
     }
 
-	/* (non-Javadoc)
-	 * @see javax.swing.event.DocumentListener#insertUpdate(javax.swing.event.DocumentEvent)
-	 */
-	public void insertUpdate(DocumentEvent arg0) {
-		setNextButton();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.event.DocumentListener#removeUpdate(javax.swing.event.DocumentEvent)
-	 */
-	public void removeUpdate(DocumentEvent arg0) {
-		setNextButton();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.DocumentEvent)
-	 */
-	public void changedUpdate(DocumentEvent arg0) {
-		setNextButton();
-	}
 }

@@ -11,7 +11,6 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
-import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,6 +19,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +50,9 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
  * @author Jeffrey Nicholas
  */
 public abstract class DatabaseProfile extends Profile {
+    
+    public enum GOAspect { Function, Component, Process }
+
     // Static Variables
     
 	// RB - added to hold species taxon ids
@@ -84,10 +87,9 @@ public abstract class DatabaseProfile extends Profile {
     protected String notes;
     protected String genMAPPDatabase = null; // jn - changed from File to String
     protected ConnectionConfiguration connectionConfiguration = null;
-    protected File associationsFile = null;
     protected Map<String, SystemType> systemTables;
     protected String[] relationshipTables;
-    protected char chosenAspect;
+    protected List<GOAspect> chosenAspects;
 
     protected TableManager primarySystemTableManager = null;
     protected TableManager systemTableManager = null;
@@ -304,21 +306,12 @@ public abstract class DatabaseProfile extends Profile {
     }
 
     /**
-     * Returns the associations file chosen in the export wizard.
-     *
-     * @return
-     */
-    public File getAssociationsFile() {
-        return associationsFile;
-    }
-
-    /**
      * Returns the aspect chosen in the export wizard.
      *
      * @return
      */
-    public char getChosenAspect() {
-    	return chosenAspect;
+    public List<GOAspect> getChosenAspects() {
+    	return chosenAspects;
     }
 
     /**
@@ -493,7 +486,8 @@ public abstract class DatabaseProfile extends Profile {
      * Convenience method for automatically selecting the "all" aspect.
      */
     public void setDatabaseProperties(String genMAPPDatabase, ConnectionConfiguration connectionConfiguration) {
-        setDatabaseProperties(genMAPPDatabase, connectionConfiguration, 'A');
+        setDatabaseProperties(genMAPPDatabase, connectionConfiguration,
+                Arrays.asList(GOAspect.Component, GOAspect.Function, GOAspect.Process));
     }
     
     /**
@@ -503,17 +497,11 @@ public abstract class DatabaseProfile extends Profile {
      * @param connectionConfiguration
      * @param chosenAspect
      */
-    public void setDatabaseProperties(String genMAPPDatabase, ConnectionConfiguration connectionConfiguration, char chosenAspect) {
+    public void setDatabaseProperties(String genMAPPDatabase,
+            ConnectionConfiguration connectionConfiguration, List<GOAspect> chosenAspects) {
         this.genMAPPDatabase = genMAPPDatabase;
         this.connectionConfiguration = connectionConfiguration;
-        this.chosenAspect = chosenAspect;
-    }
-
-    /**
-     * Sets the associations file chosen in the import wizard
-     */
-    public void setGOAProperties(File associationsFile) {
-    	this.associationsFile = associationsFile;
+        this.chosenAspects = chosenAspects;
     }
 
     /**
@@ -521,8 +509,8 @@ public abstract class DatabaseProfile extends Profile {
      *
      * @param chosenAspect
      */
-    public void setChosenAspect(char chosenAspect) {
-    	this.chosenAspect = chosenAspect;
+    public void setChosenAspects(List<GOAspect> chosenAspects) {
+    	this.chosenAspects = chosenAspects;
     }
 
     /**

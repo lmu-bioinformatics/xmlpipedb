@@ -607,7 +607,7 @@ public abstract class DatabaseProfile extends Profile {
         boolean firstSpecies = true;
         for (SpeciesProfile speciesProfile: selectedSpeciesProfiles) {
             speciesStringBuilder
-                .append(firstSpecies ? "" : "|")
+                .append(firstSpecies ? "" : "|") // RB - adds non short circuited OR to process each
                 .append(speciesProfile.getSpeciesName());
             firstSpecies = false;
         }
@@ -650,10 +650,23 @@ public abstract class DatabaseProfile extends Profile {
         for (String relationTable : relationshipTables) {
             SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationTable);
             // The reason why it is not short-circuit, is that we must process both systemTable1 and systemTable2
-            if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
-                tableManager = speciesProfile.getRelationsTableManagerCustomizations(stp.systemTable1, stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
+            if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | 
+            		speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
+                tableManager = speciesProfile.getRelationsTableManagerCustomizations(stp.systemTable1, 
+                	stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
             } else {
-                tableManager.submit("Relations", QueryType.insert, new String[][] { { "SystemCode", templateDefinedSystemToSystemCode.get(stp.systemTable1) }, { "RelatedCode", templateDefinedSystemToSystemCode.get(stp.systemTable2) }, { "Relation", relationTable }, { "Type", stp.systemTable1.equals(getPrimarySystemTable()) || stp.systemTable2.equals(getPrimarySystemTable()) ? "Direct" : "Inferred" }, { "Source", "" } });
+                tableManager.submit(
+                	"Relations", 
+                	QueryType.insert, 
+                	new String[][] { 
+                		{ "SystemCode", templateDefinedSystemToSystemCode.get(stp.systemTable1) }, 
+                		{ "RelatedCode", templateDefinedSystemToSystemCode.get(stp.systemTable2) }, 
+                		{ "Relation", relationTable }, 
+                		{ "Type", stp.systemTable1.equals(getPrimarySystemTable()) || 
+                			stp.systemTable2.equals(getPrimarySystemTable()) ? "Direct" : "Inferred" }, 
+                		{ "Source", "" } 
+                    }
+                );
             }
         }
 

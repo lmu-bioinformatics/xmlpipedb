@@ -245,12 +245,12 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		 * What this is doing is creating a number of update queries that will
 		 * update the Systems table for each entry in the systemTables Map. It
 		 * will update the entry with a date/time. GenMAPP uses the fact that
-		 * the record has a date/time to know that their is a table for that
+		 * the record has a date/time to know that there is a table for that
 		 * system in the database (yes this is stupid, but we're not here to
 		 * change GenMAPP).
 		 *
 		 * Note: in the original, this actually only does this for systems that
-		 * arenot species specific. (hence the "!").
+		 * are not species specific. (hence the "!").
 		 *
 		 * With the if-block commented out the date update will be applied to
 		 * all entries. Additional processing is done below.
@@ -296,8 +296,11 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						templateDefinedSystemToSystemCode.get("InterPro") },
 				{ "Columns", "ID|" } });
 
-		tableManager = speciesProfile.getSystemsTableManagerCustomizations(
-				tableManager, this);
+		// RB - need to make aware of List<SpeciesProfile>
+		// tableManager = speciesProfile.getSystemsTableManagerCustomizations( tableManager, this );
+		for( SpeciesProfile speciesProfile : selectedSpeciesProfiles ) {
+		    tableManager = speciesProfile.getSystemsTableManagerCustomizations( tableManager, this );
+		}
 		return tableManager;
 	}
 
@@ -318,8 +321,11 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		// A.thaliana for now, perhaps others later).
 		// If it returns a TableManger, we're done. Otherwise, keep chugging
 		// along.
-		tableManager = speciesProfile
+		
+		// RB - using first SpeciesProfile in the List of SpeciesProfiles: selectedSpeciesProfiles.get(0) 
+		tableManager = selectedSpeciesProfiles.get(0)
 				.getPrimarySystemTableManagerCustomizations(version);
+		//tableManager = speciesProfile.getPrimarySystemTableManagerCustomizations(version);
 		if (tableManager != null) {
 			primarySystemTableManager = tableManager;
 			return tableManager;
@@ -345,7 +351,9 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				new String[] { "UID" });
 		PreparedStatement ps = ConnectionManager.getRelationalDBConnection()
 				.prepareStatement(accessionSQL);
-		ps.setString(1, "" + speciesProfile.getTaxon());
+		// RB - using first SpeciesProfile in the List of SpeciesProfiles: selectedSpeciesProfiles.get(0)
+		ps.setString(1, "" + selectedSpeciesProfiles.get(0).getTaxon());
+		//ps.setString(1, "" + speciesProfile.getTaxon());
 		ResultSet result = ps.executeQuery();
 
 		// Step 1 - populate the TableManager with records from the
@@ -456,11 +464,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			// Step 6 -- Finally, add the species name and the date
 			tableManager.submit("UniProt", QueryType.insert, new String[][] {
 					{ "UID", row.getValue("UID") },
-					{ "Species", "|" + speciesProfile.getSpeciesName() + "|" },
-					{
-							"\"Date\"",
-							GenMAPPBuilderUtilities
-									.getSystemsDateString(version) } });
+					// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+					//         selectedSpeciesProfiles.get(0) 
+					{ "Species", "|" + selectedSpeciesProfiles.get(0).getSpeciesName() + "|" },
+					//{ "Species", "|" + speciesProfile.getSpeciesName() + "|" },
+					{ "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }
+				}
+			);
 		}
 		ps.close();
 

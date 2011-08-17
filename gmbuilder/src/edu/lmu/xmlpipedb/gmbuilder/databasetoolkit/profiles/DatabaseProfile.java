@@ -53,12 +53,6 @@ public abstract class DatabaseProfile extends Profile {
     
     public enum GOAspect { Function, Component, Process }
 
-    // Static Variables
-    
-	// RB - added to hold species taxon ids
-    // Dondi - Why was this static? - wasn't supposed to be, typed in error
-	private List<Integer> taxonIds = new ArrayList<Integer>();
-	
 	// these are used in the EportWizard GUI
 	public static enum DisplayOrderPreset {
         alphabetical
@@ -75,6 +69,7 @@ public abstract class DatabaseProfile extends Profile {
     protected final SpeciesProfile[] speciesProfilesAvailable;
     protected List<SpeciesProfile> speciesProfilesFound = new ArrayList<SpeciesProfile>();
     protected List<String> systemTablesFound = new ArrayList<String>();
+	protected List<Integer> taxonIds = new ArrayList<Integer>();
 
     protected String owner;
     protected Date version;
@@ -650,10 +645,18 @@ public abstract class DatabaseProfile extends Profile {
         for (String relationTable : relationshipTables) {
             SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationTable);
             // The reason why it is not short-circuit, is that we must process both systemTable1 and systemTable2
-            if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | 
-            		speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
-                tableManager = speciesProfile.getRelationsTableManagerCustomizations(stp.systemTable1, 
-                	stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
+            
+            // RB - using first SpeciesProfile in the List of SpeciesProfiles: selectedSpeciesProfiles.get(0)
+            if (selectedSpeciesProfiles.get(0).getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | 
+            		selectedSpeciesProfiles.get(0).getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
+            //if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | 
+            //      speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {	
+            	
+            	// RB - using first SpeciesProfile in the List of SpeciesProfiles: selectedSpeciesProfiles.get(0)
+            	tableManager = selectedSpeciesProfiles.get(0).getRelationsTableManagerCustomizations(stp.systemTable1, 
+                    	stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
+                //tableManager = speciesProfile.getRelationsTableManagerCustomizations(stp.systemTable1, 
+                	//stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
             } else {
                 tableManager.submit(
                 	"Relations", 

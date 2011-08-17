@@ -138,7 +138,7 @@ public class ExportToGenMAPP {
         TableManager tmD = selectedDatabaseProfile.getSystemsTableManager();
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmD);
 
-        // No species specific processing
+//      This uses SpeciesProfile
         // This gets all the UniProt table information
         _Log.info("Start getPrimarySystemTableManager()");
         ExportWizard.updateExportProgress(61, "Preparing tables - Primary System table...");

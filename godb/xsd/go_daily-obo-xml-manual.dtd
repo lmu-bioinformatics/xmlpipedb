@@ -35,7 +35,7 @@
    <!ELEMENT source_md5 (#PCDATA)>
    <!ELEMENT source_mtime (#PCDATA)>
    <!ELEMENT source_parsetime (#PCDATA)>
-   <!ELEMENT header (format-version|data-version|date|saved-by|auto-generated-by|default-namespace|remark|subsetdef*|synonymtypedef*|idspace*)*>
+   <!ELEMENT header (format-version|data-version|date|saved-by|auto-generated-by|default-namespace|remark|ontology|subsetdef*|synonymtypedef*|idspace*)*>
    <!ELEMENT format-version (#PCDATA)>
    <!ELEMENT data-version (#PCDATA)>
    <!ELEMENT date (#PCDATA)>
@@ -43,6 +43,7 @@
    <!ELEMENT auto-generated-by (#PCDATA)>
    <!ELEMENT default-namespace (#PCDATA)>
    <!ELEMENT remark (#PCDATA)>
+   <!ELEMENT ontology (#PCDATA)>
    <!ELEMENT subsetdef (id|name|dbxref*)+>
    <!ELEMENT synonymtypedef (id|name|scope)+>
     <!ELEMENT scope (#PCDATA)>

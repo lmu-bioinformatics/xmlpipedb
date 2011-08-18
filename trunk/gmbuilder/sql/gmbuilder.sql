@@ -286,6 +286,13 @@ create table Obo_Content (
     Obo_Content_Hjindex int4 not null,
     primary key (Obo_Content_Hjid, Obo_Content_Hjindex)
 );
+create table Ontology (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
 create table Range (
     Hjid int8 not null,
     Hjtype varchar not null,

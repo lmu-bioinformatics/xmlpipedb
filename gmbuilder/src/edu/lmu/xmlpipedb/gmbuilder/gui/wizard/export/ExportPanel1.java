@@ -333,10 +333,12 @@ public class ExportPanel1 extends JPanel {
 		//   i.e., the event fires more often than you might be thinking.
 		
 // RB - keep this field since tables are populated with this info. 
-// Need to determine how the tables are populated, then adjust to allow
-// for population of the correct species name out of those selected.
+// Need to determine how each species should be placed in the tables, 
+// then adjust to populate the selected species.
+// This field MUST be populated or ALL IDs will be pruned regardless of which
+// species are selected in the list. 
 		
-        // speciesCustomizeTextField.setText(selectedProfile.getName());
+        speciesCustomizeTextField.setText(selectedSpecies.get(0).getName());
 		
         DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
 
@@ -345,7 +347,7 @@ public class ExportPanel1 extends JPanel {
         
         if (!selectedSpecies.isEmpty()) {
             databaseProfile.setSelectedSpeciesProfile(selectedSpecies.get(0));
-            //databaseProfile.setSelectedSpeciesProfiles(selectedSpecies);
+            databaseProfile.setSelectedSpeciesProfiles(selectedSpecies);
             
             // RB - converts List<SpeciesProfile> to List<Integer> and setTaxonIds.
             databaseProfile.setTaxonIds(DatabaseProfile.taxonsFromSelectedSpeciesList(selectedSpecies));

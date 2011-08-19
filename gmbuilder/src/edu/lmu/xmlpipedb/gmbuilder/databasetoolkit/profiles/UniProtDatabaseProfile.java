@@ -497,10 +497,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 		// create a new TableManager, which will define the columns and key for
 		// the table.
-		TableManager tableManager = new TableManager(new String[][] {
-				{ "ID", "VARCHAR(50) NOT NULL" }, { "Species", "MEMO" },
-				{ "\"Date\"", "DATE" }, { "Remarks", "MEMO" } },
-				new String[] { "ID" });
+		TableManager tableManager 
+		    = new TableManager(new String[][] 
+		        { { "ID", "VARCHAR(50) NOT NULL" },
+		          { "Species", "MEMO" },
+		          { "\"Date\"", "DATE" },
+		          { "Remarks", "MEMO" } },
+		        new String[] { "ID" } );
 
 		PreparedStatement ps;
 		ResultSet result;
@@ -521,57 +524,76 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 					systemTable.getKey()))
 				) {
 				_Log.info("getSystemTableManager(): for loop: "
-								+ systemTable.getKey()
-								+ " is not in the list of DatabaseSpecificSystemTables or SpeciesSpecificSystemTables.");
+							+ systemTable.getKey()
+							+ " is not in the list of DatabaseSpecificSystemTables or SpeciesSpecificSystemTables.");
 				ps = ConnectionManager.getRelationalDBConnection()
 						.prepareStatement(
-								"SELECT distinct id FROM dbreferencetype " +
-								"INNER JOIN (" +
-								"SELECT entrytype.hjid FROM entrytype " +
-								"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
-								"INNER JOIN dbreferencetype ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
-								"WHERE dbreferencetype.type = 'NCBI Taxonomy' " +
-								"and id = ?) as species_entry on dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid " +
-								"where type = ?");
-				ps.setString(1, "" + speciesProfile.getTaxon());
+							"SELECT distinct id FROM dbreferencetype " +
+							"INNER JOIN (" +
+							"SELECT entrytype.hjid FROM entrytype " +
+							"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
+							"INNER JOIN dbreferencetype ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
+							"WHERE dbreferencetype.type = 'NCBI Taxonomy' " +
+							"and id = ?) as species_entry on dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid " +
+							"where type = ?");
+				// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+				//         selectedSpeciesProfiles.get(0) 
+				ps.setString(1, "" + selectedSpeciesProfiles.get(0).getTaxon());
+				// ps.setString(1, "" + speciesProfile.getTaxon());
 				ps.setString(2, systemTable.getKey());
 				result = ps.executeQuery();
 
 				while (result.next()) {
 					_Log.debug("getSystemTableManager(): while loop: ID:: "
-							+ result.getString("id") + "  Species:: "
-							+ speciesProfile.getSpeciesName());
+						+ result.getString("id") + "  Species:: "
+						// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+						//         selectedSpeciesProfiles.get(0)
+						+ selectedSpeciesProfiles.get(0).getSpeciesName());
+						// + speciesProfile.getSpeciesName());
 					tableManager
-							.submit(
-									systemTable.getKey(),
-									QueryType.insert,
-									new String[][] {
-											{
-													"ID",
-													GenMAPPBuilderUtilities
-															.checkAndPruneVersionSuffix(
-																	systemTable
-																			.getKey(),
-																	result
-																			.getString("id")) },
-											{
-													"Species",
-													"|"
-															+ speciesProfile
-																	.getSpeciesName()
-															+ "|" },
-											{
-													"\"Date\"",
-													GenMAPPBuilderUtilities
-															.getSystemsDateString(version) } });
+						.submit(
+								systemTable.getKey(),
+								QueryType.insert,
+								new String[][] 
+								{
+									{ "ID",
+									  GenMAPPBuilderUtilities
+									     .checkAndPruneVersionSuffix(
+										    systemTable.getKey(),
+									  result.getString("id"))
+									},
+									   
+									{ "Species",
+									// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+									//         selectedSpeciesProfiles.get(0)
+									  "|" + selectedSpeciesProfiles
+									     .get(0).getSpeciesName() + "|"
+									// "|" + speciesProfile.getSpeciesName() + "|"
+									},
+										
+									{ "\"Date\"",
+									  GenMAPPBuilderUtilities
+									     .getSystemsDateString(version) 
+									}
+								}
+							   );
 				}
 			}
 		}
 
 		// This goes off and gets the species specific system table(s) e.g.
 		// TAIR, etc.
-		tableManager = speciesProfile.getSystemTableManagerCustomizations(
-				tableManager, getPrimarySystemTableManager(), version);
+		
+		// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+		//         selectedSpeciesProfiles.get(0)
+		tableManager = selectedSpeciesProfiles.get(0)
+		                  .getSystemTableManagerCustomizations(
+				             tableManager,
+				             getPrimarySystemTableManager(),
+				             version
+				          );
+		// tableManager = speciesProfile.getSystemTableManagerCustomizations(
+		//		tableManager, getPrimarySystemTableManager(), version);
 
 		systemTableManager = tableManager;
 		return tableManager;
@@ -610,11 +632,12 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			// ExportWizard.updateExportProgress(65, "Preparing tables - " +
 			// "Relationship table - " + relationshipTable + "...");
 
-			tableManager = new TableManager(new String[][] {
-					{ "\"Primary\"", "VARCHAR(50) NOT NULL" },
-					{ "Related", "VARCHAR(50) NOT NULL" },
-					{ "Bridge", "VARCHAR(3)" } }, new String[] { "\"Primary\"",
-					"Related" });
+			tableManager = new TableManager(
+					new String[][] { { "\"Primary\"", "VARCHAR(50) NOT NULL" },
+					                 { "Related", "VARCHAR(50) NOT NULL" },
+					                 { "Bridge", "VARCHAR(3)" } },
+					new String[] { "\"Primary\"", "Related" } );
+			
 			tableManager.getTableNames().add(relationshipTable);
 
 			if ("UniProt".equals(stp.systemTable1)
@@ -622,17 +645,19 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 							stp.systemTable2)) {
 				// UniProt-X
 				PreparedStatement ps = ConnectionManager
-						.getRelationalDBConnection()
-						.prepareStatement(
-								"SELECT hjvalue, dbreferencetype.id " +
-								"FROM (SELECT entrytype.hjid FROM entrytype " +
-								"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
-								"INNER JOIN dbreferencetype ON (organismtype.hjid = dbreferencetype.organismtype_dbreference_hjid) " +
-								"WHERE dbreferencetype.type LIKE '%NCBI Taxonomy%' " +
-								"AND dbreferencetype.id = ?) as species_entry INNER JOIN dbreferencetype ON (dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid) INNER JOIN entrytype_accession " +
-								"ON (entrytype_dbreference_hjid = entrytype_accession_hjid) " +
-								"WHERE type = ?");
-				ps.setString(1, "" + speciesProfile.getTaxon());
+					.getRelationalDBConnection().prepareStatement(
+						"SELECT hjvalue, dbreferencetype.id " +
+						"FROM (SELECT entrytype.hjid FROM entrytype " +
+						"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
+						"INNER JOIN dbreferencetype ON (organismtype.hjid = dbreferencetype.organismtype_dbreference_hjid) " +
+						"WHERE dbreferencetype.type LIKE '%NCBI Taxonomy%' " +
+						"AND dbreferencetype.id = ?) as species_entry INNER JOIN dbreferencetype ON (dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid) INNER JOIN entrytype_accession " +
+						"ON (entrytype_dbreference_hjid = entrytype_accession_hjid) " +
+						"WHERE type = ?");
+				// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+				//         selectedSpeciesProfiles.get(0)
+				ps.setString(1, "" + selectedSpeciesProfiles.get(0).getTaxon());
+				// ps.setString(1, "" + speciesProfile.getTaxon());
 				ps.setString(2, stp.systemTable2);
 
 				ResultSet result = ps.executeQuery();
@@ -645,24 +670,21 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 							.checkAndPruneVersionSuffix(stp.systemTable2,
 									result.getString("id"));
 
-					tableManager
-							.submit(relationshipTable, QueryType.insert,
-									new String[][] {
-											{
-													"\"Primary\"",
-													primary != null ? primary
-															: "" },
-											{
-													"Related",
-													related != null ? related
-															: "" },
-											// TODO This is hard-coded. Fix it.
-											{ "Bridge", "S" } });
+					tableManager.submit(
+							relationshipTable,
+							QueryType.insert,
+							new String[][] {
+									{ "\"Primary\"", primary != null ? primary : "" },
+									{ "Related", related != null ? related : "" },
+									// TODO This is hard-coded. Fix it.
+									{ "Bridge", "S" }
+									       }
+									    );
 				}
 				ps.close();
 			} else if (!getDatabaseSpecificSystemTables().containsKey(
-					stp.systemTable1)
-					&& !getDatabaseSpecificSystemTables().containsKey(
+							stp.systemTable1) &&
+					   !getDatabaseSpecificSystemTables().containsKey(
 							stp.systemTable2)) {
 				// X-X
 				PreparedStatement ps = ConnectionManager
@@ -685,7 +707,10 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 								"AND id = ?) AS species_entry ON (dbrefcomp.dbrefhjid = species_entry.hjid)");
 				ps.setString(1, stp.systemTable1);
 				ps.setString(2, stp.systemTable2);
-				ps.setString(3, "" + speciesProfile.getTaxon());
+				// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+				//         selectedSpeciesProfiles.get(0)
+				ps.setString(3, "" + selectedSpeciesProfiles.get(0).getTaxon());
+				// ps.setString(3, "" + speciesProfile.getTaxon());
 				ResultSet result = ps.executeQuery();
 				while (result.next()) {
 					String primary = GenMAPPBuilderUtilities
@@ -696,30 +721,45 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 									result.getString("id2"));
 
 					tableManager
-							.submit(relationshipTable, QueryType.insert,
+							.submit(
+									relationshipTable,
+									QueryType.insert,
 									new String[][] {
-											{
-													"\"Primary\"",
-													primary != null ? primary
-															: "" },
-											{
-													"Related",
-													related != null ? related
-															: "" },
+											{ "\"Primary\"", primary != null ? primary : "" },
+											{ "Related", related != null ? related : "" },
 											// FIXME This is hard-coded. Fix it.
-											{ "Bridge", "S" } });
+											{ "Bridge", "S" } 
+											       }
+									);
 				}
 				ps.close();
-			} else if ((speciesProfile.getSpeciesSpecificSystemTables()
-					.containsKey(stp.systemTable1) || speciesProfile
+			// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+			//         selectedSpeciesProfiles.get(0)
+			} else if ((selectedSpeciesProfiles.get(0).getSpeciesSpecificSystemTables()
+			// } else if ((speciesProfile.getSpeciesSpecificSystemTables()
+					// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+					//         selectedSpeciesProfiles.get(0)
+					.containsKey(stp.systemTable1) || selectedSpeciesProfiles.get(0)
+					// .containsKey(stp.systemTable1) || speciesProfile
 					.getSpeciesSpecificSystemTables().containsKey(
 							stp.systemTable2))
 					&& !stp.systemTable2.equals("GeneOntology")) {
-				// Species-X or X-Species excluding geneontology
-				tableManager = speciesProfile
-						.getSpeciesSpecificRelationshipTable(relationshipTable,
-								getPrimarySystemTableManager(),
-								getSystemTableManager(), tableManager);
+				// Species-X or X-Species excluding gene ontology
+				
+				// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+				//         selectedSpeciesProfiles.get(0)
+				tableManager = selectedSpeciesProfiles.get(0)
+				.getSpeciesSpecificRelationshipTable(
+						relationshipTable,
+						getPrimarySystemTableManager(),
+						getSystemTableManager(),
+						tableManager);
+				// tableManager = speciesProfile
+				// 		.getSpeciesSpecificRelationshipTable(
+				// 				relationshipTable,
+				// 				getPrimarySystemTableManager(),
+				// 				getSystemTableManager(),
+				// 				tableManager);
 			} else {
 				// No way currently of producing these
 				tableManager.submit(relationshipTable, QueryType.insert,
@@ -741,7 +781,10 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 	@Override
 	public TableManager[] getSecondPassTableManagers() throws SQLException {
 		List<TableManager> tableManagers = new ArrayList<TableManager>();
-		tableManagers.addAll(speciesProfile.getSpeciesSpecificCustomTables(version));
+		// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+		//         selectedSpeciesProfiles.get(0)
+		tableManagers.addAll(selectedSpeciesProfiles.get(0).getSpeciesSpecificCustomTables(version));
+		// tableManagers.addAll(speciesProfile.getSpeciesSpecificCustomTables(version));
 		tableManagers.add(getSecondPassRelationshipTables());
 		return tableManagers.toArray(new TableManager[0]);
 	}

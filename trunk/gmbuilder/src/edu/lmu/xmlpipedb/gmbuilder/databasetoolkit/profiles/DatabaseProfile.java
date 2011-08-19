@@ -602,7 +602,7 @@ public abstract class DatabaseProfile extends Profile {
         boolean firstSpecies = true;
         for (SpeciesProfile speciesProfile: selectedSpeciesProfiles) {
             speciesStringBuilder
-                .append(firstSpecies ? "" : "|") // RB - adds non short circuited OR to process each
+                .append(firstSpecies ? "" : "|")
                 .append(speciesProfile.getSpeciesName());
             firstSpecies = false;
         }
@@ -739,11 +739,16 @@ public abstract class DatabaseProfile extends Profile {
     public TableManager getRowCountsTableManager() throws SQLException {
         TableManager tableManager;
 
-        tableManager = new TableManager(new String[][] { { "\"Table\"", "VARCHAR(50) NOT NULL" }, { "Rows", "VARCHAR(50) NOT NULL" } }, new String[] { "\"Table\"" });
+        tableManager = new TableManager(
+        		new String[][] {  { "\"Table\"", "VARCHAR(50) NOT NULL" },
+        						  { "Rows", "VARCHAR(50) NOT NULL" } },
+        		new String[] { "\"Table\"" }
+        								);
 
         List<String> allTables = new ArrayList<String>();
 
-        PreparedStatement ps = ConnectionManager.getGenMAPPDBConnection().prepareStatement("select name from MSysObjects where ((type=1) and (flags=0))");
+        PreparedStatement ps = ConnectionManager.getGenMAPPDBConnection()
+        	.prepareStatement("select name from MSysObjects where ((type=1) and (flags=0))");
         ResultSet result = ps.executeQuery();
 
         while (result.next()) {
@@ -761,7 +766,12 @@ public abstract class DatabaseProfile extends Profile {
             ps = ConnectionManager.getGenMAPPDBConnection().prepareStatement(sqlStatement);
             result = ps.executeQuery();
             while (result.next()) {
-                tableManager.submit("OriginalRowCounts", QueryType.insert, new String[][] { { "\"Table\"", tableName }, { "Rows", result.getString("count") } });
+                tableManager.submit(
+                		"OriginalRowCounts",
+                		QueryType.insert,
+                		new String[][] { { "\"Table\"", tableName },
+                						 { "Rows", result.getString("count") } }
+                					);
             }
         }
         ps.close();

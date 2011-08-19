@@ -164,10 +164,10 @@ public class ExportToGenMAPP {
 
         ExportWizard.updateExportProgress(66, "Starting second pass table creation...");
         _Log.info("Getting second-pass table managers");
-        // No species specific processing
         _Log.info("Start ()");
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
         ExportWizard.updateExportProgress(67, "Preparing tables - Second pass Relationship tables...");
+        // No species specific processing
         TableManager[] secondPass = selectedDatabaseProfile.getSecondPassTableManagers();
         _Log.info("Exporting second-pass tables");
         _Log.info("Start exportTables(selectedDatabaseProfile.getExportConnection(), secondPass)");

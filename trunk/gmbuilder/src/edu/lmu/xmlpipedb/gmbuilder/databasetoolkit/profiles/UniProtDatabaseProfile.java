@@ -526,17 +526,106 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				_Log.info("getSystemTableManager(): for loop: "
 							+ systemTable.getKey()
 							+ " is not in the list of DatabaseSpecificSystemTables or SpeciesSpecificSystemTables.");
+				
+				// RB - need to programatically create string "WHERE dbreferencetype.type = 'NCBI Taxonomy' " +
+				// and ( id = ? or id = ? or id = ? ) )... prior to prepareStatement() 
+				StringBuilder basePrepareStatement = new StringBuilder
+		        	( "SELECT distinct id FROM dbreferencetype " +
+					  "INNER JOIN (" + "SELECT entrytype.hjid FROM entrytype " +
+					  "INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
+					  "INNER JOIN dbreferencetype ON(dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
+					  "WHERE dbreferencetype.type = 'NCBI Taxonomy' ");
+		        			
+		        boolean first = true;
+		        
+		        for ( SpeciesProfile selected : selectedSpeciesProfiles ) {
+		        	basePrepareStatement.append(first ? " and (" : " or ");
+		        	basePrepareStatement
+		                .append("id = ?");
+		            first = false;
+		        }
+		        basePrepareStatement.append(
+		        		")) as species_entry on dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid where type = ?");
+		    	
 				ps = ConnectionManager.getRelationalDBConnection()
-						.prepareStatement(
-							"SELECT distinct id FROM dbreferencetype " +
-							"INNER JOIN (" +
-							"SELECT entrytype.hjid FROM entrytype " +
-							"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
-							"INNER JOIN dbreferencetype ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
-							"WHERE dbreferencetype.type = 'NCBI Taxonomy' " +
-							"and id = ?) as species_entry on dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid " +
-							"where type = ?");
-				// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+						.prepareStatement( basePrepareStatement.toString() );
+				
+				// ps = ConnectionManager.getRelationalDBConnection()
+				//		.prepareStatement(
+				//			"SELECT distinct id FROM dbreferencetype " +
+				//			"INNER JOIN (" +
+				//			"SELECT entrytype.hjid FROM entrytype " +
+				//			"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
+				//			"INNER JOIN dbreferencetype ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
+				//			"WHERE dbreferencetype.type = 'NCBI Taxonomy' " +
+				//			"and id = ?) as species_entry on dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid " +
+				//			"where type = ?");
+				
+				// RB - loop through each of the selectedSpeciesProfiles to do queries for each.
+				
+				for ( SpeciesProfile selected : selectedSpeciesProfiles ) {
+					ps.setLong(1, selected.getTaxon());
+					ps.setString(2, systemTable.getKey());
+					result = ps.executeQuery();
+
+					while (result.next()) {
+						_Log.debug("getSystemTableManager(): while loop: ID:: "
+								+ result.getString("id") + "  Species:: "
+								+ selected.getSpeciesName());
+						tableManager
+							.submit(
+								systemTable.getKey(),
+								QueryType.insert,
+								new String[][] 
+								{
+									{ "ID",
+									  GenMAPPBuilderUtilities
+									     .checkAndPruneVersionSuffix(
+										    systemTable.getKey(),
+									  result.getString("id")) },
+									   
+									{ "Species",
+									  "|" + selected.getSpeciesName() + "|" },
+										
+									{ "\"Date\"",
+									  GenMAPPBuilderUtilities
+									     .getSystemsDateString(version) }
+								}
+							        );
+					}
+				}
+			}
+		}
+
+		// This goes off and gets the species specific system table(s) e.g.
+		// TAIR, etc.
+
+
+		for ( SpeciesProfile selected : selectedSpeciesProfiles ) {
+			tableManager = selected.getSystemTableManagerCustomizations(
+				             	tableManager,
+				             	getPrimarySystemTableManager(),
+				             	version
+				          		);
+		}
+/*		// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+		//         selectedSpeciesProfiles.get(0)
+		tableManager = selectedSpeciesProfiles.get(0)
+		                  .getSystemTableManagerCustomizations(
+				             tableManager,
+				             getPrimarySystemTableManager(),
+				             version
+				          );
+*/
+		// tableManager = speciesProfile.getSystemTableManagerCustomizations(
+		//		tableManager, getPrimarySystemTableManager(), version);
+
+		systemTableManager = tableManager;
+		return tableManager;
+	}
+
+// RB - Temp save this previous code.
+/*				// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
 				//         selectedSpeciesProfiles.get(0) 
 				ps.setString(1, "" + selectedSpeciesProfiles.get(0).getTaxon());
 				// ps.setString(1, "" + speciesProfile.getTaxon());
@@ -597,7 +686,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 		systemTableManager = tableManager;
 		return tableManager;
-	}
+	} */
 
 	/**
 	 * @throws InvalidParameterException

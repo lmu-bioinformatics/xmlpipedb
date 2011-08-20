@@ -528,7 +528,10 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 							+ " is not in the list of DatabaseSpecificSystemTables or SpeciesSpecificSystemTables.");
 				
 				// RB - need to programatically create string "WHERE dbreferencetype.type = 'NCBI Taxonomy' " +
-				// and ( id = ? or id = ? or id = ? ) )... prior to prepareStatement() 
+				// and ( id = ? or id = ? or id = ? ) )... prior to prepareStatement()
+				
+				// Dondi - This first part is actually OK.  The issue occurs when setting the values
+				// of the ? parameters and in invoking the query (see below).
 				StringBuilder basePrepareStatement = new StringBuilder
 		        	( "SELECT distinct id FROM dbreferencetype " +
 					  "INNER JOIN (" + "SELECT entrytype.hjid FROM entrytype " +
@@ -536,13 +539,12 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 					  "INNER JOIN dbreferencetype ON(dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
 					  "WHERE dbreferencetype.type = 'NCBI Taxonomy' ");
 		        			
-		        boolean first = true;
-		        
-		        for ( SpeciesProfile selected : selectedSpeciesProfiles ) {
-		        	basePrepareStatement.append(first ? " and (" : " or ");
+		        // Dondi - You are not actually using the elements here; just their count.
+		        // So, the old-school for loop is more appropriate.
+		        for (int i = 0; i < selectedSpeciesProfiles.size(); i++) {
 		        	basePrepareStatement
+		        	    .append((i == 0) ? " and (" : " or ")
 		                .append("id = ?");
-		            first = false;
 		        }
 		        basePrepareStatement.append(
 		        		")) as species_entry on dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid where type = ?");
@@ -563,8 +565,21 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				
 				// RB - loop through each of the selectedSpeciesProfiles to do queries for each.
 				
+				// Dondi - Note, you are looping through speciesProfiles to set their successive
+				// taxonID values in the id = ? clauses from the query.  ***Then you run the query
+				// just once.***  The current loop sets an insufficient number of ? values, then
+				// attempts to run the query for each species profile.
+				//
+				// To get a concrete feel for this, the suggestion from the e-mail of formulating
+				// the SQL query yourself, then issuing it directly to the relational database,
+				// will be quite instructive here.  Make sure to do this, so that you see the
+				// results for yourself, then look at those results in terms of the while loop
+				// below.  And to connect the dots even further, go to an exported GDB as well,
+				// and look at an ID table.
 				for ( SpeciesProfile selected : selectedSpeciesProfiles ) {
-					ps.setLong(1, selected.getTaxon());
+				    // Dondi - Upon examining the schema, the id column turns out to be a string.
+				    // So, setString does turn out to be the right method for the id = ? clauses.
+					ps.setString(1, Integer.toString(selected.getTaxon()));
 					ps.setString(2, systemTable.getKey());
 					result = ps.executeQuery();
 

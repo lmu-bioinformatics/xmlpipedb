@@ -517,9 +517,6 @@ public class ExportGoData {
         	new StringBuilder( "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%'" );
         boolean first = true;
         
-        // Dondi - Not sure why you were accessing DatabaseProfile.getTaxonIds() here when
-        // taxonIds is already passed as a parameter.
-        // RB - Duh, yes I lost track.
         for ( int taxon: taxonIds ) {
             baseQueryBuilder.append(first ? " and (" : " or ");
             baseQueryBuilder

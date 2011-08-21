@@ -546,11 +546,12 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		        	    .append((i == 0) ? " and (" : " or ")
 		                .append("id = ?");
 		        }
-		        // RB - added query statement logging
-		        _Log.info("getSystemTableManager(): query used: " + basePrepareStatement);
 		        basePrepareStatement.append(
 		        		")) as species_entry on dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid where type = ?");
 		    	
+		     // RB - added query statement logging
+		        _Log.info("getSystemTableManager(): query used: " + basePrepareStatement);
+		        
 				ps = ConnectionManager.getRelationalDBConnection()
 						.prepareStatement( basePrepareStatement.toString() );
 				

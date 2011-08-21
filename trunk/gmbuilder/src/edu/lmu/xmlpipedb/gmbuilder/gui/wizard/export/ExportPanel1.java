@@ -308,40 +308,32 @@ public class ExportPanel1 extends JPanel {
                     ", generic profile." : ", custom profile.");
         	selectedSpecies.add((SpeciesProfile)selection);
 		}
-        // Dondi - Remember I suggested that you look at the Collections or Arrays classes?
-        // Compare the above code (from lines 274-286 in this version) to this:
-/*      // List<? extends SpeciesProfile> selectedSpeciesProfiles = 
-                Arrays.asList((SpeciesProfile[])list.getSelectedValues());
-           List<? extends SpeciesProfile> selectedSpeciesProfiles = 
-				(List<? extends SpeciesProfile>)Arrays.asList(list.getSelectedValues());
-        for (SpeciesProfile speciesProfile: selectedSpeciesProfiles) {
 
-            // A direct class comparison is required here (as opposed to instanceof)
-            // because we are looking specifically for instances of UniProtSpeciesProfile, 
-            // and not any of its subclasses.
-            
-            speciesTextBuilder.append("\n")
-                .append(speciesProfile)
-                .append((speciesProfile.getClass() == UniProtSpeciesProfile.class) ?
-                    ", Generic Profile." : ", Custom Profile.");
-        }
-*/       
 		speciesDescriptionTextArea.setText(speciesTextBuilder.toString());
 
-		_Log.debug(selectedSpecies); // RB - why does this print twice?
-		// Dondi - The valueChanged event fires for both selections and deselections.
-		//   i.e., the event fires more often than you might be thinking.
-		
-// RB - keep this field since tables are populated with this info. 
-// Need to determine how each species should be placed in the tables, 
-// then adjust to populate the selected species.
-// This field MUST be populated or ALL IDs will be pruned regardless of which
-// species are selected in the list. 
-		
-        speciesCustomizeTextField.setText(selectedSpecies.get(0).getName());
+		_Log.debug(selectedSpecies);
 		
         DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
 
+     // RB - keep this field since tables are populated with this info. 
+     // Need to determine how each species should be placed in the tables, 
+     // then adjust to populate the selected species.
+     // This field MUST be populated or ALL IDs will be pruned regardless of which
+     // species are selected in the list. 
+     		
+     		StringBuilder speciesStringBuilder = new StringBuilder();
+             boolean firstSpecies = true;
+             for (SpeciesProfile speciesProfile: selectedSpecies) {
+                 speciesStringBuilder
+                     .append(firstSpecies ? "" : "|")
+                     .append(speciesProfile.getSpeciesName());
+                 firstSpecies = false;
+             }
+             speciesCustomizeTextField.setText(speciesStringBuilder.toString());
+     		// speciesCustomizeTextField.setText(selectedSpecies.get(0).getName());
+        
+        
+        
 // RB - Created setSelectedSpeciesProfiles method to process
 // species profiles as SpeciesProfile Collections.
         

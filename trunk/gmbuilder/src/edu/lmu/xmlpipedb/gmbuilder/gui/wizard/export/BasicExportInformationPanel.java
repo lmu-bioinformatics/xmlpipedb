@@ -58,7 +58,7 @@ import shag.LayoutConstants;
 /**
  * @author Joey J. Barrett Class: ExportPanel1
  */
-public class ExportPanel1 extends JPanel {
+public class BasicExportInformationPanel extends JPanel {
 
     private static final long serialVersionUID = -4815677619866768960L;
     private JComboBox profileComboBox;
@@ -74,7 +74,7 @@ public class ExportPanel1 extends JPanel {
 
     // RB - Do we want to add logging here?
     // Dondi - Logging is never a bad idea  :)
-    private static final Log _Log = LogFactory.getLog(ExportPanel1.class);
+    private static final Log _Log = LogFactory.getLog(BasicExportInformationPanel.class);
 
     /**
      * Getter for "descriptor" access.
@@ -93,21 +93,12 @@ public class ExportPanel1 extends JPanel {
     /**
      * Constructor.
      */
-    protected ExportPanel1() {
+    protected BasicExportInformationPanel() {
         super();
 
-        JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new BorderLayout());
-        titlePanel.setBackground(Color.gray);
-
-        JLabel textLabel = new JLabel();
-        textLabel.setBackground(Color.gray);
-        textLabel.setFont(new Font("MS Sans Serif", Font.BOLD, 14));
-        textLabel.setText("Export to GenMAPP - Basic Setup");
-        textLabel.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
-        textLabel.setOpaque(true);
-
-        titlePanel.add(textLabel, BorderLayout.CENTER);
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.add(new JLabel("<html><h3>&nbsp;Export to GenMAPP: Basic Information</h3></html>"),
+                BorderLayout.CENTER);
         titlePanel.add(new JSeparator(), BorderLayout.SOUTH);
 
         // This initializes all the fields and puts them in a panel for display
@@ -131,7 +122,8 @@ public class ExportPanel1 extends JPanel {
     // RB - Initialization method to populate Database ComboBox with all 
     // available database profiles of which there is only one - UniProt
     private void init() {
-        for (DatabaseProfile profile : ExportToGenMAPP.getAvailableDatabaseProfiles()) {
+        profileComboBox.removeAllItems();
+        for (DatabaseProfile profile: ExportToGenMAPP.getAvailableDatabaseProfiles()) {
             profileComboBox.addItem(profile);
         }
     }
@@ -146,7 +138,7 @@ public class ExportPanel1 extends JPanel {
         // Description
         profileComboBox = new JComboBox();
         profileComboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
+            public void actionPerformed(ActionEvent actionEvent) {
                 databaseProfileSelected(profileComboBox.getSelectedItem());
             }
         });
@@ -220,17 +212,19 @@ public class ExportPanel1 extends JPanel {
         leftPanel.add(versionFormattedTextField);
         leftPanel.add(new JLabel("MODSystem:"));
         leftPanel.add(modSystemTextField);
-        leftPanel.add(new JLabel("Species:"));
+        JLabel speciesLabel = new JLabel("Species:");
+        speciesLabel.setVerticalAlignment(JLabel.TOP);
+        leftPanel.add(speciesLabel);
         leftPanel.add(new JScrollPane(speciesCheckList));
 //        leftPanel.add(new JLabel("Customize Name:"));
 //        leftPanel.add(speciesCustomizeTextField);
         leftPanel.add(new JLabel("Modify (MM/dd/yyyy):"));
         leftPanel.add(modifyFormattedTextField);
 
-        SpringUtilities.makeCompactGrid(leftPanel, leftPanel.getComponentCount() / 2, 2, // rows,
-                                                                                            // cols
-        6, 6, // initX, initY
-        6, 6); // xPad, yPad
+        SpringUtilities.makeCompactGrid(leftPanel,
+                leftPanel.getComponentCount() / 2, 2, // rows, cols
+                6, 6, // initX, initY
+                6, 6); // xPad, yPad
 
         JPanel rightPanel = new JPanel(new GridLayout(0, 1));
         rightPanel.add(profileDescriptionTextArea);

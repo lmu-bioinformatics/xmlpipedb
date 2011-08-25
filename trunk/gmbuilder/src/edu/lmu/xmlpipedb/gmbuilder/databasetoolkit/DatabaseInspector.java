@@ -47,9 +47,9 @@ public class DatabaseInspector {
 	 * @throws SQLException
 	 */
 	public static DatabaseProfile[] init(Connection connection) throws SQLException {
-		
-		//Recognize all valid profiles for the given 
-		//database connection.
+        // Recognize all valid profiles for the given
+        // database connection.
+	    profilesInUse.clear();
 		for(DatabaseProfile dbProfile : databaseProfiles) {	
 			if(dbProfile.isAvailable(connection)) {
 				dbProfile.checkRequirements(connection);

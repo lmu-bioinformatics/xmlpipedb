@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionConfiguration;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
@@ -61,6 +64,8 @@ public abstract class DatabaseProfile extends Profile {
     public static enum SystemType {
         Proper, Improper, Primary
     };
+
+    private static final Log _Log = LogFactory.getLog(DatabaseProfile.class);
 
     protected static Map<String, SystemType> templateDefinedSystemTables = new HashMap<String, SystemType>();
     protected static Map<String, String> templateDefinedSystemToSystemCode = new HashMap<String, String>();
@@ -465,6 +470,7 @@ public abstract class DatabaseProfile extends Profile {
      */
     public void setDisplayOrder(String displayOrder) {
         this.displayOrder = displayOrder;
+        _Log.info("Display order to use: " + displayOrder);
     }
 
     /**
@@ -515,19 +521,28 @@ public abstract class DatabaseProfile extends Profile {
      * @param properSystemTables
      * @param improperSystemTables
      */
-    public void setTableProperties(Object[] properSystemTables, Object[] improperSystemTables) {
+    public void setTableProperties(String[] properSystemTables, String[] improperSystemTables) {
         systemTables = new HashMap<String, SystemType>();
-        for (Object properSystemTable : properSystemTables) {
-
-            if (getPrimarySystemTable().equals((String)properSystemTable)) {
-                systemTables.put((String)properSystemTable, SystemType.Primary);
+        
+        StringBuilder exportReport = new StringBuilder("Proper system tables to export:\n");
+        for (String properSystemTable: properSystemTables) {
+            exportReport.append(" - ").append(properSystemTable);
+            if (getPrimarySystemTable().equals(properSystemTable)) {
+                exportReport.append(" (primary)");
+                systemTables.put(properSystemTable, SystemType.Primary);
             } else {
-                systemTables.put((String)properSystemTable, SystemType.Proper);
+                systemTables.put(properSystemTable, SystemType.Proper);
             }
+            exportReport.append("\n");
         }
-        for (Object improperSystemTable : improperSystemTables) {
-            systemTables.put((String)improperSystemTable, SystemType.Improper);
+        
+        exportReport.append("\nImproper system tables to export:\n");
+        for (String improperSystemTable: improperSystemTables) {
+            exportReport.append(" - ").append(improperSystemTable).append("\n");
+            systemTables.put(improperSystemTable, SystemType.Improper);
         }
+        
+        _Log.info(exportReport.toString());
     }
 
     /**
@@ -537,48 +552,15 @@ public abstract class DatabaseProfile extends Profile {
      */
     public void setRelationshipTableProperties(String[] relationshipTables) {
         this.relationshipTables = relationshipTables;
+        
+        // Report on the relationship tables to export.
+        StringBuilder exportReport = new StringBuilder("Relationship tables to export:\n");
+        for (String relationshipTable: relationshipTables) {
+            exportReport.append(" - ").append(relationshipTable).append("\n");
+        }
+        
+        _Log.info(exportReport.toString());
     }
-
-    /**
-     * Returns table managers associated with the first pass through the tables
-     * to be created. It also updates the export wizard to which tables it is
-     * preparing.
-     *
-     * @return
-     * @throws InvalidParameterException
-     * @throws Exception
-     */
-    //JN - 2007-02-24 -- This stuff was in-lined in the ExportToGenMAPP.export()
-    //  method a few months ago. It should no longer be needed and I've now
-    //  commented it out. If this causes any issues, they should be addressed
-    //  by changing the call and/or functionality, but *not* by adding this
-    //  back in.
-//    public TableManager[] getFirstPassTableManagers() throws SQLException, InvalidParameterException {
-//        List<TableManager> tableManagers = new ArrayList<TableManager>();
-////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-////        ExportWizard.updateExportProgress(53, "Preparing tables - Info table...");
-//        tableManagers.add(getInfoTableManager());
-////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-////        ExportWizard.updateExportProgress(55, "Preparing tables - Relations table...");
-//        tableManagers.add(getRelationsTableManager());
-////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-////        ExportWizard.updateExportProgress(57, "Preparing tables - Other table...");
-//        tableManagers.add(getOtherTableManager());
-////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-////        ExportWizard.updateExportProgress(59, "Preparing tables - Systems table...");
-//        tableManagers.add(getSystemsTableManager());
-////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-////        ExportWizard.updateExportProgress(61, "Preparing tables - Primary System table...");
-//        tableManagers.add(getPrimarySystemTableManager());
-////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-////        ExportWizard.updateExportProgress(63, "Preparing tables - System tables...");
-//        tableManagers.add(getSystemTableManager());
-////      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-////        ExportWizard.updateExportProgress(65, "Preparing tables - Relationship table...");
-//        tableManagers.addAll(getRelationshipTableManager());
-//
-//        return tableManagers.toArray(new TableManager[0]);
-//    }
 
     /**
      * Returns table managers associated with the second pass through the tables

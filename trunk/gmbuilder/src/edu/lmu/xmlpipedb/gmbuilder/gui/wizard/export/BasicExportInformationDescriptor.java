@@ -24,17 +24,17 @@ import com.nexes.wizard.WizardPanelDescriptor;
 /**
  * @author Joey J. Barrett
  */
-public class ExportPanel1Descriptor extends WizardPanelDescriptor implements DocumentListener, ListSelectionListener {
+public class BasicExportInformationDescriptor extends WizardPanelDescriptor implements DocumentListener, ListSelectionListener {
 
-    public static final String IDENTIFIER = "EXPORT_PANEL1";
+    public static final String IDENTIFIER = "BASIC_EXPORT_INFORMATION_PANEL";
 
-    private ExportPanel1 panel1;
+    private BasicExportInformationPanel panel1;
 
     /**
      * Constructor
      */
-    public ExportPanel1Descriptor() {
-        panel1 = new ExportPanel1();
+    public BasicExportInformationDescriptor() {
+        panel1 = new BasicExportInformationPanel();
         panel1.getOwnerTextField().getDocument().addDocumentListener(this);
         panel1.getSpeciesCheckList().addListSelectionListener(this);
 
@@ -48,7 +48,7 @@ public class ExportPanel1Descriptor extends WizardPanelDescriptor implements Doc
      * @see com.nexes.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
      */
     public Object getNextPanelDescriptor() {
-        return ExportPanel2Descriptor.IDENTIFIER;
+        return DataToExportDescriptor.IDENTIFIER;
     }
 
     /*

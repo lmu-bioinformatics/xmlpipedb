@@ -33,20 +33,19 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
  * @author Joey J. Barrett
  * Class: ExportPanel5Descriptor
  */
-public class ExportPanel5Descriptor extends WizardPanelDescriptor {
+public class ExportInProgressDescriptor extends WizardPanelDescriptor {
 
-    public static final String IDENTIFIER = "EXPORT_PANEL5";
+    public static final String IDENTIFIER = "EXPORT_IN_PROGRESS_PANEL";
 
-    ExportPanel5 panel5;
+    ExportInProgressPanel exportInProgressPanel;
 
     /**
      * Constructor.
      */
-    public ExportPanel5Descriptor() {
-
-        panel5 = new ExportPanel5();
+    public ExportInProgressDescriptor() {
+        exportInProgressPanel = new ExportInProgressPanel();
         setPanelDescriptorIdentifier(IDENTIFIER);
-        setPanelComponent(panel5);
+        setPanelComponent(exportInProgressPanel);
     }
 
     /* (non-Javadoc)
@@ -68,10 +67,7 @@ public class ExportPanel5Descriptor extends WizardPanelDescriptor {
      * @see com.nexes.wizard.WizardPanelDescriptor#aboutToDisplayPanel()
      */
     public void aboutToDisplayPanel() {
-
-        ExportPanel5.setProgress(0, "Preparing for export...");
-
-
+        exportInProgressPanel.setProgress(0, "Preparing for export...");
         getWizard().setNextFinishButtonEnabled(false);
         getWizard().setBackButtonEnabled(false);
 
@@ -87,8 +83,8 @@ public class ExportPanel5Descriptor extends WizardPanelDescriptor {
             public void run() {
                 try {
                     getWizard().getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    ExportToGenMAPP.export();
-                    ExportPanel5.setProgress(100, "Export completed successfully.");
+                    ExportToGenMAPP.export(exportInProgressPanel);
+                    exportInProgressPanel.setProgress(100, "Export completed successfully.");
                     getWizard().setNextFinishButtonEnabled(true);
                 } catch(HibernateException e) {
                     _Log.fatal("Export problem", e);
@@ -113,5 +109,5 @@ public class ExportPanel5Descriptor extends WizardPanelDescriptor {
         t.start();
     }
 
-    private static final Log _Log = LogFactory.getLog(ExportPanel5Descriptor.class);
+    private static final Log _Log = LogFactory.getLog(ExportInProgressDescriptor.class);
 }

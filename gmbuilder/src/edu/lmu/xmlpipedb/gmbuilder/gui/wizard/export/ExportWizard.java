@@ -15,11 +15,7 @@ import java.awt.Cursor;
 
 import javax.swing.JFrame;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.nexes.wizard.Wizard;
-import com.nexes.wizard.WizardPanelDescriptor;
 
 /**
  * @author Joey J. Barrett
@@ -34,22 +30,16 @@ public class ExportWizard {
 		wizard.getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		wizard.getDialog().setTitle("Export Wizard Dialog");
 		
-		WizardPanelDescriptor descriptor1 = new ExportPanel1Descriptor();
-		wizard.registerWizardPanel(ExportPanel1Descriptor.IDENTIFIER, descriptor1);
+		wizard.registerWizardPanel(BasicExportInformationDescriptor.IDENTIFIER,
+		        new BasicExportInformationDescriptor());
 
-		WizardPanelDescriptor descriptor2 = new ExportPanel2Descriptor();
-		wizard.registerWizardPanel(ExportPanel2Descriptor.IDENTIFIER, descriptor2);
+		wizard.registerWizardPanel(DataToExportDescriptor.IDENTIFIER,
+		        new DataToExportDescriptor());
 
-		WizardPanelDescriptor descriptor3 = new ExportPanel3Descriptor();
-		wizard.registerWizardPanel(ExportPanel3Descriptor.IDENTIFIER, descriptor3);
+		wizard.registerWizardPanel(ExportInProgressDescriptor.IDENTIFIER,
+		        new ExportInProgressDescriptor());
 		
-		WizardPanelDescriptor descriptor4 = new ExportPanel4Descriptor();
-		wizard.registerWizardPanel(ExportPanel4Descriptor.IDENTIFIER, descriptor4);
-    
-		descriptor5 = new ExportPanel5Descriptor();
-		wizard.registerWizardPanel(ExportPanel5Descriptor.IDENTIFIER, descriptor5);
-		
-		wizard.setCurrentPanel(ExportPanel1Descriptor.IDENTIFIER);
+		wizard.setCurrentPanel(BasicExportInformationDescriptor.IDENTIFIER);
     
 		wizard.getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         wizard.getDialog().setLocationRelativeTo(owner);
@@ -57,27 +47,4 @@ public class ExportWizard {
 		//0=Finish,1=Cancel,2=Error
 		wizard.showModalDialog();        
 	}
-	
-	/**
-	 * Provides a loop-through to the progress bar on 
-	 * ExportPanel5.  Sets the progress of the progress bar.
-	 * 
-     * @param progressValue must be an integer between 0-100.
-     * @param progressText some description string.
-	 */
-	public static void updateExportProgress(int progressValue, String progressText) {
-        _Log.info(progressText);
-		ExportPanel5.setProgress(progressValue, progressText);
-        // Why was this here?
-//		try {
-//			Thread.sleep(1000);
-//		} catch (InterruptedException ignored) {}
-	}
-
-    /**
-     * Log object for this class.
-     */
-    private static final Log _Log = LogFactory.getLog(ExportWizard.class);    
-    
-    private WizardPanelDescriptor descriptor5;
 }

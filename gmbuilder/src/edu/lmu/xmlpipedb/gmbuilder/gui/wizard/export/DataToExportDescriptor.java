@@ -1,5 +1,5 @@
 /********************************************************
- * Filename: ExportPanel4Descriptor.java
+ * Filename: ExportPanel2Descriptor.java
  * Author: Joey J. Barrett
  * Program: gmBuilder
  * Description: A subclass of WizardPanelDescriptor which
@@ -14,54 +14,59 @@ package edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export;
 
 import com.nexes.wizard.WizardPanelDescriptor;
 
-
 /**
  * @author Joey J. Barrett
- * Class: ExportPanel4Descriptor
+ * Class: ExportPanel2Descriptor
  */
-public class ExportPanel4Descriptor extends WizardPanelDescriptor {
+public class DataToExportDescriptor extends WizardPanelDescriptor {
 
-    public static final String IDENTIFIER = "EXPORT_PANEL4";
+    public static final String IDENTIFIER = "DATA_TO_EXPORT_PANEL";
 
-    ExportPanel4 panel4;
+    private DataToExportPanel panel2;
 
     /**
-     * Constructor.
+     * Constructor
      */
-    public ExportPanel4Descriptor() {
-
-        panel4 = new ExportPanel4();
+    public DataToExportDescriptor() {
+        panel2 = new DataToExportPanel(this);
         setPanelDescriptorIdentifier(IDENTIFIER);
-        setPanelComponent(panel4);
-
+        setPanelComponent(panel2);
     }
 
     /* (non-Javadoc)
      * @see com.nexes.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
      */
     public Object getNextPanelDescriptor() {
-        return ExportPanel5Descriptor.IDENTIFIER;
+        return ExportInProgressDescriptor.IDENTIFIER;
     }
 
     /* (non-Javadoc)
      * @see com.nexes.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
      */
     public Object getBackPanelDescriptor() {
-        return ExportPanel3Descriptor.IDENTIFIER;
+        return BasicExportInformationDescriptor.IDENTIFIER;
     }
 
     /* (non-Javadoc)
      * @see com.nexes.wizard.WizardPanelDescriptor#aboutToDisplayPanel()
      */
     public void aboutToDisplayPanel() {
-        panel4.displayAvailableInformation();
+    	panel2.displayAvailableInformation();
+        setNextButton();
     }
 
     /* (non-Javadoc)
      * @see com.nexes.wizard.WizardPanelDescriptor#aboutToHidePanel()
      */
     public void aboutToHidePanel() {
-        panel4.submitInformationEntered();
+        panel2.submitInformationEntered();
+     }
+
+    /**
+     * Sets the next button accordingly.
+     */
+    protected void setNextButton() {
+        getWizard().setNextFinishButtonEnabled(panel2.isAllInformationEntered());
     }
 
 }

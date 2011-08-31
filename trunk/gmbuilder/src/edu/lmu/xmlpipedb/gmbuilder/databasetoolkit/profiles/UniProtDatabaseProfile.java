@@ -427,13 +427,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			ps = ConnectionManager
 					.getRelationalDBConnection()
 					.prepareStatement(
-							"select evidencedstringtype.value "
-									+ "from entrytype inner join proteintype "
-									+ "on(entrytype.protein = proteintype.hjid) "
-									+ "inner join proteinnamegrouprecommendednametype "
-									+ "on (proteintype.recommendedname = proteinnamegrouprecommendednametype.hjid) "
-									+ "inner join evidencedstringtype on (proteinnamegrouprecommendednametype.fullname = evidencedstringtype.hjid) "
-									+ "where entrytype.hjid = ? order by evidencedstringtype.value;");
+						"select evidencedstringtype.value "
+							+ "from entrytype inner join proteintype "
+							+ "on(entrytype.protein = proteintype.hjid) "
+							+ "inner join proteinnamegrouprecommendednametype "
+							+ "on (proteintype.recommendedname = proteinnamegrouprecommendednametype.hjid) "
+							+ "inner join evidencedstringtype on (proteinnamegrouprecommendednametype.fullname = evidencedstringtype.hjid) "
+							+ "where entrytype.hjid = ? order by evidencedstringtype.value;");
 			ps.setInt(1, Integer.parseInt(row.getValue("UID")));
 			result = ps.executeQuery();
 			while (result.next()) {
@@ -519,13 +519,12 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			 * returned by getDatabaseSpecificSystemTables()
 			 */
 			_Log.info("getSystemTableManager(): for loop: systemTable.getKey() = "
-							+ systemTable.getKey());
-			if ((!getDatabaseSpecificSystemTables().containsKey(
-					systemTable.getKey()))
-				) {
+				+ systemTable.getKey());
+			
+			if (( !getDatabaseSpecificSystemTables().containsKey( systemTable.getKey() ) ) ) {
 				_Log.info("getSystemTableManager(): for loop: "
-							+ systemTable.getKey()
-							+ " is not in the list of DatabaseSpecificSystemTables or SpeciesSpecificSystemTables.");
+						+ systemTable.getKey()
+						+ " is not in the list of DatabaseSpecificSystemTables or SpeciesSpecificSystemTables.");
 				
 				// RB - need to programatically create string "WHERE dbreferencetype.type = 'NCBI Taxonomy' " +
 				// and ( id = ? or id = ? or id = ? ) )... prior to prepareStatement()
@@ -549,22 +548,11 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		        basePrepareStatement.append(
 		        		")) as species_entry on dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid where type = ?");
 		    	
-		     // RB - added query statement logging
+		        // RB - added query statement logging
 		        _Log.info("getSystemTableManager(): query used: " + basePrepareStatement);
 		        
 				ps = ConnectionManager.getRelationalDBConnection()
 						.prepareStatement( basePrepareStatement.toString() );
-				
-				// ps = ConnectionManager.getRelationalDBConnection()
-				//		.prepareStatement(
-				//			"SELECT distinct id FROM dbreferencetype " +
-				//			"INNER JOIN (" +
-				//			"SELECT entrytype.hjid FROM entrytype " +
-				//			"INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
-				//			"INNER JOIN dbreferencetype ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
-				//			"WHERE dbreferencetype.type = 'NCBI Taxonomy' " +
-				//			"and id = ?) as species_entry on dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid " +
-				//			"where type = ?");
 				
 				// RB - loop through each of the selectedSpeciesProfiles to do queries for each.
 				
@@ -579,37 +567,50 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				// results for yourself, then look at those results in terms of the while loop
 				// below.  And to connect the dots even further, go to an exported GDB as well,
 				// and look at an ID table.
-				for ( SpeciesProfile selected : selectedSpeciesProfiles ) {
-				    // Dondi - Upon examining the schema, the id column turns out to be a string.
-				    // So, setString does turn out to be the right method for the id = ? clauses.
-					ps.setString(1, Integer.toString(selected.getTaxon()));
-					ps.setString(2, systemTable.getKey());
-					result = ps.executeQuery();
+				
+				for ( int i = 0; i < selectedSpeciesProfiles.size(); i++ ) {
+	
+					ps.setString( i + 1, Integer.toString( selectedSpeciesProfiles.get( i ).getTaxon() ) );
+				}	
+				ps.setString( selectedSpeciesProfiles.size() + 1, systemTable.getKey());
+				
+				//for ( SpeciesProfile selected : selectedSpeciesProfiles ) {
+			// Dondi - Upon examining the schema, the id column turns out to be a string.
+			// So, setString does turn out to be the right method for the id = ? clauses.
+				//ps.setString(1, Integer.toString(selected.getTaxon()));
+				//ps.setString(2, Integer.toString(selected.getTaxon()));
+				//ps.setString(3, systemTable.getKey());
+				result = ps.executeQuery();
 
-					while (result.next()) {
+				while (result.next()) {
+					
+					for ( int i = 0; i < selectedSpeciesProfiles.size(); i++ ) {
+					
 						_Log.debug("getSystemTableManager(): while loop: ID:: "
-								+ result.getString("id") + "  Species:: "
-								+ selected.getSpeciesName());
+							+ result.getString("id") + "  Species:: "
+							+ selectedSpeciesProfiles.get( i ).getSpeciesName());
+							// + selected.getSpeciesName());
 						tableManager
 							.submit(
-								systemTable.getKey(),
-								QueryType.insert,
-								new String[][] 
-								{
-									{ "ID",
-									  GenMAPPBuilderUtilities
-									     .checkAndPruneVersionSuffix(
-										    systemTable.getKey(),
-									  result.getString("id")) },
+									systemTable.getKey(),
+									QueryType.insert,
+									new String[][] 
+									{
+									  { "ID",
+										GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(systemTable.getKey(),
+										result.getString("id"))
+									  },
 									   
-									{ "Species",
-									  "|" + selected.getSpeciesName() + "|" },
+									  { "Species",
+										"|" + selectedSpeciesProfiles.get( i ).getSpeciesName() + "|"
+									  },
+									  //"|" + selected.getSpeciesName() + "|" },
 										
-									{ "\"Date\"",
-									  GenMAPPBuilderUtilities
-									     .getSystemsDateString(version) }
-								}
-							        );
+									  { "\"Date\"",
+										GenMAPPBuilderUtilities.getSystemsDateString(version)
+									  }
+									}
+							    	);
 					}
 				}
 			}
@@ -626,15 +627,15 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				             	version
 				          		);
 		}
-/*		// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
+		// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
 		//         selectedSpeciesProfiles.get(0)
-		tableManager = selectedSpeciesProfiles.get(0)
-		                  .getSystemTableManagerCustomizations(
-				             tableManager,
-				             getPrimarySystemTableManager(),
-				             version
-				          );
-*/
+		//tableManager = selectedSpeciesProfiles.get(0)
+		//                  .getSystemTableManagerCustomizations(
+		//		             tableManager,
+		//		             getPrimarySystemTableManager(),
+		//		             version
+		//		          );
+
 		// tableManager = speciesProfile.getSystemTableManagerCustomizations(
 		//		tableManager, getPrimarySystemTableManager(), version);
 
@@ -642,69 +643,6 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		return tableManager;
 	}
 
-// RB - Temp save this previous code.
-/*				// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
-				//         selectedSpeciesProfiles.get(0) 
-				ps.setString(1, "" + selectedSpeciesProfiles.get(0).getTaxon());
-				// ps.setString(1, "" + speciesProfile.getTaxon());
-				ps.setString(2, systemTable.getKey());
-				result = ps.executeQuery();
-
-				while (result.next()) {
-					_Log.debug("getSystemTableManager(): while loop: ID:: "
-						+ result.getString("id") + "  Species:: "
-						// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
-						//         selectedSpeciesProfiles.get(0)
-						+ selectedSpeciesProfiles.get(0).getSpeciesName());
-						// + speciesProfile.getSpeciesName());
-					tableManager
-						.submit(
-								systemTable.getKey(),
-								QueryType.insert,
-								new String[][] 
-								{
-									{ "ID",
-									  GenMAPPBuilderUtilities
-									     .checkAndPruneVersionSuffix(
-										    systemTable.getKey(),
-									  result.getString("id"))
-									},
-									   
-									{ "Species",
-									// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
-									//         selectedSpeciesProfiles.get(0)
-									  "|" + selectedSpeciesProfiles
-									     .get(0).getSpeciesName() + "|"
-									// "|" + speciesProfile.getSpeciesName() + "|"
-									},
-										
-									{ "\"Date\"",
-									  GenMAPPBuilderUtilities
-									     .getSystemsDateString(version) 
-									}
-								}
-							   );
-				}
-			}
-		}
-
-		// This goes off and gets the species specific system table(s) e.g.
-		// TAIR, etc.
-		
-		// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
-		//         selectedSpeciesProfiles.get(0)
-		tableManager = selectedSpeciesProfiles.get(0)
-		                  .getSystemTableManagerCustomizations(
-				             tableManager,
-				             getPrimarySystemTableManager(),
-				             version
-				          );
-		// tableManager = speciesProfile.getSystemTableManagerCustomizations(
-		//		tableManager, getPrimarySystemTableManager(), version);
-
-		systemTableManager = tableManager;
-		return tableManager;
-	} */
 
 	/**
 	 * @throws InvalidParameterException

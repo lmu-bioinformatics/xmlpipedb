@@ -584,34 +584,31 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 				while (result.next()) {
 					
-					for ( int i = 0; i < selectedSpeciesProfiles.size(); i++ ) {
-					
-						_Log.debug("getSystemTableManager(): while loop: ID:: "
-							+ result.getString("id") + "  Species:: "
-							+ selectedSpeciesProfiles.get( i ).getSpeciesName());
-							// + selected.getSpeciesName());
-						tableManager
-							.submit(
-									systemTable.getKey(),
-									QueryType.insert,
-									new String[][] 
-									{
-									  { "ID",
-										GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(systemTable.getKey(),
-										result.getString("id"))
-									  },
+					_Log.debug("getSystemTableManager(): while loop: ID:: "
+						+ result.getString("id") + "  Species:: "
+						+ selectedSpeciesProfiles.get( i ).getSpeciesName());
+						// + selected.getSpeciesName());
+					tableManager
+						.submit(
+								systemTable.getKey(),
+								QueryType.insert,
+								new String[][] 
+								{
+								  { "ID",
+									GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(systemTable.getKey(),
+									result.getString("id"))
+								  },
 									   
-									  { "Species",
-										"|" + selectedSpeciesProfiles.get( i ).getSpeciesName() + "|"
-									  },
-									  //"|" + selected.getSpeciesName() + "|" },
+								  { "Species",
+									"|" + selectedSpeciesProfiles.get( i ).getSpeciesName() + "|"
+								  },
+								  //"|" + selected.getSpeciesName() + "|" },
 										
-									  { "\"Date\"",
-										GenMAPPBuilderUtilities.getSystemsDateString(version)
-									  }
-									}
-							    	);
-					}
+								  { "\"Date\"",
+									GenMAPPBuilderUtilities.getSystemsDateString(version)
+								  }
+								}
+							    );
 				}
 			}
 		}

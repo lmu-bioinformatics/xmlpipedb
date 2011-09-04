@@ -375,8 +375,13 @@ public class BasicExportInformationPanel extends JPanel {
         // set the species name
         
         // RB - not sure if setSpeciesName needs to be modified??
-        // Dondi - not sure either; will need to follow how this string is used
-        databaseProfile.setSpeciesName(speciesCustomizeTextField.getText());
+        // Dondi - This may be the cause of the "extra name" problem in getInfoTableManager.
+        //     Calling database.setSpeciesName actually passes that string to the *single*
+        //     selected species profile.  Later on, in getInfoTableManager, this is the string
+        //     that is used when concatenating the final species string.  But, with the line
+        //     below active, then the species name of the first species profile will already
+        //     be the concatenated version.  Thus, you get the extra species name.
+//        databaseProfile.setSpeciesName(speciesCustomizeTextField.getText());
         databaseProfile.setModify(new SimpleDateFormat("MM/dd/yyyy").parse(modifyFormattedTextField.getText()));
         databaseProfile.setNotes(notesTextArea.getText());
         ExportToGenMAPP.setDatabaseProfile(databaseProfile);

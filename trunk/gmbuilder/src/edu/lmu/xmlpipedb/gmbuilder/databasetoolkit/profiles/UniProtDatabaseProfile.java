@@ -532,21 +532,35 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				// Dondi - This first part is actually OK.  The issue occurs when setting the values
 				// of the ? parameters and in invoking the query (see below).
 				StringBuilder basePrepareStatement = new StringBuilder
-		        	( "SELECT distinct id FROM dbreferencetype " +
-					  "INNER JOIN (" + "SELECT entrytype.hjid FROM entrytype " +
-					  "INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
-					  "INNER JOIN dbreferencetype ON(dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
-					  "WHERE dbreferencetype.type = 'NCBI Taxonomy' ");
+					( "SELECT distinct id, species_entry.value " +
+					  "FROM dbreferencetype INNER JOIN " +
+					  "(SELECT entrytype.hjid, organismnametype.value " +
+				         "FROM entrytype INNER JOIN organismtype " +
+				            "ON (entrytype.organism = organismtype.hjid)" +
+				         "INNER JOIN organismnametype " +
+				            "ON (organismtype.hjid = organismnametype.organismtype_name_hjid)" +
+				         "INNER JOIN dbreferencetype " +
+				            "ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
+				         "WHERE dbreferencetype.type = 'NCBI Taxonomy' ");
+				
+		        //	( "SELECT distinct id FROM dbreferencetype " +
+				//	  "INNER JOIN (" +
+		        //	     "SELECT entrytype.hjid FROM entrytype " +
+				//	     "INNER JOIN organismtype ON (entrytype.organism = organismtype.hjid) " +
+				//	     "INNER JOIN dbreferencetype ON(dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
+				//	     "WHERE dbreferencetype.type = 'NCBI Taxonomy' ");
 		        			
 		        // Dondi - You are not actually using the elements here; just their count.
 		        // So, the old-school for loop is more appropriate.
 		        for (int i = 0; i < selectedSpeciesProfiles.size(); i++) {
 		        	basePrepareStatement
-		        	    .append((i == 0) ? " and (" : " or ")
+		        	    .append((i == 0) ? "AND (" : " OR ")
 		                .append("id = ?");
 		        }
 		        basePrepareStatement.append(
-		        		")) as species_entry on dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid where type = ?");
+		        		")) AS species_entry " +
+		        		   "ON dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid " +
+		        		   "WHERE type = ?");
 		    	
 		        // RB - added query statement logging
 		        _Log.info("getSystemTableManager(): query used: " + basePrepareStatement);
@@ -585,30 +599,36 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				while (result.next()) {
 					
 					_Log.debug("getSystemTableManager(): while loop: ID:: "
+						//+ result.getString(1) + "  Species:: "
 						+ result.getString("id") + "  Species:: "
-						+ selectedSpeciesProfiles.get( i ).getSpeciesName());
+						+ result.getString(2));
+					    //+ result.getString("species_entry.value") );
 						// + selected.getSpeciesName());
 					tableManager
-						.submit(
-								systemTable.getKey(),
-								QueryType.insert,
-								new String[][] 
-								{
-								  { "ID",
-									GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(systemTable.getKey(),
-									result.getString("id"))
-								  },
+						.submit
+						   (
+							systemTable.getKey(),
+							QueryType.insert,
+							new String[][] 
+							{
+							  { "ID",
+								GenMAPPBuilderUtilities
+								   .checkAndPruneVersionSuffix
+								      (systemTable.getKey(),
+								result.getString("id"))
+							  },
 									   
-								  { "Species",
-									"|" + selectedSpeciesProfiles.get( i ).getSpeciesName() + "|"
-								  },
-								  //"|" + selected.getSpeciesName() + "|" },
+							  { "Species",
+								"|" + result.getString(2) + "|"
+							  },
+							  //"|" + selected.getSpeciesName() + "|" },
 										
-								  { "\"Date\"",
-									GenMAPPBuilderUtilities.getSystemsDateString(version)
-								  }
-								}
-							    );
+							  { "\"Date\"",
+								GenMAPPBuilderUtilities
+								   .getSystemsDateString(version)
+							  }
+							}
+							);
 				}
 			}
 		}

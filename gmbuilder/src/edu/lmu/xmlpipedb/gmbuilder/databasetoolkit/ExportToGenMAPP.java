@@ -104,18 +104,22 @@ public class ExportToGenMAPP {
     public static void export(ExportInProgressPanel exportInProgressPanel)
             throws ClassNotFoundException, SQLException, HibernateException, SAXException,
                     IOException, JAXBException, InvalidParameterException {
+    	
     	_Log.warn("Export Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
         exportInProgressPanel.setProgress(1, "Starting GeneOntology export...");
-    	// (new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getChosenAspect(), selectedDatabaseProfile.getSelectedSpeciesProfile().getTaxon());
-    	// RB - the second argument needs to be a List of taxon ids, not a single taxon id
-    	(new ExportGoData(selectedDatabaseProfile.getExportConnection())).export(selectedDatabaseProfile.getChosenAspects(), selectedDatabaseProfile.getTaxonIds());
+    	
+    	// RB - Modified ExportGoData second argument to be
+        // a List of taxon ids, not a single taxon id.
+    	(new ExportGoData(selectedDatabaseProfile.getExportConnection()))
+    		.export(selectedDatabaseProfile.getChosenAspects(), selectedDatabaseProfile.getTaxonIds());
  	
     	exportInProgressPanel.setProgress(50, "Finished GeneOntology export...");
     	exportInProgressPanel.setProgress(51, "Starting first pass table creation...");
 
         // JN - in-lining of calls with immediate write to gmb
         _Log.info("Getting first-pass table managers");
-        // No species specific processing
+        
+        // RB - modified getInfoTableManager for species submit argument
         exportInProgressPanel.setProgress(53, "Preparing tables - Info table...");
         _Log.info("Start getInfoTableManger()");
         TableManager tmA = selectedDatabaseProfile.getInfoTableManager();
@@ -127,27 +131,27 @@ public class ExportToGenMAPP {
         TableManager tmB = selectedDatabaseProfile.getRelationsTableManager();
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmB);
 
-        // No species specific processing
+        // RB - No multiple species specific processing
         _Log.info("Start getOtherTableManager()");
         exportInProgressPanel.setProgress(57, "Preparing tables - Other table...");
         TableManager tmC = selectedDatabaseProfile.getOtherTableManager();
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmC);
 
-//      This uses SpeciesProfile
+        // RB - This uses a SpeciesProfile but method only for E.coli or A.thaliana
         _Log.info("Start getSystemsTableManager()");
         exportInProgressPanel.setProgress(59, "Preparing tables - Systems table...");
         TableManager tmD = selectedDatabaseProfile.getSystemsTableManager();
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmD);
 
-//      This uses SpeciesProfile
         // This gets all the UniProt table information
+        // RB - This uses a SpeciesProfile but method only for E.coli or A.thaliana
         _Log.info("Start getPrimarySystemTableManager()");
         exportInProgressPanel.setProgress(61, "Preparing tables - Primary System table...");
         TableManager tmE = selectedDatabaseProfile.getPrimarySystemTableManager();
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmE);
 
-//      This uses SpeciesProfile
         // This gets info for all of the proper system tables (e.g. TAIR, Blattner, UniGene
+        // RB - Modified getSystemTableManager() for variable number of species.
         _Log.info("Start getSystemTableManager()");
         exportInProgressPanel.setProgress(63, "Preparing tables - System tables...");
         TableManager tmF = selectedDatabaseProfile.getSystemTableManager();

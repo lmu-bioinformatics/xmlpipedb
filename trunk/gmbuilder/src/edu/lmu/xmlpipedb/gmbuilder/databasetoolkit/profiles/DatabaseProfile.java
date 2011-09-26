@@ -579,7 +579,8 @@ public abstract class DatabaseProfile extends Profile {
      * @throws Exception
      */
     public TableManager getInfoTableManager() {
-        // Concatenate the selected species into a single compound name.
+        // Concatenate the selected species into a single compound name then use
+    	// for species submit.
         StringBuilder speciesStringBuilder = new StringBuilder();
         boolean firstSpecies = true;
         for (SpeciesProfile speciesProfile: selectedSpeciesProfiles) {
@@ -625,10 +626,20 @@ public abstract class DatabaseProfile extends Profile {
     public TableManager getRelationsTableManager() {
         TableManager tableManager = new TableManager(null, new String[] { "SystemCode", "RelatedCode" });
         for (String relationTable : relationshipTables) {
-            SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationTable);
+        	 
+        	// RB - added logging here. 
+        	_Log.info("getRelationsTableManager() For loop: Relation Table used for " 
+        			   + "parseRelationshipTableName is: " + relationTable);
+        	
+        	SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationTable);
             // The reason why it is not short-circuit, is that we must process both systemTable1 and systemTable2
             
-            // RB - using first SpeciesProfile in the List of SpeciesProfiles: selectedSpeciesProfiles.get(0)
+        	// RB - added logging here. 
+        	_Log.info("SystemTablePair stp system tables properties are: "
+        			  + "systemTable1: "+ stp.systemTable1
+        			  + "  systemTable2: " + stp.systemTable2);
+        	
+        	// RB - using first SpeciesProfile in the List of SpeciesProfiles: selectedSpeciesProfiles.get(0)
             if (selectedSpeciesProfiles.get(0).getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | 
             		selectedSpeciesProfiles.get(0).getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
             //if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | 

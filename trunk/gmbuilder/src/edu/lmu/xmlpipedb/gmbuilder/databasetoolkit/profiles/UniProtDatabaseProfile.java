@@ -683,7 +683,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				// UniProt-X conditional
 				
 				// RB - Added logging
-				_Log.info("getRelationshipTable(): if UniProt - X");
+				_Log.info("getRelationshipTable(): if (UniProt - X) {}");
 				
 				// RB - Programmatically create the SQL string for
 				// variable number of species.
@@ -716,25 +716,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		        PreparedStatement ps = ConnectionManager.getRelationalDBConnection()
 				.prepareStatement( basePrepareStatement.toString() );
 		        
-// RB - old query
-//          	PreparedStatement ps = ConnectionManager
-//					.getRelationalDBConnection().prepareStatement(
-//						"SELECT hjvalue, dbreferencetype.id " +
-//						"FROM (SELECT entrytype.hjid FROM entrytype " +
-//						       "INNER JOIN organismtype " +
-//						          "ON (entrytype.organism = organismtype.hjid) " +
-//						       "INNER JOIN dbreferencetype  " +
-//						          "ON (organismtype.hjid = dbreferencetype.organismtype_dbreference_hjid) " +
-//						       "WHERE dbreferencetype.type LIKE '%NCBI Taxonomy%' " +
-//						       "AND dbreferencetype.id = ?) " +
-//						"AS species_entry INNER JOIN dbreferencetype " +
-//						   "ON (dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid) "+
-//						"INNER JOIN entrytype_accession " +
-//						   "ON (entrytype_dbreference_hjid = entrytype_accession_hjid) " +
-//						"WHERE type = ?");
-
-		        
-		     // RB - Programmatically create the set string for variable number of
+		        // RB - Programmatically create the set string for variable number of
 				// species then cap it with the systemTable2.
 				
 				for ( int i = 0; i < selectedSpeciesProfiles.size(); i++ ) {
@@ -777,34 +759,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				// X-X conditional
 				
 				// RB - added logging
-				_Log.info("getRelationshipTable(): else if X - X");
+				_Log.info("getRelationshipTable(): else if (X - X) {}");
 				
-/*				
+				
 				// RB - Programmatically create the SQL string for
 				// variable number of species.
 				StringBuilder basePrepareStatement = new StringBuilder
-				("SELECT hjvalue, dbreferencetype.id " +
-					"FROM (SELECT entrytype.hjid FROM entrytype " +
-					       "INNER JOIN organismtype " +
-					          "ON (entrytype.organism = organismtype.hjid) " +
-					       "INNER JOIN dbreferencetype " +
-					          "ON (organismtype.hjid = dbreferencetype.organismtype_dbreference_hjid) " +
-					       "WHERE dbreferencetype.type LIKE '%NCBI Taxonomy%' ");
-				for (int i = 0; i < selectedSpeciesProfiles.size(); i++) {
-		        	basePrepareStatement
-		        	    .append((i == 0) ? "AND (" : " OR ")
-		                .append("id = ?");
-		        }
-				basePrepareStatement.append(
-					")) AS species_entry " +
-						"INNER JOIN dbreferencetype " +
-						   "ON (dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid) "+
-						"INNER JOIN entrytype_accession " +
-						   "ON (entrytype_dbreference_hjid = entrytype_accession_hjid) " +
-						"WHERE type = ?");
-*/				
-				StringBuilder basePrepareStatement = new StringBuilder
-				   ("SELECT id1, id2 FROM " +
+				("SELECT id1, id2 FROM " +
 				      "(SELECT dbref1.id " +
 					     "AS id1, dbref2.id " +
 					     "AS id2, dbref1.entrytype_dbreference_hjid " +
@@ -814,14 +775,21 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 					     "USING (entrytype_dbreference_hjid) " +
 					     "WHERE dbref1.type <> dbref2.type " +
 					     "AND dbref1.type = ? AND dbref2.type = ?) " +
-				   "AS dbrefcomp INNER JOIN " +
+				 "AS dbrefcomp INNER JOIN " +
 				      "(SELECT entrytype.hjid FROM entrytype " +
 					     "INNER JOIN organismtype " +
 					     "ON (entrytype.organism = organismtype.hjid) " +
 					     "INNER JOIN dbreferencetype " +
 					     "ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
-					     "WHERE dbreferencetype.type = 'NCBI Taxonomy' AND id = ?) " +
-				   "AS species_entry ON (dbrefcomp.dbrefhjid = species_entry.hjid)");
+					     "WHERE dbreferencetype.type = 'NCBI Taxonomy'");
+					     
+				for (int i = 0; i < selectedSpeciesProfiles.size(); i++) {
+		        	basePrepareStatement
+		        	    .append((i == 0) ? "AND (" : " OR ")
+		                .append("id = ?");
+		        }
+				basePrepareStatement.append(
+					")) AS species_entry ON (dbrefcomp.dbrefhjid = species_entry.hjid)");
 				
 		        // RB - added query statement logging
 		        _Log.info("getRelationshipTableManager(): query used: " + basePrepareStatement);
@@ -830,32 +798,22 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						.getRelationalDBConnection()
 						.prepareStatement( basePrepareStatement.toString() );
 
-/*				            "SELECT id1, id2 FROM " +
-							   "(SELECT dbref1.id " +
-							      "AS id1, dbref2.id " +
-							      "AS id2, dbref1.entrytype_dbreference_hjid " +
-							      "AS dbrefhjid " +
-							      "FROM dbreferencetype AS dbref1 " +
-							      "INNER JOIN dbreferencetype AS dbref2 " +
-							      "USING (entrytype_dbreference_hjid) " +
-							      "WHERE dbref1.type <> dbref2.type " +
-							      "AND dbref1.type = ? AND dbref2.type = ?) " +
-							"AS dbrefcomp INNER JOIN " +
-							   "(SELECT entrytype.hjid FROM entrytype " +
-							      "INNER JOIN organismtype " +
-							      "ON (entrytype.organism = organismtype.hjid) " +
-							      "INNER JOIN dbreferencetype " +
-							      "ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
-							      "WHERE dbreferencetype.type = 'NCBI Taxonomy' AND id = ?) " +
-							"AS species_entry ON (dbrefcomp.dbrefhjid = species_entry.hjid)");
-*/
 							
 				ps.setString(1, stp.systemTable1);
 				ps.setString(2, stp.systemTable2);
-				// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
-				//         selectedSpeciesProfiles.get(0)
-				ps.setString(3, "" + selectedSpeciesProfiles.get(0).getTaxon());
+
+				// RB - Programmatically create the set string for variable number of
+				// species then cap it with the systemTable2.
+				
+				for ( int i = 0; i < selectedSpeciesProfiles.size(); i++ ) {
+	
+					ps.setString( i + 3, Integer.toString( selectedSpeciesProfiles.get( i ).getTaxon() ) );
+				}	
+								
+				// RB - old set strings from single species
 				// ps.setString(3, "" + speciesProfile.getTaxon());
+				
+				
 				ResultSet result = ps.executeQuery();
 				while (result.next()) {
 					String primary = GenMAPPBuilderUtilities
@@ -879,50 +837,58 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				}
 				ps.close();
 			
-			// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
-			//         selectedSpeciesProfiles.get(0)
-			} else if ((selectedSpeciesProfiles.get(0).getSpeciesSpecificSystemTables()
-			// } else if ((speciesProfile.getSpeciesSpecificSystemTables()
-					// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
-					//         selectedSpeciesProfiles.get(0)
-					.containsKey(stp.systemTable1) || selectedSpeciesProfiles.get(0)
-					// .containsKey(stp.systemTable1) || speciesProfile
-					.getSpeciesSpecificSystemTables().containsKey(
-							stp.systemTable2))
-					&& !stp.systemTable2.equals("GeneOntology")) {
+
+			} else {
 				
-				// Species-X or X-Species excluding gene ontology conditional
+				boolean relationshipTableWasHandled = false;
+
+				// Species-X or X-Species conditional, excluding GeneOntology
+				
+				//int counter = selectedSpeciesProfiles.size();
+				for(SpeciesProfile species : selectedSpeciesProfiles) {
+				
+					if( (species.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) || 
+						 species.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) &&
+						 !stp.systemTable2.equals("GeneOntology") ) {
+					
+						// RB - added logging
+						_Log.info("getRelationshipTable(): else (Species - X or X - Species) {} " +
+							" excluding GeneOntology");							
+
+						_Log.info("( species.getSpeciesSpecificSystemTables().containsKey(" +
+							stp.systemTable1 + ") || species.getSpeciesSpecificSystemTables()" +
+							".containsKey(" + stp.systemTable2 + " )) && !" + stp.systemTable2 + 
+							" equals GeneOnotology.");						
+						
+						tableManager = species
+						   .getSpeciesSpecificRelationshipTable(
+						      relationshipTable,
+							  getPrimarySystemTableManager(),
+							  getSystemTableManager(),
+							  tableManager);							
+						
+						relationshipTableWasHandled = true;
+					}
+				}
+				if ( !relationshipTableWasHandled ) {
+				// No way currently of producing these
 				
 				// RB - added logging
-				_Log.info("getRelationshipTable(): else if Species - X or X - Species");
+				_Log.info("getRelationshipTable(): else - No way of currently producing these.");
 				
-				// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
-				//         selectedSpeciesProfiles.get(0)
-				tableManager = selectedSpeciesProfiles.get(0)
-				.getSpeciesSpecificRelationshipTable(
-						relationshipTable,
-						getPrimarySystemTableManager(),
-						getSystemTableManager(),
-						tableManager);
-				// tableManager = speciesProfile
-				// 		.getSpeciesSpecificRelationshipTable(
-				// 				relationshipTable,
-				// 				getPrimarySystemTableManager(),
-				// 				getSystemTableManager(),
-				// 				tableManager);
-			} else {
-				// No way currently of producing these
 				tableManager.submit(relationshipTable, QueryType.insert,
 						new String[][] { { "\"Primary\"", "" },
 								{ "Related", "" },
 								// FIXME: This is hard-coded. Fix it.
 								{ "Bridge", "" } });
+				}
 			}
 
-			tableManagers.add(tableManager);
+		tableManagers.add(tableManager);
 		}
 
 		return tableManagers;
+	
 	} // END getRelationshipTableManager()
 
 	/**

@@ -894,16 +894,17 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 	/**
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getSecondPassTableManagers()
 	 */
-	@Override
-	public TableManager[] getSecondPassTableManagers() throws SQLException {
-		List<TableManager> tableManagers = new ArrayList<TableManager>();
-		// RB - using first SpeciesProfile in the List of SpeciesProfiles: 
-		//         selectedSpeciesProfiles.get(0)
-		tableManagers.addAll(selectedSpeciesProfiles.get(0).getSpeciesSpecificCustomTables(version));
-		// tableManagers.addAll(speciesProfile.getSpeciesSpecificCustomTables(version));
-		tableManagers.add(getSecondPassRelationshipTables());
-		return tableManagers.toArray(new TableManager[0]);
-	}
+    @Override
+    public TableManager[] getSecondPassTableManagers() throws SQLException {
+        List<TableManager> tableManagers = new ArrayList<TableManager>();
+        // And any custom tables to the collection of table managers that
+        // will be used to perform exports.
+        for (SpeciesProfile speciesProfile: selectedSpeciesProfiles) {
+            tableManagers.addAll(speciesProfile.getSpeciesSpecificCustomTables(version));
+        }
+        tableManagers.add(getSecondPassRelationshipTables());
+        return tableManagers.toArray(new TableManager[0]);
+    }
 
 	/**
 	 * A helper method for getting the second pass TableManagers, specifically

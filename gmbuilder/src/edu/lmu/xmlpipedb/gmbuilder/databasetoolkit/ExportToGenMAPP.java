@@ -157,7 +157,7 @@ public class ExportToGenMAPP {
         TableManager tmF = selectedDatabaseProfile.getSystemTableManager();
         TableCoordinator.exportTable(selectedDatabaseProfile.getExportConnection(), tmF);
 
-//      This uses SpeciesProfile
+        // RB - Modified getRelationshipTableManager() for variable number of species.
         _Log.info("Start getRelationshipTableManager()");
         exportInProgressPanel.setProgress(65, "Preparing tables - Relationship table...");
         List<TableManager> tmG = selectedDatabaseProfile.getRelationshipTableManager();
@@ -172,7 +172,7 @@ public class ExportToGenMAPP {
         _Log.info("Start ()");
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
         exportInProgressPanel.setProgress(67, "Preparing tables - Second pass Relationship tables...");
-        // No species specific processing
+        // RB - Modified getSecondPassTableManager() for variable number of species.
         TableManager[] secondPass = selectedDatabaseProfile.getSecondPassTableManagers();
         _Log.info("Exporting second-pass tables");
         _Log.info("Start exportTables(selectedDatabaseProfile.getExportConnection(), secondPass)");

@@ -290,12 +290,8 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getPrimarySystemTableManagerCustomizations()
 	 */
 	@Override
-	public TableManager getPrimarySystemTableManagerCustomizations(Date version)
+	public boolean getPrimarySystemTableManagerCustomizations(TableManager tableManager, Date version)
 			throws SQLException {
-	    // FIXME Too many similarities here between this version and the one for E. coli.
-	    // Some of this needs to go to the superclass, with the subclasses doing only
-	    // what is specific to that UniProt species.
-		TableManager tableManager = null;
 		PreparedStatement ps;
 		int recordCounter = 0;
 
@@ -337,20 +333,6 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 				"orderedlocus, protein, function " +
 				"from temp_uniprot;";
 		
-		/* JN 2/16/2007 -- 
-		 * For A. thaliana to work, I've removed the "NOT NULL" constraint 
-		 * on the GeneName field. This may not be appropriate for other
-		 * Species and therefore may need to change later. -- let's keep an eye on it.
-		 * 
-		 */
-		tableManager = new TableManager(new String[][] {
-				{ "ID", "VARCHAR(50) NOT NULL" },
-				{ "EntryName", "VARCHAR(50) NOT NULL" },
-				{ "GeneName", "VARCHAR(50)" }, { "ProteinName", "MEMO" },
-				{ "Function", "MEMO" }, { "Species", "MEMO" },
-				{ "\"Date\"", "DATE" }, { "Remarks", "MEMO" } },
-				new String[] { "UID" });
-
 		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(primarySQL);
 		ps.executeUpdate();
 
@@ -406,8 +388,8 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 		_Log.info("End of Method - Number of rows in TM: [" + tmrows.length
 				+ "]");
 
-		return tableManager;
-
+		// Yes, this species profile does customize the primary system table.
+		return true;
 	}
 
 } // end class

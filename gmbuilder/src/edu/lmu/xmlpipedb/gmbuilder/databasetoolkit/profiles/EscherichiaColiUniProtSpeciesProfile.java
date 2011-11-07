@@ -44,55 +44,42 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getPrimarySystemTableManagerCustomizations()
 	 */
 	@Override
-	public TableManager getPrimarySystemTableManagerCustomizations(Date version) throws SQLException {
-        // FIXME Too many similarities here between this version and the one for A. thaliana.
-        // Some of this needs to go to the superclass, with the subclasses doing only
-        // what is specific to that UniProt species.
-		TableManager tableManager = null;
+	public boolean getPrimarySystemTableManagerCustomizations(TableManager tableManager, Date version) throws SQLException {
 		PreparedStatement ps;
 		int recordCounter = 0;
 
 		String primarySQL = 
-		" create temporary table temp_genename_primary AS " +
-		" select b.entrytype_gene_hjid as hjid, a.value " +
-		" from genenametype a LEFT OUTER JOIN entrytype_genetype b " + 
-		" ON (entrytype_genetype_name_hjid =  b.hjid) " +
-		" where a.type = 'primary'; ";
+    		" create temporary table temp_genename_primary AS " +
+    		" select b.entrytype_gene_hjid as hjid, a.value " +
+    		" from genenametype a LEFT OUTER JOIN entrytype_genetype b " + 
+    		" ON (entrytype_genetype_name_hjid =  b.hjid) " +
+    		" where a.type = 'primary'; ";
 
 		String orderedLocusSQL = 
-		" create temporary table temp_genename_orderedlocus AS " +
-		" select b.entrytype_gene_hjid as hjid, a.value " +
-		" from genenametype a LEFT OUTER JOIN entrytype_genetype b " + 
-		" ON (entrytype_genetype_name_hjid =  b.hjid) " +
-		" where a.type = 'ordered locus'; ";
+    		" create temporary table temp_genename_orderedlocus AS " +
+    		" select b.entrytype_gene_hjid as hjid, a.value " +
+    		" from genenametype a LEFT OUTER JOIN entrytype_genetype b " + 
+    		" ON (entrytype_genetype_name_hjid =  b.hjid) " +
+    		" where a.type = 'ordered locus'; ";
 
 		String proteinSQL = 
-		" create temporary table temp_protein AS " +
-		"select entrytype.hjid, evidencedstringtype.value from entrytype inner join proteintype on(entrytype.protein = proteintype.hjid) inner join proteinnamegrouprecommendednametype on (proteintype.recommendedname = proteinnamegrouprecommendednametype.hjid) inner join evidencedstringtype on (proteinnamegrouprecommendednametype.fullname = evidencedstringtype.hjid) order by evidencedstringtype.value;";
+    		" create temporary table temp_protein AS " +
+    		" select entrytype.hjid, evidencedstringtype.value from entrytype inner join proteintype on(entrytype.protein = proteintype.hjid) inner join proteinnamegrouprecommendednametype on (proteintype.recommendedname = proteinnamegrouprecommendednametype.hjid) inner join evidencedstringtype on (proteinnamegrouprecommendednametype.fullname = evidencedstringtype.hjid) order by evidencedstringtype.value;";
 
 		String commentSQL = 
-		" create temporary table temp_comment AS " +
-        "select entrytype_comment_hjid as hjid, value as text from commenttype inner join entrytype_comment on (entrytype_comment_hjchildid = commenttype.hjid) inner join evidencedstringtype on (text = evidencedstringtype.hjid) where type = 'function'";
+    		" create temporary table temp_comment AS " +
+            " select entrytype_comment_hjid as hjid, value as text from commenttype inner join entrytype_comment on (entrytype_comment_hjchildid = commenttype.hjid) inner join evidencedstringtype on (text = evidencedstringtype.hjid) where type = 'function'";
 
 		String querySQL = 
-		" select a.entrytype_accession_hjid as hjid, a.hjvalue as accession, b.hjvalue as entryname, c.value as primary, d.value as orderedlocus, e.value as protein, f.text as function " +
-		" from " + 
-		" entrytype_accession a LEFT OUTER JOIN entrytype_name b ON (a.entrytype_accession_hjid = b.entrytype_name_hjid) " +
-		" LEFT OUTER JOIN temp_genename_primary c ON (a.entrytype_accession_hjid = c.hjid) " +
-		" LEFT OUTER JOIN temp_genename_orderedlocus d ON (a.entrytype_accession_hjid = d.hjid) " +
-		" LEFT OUTER JOIN temp_protein e ON (a.entrytype_accession_hjid = e.hjid) " +
-		" LEFT OUTER JOIN temp_comment f ON (a.entrytype_accession_hjid = f.hjid) " + 
-		" WHERE entrytype_accession_hjindex = 0; ";
+    		" select a.entrytype_accession_hjid as hjid, a.hjvalue as accession, b.hjvalue as entryname, c.value as primary, d.value as orderedlocus, e.value as protein, f.text as function " +
+    		" from " + 
+    		" entrytype_accession a LEFT OUTER JOIN entrytype_name b ON (a.entrytype_accession_hjid = b.entrytype_name_hjid) " +
+    		" LEFT OUTER JOIN temp_genename_primary c ON (a.entrytype_accession_hjid = c.hjid) " +
+    		" LEFT OUTER JOIN temp_genename_orderedlocus d ON (a.entrytype_accession_hjid = d.hjid) " +
+    		" LEFT OUTER JOIN temp_protein e ON (a.entrytype_accession_hjid = e.hjid) " +
+    		" LEFT OUTER JOIN temp_comment f ON (a.entrytype_accession_hjid = f.hjid) " + 
+    		" WHERE entrytype_accession_hjindex = 0; ";
 		
-		tableManager = new TableManager(new String[][] {
-				{ "ID", "VARCHAR(50) NOT NULL" },
-				{ "EntryName", "VARCHAR(50) NOT NULL" },
-				{ "GeneName", "VARCHAR(50) NOT NULL" }, 
-				{ "ProteinName", "MEMO" },
-				{ "Function", "MEMO" }, { "Species", "MEMO" },
-				{ "\"Date\"", "DATE" }, { "Remarks", "MEMO" } },
-				new String[] { "UID" });
-
 		ps = ConnectionManager.getRelationalDBConnection().prepareStatement(primarySQL);
 		ps.executeUpdate();
 
@@ -158,7 +145,8 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 		_Log.info("End of Method - Number of rows in TM: [" + tmrows.length
 				+ "]");
 
-		return tableManager;
+		// Yes, E. coli customizes.
+		return true;
 
 	}
 

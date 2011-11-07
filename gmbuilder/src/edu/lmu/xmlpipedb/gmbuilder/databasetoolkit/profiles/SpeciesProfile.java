@@ -141,7 +141,7 @@ public abstract class SpeciesProfile extends Profile {
 	 * @return
 	 * @throws SQLException
 	 */
-	public abstract TableManager getPrimarySystemTableManagerCustomizations(Date version)
+	public abstract boolean getPrimarySystemTableManagerCustomizations(TableManager tableManager, Date version)
 			throws SQLException;
 
 	/**

@@ -59,9 +59,9 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 	 * @param taxonID
 	 * @param description
 	 */
-	public UniProtSpeciesProfile(String name, int taxonID, String description){
-		super(name, taxonID, description);
-	}
+    public UniProtSpeciesProfile(String name, int taxonID, String description) {
+        super(name, taxonID, description);
+    }
 
 	/**
 	 * Creates a custom species profile for a UniProt centric database,
@@ -71,9 +71,9 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 	 * @param taxonID
 	 * @param description
 	 */
-	public UniProtSpeciesProfile(int taxonID, String description){
-		super(null, taxonID, description);
-	}
+    public UniProtSpeciesProfile(int taxonID, String description) {
+        super("(name not available)", taxonID, description);
+    }
 
 	/* (non-Javadoc)
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.SpeciesProfile#getSpeciesSpecificSystemTables()
@@ -383,9 +383,9 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 	}
 
 	@Override
-	public TableManager getPrimarySystemTableManagerCustomizations(Date version) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean getPrimarySystemTableManagerCustomizations(TableManager tableManager, Date version) throws SQLException {
+	    // By default, we do not have customizations.
+		return false;
 	}
 
 	/**
@@ -410,8 +410,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 			name = result.getString(0);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		    _Log.error(e);
 		}
 
 

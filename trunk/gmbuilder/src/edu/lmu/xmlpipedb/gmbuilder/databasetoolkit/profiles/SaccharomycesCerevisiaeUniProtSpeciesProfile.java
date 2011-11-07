@@ -21,7 +21,7 @@ public class SaccharomycesCerevisiaeUniProtSpeciesProfile extends
 		UniProtSpeciesProfile {
 
     public SaccharomycesCerevisiaeUniProtSpeciesProfile() {
-	    super("Saccharomyces cerevisiae", 4932,
+	    super("Saccharomyces cerevisiae", 559292,
 	       "This profile customizes the GenMAPP Builder export for Saccharomyces cerevisiae data loaded from a UniProt XML file.");
 	}
 

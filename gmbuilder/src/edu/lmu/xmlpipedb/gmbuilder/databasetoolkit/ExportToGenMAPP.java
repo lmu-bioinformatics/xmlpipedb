@@ -31,6 +31,7 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
  * @author Joey J. Barrett Class: ExportToGenMAPP
+ * @author Richard Brous: multi-species export
  */
 public class ExportToGenMAPP {
 
@@ -108,8 +109,7 @@ public class ExportToGenMAPP {
     	_Log.warn("Export Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format( System.currentTimeMillis()) );
         exportInProgressPanel.setProgress(1, "Starting GeneOntology export...");
     	
-    	// RB - Modified ExportGoData second argument to be
-        // a List of taxon ids, not a single taxon id.
+    	// RB - Modified ExportGoData second argument to be a List of taxon ids, from a single taxon id.
     	(new ExportGoData(selectedDatabaseProfile.getExportConnection()))
     		.export(selectedDatabaseProfile.getChosenAspects(), selectedDatabaseProfile.getTaxonIds());
  	

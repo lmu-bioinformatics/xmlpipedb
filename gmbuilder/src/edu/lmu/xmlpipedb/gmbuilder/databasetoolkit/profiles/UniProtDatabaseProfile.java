@@ -39,6 +39,7 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 /**
  * @author Joey J. Barrett Class: UniProtDatabaseProfile
  * @author Jeffrey Nicholas
+ * @author Richard Brous: multi-species export modifications
  */
 public class UniProtDatabaseProfile extends DatabaseProfile {
 
@@ -191,8 +192,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 		switch (displayOrderPreset) {
 		case alphabetical:
-			Collections
-					.sort(systemCodes, new CaseInsensitiveStringComparator());
+			Collections.sort(systemCodes, new CaseInsensitiveStringComparator());
 			_Log.debug("System Codes: [" + systemCodes + "]");
 			break;
 		}
@@ -271,31 +271,16 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				_Log.warn("No system code found for " + systemTable.getKey());
 			}
 			tableManager.submit("Systems", QueryType.update, new String[][] {
-					{
-							"SystemCode",
-							templateDefinedSystemToSystemCode.get(systemTable
-									.getKey()) },
-					{
-							"\"Date\"",
-							GenMAPPBuilderUtilities
-									.getSystemsDateString(version) } });
-			// }
+				{ "SystemCode", templateDefinedSystemToSystemCode.get(systemTable.getKey()) },
+				{ "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }
+			});
 		}
 
 		// The "Other" table also needs a date: the date of export.
-		tableManager
-				.submit(
-						"Systems",
-						QueryType.update,
-						new String[][] {
-								{
-										"SystemCode",
-										templateDefinedSystemToSystemCode
-												.get("Other") },
-								{
-										"\"Date\"",
-										GenMAPPBuilderUtilities
-												.getSystemsDateString(new Date()) } });
+		tableManager.submit("Systems", QueryType.update, new String[][] {
+            { "SystemCode", templateDefinedSystemToSystemCode.get("Other") },
+            { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(new Date()) }
+        });
 
 		/*
 		 * Next we want to ensure that this record get it's "Columns" column
@@ -307,11 +292,9 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         });
 
 		// RB - need to make aware of List<SpeciesProfile>
-		// tableManager = speciesProfile.getSystemsTableManagerCustomizations( tableManager, this );
-        for (SpeciesProfile speciesProfile : selectedSpeciesProfiles) {
+		for (SpeciesProfile speciesProfile : selectedSpeciesProfiles) {
             tableManager = speciesProfile.getSystemsTableManagerCustomizations(tableManager, this);
         }
-
         return tableManager;
 	}
 
@@ -542,13 +525,11 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				_Log.info("getSystemTableManager(): for loop: "
 						+ systemTable.getKey()
 						+ " is not in the list of DatabaseSpecificSystemTables or SpeciesSpecificSystemTables.");
-				
-				// RB - Programatically created SQL query string which returned
-				// id, species name for all species from a species List. Multiple species
-				// need (id = ?) for each and the end the query with (type = ?).
-				
-				// Dondi - This first part is actually OK.  The issue occurs when setting the values
-				// of the ? parameters and in invoking the query (see below).
+				/*
+				 * RB - Programmatically created SQL query string which returns
+				 * id, species name for all species from the selected species List.
+				 *  Multiple species need (id = ?) for each and the end the query with (type = ?).
+				 */
 				StringBuilder basePrepareStatement = new StringBuilder
 					( "SELECT distinct id, species_entry.value " +
 					  "FROM dbreferencetype INNER JOIN " +
@@ -579,19 +560,16 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				ps = ConnectionManager.getRelationalDBConnection()
 						.prepareStatement( basePrepareStatement.toString() );
 				
-				// RB - Programmatically create the set string for variable number of
-				// species then cap it with the current system type.
-				
+			   /*
+				* RB - Programmatically create the set string for variable number of
+				* species then cap it with the current system type.
+				*/
 				for ( int i = 0; i < selectedSpeciesProfiles.size(); i++ ) {
 	
 					ps.setString( i + 1, Integer.toString( selectedSpeciesProfiles.get( i ).getTaxon() ) );
 				}	
 				ps.setString( selectedSpeciesProfiles.size() + 1, systemTable.getKey());
 				
-				// Dondi - Upon examining the schema, the id column turns out to be a string.
-				// So, setString does turn out to be the right method for the id = ? clauses.
-				// ie. ps.setString(1, Integer.toString(selected.getTaxon()));
-								
 				result = ps.executeQuery();
 
 				while (result.next()) {
@@ -603,32 +581,16 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						+ result.getString("id") + "  Species:: "
 						+ result.getString(2));
 					    
-					tableManager
-						.submit
-						   (
-							systemTable.getKey(),
-							QueryType.insert,
-							new String[][] 
-							{
-							  { "ID",
-								GenMAPPBuilderUtilities
-								   .checkAndPruneVersionSuffix
-								      (systemTable.getKey(),
-								result.getString("id"))
-							  },
+					tableManager.submit(systemTable.getKey(), QueryType.insert, new String[][] {
+					    { "ID", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(systemTable.getKey(),
+						    result.getString("id"))
+						},
 									   
-							  { "Species",
-								// RB - get string from column 2 from
-								// SQL query result.
-								"|" + result.getString(2) + "|"
-							  },
-							  										
-							  { "\"Date\"",
-								GenMAPPBuilderUtilities
-								   .getSystemsDateString(version)
-							  }
-							}
-							);
+						//RB - get string from column 2SQL query result.
+						{ "Species", "|" + result.getString(2) + "|" },
+
+						{ "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }
+                    });
 				}
 			}
 		}
@@ -639,10 +601,10 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         // RB - get customizations for each species in selectedSpeciesProfiles.
 		for ( SpeciesProfile selected : selectedSpeciesProfiles ) {
 			tableManager = selected.getSystemTableManagerCustomizations(
-				             	tableManager,
-				             	getPrimarySystemTableManager(),
-				             	version
-				          		);
+				      tableManager,
+				      getPrimarySystemTableManager(),
+				      version
+				      );
 		}
 		
 		systemTableManager = tableManager;
@@ -731,7 +693,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		        PreparedStatement ps = ConnectionManager.getRelationalDBConnection()
 				.prepareStatement( basePrepareStatement.toString() );
 		        
-		        // RB - Programmatically create the set string for variable number of
+		        // RB - Programmatically create set string for variable number of
 				// species then cap it with the systemTable2.
 				
 				for ( int i = 0; i < selectedSpeciesProfiles.size(); i++ ) {
@@ -740,10 +702,6 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				}	
 				ps.setString(selectedSpeciesProfiles.size() + 1, stp.systemTable2);
 				
-				// RB - old set strings from single species
-				// ps.setString(1, "" + speciesProfile.getTaxon());
-        		// ps.setString(2, stp.systemTable2);
-
 				ResultSet result = ps.executeQuery();
 
 				String primary = "";
@@ -813,22 +771,16 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						.getRelationalDBConnection()
 						.prepareStatement( basePrepareStatement.toString() );
 
-							
 				ps.setString(1, stp.systemTable1);
 				ps.setString(2, stp.systemTable2);
 
 				// RB - Programmatically create the set string for variable number of
 				// species then cap it with the systemTable2.
-				
 				for ( int i = 0; i < selectedSpeciesProfiles.size(); i++ ) {
 	
 					ps.setString( i + 3, Integer.toString( selectedSpeciesProfiles.get( i ).getTaxon() ) );
 				}	
 								
-				// RB - old set strings from single species
-				// ps.setString(3, "" + speciesProfile.getTaxon());
-				
-				
 				ResultSet result = ps.executeQuery();
 				while (result.next()) {
 					String primary = GenMAPPBuilderUtilities
@@ -838,28 +790,21 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 							.checkAndPruneVersionSuffix(stp.systemTable2,
 									result.getString("id2"));
 
-					tableManager
-							.submit(
-									relationshipTable,
-									QueryType.insert,
-									new String[][] {
-											{ "\"Primary\"", primary != null ? primary : "" },
-											{ "Related", related != null ? related : "" },
-											// FIXME This is hard-coded. Fix it.
-											{ "Bridge", "S" } 
-											       }
-									);
+					tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
+					    { "\"Primary\"", primary != null ? primary : "" },
+						{ "Related", related != null ? related : "" },
+						// FIXME This is hard-coded. Fix it.
+						{ "Bridge", "S" } 
+					});
 				}
 				ps.close();
 			
-
 			} else {
 				
 				boolean relationshipTableWasHandled = false;
 
 				// Species-X or X-Species conditional, excluding GeneOntology
 				
-				//int counter = selectedSpeciesProfiles.size();
 				for(SpeciesProfile species : selectedSpeciesProfiles) {
 				
 					if( (species.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) || 
@@ -891,11 +836,12 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				// RB - added logging
 				_Log.info("getRelationshipTable(): else - No way of currently producing these.");
 				
-				tableManager.submit(relationshipTable, QueryType.insert,
-						new String[][] { { "\"Primary\"", "" },
-								{ "Related", "" },
-								// FIXME: This is hard-coded. Fix it.
-								{ "Bridge", "" } });
+				tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
+				    { "\"Primary\"", "" },
+					{ "Related", "" },
+					// FIXME: This is hard-coded. Fix it.
+					{ "Bridge", "" }
+				});
 				}
 			}
 

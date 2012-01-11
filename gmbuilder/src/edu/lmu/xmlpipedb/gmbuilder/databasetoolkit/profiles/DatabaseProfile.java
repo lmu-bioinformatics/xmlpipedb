@@ -639,33 +639,31 @@ public abstract class DatabaseProfile extends Profile {
         			  + "systemTable1: "+ stp.systemTable1
         			  + "  systemTable2: " + stp.systemTable2);
         	
-        	// RB - using first SpeciesProfile in the List of SpeciesProfiles: selectedSpeciesProfiles.get(0)
-            if (selectedSpeciesProfiles.get(0).getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | 
-            		selectedSpeciesProfiles.get(0).getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
-            //if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | 
-            //      speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {	
+        	for (SpeciesProfile speciesProfile: selectedSpeciesProfiles) {
+        	
+                if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | 
+                    speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {	
             	
-            	// RB - using first SpeciesProfile in the List of SpeciesProfiles: selectedSpeciesProfiles.get(0)
-            	tableManager = selectedSpeciesProfiles.get(0).getRelationsTableManagerCustomizations(stp.systemTable1, 
-                    	stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
-                //tableManager = speciesProfile.getRelationsTableManagerCustomizations(stp.systemTable1, 
-                	//stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
-            } else {
-                tableManager.submit(
-                	"Relations", 
-                	QueryType.insert, 
-                	new String[][] { 
-                		{ "SystemCode", templateDefinedSystemToSystemCode.get(stp.systemTable1) }, 
-                		{ "RelatedCode", templateDefinedSystemToSystemCode.get(stp.systemTable2) }, 
-                		{ "Relation", relationTable }, 
-                		{ "Type", stp.systemTable1.equals(getPrimarySystemTable()) || 
-                			stp.systemTable2.equals(getPrimarySystemTable()) ? "Direct" : "Inferred" }, 
-                		{ "Source", "" } 
-                    }
-                );
-            }
-        }
+            	    tableManager = speciesProfile.getRelationsTableManagerCustomizations(stp.systemTable1, 
+                	    stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
+                
+                } else {
+                    tableManager.submit(
+                	    "Relations", 
+                	    QueryType.insert, 
+                	    new String[][] { 
+                		    { "SystemCode", templateDefinedSystemToSystemCode.get(stp.systemTable1) }, 
+                		    { "RelatedCode", templateDefinedSystemToSystemCode.get(stp.systemTable2) }, 
+                		    { "Relation", relationTable }, 
+                		    { "Type", stp.systemTable1.equals(getPrimarySystemTable()) || 
+                			   stp.systemTable2.equals(getPrimarySystemTable()) ? "Direct" : "Inferred" }, 
+                		    { "Source", "" } 
+                        }
+                    );
+                }
 
+        	}
+       }
         return tableManager;
     }
 

@@ -51,6 +51,7 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
  *
  * @author Joey J. Barrett Class: DatabaseProfile
  * @author Jeffrey Nicholas
+ * @author Richard Brous: multi-species export
  */
 public abstract class DatabaseProfile extends Profile {
     
@@ -400,9 +401,6 @@ public abstract class DatabaseProfile extends Profile {
 	}
 	
 	
-	
-	
-	
 	/**
      * Sets the owner string for the Gene Database to be exported.
      *
@@ -590,12 +588,6 @@ public abstract class DatabaseProfile extends Profile {
             firstSpecies = false;
         }
 
-        // Dondi - Rich, compare this block of code to the original, to see how the change
-        // was implemented.  Note also how, when in doubt, some judicious code reformatting
-        // (line breaks, indenting) helps to clarify the structure of the code.
-        //
-        // There was also an unnecessary recreation of the same object (the date format),
-        // which I addressed by creating just once and storing in a final local variable.
         final DateFormat infoDateFormat = new SimpleDateFormat("yyyyMMdd");
         TableManager tableManager = new TableManager(null, new String[] {});
         tableManager.submit(
@@ -730,11 +722,11 @@ public abstract class DatabaseProfile extends Profile {
     public TableManager getRowCountsTableManager() throws SQLException {
         TableManager tableManager;
 
-        tableManager = new TableManager(
-        		new String[][] {  { "\"Table\"", "VARCHAR(50) NOT NULL" },
-        						  { "Rows", "VARCHAR(50) NOT NULL" } },
-        		new String[] { "\"Table\"" }
-        								);
+        tableManager = new TableManager(new String[][] {
+            { "\"Table\"", "VARCHAR(50) NOT NULL" },
+        	{ "Rows", "VARCHAR(50) NOT NULL" }
+        }, new String[] { "\"Table\"" }
+        );
 
         List<String> allTables = new ArrayList<String>();
 
@@ -757,12 +749,10 @@ public abstract class DatabaseProfile extends Profile {
             ps = ConnectionManager.getGenMAPPDBConnection().prepareStatement(sqlStatement);
             result = ps.executeQuery();
             while (result.next()) {
-                tableManager.submit(
-                		"OriginalRowCounts",
-                		QueryType.insert,
-                		new String[][] { { "\"Table\"", tableName },
-                						 { "Rows", result.getString("count") } }
-                					);
+                tableManager.submit("OriginalRowCounts", QueryType.insert, new String[][] {
+                    { "\"Table\"", tableName },
+                    { "Rows", result.getString("count") }
+                });
             }
         }
         ps.close();

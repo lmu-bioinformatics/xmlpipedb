@@ -223,8 +223,8 @@ aureus</i> (strain MRSA252)</a></h4>
 
 <h4>GenMAPP Builder</h4>
 <ul>
-    <li><a class="external" href="http://java.sun.com">Java 5 Runtime
-    Environment</a></li>
+    <li><a class="external" href="http://www.oracle.com/technetwork/java">Java
+    6 Runtime Environment</a></li>
     <li>Relational database with available JDBC driver (only <a class="external"
         href="http://www.postgresql.org">PostgreSQL</a> has been
     explicitly tested so far)</li>
@@ -234,14 +234,14 @@ aureus</i> (strain MRSA252)</a></h4>
 
 <h4>XSD-to-DB</h4>
 <ul>
-    <li><a class="external" href="http://java.sun.com">Java 5 Runtime
-    Environment</a></li>
+    <li><a class="external" href="http://www.oracle.com/technetwork/java">Java
+    6 Runtime Environment</a></li>
 </ul>
 
 <h4>XMLPipeDB Utilities</h4>
 <ul>
-    <li><a class="external" href="http://java.sun.com">Java 5 Runtime
-    Environment</a></li>
+    <li><a class="external" href="http://www.oracle.com/technetwork/java">Java
+    6 Runtime Environment</a></li>
     <li>Relational database with available JDBC driver (only <a class="external"
         href="http://www.postgresql.org">PostgreSQL</a> has been
     explicitly tested so far)</li>
@@ -249,8 +249,8 @@ aureus</i> (strain MRSA252)</a></h4>
 
 <h4>Database Libraries (UniProtDB, GODB)</h4>
 <ul>
-    <li><a class="external" href="http://java.sun.com">Java 5 Runtime
-    Environment</a></li>
+    <li><a class="external" href="http://www.oracle.com/technetwork/java">Java
+    6 Runtime Environment</a></li>
     <li>Relational database with available JDBC driver (only <a class="external"
         href="http://www.postgresql.org">PostgreSQL</a> has been
     explicitly tested so far)</li>

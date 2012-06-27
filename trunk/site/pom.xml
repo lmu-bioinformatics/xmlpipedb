@@ -16,7 +16,7 @@
         <site>
             <id>website</id>
             <url>
-                scp://keck.cs.lmu.edu/afs/cs.lmu.edu/projects/x/xmlpipedb/web/htdocs
+                scp://ab204.cs.lmu.edu/apps/xmlpipedb.cs.lmu.edu
             </url>
         </site>
     </distributionManagement>

@@ -19,7 +19,7 @@
 </property>
 <property name="Version">
 <column name="Version"/>
-<type name="org.hibernate.type.BigIntegerType"/>
+<type name="org.hibernate.type.IntegerType"/>
 </property>
 <subclass discriminator-value="org.uniprot.uniprot.CommentType.ConflictType.SequenceType" name="org.uniprot.uniprot.impl.CommentTypeImpl$ConflictTypeImpl$SequenceTypeImpl"/>
 </class>

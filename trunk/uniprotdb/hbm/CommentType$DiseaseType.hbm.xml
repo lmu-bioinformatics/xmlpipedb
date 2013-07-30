@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="false" default-cascade="all-delete-orphan" default-lazy="false">
+<class name="org.uniprot.uniprot.CommentType$DiseaseType" table="CommentType_DiseaseType">
+<id name="Hjid" type="org.hibernate.type.LongType">
+<generator class="native"/>
+</id>
+<discriminator type="org.hibernate.type.StringType">
+<column name="Hjtype"/>
+</discriminator>
+<version name="Hjversion" type="org.hibernate.type.LongType"/>
+<property name="Name">
+<column name="Name"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<property name="Description">
+<column name="Description"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<property name="Id">
+<column name="Id"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<property name="Acronym">
+<column name="Acronym"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<many-to-one class="org.uniprot.uniprot.DbReferenceType" name="DbReference">
+<column name="DbReference"/>
+</many-to-one>
+<subclass discriminator-value="org.uniprot.uniprot.CommentType.DiseaseType" name="org.uniprot.uniprot.impl.CommentTypeImpl$DiseaseTypeImpl"/>
+</class>
+</hibernate-mapping>

@@ -11,8 +11,11 @@
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
 <property name="Experiments">
 <column name="Experiments"/>
-<type name="org.hibernate.type.BigIntegerType"/>
+<type name="org.hibernate.type.IntegerType"/>
 </property>
+<many-to-one class="org.uniprot.uniprot.CommentType$DiseaseType" name="Disease">
+<column name="Disease"/>
+</many-to-one>
 <many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="TemperatureDependence">
 <column name="TemperatureDependence"/>
 </many-to-one>
@@ -120,10 +123,17 @@
 <column name="OrganismsDiffer"/>
 <type name="org.hibernate.type.BooleanType"/>
 </property>
-<property name="Evidence">
-<column name="Evidence"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Evidence" table="CommentType_Evidence">
+<key>
+<column name="CommentType_Evidence_Hjid"/>
+</key>
+<list-index>
+<column name="CommentType_Evidence_Hjindex"/>
+</list-index>
+<element type="org.hibernate.type.IntegerType">
+<column name="Hjvalue"/>
+</element>
+</list>
 <subclass discriminator-value="org.uniprot.uniprot.CommentType" name="org.uniprot.uniprot.impl.CommentTypeImpl"/>
 </class>
 </hibernate-mapping>

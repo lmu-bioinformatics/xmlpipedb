@@ -21,10 +21,17 @@
 <many-to-one class="org.uniprot.uniprot.OrganismType$LineageType" name="Lineage">
 <column name="Lineage"/>
 </many-to-one>
-<property name="Evidence">
-<column name="Evidence"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Evidence" table="OrganismType_Evidence">
+<key>
+<column name="OrganismType_Evidence_Hjid"/>
+</key>
+<list-index>
+<column name="OrganismType_Evidence_Hjindex"/>
+</list-index>
+<element type="org.hibernate.type.IntegerType">
+<column name="Hjvalue"/>
+</element>
+</list>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="DbReference" table="OrganismType_DbReference">
 <key>
 <column name="OrganismType_DbReference_Hjid"/>

@@ -23,11 +23,11 @@
 </property>
 <property name="Mass">
 <column name="Mass"/>
-<type name="org.hibernate.type.BigIntegerType"/>
+<type name="org.hibernate.type.IntegerType"/>
 </property>
 <property name="Length">
 <column name="Length"/>
-<type name="org.hibernate.type.BigIntegerType"/>
+<type name="org.hibernate.type.IntegerType"/>
 </property>
 <property name="Precursor">
 <column name="Precursor"/>
@@ -35,7 +35,7 @@
 </property>
 <property name="Version">
 <column name="Version"/>
-<type name="org.hibernate.type.BigIntegerType"/>
+<type name="org.hibernate.type.IntegerType"/>
 </property>
 <property name="Fragment">
 <column name="Fragment"/>

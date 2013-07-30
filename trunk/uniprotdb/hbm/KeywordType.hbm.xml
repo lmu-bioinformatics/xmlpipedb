@@ -17,10 +17,17 @@
 <column name="Id"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<property name="Evidence">
-<column name="Evidence"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Evidence" table="KeywordType_Evidence">
+<key>
+<column name="KeywordType_Evidence_Hjid"/>
+</key>
+<list-index>
+<column name="KeywordType_Evidence_Hjindex"/>
+</list-index>
+<element type="org.hibernate.type.IntegerType">
+<column name="Hjvalue"/>
+</element>
+</list>
 <subclass discriminator-value="org.uniprot.uniprot.KeywordType" name="org.uniprot.uniprot.impl.KeywordTypeImpl"/>
 </class>
 </hibernate-mapping>

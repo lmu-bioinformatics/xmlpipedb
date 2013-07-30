@@ -9,16 +9,16 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="PersonOrConsortium" table="NameListType_PersonOrConsortium">
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="ConsortiumOrPerson" table="NameListType_ConsortiumOrPerson">
 <key>
-<column name="NameListType_PersonOrConsortium_Hjid"/>
+<column name="NameListType_ConsortiumOrPerson_Hjid"/>
 </key>
 <list-index>
-<column name="NameListType_PersonOrConsortium_Hjindex"/>
+<column name="NameListType_ConsortiumOrPerson_Hjindex"/>
 </list-index>
 <many-to-any id-type="org.hibernate.type.LongType">
-<column name="NameListType_PersonOrConsortium_Hjclass"/>
-<column name="NameListType_PersonOrConsortium_Hjchildid"/>
+<column name="NameListType_ConsortiumOrPerson_Hjclass"/>
+<column name="NameListType_ConsortiumOrPerson_Hjchildid"/>
 </many-to-any>
 </list>
 <subclass discriminator-value="org.uniprot.uniprot.NameListType" name="org.uniprot.uniprot.impl.NameListTypeImpl"/>

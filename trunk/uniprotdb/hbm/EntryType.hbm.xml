@@ -28,7 +28,7 @@
 <list-index>
 <column name="EntryType_Gene_Hjindex"/>
 </list-index>
-<one-to-many class="org.uniprot.uniprot.EntryType$GeneType"/>
+<one-to-many class="org.uniprot.uniprot.GeneType"/>
 </list>
 <property name="Dataset">
 <column name="Dataset"/>
@@ -115,7 +115,7 @@
 </list>
 <property name="Version">
 <column name="Version"/>
-<type name="org.hibernate.type.BigIntegerType"/>
+<type name="org.hibernate.type.IntegerType"/>
 </property>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Accession" table="EntryType_Accession">
 <key>

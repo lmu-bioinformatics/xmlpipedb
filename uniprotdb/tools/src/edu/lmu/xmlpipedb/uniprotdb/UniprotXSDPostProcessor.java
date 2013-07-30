@@ -39,125 +39,72 @@ public class UniprotXSDPostProcessor extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static final String SQL_EXTENSION = ".sql";
-	private static final String XML_EXTENSION = ".xml";
-	private static final String JAVA_EXTENSION = ".java";
-	
-	private static final String SQL_FILE = "uniprot.sql";
-	private static final String HBM_FILE_1 = "LocationType.hbm.xml";
-	private static final String HBM_FILE_2 = "CitationType.hbm.xml";
-	private static final String JAVA_FILE_1 = "org.uniprot.uniprot.CitationType.java";
-	private static final String JAVA_FILE_2 = "org.uniprot.uniprot.impl.CitationTypeImpl.java";
-
 	private JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
-	
-	private File sqlFile;
-	private File hbmFile1;
-	private File hbmFile2;
-	private File javaFile1;
-	private File javaFile2;
-	
+
+	/**
+	 * This is it, the full post-processing "program."
+	 */
+	private PostProcessingStep[] postProcessingSteps = new PostProcessingStep[] {
+	    new PostProcessingStep("uniprot.sql", ".sql", new FileProcessor[] {
+	            new StringReplacer("varchar\\(255\\)", "varchar"),
+	            new StringReplacer("End", "EndPosition"),
+                new StringReplacer(" SourceType", " UniProtSourceType")
+	    }),
+
+	    new PostProcessingStep("LocationType.hbm.xml", ".xml", new FileProcessor[] {
+                new StringReplacer("<column name=\"End\"/>", "<column name=\"EndPosition\"/>")
+        }),
+
+        new PostProcessingStep("CitationType.hbm.xml", ".xml", new FileProcessor[] {
+                new StringReplacer(
+                        "<any id-type=\"org.hibernate.type.LongType\" meta-type=\"org.hibernate.type.StringType\" name=\"Date\">",
+                        "<property name=\"Date\">"
+                    ),
+                
+                new StringReplacer("<column name=\"Date_Hjid\"/>", "<type name=\"org.hibernate.type.StringType\"/>"),
+                new StringReplacer("</any>", "</property>")
+        }),
+
+        new PostProcessingStep("org.uniprot.uniprot.CitationType.java", ".java", new FileProcessor[] {
+                new StringReplacer("java.io.Serializable getDate\\(\\);", "java.lang.String getDate();"),
+                new StringReplacer(
+                        "void setDate\\(java.io.Serializable value\\);",
+                        "void setDate(java.lang.String value);"
+                    )
+        }),
+
+        new PostProcessingStep("org.uniprot.uniprot.impl.CitationTypeImpl.java", ".java", new FileProcessor[] {
+                new StringReplacer("protected java.io.Serializable _Date;", "protected java.lang.String _Date;"),
+                new StringReplacer("public java.io.Serializable getDate\\(\\) \\{", "public java.lang.String getDate() {"),
+                new StringReplacer(
+                        "public void setDate\\(java.io.Serializable value\\) \\{",
+                        "public void setDate(java.lang.String value) {"
+                    ),
+
+                // Special handling.
+                new CitationTypeImplDateHandler(),
+                
+                new StringReplacer(
+                        "_Date = javax.xml.bind.DatatypeConverter.parseDate\\(com.sun.xml.bind.WhiteSpaceProcessor.collapse\\(value\\)\\);",
+                        "_Date = com.sun.xml.bind.WhiteSpaceProcessor.collapse(value);"
+                    )
+        }),
+
+        new PostProcessingStep("SourceType.hbm.xml", ".xml", new FileProcessor[] {
+                new StringReplacer("\"SourceType\"", "\"UniProtSourceType\"")
+        })
+
+	};
+
 	/**
 	 * A constructor for no sql file name given.
 	 */
 	public UniprotXSDPostProcessor() {
-		
-		//
-		// Notice for selecting the uniprot sql file.
-		//
-		locateFileDialog(SQL_FILE);
-		chooser.setFileFilter(new MyFilter(SQL_EXTENSION));
-		chooser.setDialogTitle("Locate the " + SQL_FILE + " file");
-		chooser.showOpenDialog(this);
-		sqlFile = chooser.getSelectedFile();
-		if (sqlFile == null) {
-        	handleNoFileSelectedError(SQL_FILE);
-        	return;
-		}
-		try {
-			processSQLFile();
-		} catch (IOException e) {
-        	handleIOException(e);
-        	return;
-		}
-		
-		//
-		// Notice for selecting the LocationType.hbm.xml file.
-		//
-		locateFileDialog(HBM_FILE_1);
-		chooser.setFileFilter(new MyFilter(XML_EXTENSION));
-		chooser.setDialogTitle("Locate the " + HBM_FILE_1 + " file");
-		chooser.showOpenDialog(this);
-		hbmFile1 = chooser.getSelectedFile();
-		if (hbmFile1 == null) {
-        	handleNoFileSelectedError(HBM_FILE_1);
-        	return;
-		}
-		try {
-			processHBMFile1();
-		} catch (IOException e) {
-			handleIOException(e);
-			return;
-		}
-        
-		//
-		// Notice for selecting the CitationType.hbm.xml file.
-		//
-		locateFileDialog(HBM_FILE_2);
-		chooser.setFileFilter(new MyFilter(XML_EXTENSION));
-		chooser.setDialogTitle("Locate the " + HBM_FILE_2 + " file");
-		chooser.showOpenDialog(this);
-		hbmFile2 = chooser.getSelectedFile();
-		if (hbmFile2 == null) {
-        	handleNoFileSelectedError(HBM_FILE_2);
-        	return;
-		}
-		try {
-			processHBMFile2();
-		} catch (IOException e) {
-			handleIOException(e);
-			return;
-		}
-		
-		//
-		// Notice for selecting the org.uniprot.uniprot.CitationType.java file.
-		//
-		locateFileDialog(JAVA_FILE_1);
-		chooser.setFileFilter(new MyFilter(JAVA_EXTENSION));
-		chooser.setDialogTitle("Locate the " + JAVA_FILE_1 + " file");
-		chooser.showOpenDialog(this);
-		javaFile1 = chooser.getSelectedFile();
-		if (javaFile1 == null) {
-        	handleNoFileSelectedError(JAVA_FILE_1);
-        	return;
-		}
-		try {
-			processJavaFile1();
-		} catch (IOException e) {
-			handleIOException(e);
-			return;
-		}
-		
-		//
-		// Notice for selecting the org.uniprot.uniprot.impl.CitationType.java file.
-		//
-		locateFileDialog(JAVA_FILE_2);
-		chooser.setFileFilter(new MyFilter(JAVA_EXTENSION));
-		chooser.setDialogTitle("Locate the " + JAVA_FILE_2 + " file");
-		chooser.showOpenDialog(this);
-		javaFile2 = chooser.getSelectedFile();
-		if (javaFile2 == null) {
-        	handleNoFileSelectedError(JAVA_FILE_2);
-        	return;
-		}
-		try {
-			processJavaFile2();
-		} catch (IOException e) {
-			handleIOException(e);
-			return;
-		}
-		
-		//
+	    for (PostProcessingStep postProcessingStep: postProcessingSteps) {
+	        postProcessingStep.processFile();
+	    }
+
+	    //
 		// Notice for completion of post processing task.
 		//
 		JOptionPane.showMessageDialog(this,
@@ -172,160 +119,17 @@ public class UniprotXSDPostProcessor extends JFrame {
 	}
 
 	/**
-	 * A constructor with a given sql file name and hibernate mapping file name.  
+	 * A constructor with the given filenames, one per known post-processing step.  
 	 * @throws IOException 
 	 */
-    public UniprotXSDPostProcessor(String sqlFile, 
-    		String hbmFile1, String hbmFile2, 
-    		String javaFile1, String javaFile2) throws IOException {
-		this.sqlFile = new File(sqlFile);
-		this.hbmFile1 = new File(hbmFile1);
-		this.hbmFile2 = new File(hbmFile2);
-		this.javaFile1 = new File(javaFile1);
-		this.javaFile2 = new File(javaFile2);
-		processSQLFile();
-		processHBMFile1();
-		processHBMFile2();
-		processJavaFile1();
-		processJavaFile2();
+    public UniprotXSDPostProcessor(String... filenames) throws IOException {
+        int index = 0;
+        for (String filename: filenames) {
+            postProcessingSteps[index].processFile(filename != null ? new File(filename) : null);
+            index++;
+        }
 	}
 
-
-	/**
-	 * Make changes to SQL file.  Used pattern and matcher for speed on large files.
-	 * @throws IOException 
-	 */
-	private void processSQLFile() throws IOException {
-
-		String sqlFileBuffer = openFile(sqlFile);
-		
-		Pattern p = Pattern.compile("varchar\\(255\\)");
-		Matcher m = p.matcher(sqlFileBuffer);
-		sqlFileBuffer = m.replaceAll("varchar");
-		
-		p = Pattern.compile("End");
-		m = p.matcher(sqlFileBuffer);
-		sqlFileBuffer = m.replaceAll("EndPosition");
-		
-		writeFile(sqlFileBuffer, sqlFile);
-	}
-
-	/**
-	 * Make changes to HBM file.
-	 * @throws IOException 
-	 */
-	private void processHBMFile1() throws IOException {
-		
-		String hbmFileBuffer = openFile(hbmFile1);
-		
-		Pattern p = Pattern.compile("<column name=\"End\"/>");
-		Matcher m = p.matcher(hbmFileBuffer);
-		hbmFileBuffer = m.replaceAll("<column name=\"EndPosition\"/>");
-
-		writeFile(hbmFileBuffer, hbmFile1);
-	}
-	
-	/**
-	 * Make changes to HBM file.
-	 * @throws IOException 
-	 */
-	private void processHBMFile2() throws IOException {
-		
-		String hbmFileBuffer = openFile(hbmFile2);
-		
-		Pattern p = Pattern.compile("<any id-type=\"org.hibernate.type.LongType\" meta-type=\"org.hibernate.type.StringType\" name=\"Date\">");
-		Matcher m = p.matcher(hbmFileBuffer);
-		hbmFileBuffer = m.replaceAll("<property name=\"Date\">");
-		p = Pattern.compile("<column name=\"Date_Hjid\"/>");
-		m = p.matcher(hbmFileBuffer);
-		hbmFileBuffer = m.replaceAll("<type name=\"org.hibernate.type.StringType\"/>");
-		p = Pattern.compile("</any>");
-		m = p.matcher(hbmFileBuffer);
-		hbmFileBuffer = m.replaceAll("</property>");
-		
-		writeFile(hbmFileBuffer, hbmFile2);
-	}
-
-	/**
-	 * Make changes to Java file.
-	 * @throws IOException 
-	 */
-	private void processJavaFile1()  throws IOException {
-		
-		String javaFileBuffer = openFile(javaFile1);
-		
-		Pattern p = Pattern.compile("java.io.Serializable getDate\\(\\);");
-		Matcher m = p.matcher(javaFileBuffer);
-		javaFileBuffer = m.replaceAll("java.lang.String getDate();");
-		
-		p = Pattern.compile("void setDate\\(java.io.Serializable value\\);");
-		m = p.matcher(javaFileBuffer);
-		javaFileBuffer = m.replaceAll("void setDate(java.lang.String value);");
-		
-		writeFile(javaFileBuffer, javaFile1);
-	}
-	
-	/**
-	 * Make changes to the Java file.
-	 * @throws IOException 
-	 */
-	private void processJavaFile2()  throws IOException {
-		
-		String javaFileBuffer = openFile(javaFile2);
-		
-		Pattern p = Pattern.compile("protected java.io.Serializable _Date;");
-		Matcher m = p.matcher(javaFileBuffer);
-		javaFileBuffer = m.replaceAll("protected java.lang.String _Date;");
-		
-		p = Pattern.compile("public java.io.Serializable getDate\\(\\) \\{");
-		m = p.matcher(javaFileBuffer);
-		javaFileBuffer = m.replaceAll("public java.lang.String getDate() {");
-		
-		p = Pattern.compile("public void setDate\\(java.io.Serializable value\\) \\{");
-		m = p.matcher(javaFileBuffer);
-		javaFileBuffer = m.replaceAll("public void setDate(java.lang.String value) {");
-		
-		p = Pattern.compile("if \\(_Date!= null\\) \\{");
-		m = p.matcher(javaFileBuffer);
-		
-		int startPosition = 0;
-		
-		if(m.find()) {
-			startPosition = m.start();
-		}
-		
-		p = Pattern.compile("context.endAttribute\\(\\);");
-		m = p.matcher(javaFileBuffer);
-		
-		int endPosition = 0;
-		
-		if(m.find(startPosition)) {
-			endPosition = m.end();
-		}
-		
-		String replacementString = "if (_Date!= null) {" + System.getProperty("line.separator") +
-        	"context.startAttribute(\"\", \"date\");" + System.getProperty("line.separator") +
-        	"if (_Date instanceof java.lang.String) {" + System.getProperty("line.separator") +
-            "try {" + System.getProperty("line.separator") +
-            "context.text(((java.lang.String) _Date), \"Date\");" + System.getProperty("line.separator") +
-            "} catch (java.lang.Exception e) {" + System.getProperty("line.separator") +
-            "org.uniprot.uniprot.impl.runtime.Util.handlePrintConversionException(this, e, context);" + System.getProperty("line.separator") +
-            "}" + System.getProperty("line.separator") +
-        	"}" + System.getProperty("line.separator") +
-            "context.endAttribute();";
-		
-		StringBuffer buffer = new StringBuffer(javaFileBuffer);
-		
-		buffer.replace(startPosition, endPosition, replacementString);
-		javaFileBuffer = buffer.toString();
-		
-		p = Pattern.compile("_Date = javax.xml.bind.DatatypeConverter.parseDate\\(com.sun.xml.bind.WhiteSpaceProcessor.collapse\\(value\\)\\);");
-		m = p.matcher(javaFileBuffer);
-		javaFileBuffer = m.replaceAll("_Date = com.sun.xml.bind.WhiteSpaceProcessor.collapse(value);");
-			
-		writeFile(javaFileBuffer, javaFile2);
-	}
-	
 	/**
 	 * Asks the user to locate a particular file to post process
 	 * @param fileName
@@ -333,19 +137,19 @@ public class UniprotXSDPostProcessor extends JFrame {
 	private void locateFileDialog(String fileName) {
 		// Message dialog
 		JOptionPane.showMessageDialog(this,
-			    "Please locate the " + fileName + " file.",
-			    "Please select a file", 
-			    JOptionPane.INFORMATION_MESSAGE);
+		    "Please locate the " + fileName + " file.",
+		    "Please select a file", 
+		    JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
 	 * Error handling when no file is selected to post process
 	 * @param fileName
 	 */
-	private void handleNoFileSelectedError(String fileName) {
-    	// Error message
+	private void handleNoFileSelected(String fileName) {
+    	// Notification message
     	JOptionPane.showMessageDialog(this,
-    	    "Must select the " + fileName + " file.\nSystem will exit.",
+    	    fileName + " not selected.\nSkipping it.",
     	    "No File Selected",
     	    JOptionPane.ERROR_MESSAGE);
 	}
@@ -368,7 +172,6 @@ public class UniprotXSDPostProcessor extends JFrame {
 	 * @throws IOException 
      */
 	private void writeFile(String fileBuffer, File ouputFile) throws IOException {
-
         BufferedWriter out = new BufferedWriter(
             new FileWriter(ouputFile));
         out.write(fileBuffer);
@@ -423,7 +226,135 @@ public class UniprotXSDPostProcessor extends JFrame {
         in.close();
         return buffer.toString();
 	}
-	
+
+	/**
+	 * Common interface for post-processing activities.
+	 */
+	interface FileProcessor {
+	    String process(String content);
+	}
+
+	/**
+	 * Encapsulates one of the primary post-processing activities:
+	 * string replacement.
+	 */
+	private class StringReplacer implements FileProcessor {
+	    private String pattern;
+	    private String replacement;
+
+	    public StringReplacer(String pattern, String replacement) {
+	        this.pattern = pattern;
+	        this.replacement = replacement;
+	    }
+	    
+	    @Override
+	    public String process(String content) {
+	        Pattern p = Pattern.compile(pattern);
+	        Matcher m = p.matcher(content);
+	        return m.replaceAll(replacement);
+	    }
+	    
+	}
+
+	private class CitationTypeImplDateHandler implements FileProcessor {
+
+	    public String process(String content) {
+	        Pattern p = Pattern.compile("if \\(_Date!= null\\) \\{");
+	        Matcher m = p.matcher(content);
+	        
+	        int startPosition = 0;
+	        
+	        if (m.find()) {
+	            startPosition = m.start();
+	        }
+	        
+	        p = Pattern.compile("context.endAttribute\\(\\);");
+	        m = p.matcher(content);
+	        
+	        int endPosition = 0;
+	        
+	        if (m.find(startPosition)) {
+	            endPosition = m.end();
+	        }
+	        
+	        String replacementString = "if (_Date!= null) {" + System.getProperty("line.separator") +
+	            "context.startAttribute(\"\", \"date\");" + System.getProperty("line.separator") +
+	            "if (_Date instanceof java.lang.String) {" + System.getProperty("line.separator") +
+	            "try {" + System.getProperty("line.separator") +
+	            "context.text(((java.lang.String) _Date), \"Date\");" + System.getProperty("line.separator") +
+	            "} catch (java.lang.Exception e) {" + System.getProperty("line.separator") +
+	            "org.uniprot.uniprot.impl.runtime.Util.handlePrintConversionException(this, e, context);" + System.getProperty("line.separator") +
+	            "}" + System.getProperty("line.separator") +
+	            "}" + System.getProperty("line.separator") +
+	            "context.endAttribute();";
+	        
+	        StringBuilder buffer = new StringBuilder(content);
+	        buffer.replace(startPosition, endPosition, replacementString);
+	        return buffer.toString();
+	    }
+	}
+
+	/**
+	 * A complete file processing step, including UI for determining
+	 * the file to process and the steps to perform in order to process
+	 * it.
+	 */
+	private class PostProcessingStep {
+	    private String filename;
+	    private String fileExtension;
+	    private FileProcessor[] fileProcessors;
+	    private String newFilename = null;
+
+	    public PostProcessingStep(String filename, String fileExtension, FileProcessor[] fileProcessors) {
+	        this.filename = filename;
+	        this.fileExtension = fileExtension;
+	        this.fileProcessors = fileProcessors;
+	    }
+
+        @SuppressWarnings("unused")
+        public PostProcessingStep(String filename, String fileExtension, FileProcessor[] fileProcessors, String newFilename) {
+            this(filename, fileExtension, fileProcessors);
+            this.newFilename = newFilename;
+        }
+
+	    /**
+	     * Intermediate step in case file choosing is needed.
+	     */
+	    public void processFile() {
+	        locateFileDialog(filename);
+	        chooser.setFileFilter(new MyFilter(fileExtension));
+	        chooser.setDialogTitle("Locate the " + filename + " file");
+	        chooser.showOpenDialog(UniprotXSDPostProcessor.this);
+	        processFile(chooser.getSelectedFile());
+	    }
+	    
+	    /**
+	     * The actual processing step, with the given File.
+	     * @param selectedFile
+	     */
+	    public void processFile(File selectedFile) {
+            if (selectedFile == null) {
+                handleNoFileSelected(filename);
+            } else {
+                try {
+                    String content = openFile(selectedFile);
+                    for (FileProcessor fileProcessor: fileProcessors) {
+                        content = fileProcessor.process(content);
+                    }
+                    writeFile(content, selectedFile);
+                    
+                    // If specified, rename the file.
+                    if (newFilename != null) {
+                        File newFile = new File(selectedFile.getParentFile(), newFilename);
+                        selectedFile.renameTo(newFile);
+                    }
+                } catch (IOException e) {
+                    handleIOException(e);
+                }
+            }
+	    }
+	}
+
 	/**
      * A tester main method for running the processor.
      */
@@ -434,5 +365,7 @@ public class UniprotXSDPostProcessor extends JFrame {
                 new UniprotXSDPostProcessor();
             }
         });
-     }
+
+	}
+
 }

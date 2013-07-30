@@ -13,10 +13,17 @@
 <column name="Value"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<property name="Evidence">
-<column name="Evidence"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Evidence" table="IsoformType_NoteType_Evidence">
+<key>
+<column name="IsoformType_NoteType_Evidence_Hjid"/>
+</key>
+<list-index>
+<column name="IsoformType_NoteType_Evidence_Hjindex"/>
+</list-index>
+<element type="org.hibernate.type.IntegerType">
+<column name="Hjvalue"/>
+</element>
+</list>
 <subclass discriminator-value="org.uniprot.uniprot.IsoformType.NoteType" name="org.uniprot.uniprot.impl.IsoformTypeImpl$NoteTypeImpl"/>
 </class>
 </hibernate-mapping>

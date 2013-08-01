@@ -98,8 +98,8 @@ public class ArabidopsisTAIRIDCollector {
         // potential lists, extract the TAIR IDs, then insert a new individual
         // record for each of them.
         sqlQuery = "select d.entrytype_gene_hjid as hjid, c.value " +
-            "from genenametype c inner join entrytype_genetype d " +
-            "on (c.entrytype_genetype_name_hjid = d.hjid) " +
+            "from genenametype c inner join genetype d " +
+            "on (c.genetype_name_hjid = d.hjid) " +
             "where c.value similar to ? " +
             "group by d.entrytype_gene_hjid, c.value";
         parseMatches(sqlQuery, tairID, c);

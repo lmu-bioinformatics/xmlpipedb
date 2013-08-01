@@ -40,8 +40,8 @@ public class MycobacteriumTuberculosisUniProtSpeciesProfile extends UniProtSpeci
     public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws SQLException, InvalidParameterException {
         // Build the base query; we use 'ordered locus' and 'ORF' and ids that begin with "Rv."
         PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " +
-            "FROM genenametype INNER JOIN entrytype_genetype " +
-            "ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
+            "FROM genenametype INNER JOIN genetype " +
+            "ON (genetype_name_hjid = genetype.hjid) " +
             "WHERE (type = 'ordered locus' or type = 'ORF') and (value like 'Rv%'and not value = 'Rv3346/55c') and entrytype_gene_hjid = ?");
         ResultSet result;
 

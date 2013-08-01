@@ -51,15 +51,15 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 		String primarySQL = 
     		" create temporary table temp_genename_primary AS " +
     		" select b.entrytype_gene_hjid as hjid, a.value " +
-    		" from genenametype a LEFT OUTER JOIN entrytype_genetype b " + 
-    		" ON (entrytype_genetype_name_hjid =  b.hjid) " +
+    		" from genenametype a LEFT OUTER JOIN genetype b " + 
+    		" ON (genetype_name_hjid =  b.hjid) " +
     		" where a.type = 'primary'; ";
 
 		String orderedLocusSQL = 
     		" create temporary table temp_genename_orderedlocus AS " +
     		" select b.entrytype_gene_hjid as hjid, a.value " +
-    		" from genenametype a LEFT OUTER JOIN entrytype_genetype b " + 
-    		" ON (entrytype_genetype_name_hjid =  b.hjid) " +
+    		" from genenametype a LEFT OUTER JOIN genetype b " + 
+    		" ON (genetype_name_hjid =  b.hjid) " +
     		" where a.type = 'ordered locus'; ";
 
 		String proteinSQL = 

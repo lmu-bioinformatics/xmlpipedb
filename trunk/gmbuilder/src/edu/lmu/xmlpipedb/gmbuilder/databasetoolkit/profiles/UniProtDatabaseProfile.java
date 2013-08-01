@@ -351,7 +351,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         			"AND dbreferencetype.type LIKE '%NCBI Taxonomy%' " +
         			"AND dbreferencetype.id = ?";
         		String nameSQL = "SELECT hjvalue FROM entrytype_name WHERE entrytype_name_hjid = ?";
-        		String geneSQL = "SELECT value, type FROM genenametype INNER JOIN entrytype_genetype ON (entrytype_genetype_name_hjid = entrytype_genetype.hjid) WHERE entrytype_gene_hjid = ?";
+        		String geneSQL = "SELECT value, type FROM genenametype INNER JOIN genetype ON (genetype_name_hjid = genetype.hjid) WHERE entrytype_gene_hjid = ?";
         
         		PreparedStatement ps = ConnectionManager.getRelationalDBConnection()
         				.prepareStatement(accessionSQL);

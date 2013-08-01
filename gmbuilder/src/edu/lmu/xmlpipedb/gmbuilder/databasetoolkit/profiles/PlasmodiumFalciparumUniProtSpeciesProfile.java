@@ -64,8 +64,8 @@ public class PlasmodiumFalciparumUniProtSpeciesProfile extends UniProtSpeciesPro
         // query searches for all ids of type = 'ORF'
 
         String sqlQuery = "select d.entrytype_gene_hjid as hjid, c.value " +
-            "from genenametype c inner join entrytype_genetype d " +
-            "on (c.entrytype_genetype_name_hjid = d.hjid) " +
+            "from genenametype c inner join genetype d " +
+            "on (c.genetype_name_hjid = d.hjid) " +
             "where c.type = 'ORF'" +
             "group by d.entrytype_gene_hjid, c.value";
 

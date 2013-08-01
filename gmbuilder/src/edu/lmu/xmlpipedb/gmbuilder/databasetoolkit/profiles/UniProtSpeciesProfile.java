@@ -135,10 +135,10 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
     	}
 
     	PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, genenametype.type " +
-    			"FROM genenametype INNER JOIN entrytype_genetype " +
-    				"ON (genenametype.entrytype_genetype_name_hjid = entrytype_genetype.hjid) " +
+    			"FROM genenametype INNER JOIN genetype " +
+    				"ON (genenametype.genetype_name_hjid = genetype.hjid) " +
     				"INNER JOIN entrytype " +
-    				"ON (entrytype_genetype.entrytype_gene_hjid = entrytype.hjid) " +
+    				"ON (genetype.entrytype_gene_hjid = entrytype.hjid) " +
     				"INNER JOIN organismtype " +
     				"ON (entrytype.organism = organismtype.hjid) " +
     				"INNER join dbreferencetype " +

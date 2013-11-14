@@ -3,13 +3,13 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 
-public class SinorhizobiumMelilotiUniProtSpeciesProfile extends UniProtSpeciesProfile {
+public class LeishmaniaMajorUniProtSpeciesProfile extends UniProtSpeciesProfile {
     
-    public SinorhizobiumMelilotiUniProtSpeciesProfile() {
-        super("Sinorhizobium meliloti",
-            266834,
+    public LeishmaniaMajorUniProtSpeciesProfile() {
+        super("Leishmania major",
+            5664,
             "This profile customizes the GenMAPP Builder export for " +
-                "Sinorhizobium meliloti" +
+                "Leishmania major" +
                 " data loaded from a UniProt XML file.");
     }
     
@@ -26,7 +26,9 @@ public class SinorhizobiumMelilotiUniProtSpeciesProfile extends UniProtSpeciesPr
             { "Link", "***species-specific-database-link***" }
         });
     
-        return tableManager;
+        return tableManager;  
     }
-    
+
 }
+
+

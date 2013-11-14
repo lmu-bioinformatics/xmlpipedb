@@ -57,17 +57,22 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				"This profile defines the requirements "
 						+ "for any UniProt-centric Gene Database.",
 				new SpeciesProfile[] {
-						new EscherichiaColiUniProtSpeciesProfile(),
-						new ArabidopsisThalianaUniProtSpeciesProfile(),
-						new PlasmodiumFalciparumUniProtSpeciesProfile(),
-						new VibrioCholeraeUniprotSpeciesProfile(),
-						new SaccharomycesCerevisiaeUniProtSpeciesProfile(),
-						new MycobacteriumTuberculosisUniProtSpeciesProfile(),
-						new PseudomonasAeruginosaUniProtSpeciesProfile(), 
-						new StaphylococcusAureusMRSA252UniProtSpeciesProfile(),
-						new MycobacteriumSmegmatisUniProtSpeciesProfile(),
-						new HelicobacterPyloriUniProtSpeciesProfile(),
-						new SalmonellaTyphimuriumUniProtSpeciesProfile()});
+                    new EscherichiaColiUniProtSpeciesProfile(),
+                    new ArabidopsisThalianaUniProtSpeciesProfile(),
+                    new PlasmodiumFalciparumUniProtSpeciesProfile(),
+                    new VibrioCholeraeUniprotSpeciesProfile(),
+                    new SaccharomycesCerevisiaeUniProtSpeciesProfile(),
+                    new MycobacteriumTuberculosisUniProtSpeciesProfile(),
+                    new PseudomonasAeruginosaUniProtSpeciesProfile(), 
+                    new StaphylococcusAureusMRSA252UniProtSpeciesProfile(),
+                    new MycobacteriumSmegmatisUniProtSpeciesProfile(),
+                    new HelicobacterPyloriUniProtSpeciesProfile(),
+                    new SalmonellaTyphimuriumUniProtSpeciesProfile(),
+                    new ChlamydiaTrachomatisSerovarAUniProtSpeciesProfile(),
+                    new LeishmaniaMajorUniProtSpeciesProfile(),
+                    new SinorhizobiumMelilotiUniProtSpeciesProfile(),
+                    new StreptococcusPneumoniaeR6UniProtSpeciesProfile()
+		        });
 	}
 
 	/*

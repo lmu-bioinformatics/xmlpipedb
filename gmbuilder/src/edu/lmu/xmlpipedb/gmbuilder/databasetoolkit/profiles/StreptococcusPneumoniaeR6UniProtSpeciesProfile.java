@@ -3,13 +3,13 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 
-public class ChlamydiaTrachomatisSerovarA extends UniProtSpeciesProfile {
-	
-	public ChlamydiaTrachomatisSerovarA() {
-	    super("ChlamydiaTrachomatisSerovarA",
-	    		315277,
+public class StreptococcusPneumoniaeR6UniProtSpeciesProfile extends
+		UniProtSpeciesProfile {
+	public StreptococcusPneumoniaeR6UniProtSpeciesProfile() {
+	    super("StreptococcusPneumoniaeR6",
+	        171101,
 	        "This profile customizes the GenMAPP Builder export for " +
-	            "ChlamydiaTrachomatisSerovarAUniProtSpeciesProfile" +
+	            "StreptococcusPneumoniaeR6" +
 	            " data loaded from a UniProt XML file.");
 	}
 	
@@ -30,3 +30,5 @@ public class ChlamydiaTrachomatisSerovarA extends UniProtSpeciesProfile {
 	}
 	
 }
+
+

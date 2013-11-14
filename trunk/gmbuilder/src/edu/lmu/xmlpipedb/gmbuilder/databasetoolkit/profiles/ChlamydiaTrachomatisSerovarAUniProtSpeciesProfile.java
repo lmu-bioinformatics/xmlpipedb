@@ -3,13 +3,13 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 
-public class SinorhizobiumMelilotiUniProtSpeciesProfile extends UniProtSpeciesProfile {
+public class ChlamydiaTrachomatisSerovarAUniProtSpeciesProfile extends UniProtSpeciesProfile {
     
-    public SinorhizobiumMelilotiUniProtSpeciesProfile() {
-        super("Sinorhizobium meliloti",
-            266834,
+    public ChlamydiaTrachomatisSerovarAUniProtSpeciesProfile() {
+        super("ChlamydiaTrachomatisSerovarA",
+            315277,
             "This profile customizes the GenMAPP Builder export for " +
-                "Sinorhizobium meliloti" +
+                "ChlamydiaTrachomatisSerovarAUniProtSpeciesProfile" +
                 " data loaded from a UniProt XML file.");
     }
     

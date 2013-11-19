@@ -1,7 +1,13 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 public class LeishmaniaMajorUniProtSpeciesProfile extends UniProtSpeciesProfile {
     
@@ -23,10 +29,23 @@ public class LeishmaniaMajorUniProtSpeciesProfile extends UniProtSpeciesProfile 
     
         tableManager.submit("Systems", QueryType.update, new String[][] {
             { "SystemCode", "N" },
-            { "Link", "***species-specific-database-link***" }
+            { "Link", "http://www.genedb.org/gene/~" }
         });
     
         return tableManager;  
+    }
+
+    @Override
+    public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws SQLException, InvalidParameterException {
+        /*
+         * This method is only called (and therefore this bit 'o logic is only
+         * invoked) when the species specific class has not overridden this
+         * method.
+         */
+        List<String> comparisonList = new ArrayList<String>(1);
+        comparisonList.add("ORF");
+
+        return systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "OrderedLocusNames", comparisonList);
     }
 
 }

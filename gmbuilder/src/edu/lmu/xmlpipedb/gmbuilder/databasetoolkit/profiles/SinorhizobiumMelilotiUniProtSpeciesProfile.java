@@ -3,6 +3,7 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 
+
 public class SinorhizobiumMelilotiUniProtSpeciesProfile extends UniProtSpeciesProfile {
     
     public SinorhizobiumMelilotiUniProtSpeciesProfile() {
@@ -23,7 +24,7 @@ public class SinorhizobiumMelilotiUniProtSpeciesProfile extends UniProtSpeciesPr
     
         tableManager.submit("Systems", QueryType.update, new String[][] {
             { "SystemCode", "N" },
-            { "Link", "***species-specific-database-link***" }
+            { "Link", "http://cmr.jcvi.org/tigr-scripts/CMR/shared/GenePage.cgi?locus=~" }
         });
     
         return tableManager;

@@ -145,6 +145,8 @@ public class ImportGOAEngine {
             conn.commit();
             _Log.warn("Imported " + (primarykeyid - (prevKeyCount + 1)) + " lines from GOA file.");
             _Log.warn("Import Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
+
+            in.close();
         } finally {
             try { query.close(); } catch(Exception exc) { }
             try { session.close(); } catch(Exception exc) { }
@@ -165,6 +167,7 @@ public class ImportGOAEngine {
 	        lineCounter++;
 	    }
 
+	    in.close();
 	    return lineCounter;
 	}
 

@@ -23,7 +23,7 @@ public class ChlamydiaTrachomatisSerovarAUniProtSpeciesProfile extends UniProtSp
     
         tableManager.submit("Systems", QueryType.update, new String[][] {
             { "SystemCode", "N" },
-            { "Link", "***species-specific-database-link***" }
+            { "Link", "http://bacteria.ensembl.org/chlamydia_trachomatis_a_har_13/Gene/Summary?g=~"}
         });
     
         return tableManager;

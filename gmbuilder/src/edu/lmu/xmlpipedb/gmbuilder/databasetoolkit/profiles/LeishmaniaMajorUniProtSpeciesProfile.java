@@ -58,7 +58,7 @@ public class LeishmaniaMajorUniProtSpeciesProfile extends UniProtSpeciesProfile 
 
         // We want to grab all of the legal OrderedLocusNames Ids and
         // remove the '_', adding them to the OrderedLocusNames table
-        final String vcID = "L[Mm][Jj]F*";
+        final String vcID = "L[Mm][Jj]F%";
         String sqlQuery = "select d.entrytype_gene_hjid as hjid, c.value " + "from genenametype c inner join genetype d " + "on (c.genetype_name_hjid = d.hjid) " + "where (c.value similar to ?)" + "and type = 'ORF' " + "group by d.entrytype_gene_hjid, c.value";
 
         String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);

@@ -26,13 +26,52 @@ Computer Science</p>
 <p class="dataline">Richard Brous, spring 2011 (<i>Mycobacterium tuberculosis</i>, GenMAPP Builder)</p>
 <p class="dataline">Wesley Citti, summer 2006 (XMLPipeDB logo)</p>
 <p class="dataline">Kelia McDonald, spring 2010 (<i>Pseudomonas aeruginosa</i>)</p>
+<p class="dataline">Kevin McGee, spring 2014 (<i>Leishmania major</i>)</p>
 <p class="dataline">Don Murphy, spring-fall 2010 (<i>Saccharomyces cerevisiae</i>, GenMAPP Builder, GO Slim)</p>
 <p class="dataline">Jeffrey Nicholas, Masters thesis 2007 (<i>Arabidopsis thaliana</i>, GenMAPP Builder, xmlpipedbutils)</p>
 <p class="dataline">Bernadette Pak, spring 2010 (<i>Saccharomyces cerevisiae</i>)</p>
 <p class="dataline">Kevin Paiz-Ramirez, fall 2010 (<i>Mycobacterium tuberculosis</i>)</p>
 <p class="dataline">Kelly Parks, spring-fall 2010, spring 2011 (<i>Staphylococcus aureus</i>)</p>
+<p class="dataline">Mitchell Petredis, spring 2014 (<i>Sinorhizobium meliloti</i> strain 1021)</p>
+<p class="dataline">Andrew Pita, spring 2014 (<i>Streptococcus pneumoniae</i>)</p>
 <p class="dataline">Derek Smith, spring 2009 (GenMAPP Builder, xmlpipedbutils)</p>
 <p class="dataline">Chad Villaflores, spring 2009 (<i>Escherischia coli K12</i>)</p>
+
+<h3>Fall 2013 Biological Databases</h3>
+
+<div class="contributorBlock">
+<h4>Team H(oo)KD: Chlamydia trachomatis</h4>
+
+<p class="dataline">Katrina Sherbina, <i>project manager, coder</i></p>
+<p class="dataline">Hilda Delgadillo, <i>quality assurance</i></p>
+<p class="dataline">Dillon Williams, <i>GenMAPP user</i></p>
+</div>
+
+<div class="contributorBlock">
+<h4>Team ATK: Streptococcus pneumoniae</h4>
+
+<p class="dataline">Tauras Vilgalys, <i>project manager, coder</i></p>
+<p class="dataline">Alina Vreeland, <i>quality assurance</i></p>
+<p class="dataline">Kevin Meilak, <i>GenMAPP user</i></p>
+</div>
+
+<div class="contributorBlock">
+<h4>Off the Leish: Leishmania major</h4>
+
+<p class="dataline">Gabriel Leis, <i>project manager, coder</i></p>
+<p class="dataline">Lena Hunt, <i>quality assurance</i></p>
+<p class="dataline">Viktoria Kuehn, <i>GenMAPP user</i></p>
+<p class="dataline">Kevin McGee, <i>GenMAPP user</i></p>
+</div>
+
+<div class="contributorBlock">
+<h4>Team Name: Sinorhizobium meliloti (strain 1021)</h4>
+
+<p class="dataline">Stephen Louie, <i>project manager, quality assurance</i></p>
+<p class="dataline">Mitchell Petredis, <i>coder</i></p>
+<p class="dataline">Lauren Magee, <i>GenMAPP user</i></p>
+<p class="dataline">Miles Malefyt, <i>GenMAPP user</i></p>
+</div>
 
 <h3>Fall 2010 Biological Databases</h3>
 

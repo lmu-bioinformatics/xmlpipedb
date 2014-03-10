@@ -51,6 +51,7 @@ public class LeishmaniaMajorUniProtSpeciesProfile extends UniProtSpeciesProfile 
          * method.
          */
         List<String> comparisonList = new ArrayList<String>(1);
+        comparisonList.add("ordered locus");
         comparisonList.add("ORF");
 
         // First, we want to export the IDs without modification.
@@ -58,8 +59,13 @@ public class LeishmaniaMajorUniProtSpeciesProfile extends UniProtSpeciesProfile 
 
         // We want to grab all of the legal OrderedLocusNames Ids and
         // remove the '_', adding them to the OrderedLocusNames table
-        final String vcID = "L[Mm][Jj]F%";
-        String sqlQuery = "select d.entrytype_gene_hjid as hjid, c.value " + "from genenametype c inner join genetype d " + "on (c.genetype_name_hjid = d.hjid) " + "where (c.value similar to ?)" + "and type = 'ORF' " + "group by d.entrytype_gene_hjid, c.value";
+        final String lmID = "L[Mm][Jj]F%";
+        String sqlQuery = "select d.entrytype_gene_hjid as hjid, c.value " +
+                "from genenametype c inner join genetype d " +
+                "on (c.genetype_name_hjid = d.hjid) " +
+                "where (c.value similar to ?) " +
+                "and (type = 'ORF' or type = 'ordered locus') " +
+                "group by d.entrytype_gene_hjid, c.value";
 
         String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);
         Connection c = ConnectionManager.getRelationalDBConnection();
@@ -68,7 +74,7 @@ public class LeishmaniaMajorUniProtSpeciesProfile extends UniProtSpeciesProfile 
         try {
             // Query, iterate, add to table manager.
             ps = c.prepareStatement(sqlQuery);
-            ps.setString(1, vcID);
+            ps.setString(1, lmID);
             rs = ps.executeQuery();
             while (rs.next()) {
                 String hjid = Long.valueOf(rs.getLong("hjid")).toString();
@@ -77,15 +83,22 @@ public class LeishmaniaMajorUniProtSpeciesProfile extends UniProtSpeciesProfile 
                 String id = rs.getString("value");
 
                 String[] substrings = id.split("/");
-                String new_id = null;
                 for (int i = 0; i < substrings.length; i++) {
-                	// Standardize capitalization.
-                    new_id = substrings[i].replaceAll("L[Mm][Jj]F_", "LmjF");
-                    // Replace the second underscore with a period.
-                    new_id = substrings[i].replaceAll("_", ".");
+                    // Grab the digit sets---this is what we care about anyway.
+                    int length = substrings[i].length();
+                    String firstTwoDigits = substrings[i].substring(length - 7, length - 5);
+                    String lastFourDigits = substrings[i].substring(length - 4, length);
 
-                    _Log.debug("Original ID: " + substrings[i] + " converted to: " + new_id + " for surrogate " + hjid);
-                    result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                    // Generate all three variants.
+                    List<String> variants = new ArrayList<String>(3);
+                    variants.add("LmjF" + "." + firstTwoDigits + "." + lastFourDigits); // LmjF.##.####
+                    variants.add("LmjF" + "_" + firstTwoDigits + "_" + lastFourDigits); // LmjF_##_####
+                    variants.add("LmjF" + firstTwoDigits + "." + lastFourDigits); // LmjF##.####
+
+                    for (String variant: variants) {
+                        _Log.debug("Original ID: " + substrings[i] + " converted to: " + variant + " for surrogate " + hjid);
+                        result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", variant }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                    }
                 }
             }
         } catch(SQLException sqlexc) {

@@ -71,7 +71,9 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                     new ChlamydiaTrachomatisSerovarAUniProtSpeciesProfile(),
                     new LeishmaniaMajorUniProtSpeciesProfile(),
                     new SinorhizobiumMelilotiUniProtSpeciesProfile(),
-                    new StreptococcusPneumoniaeTIGR4UniProtSpeciesProfile()
+                    new StreptococcusPneumoniaeTIGR4UniProtSpeciesProfile(),
+                    new StreptococcusPneumoniaeG54UniProtSpeciesProfile(),
+                    new StreptococcusPneumoniaeR6UniProtSpeciesProfile()
 		        });
 	}
 

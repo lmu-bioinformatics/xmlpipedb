@@ -18,14 +18,19 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 public class StreptococcusPneumoniaeTIGR4UniProtSpeciesProfile extends
 		UniProtSpeciesProfile {
 	public StreptococcusPneumoniaeTIGR4UniProtSpeciesProfile() {
-	    super("StreptococcusPneumoniaeTIGR4",
+	    this("StreptococcusPneumoniaeTIGR4",
 	        170187,
 	        "This profile customizes the GenMAPP Builder export for " +
-	            "StreptococcusPneumoniaeTIGR4" +
+	            "Streptococcus pneumoniae TIGR4" +
 	            " data loaded from a UniProt XML file.");
 	}
-	
-	@Override
+
+	// For subclass use.
+    public StreptococcusPneumoniaeTIGR4UniProtSpeciesProfile(String name, int taxonID, String description) {
+        super(name, taxonID, description);
+    }
+
+    @Override
 	public TableManager getSystemsTableManagerCustomizations(TableManager tableManager, DatabaseProfile dbProfile) {
 	    super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
 	    tableManager.submit("Systems", QueryType.update, new String[][] {

@@ -45,8 +45,12 @@ public class StreptococcusPneumoniaeTIGR4UniProtSpeciesProfile extends
 
 	    return tableManager;
 	}
-	
-	  /**
+
+    protected String getIdPattern() {
+        return "SP_*";
+    }
+
+    /**
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.UniProtSpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
      *      edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager,
      *      java.util.Date)
@@ -58,7 +62,7 @@ public class StreptococcusPneumoniaeTIGR4UniProtSpeciesProfile extends
 
         // We want to grab all of the legal OrderedLocusNames Ids and
         // remove the '_', adding them to the OrderedLocusNames table
-        final String vcID = "SP_*";
+        final String vcID = getIdPattern();
         String sqlQuery = "select d.entrytype_gene_hjid as hjid, c.value " + "from genenametype c inner join genetype d " + "on (c.genetype_name_hjid = d.hjid) " + "where (c.value similar to ?)" + "and type <> 'ordered locus names' " + "group by d.entrytype_gene_hjid, c.value";
 
         String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);

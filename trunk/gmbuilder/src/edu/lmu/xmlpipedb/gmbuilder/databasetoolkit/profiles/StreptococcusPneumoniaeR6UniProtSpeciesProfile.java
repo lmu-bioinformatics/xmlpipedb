@@ -29,4 +29,8 @@ public class StreptococcusPneumoniaeR6UniProtSpeciesProfile extends Streptococcu
         return tableManager;
     }
 
+    protected String getIdPattern() {
+        return "SPR_*";
+    }
+
 }

@@ -29,4 +29,8 @@ public class StreptococcusPneumoniaeG54UniProtSpeciesProfile extends Streptococc
         return tableManager;
     }
 
+    protected String getIdPattern() {
+        return "SPG_*";
+    }
+
 }

@@ -27,6 +27,11 @@ public class LeishmaniaMajorUniProtSpeciesProfile extends UniProtSpeciesProfile 
                 " data loaded from a UniProt XML file.");
     }
     
+    // For subclass use.
+    public LeishmaniaMajorUniProtSpeciesProfile(String name, int taxonID, String description) {
+        super(name, taxonID, description);
+    }
+
     @Override
     public TableManager getSystemsTableManagerCustomizations(TableManager tableManager, DatabaseProfile dbProfile) {
         super.getSystemsTableManagerCustomizations(tableManager, dbProfile);
@@ -41,6 +46,14 @@ public class LeishmaniaMajorUniProtSpeciesProfile extends UniProtSpeciesProfile 
         });
     
         return tableManager;  
+    }
+
+    protected String getIDPattern() {
+        return "L[Mm][Jj]F%";
+    }
+    
+    protected String getExportPrefix() {
+        return "LmjF";
     }
 
     @Override
@@ -59,7 +72,7 @@ public class LeishmaniaMajorUniProtSpeciesProfile extends UniProtSpeciesProfile 
 
         // We want to grab all of the legal OrderedLocusNames Ids and
         // remove the '_', adding them to the OrderedLocusNames table
-        final String lmID = "L[Mm][Jj]F%";
+        final String lmID = getIDPattern();
         String sqlQuery = "select d.entrytype_gene_hjid as hjid, c.value " +
                 "from genenametype c inner join genetype d " +
                 "on (c.genetype_name_hjid = d.hjid) " +
@@ -91,9 +104,9 @@ public class LeishmaniaMajorUniProtSpeciesProfile extends UniProtSpeciesProfile 
 
                     // Generate all three variants.
                     List<String> variants = new ArrayList<String>(3);
-                    variants.add("LmjF" + "." + firstTwoDigits + "." + lastFourDigits); // LmjF.##.####
-                    variants.add("LmjF" + "_" + firstTwoDigits + "_" + lastFourDigits); // LmjF_##_####
-                    variants.add("LmjF" + firstTwoDigits + "." + lastFourDigits); // LmjF##.####
+                    variants.add(getExportPrefix() + "." + firstTwoDigits + "." + lastFourDigits); // LmjF.##.####
+                    variants.add(getExportPrefix() + "_" + firstTwoDigits + "_" + lastFourDigits); // LmjF_##_####
+                    variants.add(getExportPrefix() + firstTwoDigits + "." + lastFourDigits); // LmjF##.####
 
                     for (String variant: variants) {
                         _Log.debug("Original ID: " + substrings[i] + " converted to: " + variant + " for surrogate " + hjid);

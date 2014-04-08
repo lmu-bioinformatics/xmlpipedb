@@ -70,6 +70,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                     new SalmonellaTyphimuriumUniProtSpeciesProfile(),
                     new ChlamydiaTrachomatisSerovarAUniProtSpeciesProfile(),
                     new LeishmaniaMajorUniProtSpeciesProfile(),
+                    new LeishmaniaInfantumUniProtSpeciesProfile(),
                     new SinorhizobiumMelilotiUniProtSpeciesProfile(),
                     new StreptococcusPneumoniaeTIGR4UniProtSpeciesProfile(),
                     new StreptococcusPneumoniaeG54UniProtSpeciesProfile(),

@@ -122,6 +122,13 @@ create table Domain (
     Content varchar,
     primary key (Hjid)
 );
+create table ExpandAssertionTo (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
 create table FormatVersion (
     Hjid int8 not null,
     Hjtype varchar not null,
@@ -210,6 +217,20 @@ create table IsAntiSymmetric (
     Content varchar,
     primary key (Hjid)
 );
+create table IsClassLevel (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
+create table IsMetadataTag (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
 create table IsObsolete (
     Hjid int8 not null,
     Hjtype varchar not null,
@@ -287,6 +308,13 @@ create table Obo_Content (
     primary key (Obo_Content_Hjid, Obo_Content_Hjindex)
 );
 create table Ontology (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
+create table PropertyValue (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,

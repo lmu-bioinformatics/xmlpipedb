@@ -35,7 +35,7 @@
    <!ELEMENT source_md5 (#PCDATA)>
    <!ELEMENT source_mtime (#PCDATA)>
    <!ELEMENT source_parsetime (#PCDATA)>
-   <!ELEMENT header (format-version|data-version|date|saved-by|auto-generated-by|default-namespace|remark|ontology|subsetdef*|synonymtypedef*|idspace*)*>
+   <!ELEMENT header (format-version|data-version|date|saved-by|auto-generated-by|default-namespace|remark|ontology|subsetdef|synonymtypedef|idspace|property_value)*>
    <!ELEMENT format-version (#PCDATA)>
    <!ELEMENT data-version (#PCDATA)>
    <!ELEMENT date (#PCDATA)>
@@ -48,6 +48,7 @@
    <!ELEMENT synonymtypedef (id|name|scope)+>
     <!ELEMENT scope (#PCDATA)>
    <!ELEMENT idspace (local|global|comment*)+>
+   <!ELEMENT property_value (#PCDATA)>
 
     <!ELEMENT local (#PCDATA)>
     <!ELEMENT global (#PCDATA)>
@@ -102,7 +103,7 @@
 <!-- TYPEDEF : this element represents relationship types and
 properties in an ontology -->
 
-<!ELEMENT typedef (id|name|namespace|is_a*|def?|domain?|range?|inverse_of?|is_transitive?|is_symmetric?|is_anti_symmetric?|is_reflexive?|transitive_over?|xref_analog?)+>
+<!ELEMENT typedef (id|name|namespace|is_a*|def?|domain?|range?|inverse_of?|is_transitive?|is_symmetric?|is_anti_symmetric?|is_reflexive?|transitive_over?|xref_analog?|expand_assertion_to?|is_metadata_tag?|is_class_level?)+>
 
   <!ELEMENT inverse_of (#PCDATA)>
   <!ELEMENT domain (#PCDATA)>
@@ -113,6 +114,9 @@ properties in an ontology -->
   <!ELEMENT is_anti_symmetric (#PCDATA)>
   <!ELEMENT is_reflexive (#PCDATA)>
   <!ELEMENT transitive_over (#PCDATA)>
+  <!ELEMENT expand_assertion_to (#PCDATA)>
+  <!ELEMENT is_metadata_tag (#PCDATA)>
+  <!ELEMENT is_class_level (#PCDATA)>
 
 <!-- DBXREF -->
 

@@ -32,6 +32,7 @@ drop table DefaultNamespace;
 drop table Defstr;
 drop table DisjointFrom;
 drop table Domain;
+drop table ExpandAssertionTo;
 drop table FormatVersion;
 drop table Global;
 drop table Header;
@@ -45,6 +46,8 @@ drop table InverseOf;
 drop table IsA;
 drop table IsAnonymous;
 drop table IsAntiSymmetric;
+drop table IsClassLevel;
+drop table IsMetadataTag;
 drop table IsObsolete;
 drop table IsReflexive;
 drop table IsRoot;
@@ -57,6 +60,7 @@ drop table Namespace;
 drop table Obo;
 drop table Obo_Content;
 drop table Ontology;
+drop table PropertyValue;
 drop table Range;
 drop table Relationship;
 drop table Relationship_Content;
@@ -220,6 +224,13 @@ create table Domain (
     Content varchar,
     primary key (Hjid)
 );
+create table ExpandAssertionTo (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
 create table FormatVersion (
     Hjid int8 not null,
     Hjtype varchar not null,
@@ -308,6 +319,20 @@ create table IsAntiSymmetric (
     Content varchar,
     primary key (Hjid)
 );
+create table IsClassLevel (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
+create table IsMetadataTag (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
 create table IsObsolete (
     Hjid int8 not null,
     Hjtype varchar not null,
@@ -385,6 +410,13 @@ create table Obo_Content (
     primary key (Obo_Content_Hjid, Obo_Content_Hjindex)
 );
 create table Ontology (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    primary key (Hjid)
+);
+create table PropertyValue (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,

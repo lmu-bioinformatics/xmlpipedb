@@ -25,18 +25,11 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
-
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.JFrame;
 
 /**
  * GodbXSDPostProcessor does post processing for the Godb
@@ -146,9 +139,9 @@ public class GodbPostProcessor extends JFrame {
 		Matcher m = p.matcher(sqlFileBuffer);
 		sqlFileBuffer = m.replaceAll("varchar");
 
-		p = Pattern.compile("To");
+		p = Pattern.compile(" To");
 		m = p.matcher(sqlFileBuffer);
-		sqlFileBuffer = m.replaceAll("To_");
+		sqlFileBuffer = m.replaceAll(" To_");
 		
 		writeFile(sqlFileBuffer, sqlFile);		
 	}

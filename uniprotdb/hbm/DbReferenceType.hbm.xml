@@ -9,6 +9,9 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
+<many-to-one class="org.uniprot.uniprot.MoleculeType" name="Molecule">
+<column name="Molecule"/>
+</many-to-one>
 <property name="Type">
 <column name="Type"/>
 <type name="org.hibernate.type.StringType"/>

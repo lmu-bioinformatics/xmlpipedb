@@ -14,6 +14,7 @@
          -XSV (XML Schema Validator), http://www.w3.org/2001/03/webdata/xsv
          -->
 
+
     <!-- Root element definition begins -->
     <xs:element name="uniprot">
         <xs:annotation>
@@ -479,14 +480,14 @@
             Equivalent to the flat file CC-line.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:choice minOccurs="0" maxOccurs="1">
+            <xs:choice minOccurs="0">
                 <xs:group ref="bpcCommentGroup"/>
                 <xs:sequence>
                     <xs:annotation>
                         <xs:documentation>Used in 'subcellular location' annotations.</xs:documentation>
                     </xs:annotation>
-                    <xs:element name="molecule" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                    <xs:element name="subcellularLocation" type="subcellularLocationType" minOccurs="1" maxOccurs="unbounded"/>
+                    <xs:element name="molecule" type="moleculeType" minOccurs="0"/>
+                    <xs:element name="subcellularLocation" type="subcellularLocationType" maxOccurs="unbounded"/>
                 </xs:sequence>
 
                 <xs:element name="conflict">
@@ -495,7 +496,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="sequence" minOccurs="0" maxOccurs="1">
+                            <xs:element name="sequence" minOccurs="0">
                                 <xs:complexType>
                                     <xs:attribute name="resource" use="required">
                                         <xs:simpleType>
@@ -545,7 +546,7 @@
                     <xs:annotation>
                         <xs:documentation>Used in 'alternative products' annotations.</xs:documentation>
                     </xs:annotation>
-                    <xs:element name="event" type="eventType" minOccurs="1" maxOccurs="4"/>
+                    <xs:element name="event" type="eventType" maxOccurs="4"/>
                     <xs:element name="isoform" type="isoformType" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
 
@@ -554,8 +555,8 @@
                         <xs:documentation>Used in 'interaction' annotations.</xs:documentation>
                     </xs:annotation>
                     <xs:element name="interactant" type="interactantType" minOccurs="2" maxOccurs="2"/>
-                    <xs:element name="organismsDiffer" type="xs:boolean" minOccurs="1" default="false"/>
-                    <xs:element name="experiments" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="organismsDiffer" type="xs:boolean" default="false"/>
+                    <xs:element name="experiments" type="xs:int"/>
                 </xs:sequence>
                 
                 <xs:element name="disease">
@@ -665,26 +666,26 @@
             <xs:documentation>Describes different types of biophysicochemical properties.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="absorption" minOccurs="0" maxOccurs="1">
+            <xs:element name="absorption" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="max" type="evidencedStringType" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="text" type="evidencedStringType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max" type="evidencedStringType" minOccurs="0"/>
+                        <xs:element name="text" type="evidencedStringType" minOccurs="0"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="kinetics" minOccurs="0" maxOccurs="1">
+            <xs:element name="kinetics" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="KM" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
                         <xs:element name="Vmax" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element name="text" type="evidencedStringType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="text" type="evidencedStringType" minOccurs="0"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="phDependence" type="evidencedStringType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="redoxPotential" type="evidencedStringType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="temperatureDependence" type="evidencedStringType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="phDependence" type="evidencedStringType" minOccurs="0"/>
+            <xs:element name="redoxPotential" type="evidencedStringType" minOccurs="0"/>
+            <xs:element name="temperatureDependence" type="evidencedStringType" minOccurs="0"/>
         </xs:sequence>
     </xs:group>
 
@@ -693,7 +694,7 @@
             <xs:documentation>Describes the subcellular location and optionally the topology and orientation of a molecule.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="location" type="evidencedStringType" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="location" type="evidencedStringType" maxOccurs="unbounded"/>
             <xs:element name="topology" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="orientation" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
@@ -759,7 +760,7 @@
 
     <xs:group name="interactantGroup">
         <xs:sequence>
-            <xs:element name="id" type="xs:string" minOccurs="1"/>
+            <xs:element name="id" type="xs:string"/>
             <xs:element name="label" type="xs:string" minOccurs="0"/>
         </xs:sequence>
     </xs:group>
@@ -777,6 +778,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
+            <xs:element name="molecule" type="moleculeType" minOccurs="0"/>
             <xs:element name="property" type="propertyType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="type" type="xs:string" use="required">
@@ -923,8 +925,8 @@
         </xs:annotation>
         <xs:choice>
             <xs:sequence>
-                <xs:element name="begin" type="positionType" minOccurs="1"/>
-                <xs:element name="end" type="positionType" minOccurs="1"/>
+                <xs:element name="begin" type="positionType"/>
+                <xs:element name="end" type="positionType"/>
             </xs:sequence>
             <xs:element name="position" type="positionType"/>
         </xs:choice>
@@ -971,6 +973,20 @@
     </xs:complexType>
     <!-- Sequence definition ends -->
 
+    <!-- Molecule definition begins -->
+    <xs:complexType name="moleculeType">
+        <xs:annotation>
+            <xs:documentation>Describes a molecule by name or unique identifier.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="id" type="xs:string" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <!-- Molecule definition ends -->
+
+    <!-- Evidence definition begins -->
     <xs:complexType name="evidenceType">
         <xs:annotation>
             <xs:documentation>Describes the evidence for an annotation.
@@ -1008,7 +1024,6 @@
             <xs:element name="dbReference" type="dbReferenceType"/>
         </xs:sequence>
     </xs:complexType>
-
     <!-- Evidence definition ends -->
 
     <xs:complexType name="evidencedStringType">

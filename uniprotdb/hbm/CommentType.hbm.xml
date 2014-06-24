@@ -98,10 +98,9 @@
 </list-index>
 <one-to-many class="org.uniprot.uniprot.SubcellularLocationType"/>
 </list>
-<property name="Molecule">
+<many-to-one class="org.uniprot.uniprot.MoleculeType" name="Molecule">
 <column name="Molecule"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
+</many-to-one>
 <property name="LocationType">
 <column name="LocationType"/>
 <type name="org.hibernate.type.StringType"/>

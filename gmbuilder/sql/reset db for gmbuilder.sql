@@ -785,12 +785,14 @@ alter table CommentType drop constraint FKE0CB5219D8CF5AEB;
 alter table CommentType drop constraint FKE0CB52191CDB7784;
 alter table CommentType drop constraint FKE0CB5219CFA3BF01;
 alter table CommentType drop constraint FKE0CB5219A0F7078F;
+alter table CommentType drop constraint FKE0CB5219236A6DBE;
 alter table CommentType_ConflictType drop constraint FK6F5452B2BCD5B9D1;
 alter table CommentType_DiseaseType drop constraint FK50BCD190A693E7C;
 alter table CommentType_Evidence drop constraint FK55102DDD751FD9C0;
 alter table CommentType_LinkType drop constraint FK856AB5DA6ECF92FD;
 alter table DbReferenceType drop constraint FKE43B3D2762738266;
 alter table DbReferenceType drop constraint FKE43B3D279338FF06;
+alter table DbReferenceType drop constraint FKE43B3D27236A6DBE;
 alter table DbReferenceType drop constraint FKE43B3D27E13D04B6;
 alter table DbReferenceType_Evidence drop constraint FK855CD28F121DA37C;
 alter table EntryType drop constraint FK5ADFA2AC25CD0850;
@@ -928,6 +930,7 @@ drop table IsoformType_SequenceType;
 drop table KeywordType;
 drop table KeywordType_Evidence;
 drop table LocationType;
+drop table MoleculeType;
 drop table NameListType;
 drop table NameListType_ConsortiumOrPerson;
 drop table OrganismNameType;
@@ -1017,7 +1020,7 @@ create table CommentType (
     Name varchar,
     Text int8,
     PhDependence int8,
-    Molecule varchar,
+    Molecule int8,
     LocationType varchar,
     Mass float4,
     Kinetics int8,
@@ -1088,6 +1091,7 @@ create table DbReferenceType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
+    Molecule int8,
     Type varchar,
     Id varchar,
     CitationType_DbReference_Hjid int8,
@@ -1368,6 +1372,14 @@ create table LocationType (
     Begin int8,
     CommentType_Location_Hjid int8,
     CommentType_Location_Hjindex int4,
+    primary key (Hjid)
+);
+create table MoleculeType (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Value varchar,
+    Id varchar,
     primary key (Hjid)
 );
 create table NameListType (
@@ -1709,6 +1721,10 @@ alter table CommentType
     add constraint FKE0CB5219A0F7078F 
     foreign key (PhDependence) 
     references EvidencedStringType;
+alter table CommentType 
+    add constraint FKE0CB5219236A6DBE 
+    foreign key (Molecule) 
+    references MoleculeType;
 alter table CommentType_ConflictType 
     add constraint FK6F5452B2BCD5B9D1 
     foreign key (Sequence) 
@@ -1733,6 +1749,10 @@ alter table DbReferenceType
     add constraint FKE43B3D279338FF06 
     foreign key (CitationType_DbReference_Hjid) 
     references CitationType;
+alter table DbReferenceType 
+    add constraint FKE43B3D27236A6DBE 
+    foreign key (Molecule) 
+    references MoleculeType;
 alter table DbReferenceType 
     add constraint FKE43B3D27E13D04B6 
     foreign key (EntryType_DbReference_Hjid) 

@@ -32,7 +32,7 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
  * @author Joey J. Barrett Class: SpeciesProfile
  * @author Jeffrey Nicholas
  */
-public abstract class SpeciesProfile extends Profile {
+public abstract class SpeciesProfile extends Profile implements Comparable<SpeciesProfile> {
 
 	private String customizedName = null;
 	private int taxonID;
@@ -183,14 +183,18 @@ public abstract class SpeciesProfile extends Profile {
 
 	@Override
 	public String toString() {
-	    return new StringBuilder("Taxon ID ")
-	            .append(taxonID)
-	            .append(", ")
-	            .append(this.getName()).toString();
+	    return new StringBuilder(this.getName())
+	            .append(", Taxon ID ")
+	            .append(taxonID).toString();
 	}
 
 	public int getTaxon() {
 		return taxonID;
 	}
 
+    @Override
+    public int compareTo(SpeciesProfile otherSpeciesProfile) {
+        return this.getTaxon() - otherSpeciesProfile.getTaxon();
+    }
+	
 }

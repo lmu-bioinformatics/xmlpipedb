@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -263,8 +264,10 @@ public class BasicExportInformationPanel extends JPanel {
 
             // Dondi - Note how, with the list model properly coded, all of the above becomes
             // this single [nested] statement.
+            SpeciesProfile[] speciesProfiles = selectedProfile.getSpeciesProfilesFound();
+            Arrays.sort(speciesProfiles);
             ((SpeciesListModel)speciesCheckList.getModel())
-                .setSpeciesProfiles(selectedProfile.getSpeciesProfilesFound());
+                .setSpeciesProfiles(speciesProfiles);
         }
     }
 

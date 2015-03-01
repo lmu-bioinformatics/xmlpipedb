@@ -9,13 +9,6 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<property name="Experiments">
-<column name="Experiments"/>
-<type name="org.hibernate.type.IntegerType"/>
-</property>
-<many-to-one class="org.uniprot.uniprot.CommentType$DiseaseType" name="Disease">
-<column name="Disease"/>
-</many-to-one>
 <many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="TemperatureDependence">
 <column name="TemperatureDependence"/>
 </many-to-one>
@@ -23,15 +16,33 @@
 <column name="Method"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Interactant" table="CommentType_Interactant">
+<property name="Type">
+<column name="Type"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<property name="LocationType">
+<column name="LocationType"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<many-to-one class="org.uniprot.uniprot.BpcCommentGroupAbsorptionType" name="Absorption">
+<column name="Absorption"/>
+</many-to-one>
+<property name="Experiments">
+<column name="Experiments"/>
+<type name="org.hibernate.type.IntegerType"/>
+</property>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Cofactor" table="CommentType_Cofactor">
 <key>
-<column name="CommentType_Interactant_Hjid"/>
+<column name="CommentType_Cofactor_Hjid"/>
 </key>
 <list-index>
-<column name="CommentType_Interactant_Hjindex"/>
+<column name="CommentType_Cofactor_Hjindex"/>
 </list-index>
-<one-to-many class="org.uniprot.uniprot.InteractantType"/>
+<one-to-many class="org.uniprot.uniprot.CofactorType"/>
 </list>
+<many-to-one class="org.uniprot.uniprot.CommentType$DiseaseType" name="Disease">
+<column name="Disease"/>
+</many-to-one>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Event" table="CommentType_Event">
 <key>
 <column name="CommentType_Event_Hjid"/>
@@ -41,10 +52,15 @@
 </list-index>
 <one-to-many class="org.uniprot.uniprot.EventType"/>
 </list>
-<property name="Type">
-<column name="Type"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Interactant" table="CommentType_Interactant">
+<key>
+<column name="CommentType_Interactant_Hjid"/>
+</key>
+<list-index>
+<column name="CommentType_Interactant_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.InteractantType"/>
+</list>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Isoform" table="CommentType_Isoform">
 <key>
 <column name="CommentType_Isoform_Hjid"/>
@@ -74,11 +90,11 @@
 <column name="Name"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="Text">
-<column name="Text"/>
-</many-to-one>
 <many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="PhDependence">
 <column name="PhDependence"/>
+</many-to-one>
+<many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="Text">
+<column name="Text"/>
 </many-to-one>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Link" table="CommentType_Link">
 <key>
@@ -101,20 +117,13 @@
 <many-to-one class="org.uniprot.uniprot.MoleculeType" name="Molecule">
 <column name="Molecule"/>
 </many-to-one>
-<property name="LocationType">
-<column name="LocationType"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
+<many-to-one class="org.uniprot.uniprot.BpcCommentGroupKineticsType" name="Kinetics">
+<column name="Kinetics"/>
+</many-to-one>
 <property name="Mass">
 <column name="Mass"/>
 <type name="org.hibernate.type.FloatType"/>
 </property>
-<many-to-one class="org.uniprot.uniprot.BpcCommentGroupKineticsType" name="Kinetics">
-<column name="Kinetics"/>
-</many-to-one>
-<many-to-one class="org.uniprot.uniprot.BpcCommentGroupAbsorptionType" name="Absorption">
-<column name="Absorption"/>
-</many-to-one>
 <many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="RedoxPotential">
 <column name="RedoxPotential"/>
 </many-to-one>

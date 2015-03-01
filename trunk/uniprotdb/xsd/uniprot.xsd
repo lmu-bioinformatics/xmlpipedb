@@ -480,13 +480,21 @@
             Equivalent to the flat file CC-line.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
+            <xs:element name="molecule" type="moleculeType" minOccurs="0"/>
             <xs:choice minOccurs="0">
                 <xs:group ref="bpcCommentGroup"/>
+
+                <xs:sequence>
+                    <xs:annotation>
+                        <xs:documentation>Used in 'cofactor' annotations.</xs:documentation>
+                    </xs:annotation>
+                    <xs:element name="cofactor" type="cofactorType" maxOccurs="unbounded"/>
+                </xs:sequence>
+
                 <xs:sequence>
                     <xs:annotation>
                         <xs:documentation>Used in 'subcellular location' annotations.</xs:documentation>
                     </xs:annotation>
-                    <xs:element name="molecule" type="moleculeType" minOccurs="0"/>
                     <xs:element name="subcellularLocation" type="subcellularLocationType" maxOccurs="unbounded"/>
                 </xs:sequence>
 
@@ -688,6 +696,17 @@
             <xs:element name="temperatureDependence" type="evidencedStringType" minOccurs="0"/>
         </xs:sequence>
     </xs:group>
+
+    <xs:complexType name="cofactorType">
+        <xs:annotation>
+            <xs:documentation>Describes a cofactor.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="dbReference" type="dbReferenceType"/>
+        </xs:sequence>
+        <xs:attribute name="evidence" type="intListType" use="optional"/>
+    </xs:complexType>
 
     <xs:complexType name="subcellularLocationType">
         <xs:annotation>

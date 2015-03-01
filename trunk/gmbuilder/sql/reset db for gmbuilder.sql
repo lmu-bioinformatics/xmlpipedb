@@ -777,6 +777,9 @@ alter table BpcCommentGroupAbsorptionType drop constraint FK1D8423BEC7E8E1C4;
 alter table BpcCommentGroupKineticsType drop constraint FKE5FBEB69C81D818D;
 alter table CitationType drop constraint FK7C9796E1F57415A4;
 alter table CitationType drop constraint FK7C9796E1F22C5486;
+alter table CofactorType drop constraint FKFE1886B5A693E7C;
+alter table CofactorType drop constraint FKFE1886B59E6BD1DC;
+alter table CofactorType_Evidence drop constraint FKA61E68C1950ED528;
 alter table CommentType drop constraint FKE0CB521925E10D55;
 alter table CommentType drop constraint FKE0CB521947B1940B;
 alter table CommentType drop constraint FKE0CB5219EA21FEEF;
@@ -892,6 +895,8 @@ alter table SubcellularLocationType drop constraint FKDAB41539501D42C4;
 drop table BpcCommentGroupAbsorptionType;
 drop table BpcCommentGroupKineticsType;
 drop table CitationType;
+drop table CofactorType;
+drop table CofactorType_Evidence;
 drop table CommentType;
 drop table CommentType_ConflictType;
 drop table CommentType_ConflictType_SequenceType;
@@ -1006,25 +1011,41 @@ create table CitationType (
     Institute varchar,
     primary key (Hjid)
 );
+create table CofactorType (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Name varchar,
+    DbReference int8,
+    CommentType_Cofactor_Hjid int8,
+    CommentType_Cofactor_Hjindex int4,
+    primary key (Hjid)
+);
+create table CofactorType_Evidence (
+    CofactorType_Evidence_Hjid int8 not null,
+    Hjvalue int4,
+    CofactorType_Evidence_Hjindex int4 not null,
+    primary key (CofactorType_Evidence_Hjid, CofactorType_Evidence_Hjindex)
+);
 create table CommentType (
     Hjid int8 not null,
     Hjtype varchar not null,
     Hjversion int8 not null,
-    Experiments int4,
-    Disease int8,
     TemperatureDependence int8,
     Method varchar,
     Type varchar,
+    LocationType varchar,
+    Absorption int8,
+    Experiments int4,
+    Disease int8,
     Conflict int8,
     Error varchar,
     Name varchar,
-    Text int8,
     PhDependence int8,
+    Text int8,
     Molecule int8,
-    LocationType varchar,
-    Mass float4,
     Kinetics int8,
-    Absorption int8,
+    Mass float4,
     RedoxPotential int8,
     OrganismsDiffer bool,
     primary key (Hjid)
@@ -1689,6 +1710,18 @@ alter table CitationType
     add constraint FK7C9796E1F22C5486 
     foreign key (EditorList) 
     references NameListType;
+alter table CofactorType 
+    add constraint FKFE1886B5A693E7C 
+    foreign key (DbReference) 
+    references DbReferenceType;
+alter table CofactorType 
+    add constraint FKFE1886B59E6BD1DC 
+    foreign key (CommentType_Cofactor_Hjid) 
+    references CommentType;
+alter table CofactorType_Evidence 
+    add constraint FKA61E68C1950ED528 
+    foreign key (CofactorType_Evidence_Hjid) 
+    references CofactorType;
 alter table CommentType 
     add constraint FKE0CB521925E10D55 
     foreign key (Absorption) 

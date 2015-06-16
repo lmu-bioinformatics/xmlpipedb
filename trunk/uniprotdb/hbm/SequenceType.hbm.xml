@@ -9,6 +9,22 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
+<property name="Mass">
+<column name="Mass"/>
+<type name="org.hibernate.type.IntegerType"/>
+</property>
+<property name="Modified">
+<column name="Modified"/>
+<type name="org.jvnet.hyperjaxb2.runtime.hibernate.type.CalendarType"/>
+</property>
+<property name="Length">
+<column name="Length"/>
+<type name="org.hibernate.type.IntegerType"/>
+</property>
+<property name="Version">
+<column name="Version"/>
+<type name="org.hibernate.type.IntegerType"/>
+</property>
 <property name="Checksum">
 <column name="Checksum"/>
 <type name="org.hibernate.type.StringType"/>
@@ -17,29 +33,13 @@
 <column name="Value"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<property name="Modified">
-<column name="Modified"/>
-<type name="org.jvnet.hyperjaxb2.runtime.hibernate.type.CalendarType"/>
-</property>
-<property name="Mass">
-<column name="Mass"/>
-<type name="org.hibernate.type.IntegerType"/>
-</property>
-<property name="Length">
-<column name="Length"/>
-<type name="org.hibernate.type.IntegerType"/>
+<property name="Fragment">
+<column name="Fragment"/>
+<type name="org.hibernate.type.StringType"/>
 </property>
 <property name="Precursor">
 <column name="Precursor"/>
 <type name="org.hibernate.type.BooleanType"/>
-</property>
-<property name="Version">
-<column name="Version"/>
-<type name="org.hibernate.type.IntegerType"/>
-</property>
-<property name="Fragment">
-<column name="Fragment"/>
-<type name="org.hibernate.type.StringType"/>
 </property>
 <subclass discriminator-value="org.uniprot.uniprot.SequenceType" name="org.uniprot.uniprot.impl.SequenceTypeImpl"/>
 </class>

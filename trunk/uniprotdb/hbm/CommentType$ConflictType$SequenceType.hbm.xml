@@ -9,6 +9,10 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
+<property name="Version">
+<column name="Version"/>
+<type name="org.hibernate.type.IntegerType"/>
+</property>
 <property name="Resource">
 <column name="Resource"/>
 <type name="org.hibernate.type.StringType"/>
@@ -16,10 +20,6 @@
 <property name="Id">
 <column name="Id"/>
 <type name="org.hibernate.type.StringType"/>
-</property>
-<property name="Version">
-<column name="Version"/>
-<type name="org.hibernate.type.IntegerType"/>
 </property>
 <subclass discriminator-value="org.uniprot.uniprot.CommentType.ConflictType.SequenceType" name="org.uniprot.uniprot.impl.CommentTypeImpl$ConflictTypeImpl$SequenceTypeImpl"/>
 </class>

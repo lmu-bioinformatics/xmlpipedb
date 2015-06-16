@@ -9,16 +9,16 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
+<property name="IntactId">
+<column name="IntactId"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
 <property name="Label">
 <column name="Label"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
 <property name="Id">
 <column name="Id"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
-<property name="IntactId">
-<column name="IntactId"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
 <subclass discriminator-value="org.uniprot.uniprot.InteractantType" name="org.uniprot.uniprot.impl.InteractantTypeImpl"/>

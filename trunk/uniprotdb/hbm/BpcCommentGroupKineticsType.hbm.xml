@@ -9,9 +9,15 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="Text">
-<column name="Text"/>
-</many-to-one>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="KM" table="BpcCommentGroupKineticsType_KM">
+<key>
+<column name="BpcCommentGroupKineticsType_KM_Hjid"/>
+</key>
+<list-index>
+<column name="BpcCommentGroupKineticsType_KM_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
+</list>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Vmax" table="BpcCommentGroupKineticsType_Vmax">
 <key>
 <column name="BpcCommentGroupKineticsType_Vmax_Hjid"/>
@@ -21,12 +27,12 @@
 </list-index>
 <one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
 </list>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="KM" table="BpcCommentGroupKineticsType_KM">
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Text" table="BpcCommentGroupKineticsType_Text">
 <key>
-<column name="BpcCommentGroupKineticsType_KM_Hjid"/>
+<column name="BpcCommentGroupKineticsType_Text_Hjid"/>
 </key>
 <list-index>
-<column name="BpcCommentGroupKineticsType_KM_Hjindex"/>
+<column name="BpcCommentGroupKineticsType_Text_Hjindex"/>
 </list-index>
 <one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
 </list>

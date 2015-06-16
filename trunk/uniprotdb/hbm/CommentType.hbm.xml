@@ -9,49 +9,12 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="TemperatureDependence">
-<column name="TemperatureDependence"/>
+<many-to-one class="org.uniprot.uniprot.BpcCommentGroupPhDependenceType" name="PhDependence">
+<column name="PhDependence"/>
 </many-to-one>
-<property name="Method">
-<column name="Method"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
-<property name="Type">
-<column name="Type"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
-<property name="LocationType">
-<column name="LocationType"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
-<many-to-one class="org.uniprot.uniprot.BpcCommentGroupAbsorptionType" name="Absorption">
-<column name="Absorption"/>
-</many-to-one>
-<property name="Experiments">
-<column name="Experiments"/>
-<type name="org.hibernate.type.IntegerType"/>
-</property>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Cofactor" table="CommentType_Cofactor">
-<key>
-<column name="CommentType_Cofactor_Hjid"/>
-</key>
-<list-index>
-<column name="CommentType_Cofactor_Hjindex"/>
-</list-index>
-<one-to-many class="org.uniprot.uniprot.CofactorType"/>
-</list>
 <many-to-one class="org.uniprot.uniprot.CommentType$DiseaseType" name="Disease">
 <column name="Disease"/>
 </many-to-one>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Event" table="CommentType_Event">
-<key>
-<column name="CommentType_Event_Hjid"/>
-</key>
-<list-index>
-<column name="CommentType_Event_Hjindex"/>
-</list-index>
-<one-to-many class="org.uniprot.uniprot.EventType"/>
-</list>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Interactant" table="CommentType_Interactant">
 <key>
 <column name="CommentType_Interactant_Hjid"/>
@@ -61,76 +24,32 @@
 </list-index>
 <one-to-many class="org.uniprot.uniprot.InteractantType"/>
 </list>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Isoform" table="CommentType_Isoform">
-<key>
-<column name="CommentType_Isoform_Hjid"/>
-</key>
-<list-index>
-<column name="CommentType_Isoform_Hjindex"/>
-</list-index>
-<one-to-many class="org.uniprot.uniprot.IsoformType"/>
-</list>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Location" table="CommentType_Location">
-<key>
-<column name="CommentType_Location_Hjid"/>
-</key>
-<list-index>
-<column name="CommentType_Location_Hjindex"/>
-</list-index>
-<one-to-many class="org.uniprot.uniprot.LocationType"/>
-</list>
-<many-to-one class="org.uniprot.uniprot.CommentType$ConflictType" name="Conflict">
-<column name="Conflict"/>
+<many-to-one class="org.uniprot.uniprot.BpcCommentGroupRedoxPotentialType" name="RedoxPotential">
+<column name="RedoxPotential"/>
 </many-to-one>
-<property name="Error">
-<column name="Error"/>
-<type name="org.hibernate.type.StringType"/>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Cofactor" table="CommentType_Cofactor">
+<key>
+<column name="CommentType_Cofactor_Hjid"/>
+</key>
+<list-index>
+<column name="CommentType_Cofactor_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.CofactorType"/>
+</list>
+<property name="Experiments">
+<column name="Experiments"/>
+<type name="org.hibernate.type.IntegerType"/>
 </property>
 <property name="Name">
 <column name="Name"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="PhDependence">
-<column name="PhDependence"/>
+<many-to-one class="org.uniprot.uniprot.BpcCommentGroupAbsorptionType" name="Absorption">
+<column name="Absorption"/>
 </many-to-one>
-<many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="Text">
-<column name="Text"/>
+<many-to-one class="org.uniprot.uniprot.BpcCommentGroupTemperatureDependenceType" name="TemperatureDependence">
+<column name="TemperatureDependence"/>
 </many-to-one>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Link" table="CommentType_Link">
-<key>
-<column name="CommentType_Link_Hjid"/>
-</key>
-<list-index>
-<column name="CommentType_Link_Hjindex"/>
-</list-index>
-<one-to-many class="org.uniprot.uniprot.CommentType$LinkType"/>
-</list>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="SubcellularLocation" table="CommentType_SubcellularLocation">
-<key>
-<column name="CommentType_SubcellularLocation_Hjid"/>
-</key>
-<list-index>
-<column name="CommentType_SubcellularLocation_Hjindex"/>
-</list-index>
-<one-to-many class="org.uniprot.uniprot.SubcellularLocationType"/>
-</list>
-<many-to-one class="org.uniprot.uniprot.MoleculeType" name="Molecule">
-<column name="Molecule"/>
-</many-to-one>
-<many-to-one class="org.uniprot.uniprot.BpcCommentGroupKineticsType" name="Kinetics">
-<column name="Kinetics"/>
-</many-to-one>
-<property name="Mass">
-<column name="Mass"/>
-<type name="org.hibernate.type.FloatType"/>
-</property>
-<many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="RedoxPotential">
-<column name="RedoxPotential"/>
-</many-to-one>
-<property name="OrganismsDiffer">
-<column name="OrganismsDiffer"/>
-<type name="org.hibernate.type.BooleanType"/>
-</property>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Evidence" table="CommentType_Evidence">
 <key>
 <column name="CommentType_Evidence_Hjid"/>
@@ -141,6 +60,93 @@
 <element type="org.hibernate.type.IntegerType">
 <column name="Hjvalue"/>
 </element>
+</list>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Isoform" table="CommentType_Isoform">
+<key>
+<column name="CommentType_Isoform_Hjid"/>
+</key>
+<list-index>
+<column name="CommentType_Isoform_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.IsoformType"/>
+</list>
+<property name="OrganismsDiffer">
+<column name="OrganismsDiffer"/>
+<type name="org.hibernate.type.BooleanType"/>
+</property>
+<property name="Error">
+<column name="Error"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Text" table="CommentType_Text">
+<key>
+<column name="CommentType_Text_Hjid"/>
+</key>
+<list-index>
+<column name="CommentType_Text_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
+</list>
+<property name="Method">
+<column name="Method"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<property name="Mass">
+<column name="Mass"/>
+<type name="org.hibernate.type.FloatType"/>
+</property>
+<many-to-one class="org.uniprot.uniprot.MoleculeType" name="Molecule">
+<column name="Molecule"/>
+</many-to-one>
+<property name="Type">
+<column name="Type"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<many-to-one class="org.uniprot.uniprot.CommentType$ConflictType" name="Conflict">
+<column name="Conflict"/>
+</many-to-one>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Event" table="CommentType_Event">
+<key>
+<column name="CommentType_Event_Hjid"/>
+</key>
+<list-index>
+<column name="CommentType_Event_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.EventType"/>
+</list>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="SubcellularLocation" table="CommentType_SubcellularLocation">
+<key>
+<column name="CommentType_SubcellularLocation_Hjid"/>
+</key>
+<list-index>
+<column name="CommentType_SubcellularLocation_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.SubcellularLocationType"/>
+</list>
+<many-to-one class="org.uniprot.uniprot.BpcCommentGroupKineticsType" name="Kinetics">
+<column name="Kinetics"/>
+</many-to-one>
+<property name="LocationType">
+<column name="LocationType"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Link" table="CommentType_Link">
+<key>
+<column name="CommentType_Link_Hjid"/>
+</key>
+<list-index>
+<column name="CommentType_Link_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.CommentType$LinkType"/>
+</list>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Location" table="CommentType_Location">
+<key>
+<column name="CommentType_Location_Hjid"/>
+</key>
+<list-index>
+<column name="CommentType_Location_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.LocationType"/>
 </list>
 <subclass discriminator-value="org.uniprot.uniprot.CommentType" name="org.uniprot.uniprot.impl.CommentTypeImpl"/>
 </class>

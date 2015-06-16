@@ -9,6 +9,15 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="EcNumber" table="ProteinNameGroupRecommendedNameType_EcNumber">
+<key>
+<column name="ProteinNameGroupRecommendedNameType_EcNumber_Hjid"/>
+</key>
+<list-index>
+<column name="ProteinNameGroupRecommendedNameType_EcNumber_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
+</list>
 <many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="FullName">
 <column name="FullName"/>
 </many-to-one>
@@ -18,15 +27,6 @@
 </key>
 <list-index>
 <column name="ProteinNameGroupRecommendedNameType_ShortName_Hjindex"/>
-</list-index>
-<one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
-</list>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="EcNumber" table="ProteinNameGroupRecommendedNameType_EcNumber">
-<key>
-<column name="ProteinNameGroupRecommendedNameType_EcNumber_Hjid"/>
-</key>
-<list-index>
-<column name="ProteinNameGroupRecommendedNameType_EcNumber_Hjindex"/>
 </list-index>
 <one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
 </list>

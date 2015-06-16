@@ -9,14 +9,14 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Name" table="OrganismType_Name">
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="DbReference" table="OrganismType_DbReference">
 <key>
-<column name="OrganismType_Name_Hjid"/>
+<column name="OrganismType_DbReference_Hjid"/>
 </key>
 <list-index>
-<column name="OrganismType_Name_Hjindex"/>
+<column name="OrganismType_DbReference_Hjindex"/>
 </list-index>
-<one-to-many class="org.uniprot.uniprot.OrganismNameType"/>
+<one-to-many class="org.uniprot.uniprot.DbReferenceType"/>
 </list>
 <many-to-one class="org.uniprot.uniprot.OrganismType$LineageType" name="Lineage">
 <column name="Lineage"/>
@@ -32,14 +32,14 @@
 <column name="Hjvalue"/>
 </element>
 </list>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="DbReference" table="OrganismType_DbReference">
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Name" table="OrganismType_Name">
 <key>
-<column name="OrganismType_DbReference_Hjid"/>
+<column name="OrganismType_Name_Hjid"/>
 </key>
 <list-index>
-<column name="OrganismType_DbReference_Hjindex"/>
+<column name="OrganismType_Name_Hjindex"/>
 </list-index>
-<one-to-many class="org.uniprot.uniprot.DbReferenceType"/>
+<one-to-many class="org.uniprot.uniprot.OrganismNameType"/>
 </list>
 <subclass discriminator-value="org.uniprot.uniprot.OrganismType" name="org.uniprot.uniprot.impl.OrganismTypeImpl"/>
 </class>

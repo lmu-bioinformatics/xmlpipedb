@@ -9,12 +9,18 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="Text">
-<column name="Text"/>
-</many-to-one>
 <many-to-one class="org.uniprot.uniprot.EvidencedStringType" name="Max">
 <column name="Max"/>
 </many-to-one>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Text" table="BpcCommentGroupAbsorptionType_Text">
+<key>
+<column name="BpcCommentGroupAbsorptionType_Text_Hjid"/>
+</key>
+<list-index>
+<column name="BpcCommentGroupAbsorptionType_Text_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
+</list>
 <subclass discriminator-value="org.uniprot.uniprot.BpcCommentGroupAbsorptionType" name="org.uniprot.uniprot.impl.BpcCommentGroupAbsorptionTypeImpl"/>
 </class>
 </hibernate-mapping>

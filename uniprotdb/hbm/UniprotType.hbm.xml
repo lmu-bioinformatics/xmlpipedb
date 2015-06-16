@@ -9,6 +9,10 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
+<property name="Copyright">
+<column name="Copyright"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Entry" table="UniprotType_Entry">
 <key>
 <column name="UniprotType_Entry_Hjid"/>
@@ -18,10 +22,6 @@
 </list-index>
 <one-to-many class="org.uniprot.uniprot.EntryType"/>
 </list>
-<property name="Copyright">
-<column name="Copyright"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
 <subclass discriminator-value="org.uniprot.uniprot.UniprotType" name="org.uniprot.uniprot.impl.UniprotTypeImpl"/>
 </class>
 </hibernate-mapping>

@@ -9,21 +9,21 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Orientation" table="SubcellularLocationType_Orientation">
-<key>
-<column name="SubcellularLocationType_Orientation_Hjid"/>
-</key>
-<list-index>
-<column name="SubcellularLocationType_Orientation_Hjindex"/>
-</list-index>
-<one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
-</list>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Topology" table="SubcellularLocationType_Topology">
 <key>
 <column name="SubcellularLocationType_Topology_Hjid"/>
 </key>
 <list-index>
 <column name="SubcellularLocationType_Topology_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
+</list>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Orientation" table="SubcellularLocationType_Orientation">
+<key>
+<column name="SubcellularLocationType_Orientation_Hjid"/>
+</key>
+<list-index>
+<column name="SubcellularLocationType_Orientation_Hjindex"/>
 </list-index>
 <one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
 </list>

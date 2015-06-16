@@ -9,15 +9,6 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Name" table="GeneLocationType_Name">
-<key>
-<column name="GeneLocationType_Name_Hjid"/>
-</key>
-<list-index>
-<column name="GeneLocationType_Name_Hjindex"/>
-</list-index>
-<one-to-many class="org.uniprot.uniprot.StatusType"/>
-</list>
 <property name="Type">
 <column name="Type"/>
 <type name="org.hibernate.type.StringType"/>
@@ -32,6 +23,15 @@
 <element type="org.hibernate.type.IntegerType">
 <column name="Hjvalue"/>
 </element>
+</list>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Name" table="GeneLocationType_Name">
+<key>
+<column name="GeneLocationType_Name_Hjid"/>
+</key>
+<list-index>
+<column name="GeneLocationType_Name_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.StatusType"/>
 </list>
 <subclass discriminator-value="org.uniprot.uniprot.GeneLocationType" name="org.uniprot.uniprot.impl.GeneLocationTypeImpl"/>
 </class>

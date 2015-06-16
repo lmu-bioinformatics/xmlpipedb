@@ -9,18 +9,15 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Name" table="IsoformType_Name">
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Text" table="IsoformType_Text">
 <key>
-<column name="IsoformType_Name_Hjid"/>
+<column name="IsoformType_Text_Hjid"/>
 </key>
 <list-index>
-<column name="IsoformType_Name_Hjindex"/>
+<column name="IsoformType_Text_Hjindex"/>
 </list-index>
-<one-to-many class="org.uniprot.uniprot.IsoformType$NameType"/>
+<one-to-many class="org.uniprot.uniprot.EvidencedStringType"/>
 </list>
-<many-to-one class="org.uniprot.uniprot.IsoformType$NoteType" name="Note">
-<column name="Note"/>
-</many-to-one>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Id" table="IsoformType_Id">
 <key>
 <column name="IsoformType_Id_Hjid"/>
@@ -35,6 +32,15 @@
 <many-to-one class="org.uniprot.uniprot.IsoformType$SequenceType" name="Sequence">
 <column name="Sequence"/>
 </many-to-one>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Name" table="IsoformType_Name">
+<key>
+<column name="IsoformType_Name_Hjid"/>
+</key>
+<list-index>
+<column name="IsoformType_Name_Hjindex"/>
+</list-index>
+<one-to-many class="org.uniprot.uniprot.IsoformType$NameType"/>
+</list>
 <subclass discriminator-value="org.uniprot.uniprot.IsoformType" name="org.uniprot.uniprot.impl.IsoformTypeImpl"/>
 </class>
 </hibernate-mapping>

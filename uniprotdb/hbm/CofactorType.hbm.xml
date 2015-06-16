@@ -9,10 +9,9 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<property name="Name">
-<column name="Name"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
+<many-to-one class="org.uniprot.uniprot.DbReferenceType" name="DbReference">
+<column name="DbReference"/>
+</many-to-one>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Evidence" table="CofactorType_Evidence">
 <key>
 <column name="CofactorType_Evidence_Hjid"/>
@@ -24,9 +23,10 @@
 <column name="Hjvalue"/>
 </element>
 </list>
-<many-to-one class="org.uniprot.uniprot.DbReferenceType" name="DbReference">
-<column name="DbReference"/>
-</many-to-one>
+<property name="Name">
+<column name="Name"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
 <subclass discriminator-value="org.uniprot.uniprot.CofactorType" name="org.uniprot.uniprot.impl.CofactorTypeImpl"/>
 </class>
 </hibernate-mapping>

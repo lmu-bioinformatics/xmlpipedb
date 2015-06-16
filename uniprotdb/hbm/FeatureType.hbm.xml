@@ -17,17 +17,29 @@
 <column name="Ref"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<property name="Description">
-<column name="Description"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
 <property name="Type">
 <column name="Type"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<many-to-one class="org.uniprot.uniprot.LocationType" name="Location">
-<column name="Location"/>
-</many-to-one>
+<property name="Description">
+<column name="Description"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
+<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Evidence" table="FeatureType_Evidence">
+<key>
+<column name="FeatureType_Evidence_Hjid"/>
+</key>
+<list-index>
+<column name="FeatureType_Evidence_Hjindex"/>
+</list-index>
+<element type="org.hibernate.type.IntegerType">
+<column name="Hjvalue"/>
+</element>
+</list>
+<property name="Id">
+<column name="Id"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
 <list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Variation" table="FeatureType_Variation">
 <key>
 <column name="FeatureType_Variation_Hjid"/>
@@ -43,21 +55,9 @@
 <column name="Original"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<property name="Id">
-<column name="Id"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
-<list access="org.jvnet.hyperjaxb2.runtime.hibernate.accessor.ListAccessor" name="Evidence" table="FeatureType_Evidence">
-<key>
-<column name="FeatureType_Evidence_Hjid"/>
-</key>
-<list-index>
-<column name="FeatureType_Evidence_Hjindex"/>
-</list-index>
-<element type="org.hibernate.type.IntegerType">
-<column name="Hjvalue"/>
-</element>
-</list>
+<many-to-one class="org.uniprot.uniprot.LocationType" name="Location">
+<column name="Location"/>
+</many-to-one>
 <subclass discriminator-value="org.uniprot.uniprot.FeatureType" name="org.uniprot.uniprot.impl.FeatureTypeImpl"/>
 </class>
 </hibernate-mapping>

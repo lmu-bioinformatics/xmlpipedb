@@ -9,14 +9,13 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<property name="Name">
-<column name="Name"/>
-<type name="org.hibernate.type.StringType"/>
-</property>
 <property name="Description">
 <column name="Description"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
+<many-to-one class="org.uniprot.uniprot.DbReferenceType" name="DbReference">
+<column name="DbReference"/>
+</many-to-one>
 <property name="Id">
 <column name="Id"/>
 <type name="org.hibernate.type.StringType"/>
@@ -25,9 +24,10 @@
 <column name="Acronym"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<many-to-one class="org.uniprot.uniprot.DbReferenceType" name="DbReference">
-<column name="DbReference"/>
-</many-to-one>
+<property name="Name">
+<column name="Name"/>
+<type name="org.hibernate.type.StringType"/>
+</property>
 <subclass discriminator-value="org.uniprot.uniprot.CommentType.DiseaseType" name="org.uniprot.uniprot.impl.CommentTypeImpl$DiseaseTypeImpl"/>
 </class>
 </hibernate-mapping>

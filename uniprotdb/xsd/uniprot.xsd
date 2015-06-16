@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- *****************************************************************************
 	UniProt Knowledgebase
-	Version: 	$Revision$
-	Date:		$Date$
+	Version: 	$Revision: 1.3 $
+	Date:		$Date: 2015/04/07 15:00:57 $
 
 	Copyright (c) 2011 UniProt consortium
 	All rights reserved.
@@ -590,11 +590,7 @@
                 </xs:annotation>
             </xs:element>
 
-            <xs:element name="text" type="evidencedStringType" minOccurs="0">
-                <xs:annotation>
-                    <xs:documentation>Used to store non-structured types of annotations, as well as optional free-text notes of structured types of annotations.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
+            <xs:element name="text" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
 
         </xs:sequence>
 
@@ -678,7 +674,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="max" type="evidencedStringType" minOccurs="0"/>
-                        <xs:element name="text" type="evidencedStringType" minOccurs="0"/>
+                        <xs:element name="text" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -687,13 +683,31 @@
                     <xs:sequence>
                         <xs:element name="KM" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
                         <xs:element name="Vmax" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element name="text" type="evidencedStringType" minOccurs="0"/>
+                        <xs:element name="text" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="phDependence" type="evidencedStringType" minOccurs="0"/>
-            <xs:element name="redoxPotential" type="evidencedStringType" minOccurs="0"/>
-            <xs:element name="temperatureDependence" type="evidencedStringType" minOccurs="0"/>
+            <xs:element name="phDependence" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="text" type="evidencedStringType" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="redoxPotential" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="text" type="evidencedStringType" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="temperatureDependence" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="text" type="evidencedStringType" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
     </xs:group>
 
@@ -765,15 +779,7 @@
                     <xs:attribute name="ref" type="xs:string" use="optional"/>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="note" minOccurs="0">
-                <xs:complexType>
-                    <xs:simpleContent>
-                        <xs:extension base="xs:string">
-                            <xs:attribute name="evidence" type="intListType" use="optional"/>
-                        </xs:extension>
-                    </xs:simpleContent>
-                </xs:complexType>
-            </xs:element>
+            <xs:element name="text" type="evidencedStringType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 

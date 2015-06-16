@@ -9,19 +9,19 @@
 <column name="Hjtype"/>
 </discriminator>
 <version name="Hjversion" type="org.hibernate.type.LongType"/>
-<many-to-one class="org.uniprot.uniprot.PositionType" name="End">
-<column name="EndPosition"/>
-</many-to-one>
 <many-to-one class="org.uniprot.uniprot.PositionType" name="Position">
 <column name="Position"/>
+</many-to-one>
+<many-to-one class="org.uniprot.uniprot.PositionType" name="Begin">
+<column name="Begin"/>
+</many-to-one>
+<many-to-one class="org.uniprot.uniprot.PositionType" name="End">
+<column name="EndPosition"/>
 </many-to-one>
 <property name="Sequence">
 <column name="Sequence"/>
 <type name="org.hibernate.type.StringType"/>
 </property>
-<many-to-one class="org.uniprot.uniprot.PositionType" name="Begin">
-<column name="Begin"/>
-</many-to-one>
 <subclass discriminator-value="org.uniprot.uniprot.LocationType" name="org.uniprot.uniprot.impl.LocationTypeImpl"/>
 </class>
 </hibernate-mapping>

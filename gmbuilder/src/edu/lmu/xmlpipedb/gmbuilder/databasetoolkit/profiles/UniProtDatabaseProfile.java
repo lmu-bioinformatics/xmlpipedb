@@ -466,7 +466,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         									+ "from commenttype inner join entrytype_comment "
         									+ "on (entrytype_comment_hjchildid = commenttype.hjid) "
         									+ "inner join evidencedstringtype "
-        									+ "on (text = evidencedstringtype.hjid) "
+        									+ "on (commenttype.hjid = commenttype_text_hjid) "
         									+ "where type = 'function' "
         									+ "and entrytype_comment_hjid = ?");
         			ps.setInt(1, Integer.parseInt(row.getValue("UID")));

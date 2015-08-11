@@ -81,7 +81,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "2.0b84";
+    public static final String VERSION = "2.0b85";
 
     /**
      * Starts the application.
@@ -1138,43 +1138,31 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
         // Tests version of Java being used; if 64-bit version is being used, prevents
         // export and returns error.
-        if ("64".equals(System.getProperty("sun.arch.data.model"))) {
-        	ModalDialog.showErrorDialog("Java Driver Compatibility Error",
-        			"GenMAPP Builder is unable to export to an GenMAPP database while\n"
-        			+ "running in a 64-bit Java environment. You will need to restart GenMAPP\n"
-        			+ "Builder in a 32-bit environment.\n\n"
-        			+ "If you do not have a 32-bit Java environment installed, you will need\n"
-        			+ "to install a 32-bit Java JDK or JRE.\n\n"
-        			+ "If you do have a 32-bit Java environment installed, relaunch GenMAPP\n"
-        			+ "Builder using the gmbuilder-32bit.bat file.");
-        } else {
+        Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
 
-            Configuration hibernateConfiguration = GenMAPPBuilder.createHibernateConfiguration();
+        if (hibernateConfiguration != null) {
+            try {
+                validateDatabaseSettings(hibernateConfiguration);
 
-            if (hibernateConfiguration != null) {
-                try {
-                    validateDatabaseSettings(hibernateConfiguration);
-
-                    /*
-                     * ExportToGenMAPP is initialized
-                     */
-                    ExportToGenMAPP.init(hibernateConfiguration);
-                    getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    new ExportWizard(this.getFrontmostWindow());
-                } catch(HibernateException e) {
-                    _Log.error(e);
-                    handleErroneousHibernateConfiguration();
-                } catch(Exception e) {
-                    _Log.error(e);
-                    ModalDialog.showErrorDialog("Unexpected Export Error",
-                    		"An unexpected error has occurred during export.\n" +
-                    		"Please consult the log for technical details.");
-                } finally {
-                    try { ExportToGenMAPP.cleanup(); } catch(SQLException e) { /* ignored */ }
-                }
-            } else {
-                handleMissingHibernateConfiguration();
+                /*
+                 * ExportToGenMAPP is initialized
+                 */
+                ExportToGenMAPP.init(hibernateConfiguration);
+                getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                new ExportWizard(this.getFrontmostWindow());
+            } catch(HibernateException e) {
+                _Log.error(e);
+                handleErroneousHibernateConfiguration();
+            } catch(Exception e) {
+                _Log.error(e);
+                ModalDialog.showErrorDialog("Unexpected Export Error",
+                		"An unexpected error has occurred during export.\n" +
+                		"Please consult the log for technical details.");
+            } finally {
+                try { ExportToGenMAPP.cleanup(); } catch(SQLException e) { /* ignored */ }
             }
+        } else {
+            handleMissingHibernateConfiguration();
         }
 
         getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

@@ -322,9 +322,8 @@ public class ConnectionManager {
 
 		StringBuffer databaseConnectionString;
 
-	    databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=");
+	    databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=");
 	    databaseConnectionString.append(databaseFile);
-	    databaseConnectionString.append(";DriverID=22;READONLY=false}");
 
 	    // Connection will not be possible from 64-bit Java environment.
 	    // If both 32- and 64-bit Java environments are installed, gmbuilder-32bit.bat must be used.

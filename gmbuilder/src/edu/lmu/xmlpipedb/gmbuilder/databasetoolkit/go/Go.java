@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,10 +81,10 @@ public class Go {
 	 * 				Unique identifier for the GO table
 	 * @throws SQLException
 	 */
-	public void updateSystemsTable(Connection connection, String date, String systemCode) throws SQLException {
-		String stmt = "UPDATE Systems SET \"Date\" = ? WHERE SystemCode = ?";
+	public void updateSystemsTable(Connection connection, Date date, String systemCode) throws SQLException {
+		String stmt = "UPDATE Systems SET [Date] = ? WHERE SystemCode = ?";
 		PreparedStatement ps = connection.prepareStatement(stmt);
-		ps.setString(1, date);
+		ps.setTimestamp(1, new Timestamp(date.getTime()));
 		ps.setString(2, systemCode);
     	ps.executeUpdate();
     	ps.close();

@@ -163,7 +163,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 
                     	// Only add the ids that do not match the filter
                     	if (!id.matches(filter)) {
-                            tableManager.submit(substituteTable, QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
+                            tableManager.submit(substituteTable, QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
                     	}
                     }
                 }
@@ -246,7 +246,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                     while (result.next()) {
                         tableManager.submit(relationshipTable,
                             QueryType.insert, new String[][] {
-                                { "\"Primary\"", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, row.getValue("ID")) },
+                                { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, row.getValue("ID")) },
                                 { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, result.getString("id")) },
                                 // TODO This is hard-coded. Fix it.
                                 { finalColumnName, finalColumnValue }
@@ -292,7 +292,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
         			System.out.println("Added related id " + ss2.get(uid) + " for primary " + ss1.get(uid) + "to table " + stp);
         			tableManager.submit(relationshipTable,
                             QueryType.insert, new String[][] {
-                                { "\"Primary\"", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, ss1.get(uid)) },
+                                { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, ss1.get(uid)) },
                                 { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, ss2.get(uid)) },
                                 // TODO This is hard-coded. Fix it.
                                 { finalColumnName, finalColumnValue }
@@ -322,7 +322,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                         for (String id : row.getValue("ID").split("/")) {
                             tableManager.submit(relationshipTable,
                                 QueryType.insert, new String[][] {
-                                    { "\"Primary\"", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, primary) },
+                                    { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, primary) },
                                     { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, id) },
                                     // TODO This is hard-coded. Fix it.
                                     { finalColumnName, finalColumnValue }
@@ -349,7 +349,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 
                             tableManager.submit(relationshipTable,
                                 QueryType.insert, new String[][] {
-                                    { "\"Primary\"", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, row2.getValue("ID")) },
+                                    { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, row2.getValue("ID")) },
                                     { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, row1.getValue("ID")) },
                                     // TODO This is hard-coded.  Fix it.
                                     { finalColumnName, finalColumnValue }

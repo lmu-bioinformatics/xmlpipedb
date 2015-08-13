@@ -280,14 +280,14 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			}
 			tableManager.submit("Systems", QueryType.update, new String[][] {
 				{ "SystemCode", templateDefinedSystemToSystemCode.get(systemTable.getKey()) },
-				{ "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }
+				{ "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(version) }
 			});
 		}
 
 		// The "Other" table also needs a date: the date of export.
 		tableManager.submit("Systems", QueryType.update, new String[][] {
             { "SystemCode", templateDefinedSystemToSystemCode.get("Other") },
-            { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(new Date()) }
+            { "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(new Date()) }
         });
 
 		/*
@@ -326,7 +326,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             { "ProteinName", "MEMO" },
             { "Function", "MEMO" },
             { "Species", "MEMO" },
-            { "\"Date\"", "DATE" },
+            { "[Date]", "DATE" },
             { "Remarks", "MEMO" }
         }, new String[] { "UID" });
 
@@ -380,7 +380,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     					{ "UID", result.getString("entrytype_accession_hjid") },
     					{ "ID", result.getString("hjvalue") },
                         { "Species", "|" + speciesProfile.getSpeciesName() + "|" },
-                        { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }
+                        { "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(version) }
     				});
         		}
 
@@ -507,7 +507,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		    = new TableManager(new String[][] 
 		        { { "ID", "VARCHAR(50) NOT NULL" },
 		          { "Species", "MEMO" },
-		          { "\"Date\"", "DATE" },
+		          { "[Date]", "DATE" },
 		          { "Remarks", "MEMO" } },
 		        new String[] { "ID" } );
 
@@ -597,7 +597,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						//RB - get string from column 2SQL query result.
 						{ "Species", "|" + result.getString(2) + "|" },
 
-						{ "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }
+						{ "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(version) }
                     });
 				}
 			}
@@ -654,10 +654,10 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			// "Relationship table - " + relationshipTable + "...");
 
 			tableManager = new TableManager(
-					new String[][] { { "\"Primary\"", "VARCHAR(50) NOT NULL" },
+					new String[][] { { "[Primary]", "VARCHAR(50) NOT NULL" },
 					                 { "Related", "VARCHAR(50) NOT NULL" },
 					                 { "Bridge", "VARCHAR(3)" } },
-					new String[] { "\"Primary\"", "Related" } );
+					new String[] { "[Primary]", "Related" } );
 			
 			tableManager.getTableNames().add(relationshipTable);
 
@@ -724,7 +724,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 							relationshipTable,
 							QueryType.insert,
 							new String[][] {
-									{ "\"Primary\"", primary != null ? primary : "" },
+									{ "[Primary]", primary != null ? primary : "" },
 									{ "Related", related != null ? related : "" },
 									// TODO This is hard-coded. Fix it.
 									{ "Bridge", "S" }
@@ -799,7 +799,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 									result.getString("id2"));
 
 					tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
-					    { "\"Primary\"", primary != null ? primary : "" },
+					    { "[Primary]", primary != null ? primary : "" },
 						{ "Related", related != null ? related : "" },
 						// FIXME This is hard-coded. Fix it.
 						{ "Bridge", "S" } 
@@ -845,7 +845,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				_Log.info("getRelationshipTable(): else - No way of currently producing these.");
 				
 				tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
-				    { "\"Primary\"", "" },
+				    { "[Primary]", "" },
 					{ "Related", "" },
 					// FIXME: This is hard-coded. Fix it.
 					{ "Bridge", "" }
@@ -885,9 +885,9 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 	 */
 	private TableManager getSecondPassRelationshipTables() {
 		TableManager tableManager = new TableManager(new String[][] {
-				{ "\"Primary\"", "VARCHAR(50) NOT NULL" },
+				{ "[Primary]", "VARCHAR(50) NOT NULL" },
 				{ "Related", "VARCHAR(50) NOT NULL" },
-				{ "Bridge", "VARCHAR(3)" } }, new String[] { "\"Primary\"",
+				{ "Bridge", "VARCHAR(3)" } }, new String[] { "[Primary]",
 				"Related" });
 
 		PreparedStatement ps = null;
@@ -922,7 +922,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				while (result.next()) {
 					tableManager.submit(relationshipTable, QueryType.insert,
 							new String[][] {
-									{ "\"Primary\"", result.getString("id1") },
+									{ "[Primary]", result.getString("id1") },
 									{ "Related", result.getString("id2") },
 									// TODO This is hard-coded. Fix it.
 									{ "Bridge", "S" } });

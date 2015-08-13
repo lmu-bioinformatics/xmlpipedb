@@ -193,7 +193,7 @@ public class Table {
 	 */
 	private void create(String tableName) {
 		
-		StringBuffer sqlStatement = new StringBuffer("CREATE TABLE \"" + tableName + "\" (");
+		StringBuffer sqlStatement = new StringBuffer("CREATE TABLE [" + tableName + "] (");
 		for(String columnName : tableAttributes.nameSet()) {
 			sqlStatement.append(columnName + " " + tableAttributes.get(columnName) + ",");
 		}
@@ -215,7 +215,7 @@ public class Table {
 		
 		List<String> valueBag = new ArrayList<String>();
 		
-		StringBuffer sqlStatement = new StringBuffer("INSERT INTO \"" + tableName + "\" (");
+		StringBuffer sqlStatement = new StringBuffer("INSERT INTO [" + tableName + "] (");
 			
 		
 		for(Entry<String, String> nameAndValue : namesAndValues.entrySet()) {
@@ -269,7 +269,7 @@ public class Table {
 		
 		List<String> valueBag = new ArrayList<String>();
 	
-		StringBuffer sqlStatement = new StringBuffer("UPDATE \"" + tableName + "\" SET ");
+		StringBuffer sqlStatement = new StringBuffer("UPDATE [" + tableName + "] SET ");
 			
 		for(Entry<String, String> nameAndValue : namesAndValues.entrySet()) {	
 	

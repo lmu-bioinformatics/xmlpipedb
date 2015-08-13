@@ -8,40 +8,40 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go;
  */
 public enum GOTable {
     GeneOntologyTree("GeneOntologyTree",
-            "create table GeneOntologyTree (OrderNo LONG,\"Level\" Int,ID VARCHAR(50),Name MEMO)",
+            "create table GeneOntologyTree (OrderNo LONG,Level Int,ID VARCHAR(50),Name MEMO)",
             // Non-Access column types
 //          {"varchar", "varchar", "VARCHAR(50)", "varchar"}, /* GOTree */
-            "insert into GeneOntologyTree (OrderNo,\"Level\",ID,Name) values (?,?,?,?)"),
+            "insert into GeneOntologyTree (OrderNo,Level,ID,Name) values (?,?,?,?)"),
             
     GeneOntology("GeneOntology",
-            "create table GeneOntology (ID VARCHAR(50) NOT NULL,Name MEMO,Type VARCHAR(2),Parent VARCHAR(50),Relation CHAR,Species MEMO,\"Date\" DATE,Remarks MEMO)",
+            "create table GeneOntology (ID VARCHAR(50) NOT NULL,Name MEMO,Type VARCHAR(2),Parent VARCHAR(50),Relation CHAR,Species MEMO,Date DATE,Remarks MEMO)",
             // Non-Access column types
 //          {"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO */
-            "insert into GeneOntology (ID,Name,Type,Parent,Relation,Species,\"Date\",Remarks) values (?,?,?,?,?,?,?,?)"),
+            "insert into GeneOntology (ID,Name,Type,Parent,Relation,Species,Date,Remarks) values (?,?,?,?,?,?,?,?)"),
             
     GeneOntologyStage("GeneOntologyStage",
-            "create table GeneOntologyStage (ID varchar(50) not null,Name varchar,Type varchar(2),Parent varchar(50),Relation char,Species varchar,\"Date\" varchar,Remarks varchar)",
+            "create table GeneOntologyStage (ID varchar(50) not null,Name varchar,Type varchar(2),Parent varchar(50),Relation char,Species varchar,Date varchar,Remarks varchar)",
             // Access table DDL
-//            "create table GeneOntologyStage (ID VARCHAR(50) NOT NULL,Name MEMO,Type VARCHAR(2),Parent VARCHAR(50),Relation CHAR,Species MEMO,\"Date\" DATE,Remarks MEMO)",
-            "insert into GeneOntologyStage (ID,Name,Type,Parent,Relation,Species,\"Date\",Remarks) values (?,?,?,?,?,?,?,?)"),
+//            "create table GeneOntologyStage (ID VARCHAR(50) NOT NULL,Name MEMO,Type VARCHAR(2),Parent VARCHAR(50),Relation CHAR,Species MEMO,Date DATE,Remarks MEMO)",
+            "insert into GeneOntologyStage (ID,Name,Type,Parent,Relation,Species,Date,Remarks) values (?,?,?,?,?,?,?,?)"),
             
-    UniProt_GoCount("\"UniProt-GOCount\"",
-            "create table \"UniProt-GOCount\" (GO VARCHAR(50) NOT NULL,Count Int,Total Long)",
+    UniProt_GoCount("UniProt_GOCount",
+            "create table UniProt_GOCount (GO VARCHAR(50) NOT NULL,[Count] Int,Total Long)",
             // Non-Access column types
 //          {"VARCHAR(50) NOT NULL", "varchar", "varchar"}  /* UniProt-GoCount */
-            "insert into \"UniProt-GOCount\" (GO,Count,Total) values (?,?,?)"),
+            "insert into UniProt_GOCount (GO,Count,Total) values (?,?,?)"),
             
     GeneOntologyCount("GeneOntologyCount",
-            "create table GeneOntologyCount (ID VARCHAR(50) NOT NULL,Count Int)",
+            "create table GeneOntologyCount (ID VARCHAR(50) NOT NULL,[Count] Int)",
             // Non-Access column types
 //          {"VARCHAR(50) NOT NULL", "varchar"}, /* GOCount */
             "insert into GeneOntologyCount (ID,Count) values (?,?)"),
             
-    UniProt_Go("\"UniProt-GeneOntology\"",
-            "create table \"UniProt-GeneOntology\" (\"Primary\" VARCHAR(50) NOT NULL,Related VARCHAR(50) NOT NULL,Bridge VARCHAR(3) NOT NULL)",
+    UniProt_Go("[UniProt_GeneOntology]",
+            "create table [UniProt_GeneOntology] ([Primary] VARCHAR(50) NOT NULL,Related VARCHAR(50) NOT NULL,Bridge VARCHAR(3) NOT NULL)",
             // Non-Access column types
 //          {"VARCHAR(50) NOT NULL", "VARCHAR(50) NOT NULL", "VARCHAR(3) NOT NULL"},  /* UniProt-Go */
-            "insert into \"UniProt-GeneOntology\" (\"Primary\",Related,Bridge) values (?,?,?)");
+            "insert into [UniProt_GeneOntology] ([Primary],Related,Bridge) values (?,?,?)");
 
     /**
      * Returns the table's name.

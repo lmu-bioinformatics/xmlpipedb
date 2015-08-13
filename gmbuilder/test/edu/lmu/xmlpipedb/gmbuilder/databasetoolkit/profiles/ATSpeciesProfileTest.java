@@ -248,7 +248,7 @@ public class ATSpeciesProfileTest {
         	while(i.hasNext()){
         		String s = (String)i.next();
         		_Log.warn(s + "     " + r.getValue(s) + "  |x|   ");
-        		if(s.equalsIgnoreCase("\"Date\"")){
+        		if(s.equalsIgnoreCase("[Date]")){
         			if(r.getValue(s)!= null && !r.getValue(s).equals(""))
         				hasDate = true;
         		}
@@ -651,7 +651,7 @@ public class ATSpeciesProfileTest {
 	    	SpeciesProfile sp = dp.getSelectedSpeciesProfile();
 	    	TableManager tairTM = new TableManager(new String[][] {
 					{ "ID", "VARCHAR(50) NOT NULL" }, { "Species", "MEMO" },
-					{ "\"Date\"", "DATE" }, { "Remarks", "MEMO" } },
+					{ "[Date]", "DATE" }, { "Remarks", "MEMO" } },
 					new String[] { "ID" });
 			sp.getSystemTableManagerCustomizations(tairTM, null, dp.getVersion());
 			rows = tairTM.getRows();

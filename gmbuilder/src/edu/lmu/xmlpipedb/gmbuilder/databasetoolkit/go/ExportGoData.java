@@ -95,7 +95,6 @@ public class ExportGoData {
      * @throws JAXBException
      */
     public void export(List<DatabaseProfile.GOAspect> chosenAspects, List<Integer> taxonIds) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
-        String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(3, "GeneOntology export - creating tables...");
         godb.createTables(connection);
@@ -104,7 +103,7 @@ public class ExportGoData {
         populateGoTables(chosenAspects, taxonIds);
 //      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
 //        ExportWizard.updateExportProgress(40, "GeneOntology export - flushing tables...");
-        godb.updateSystemsTable(connection, Date, "T");
+        godb.updateSystemsTable(connection, new Date(), "T");
         _Log.info("done!");
     }
     
@@ -302,7 +301,7 @@ public class ExportGoData {
         ResultSet goids = connection.prepareStatement(sql).executeQuery();
         while (goids.next()) {
             String id = goids.getString(1);
-            QueryHolder qh = getUniProtIDs("select \"Primary\" from " + GOTable.UniProt_Go + " where Related = ?", id);
+            QueryHolder qh = getUniProtIDs("select [Primary] from " + GOTable.UniProt_Go + " where Related = ?", id);
             int count = 0;
             HashMap<String, Boolean> uniprot_IDs = new HashMap<String, Boolean>();
             // Count the number of times each GO ID maps to a unique UP ID
@@ -321,7 +320,7 @@ public class ExportGoData {
         }
 
         // Get Overall Totals for Entire GO Tree
-        sql = "select COUNT(Primary) as total from (select DISTINCT Primary from " + GOTable.UniProt_Go + ")";
+        sql = "select COUNT([Primary]) as total from (select DISTINCT [Primary] from " + GOTable.UniProt_Go + ")";
         // Alternative query when using a database other than Access.
         // sql = "select COUNT(\"Primary\") as total from (select DISTINCT
         // \"Primary\" from " + GOTable.UniProt_Go + ") as primaries";
@@ -346,7 +345,7 @@ public class ExportGoData {
         while (qh.rs.next()) {
             String id = qh.rs.getString(1);
 
-            String mysql = "select \"Primary\" from " + GOTable.UniProt_Go + " where Related = ?";
+            String mysql = "select [Primary] from " + GOTable.UniProt_Go + " where Related = ?";
             PreparedStatement myps = connection.prepareStatement(mysql);
             myps.setString(1, id);
             ResultSet upResults = myps.executeQuery();

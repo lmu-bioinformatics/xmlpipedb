@@ -54,7 +54,7 @@ public class MycobacteriumTuberculosisUniProtSpeciesProfile extends UniProtSpeci
                 // We want this name to appear in the OrderedLocusNames
                 // system table.
                 for (String id : result.getString("value").split("/")) {
-                    tableManager.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
+                    tableManager.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
                 }
             }
         }

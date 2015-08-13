@@ -308,29 +308,24 @@ public class ConnectionManager {
 				hibernateConfiguration.getProperty("hibernate.connection.password"));
 	}
 
-	/**
-	 * Open the GenMAPP database connection.
-	 *
-	 * @param databaseFile
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 * @throws IOException
-	 */
-	private static Connection openAccessDatabaseConnection(String databaseFile) throws ClassNotFoundException, SQLException {
-		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+    /**
+     * Open the GenMAPP database connection.
+     *
+     * @param databaseFile
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     * @throws IOException
+     */
+    private static Connection openAccessDatabaseConnection(String databaseFile) throws ClassNotFoundException, SQLException {
+        StringBuffer databaseConnectionString;
 
-		StringBuffer databaseConnectionString;
+        databaseConnectionString = new StringBuffer("jdbc:ucanaccess://");
+        databaseConnectionString.append(databaseFile);
 
-	    databaseConnectionString = new StringBuffer("jdbc:odbc:Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=");
-	    databaseConnectionString.append(databaseFile);
-
-	    // Connection will not be possible from 64-bit Java environment.
-	    // If both 32- and 64-bit Java environments are installed, gmbuilder-32bit.bat must be used.
-		_Log.info("Using database connection string: " + databaseConnectionString.toString());
-	    return DriverManager.getConnection(databaseConnectionString.toString(), "", "");
-	}
-
+        _Log.info("Using database connection string: " + databaseConnectionString.toString());
+        return DriverManager.getConnection(databaseConnectionString.toString(), "", "");
+    }
 
 	private static void copyFile(String originalFilePath, File newFile) throws IOException {
 		InputStream in = ConnectionManager.class.getResourceAsStream(originalFilePath);

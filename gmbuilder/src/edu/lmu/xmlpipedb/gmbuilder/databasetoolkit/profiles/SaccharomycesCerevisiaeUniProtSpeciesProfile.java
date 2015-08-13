@@ -79,7 +79,7 @@ public class SaccharomycesCerevisiaeUniProtSpeciesProfile extends
                 { "Symbol", "VARCHAR(50) NOT NULL" },
                 { "ORF", "VARCHAR(50) NOT NULL" }, 
                 { "Species", "MEMO" },
-                { "\"Date\"", "DATE" }, { "Remarks", "MEMO" }
+                { "[Date]", "DATE" }, { "Remarks", "MEMO" }
             }, new String[] { "UID" });
 
         ps = ConnectionManager.getRelationalDBConnection().prepareStatement(querySQL);
@@ -114,7 +114,7 @@ public class SaccharomycesCerevisiaeUniProtSpeciesProfile extends
                 { "Symbol", symbol }, 
                 { "ORF", result.getString("orf") },
                 { "Species", "|" + getSpeciesName() + "|" },
-                { "\"Date\"", GenMAPPBuilderUtilities.getSystemsDateString(version) }
+                { "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(version) }
             });
         }
         ps.close();

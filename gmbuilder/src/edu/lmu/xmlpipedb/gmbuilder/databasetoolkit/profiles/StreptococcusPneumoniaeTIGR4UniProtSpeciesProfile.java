@@ -87,7 +87,7 @@ public class StreptococcusPneumoniaeTIGR4UniProtSpeciesProfile extends
                     new_id = substrings[i].replace("_", "");
 
                     _Log.debug("Remove '_' from " + id + " to create: " + new_id + " for surrogate " + hjid);
-                    result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                    result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", dateToday }, { "UID", hjid } });
                 }
             }
         } catch(SQLException sqlexc) {

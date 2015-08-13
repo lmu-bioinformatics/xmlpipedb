@@ -93,7 +93,7 @@ public class SinorhizobiumMelilotiUniProtSpeciesProfile extends UniProtSpeciesPr
                     
                     for (String variant: variants) {
                         _Log.debug("Original ID: " + substrings[i] + " converted to: " + variant + " for surrogate " + hjid);
-                        result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", variant }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                        result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", variant }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", dateToday }, { "UID", hjid } });
                     }
                 }
             }

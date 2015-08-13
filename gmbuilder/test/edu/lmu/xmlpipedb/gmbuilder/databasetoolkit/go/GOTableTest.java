@@ -40,11 +40,11 @@ public class GOTableTest {
     public void testGetCreateMap() {
         // Verify each command.
         assertEquals("create table GeneOntologyTree (OrderNo LONG,\"Level\" Int,ID VARCHAR(50),Name MEMO)", GOTable.GeneOntologyTree.getCreate());
-        assertEquals("create table GeneOntology (ID VARCHAR(50) NOT NULL,Name MEMO,Type VARCHAR(2),Parent VARCHAR(50),Relation CHAR,Species MEMO,\"Date\" DATE,Remarks MEMO)", GOTable.GeneOntology.getCreate());
-        assertEquals("create table GeneOntologyStage (ID varchar(50) not null,Name varchar,Type varchar(2),Parent varchar(50),Relation char,Species varchar,\"Date\" varchar,Remarks varchar)", GOTable.GeneOntologyStage.getCreate());
+        assertEquals("create table GeneOntology (ID VARCHAR(50) NOT NULL,Name MEMO,Type VARCHAR(2),Parent VARCHAR(50),Relation CHAR,Species MEMO,[Date] DATE,Remarks MEMO)", GOTable.GeneOntology.getCreate());
+        assertEquals("create table GeneOntologyStage (ID varchar(50) not null,Name varchar,Type varchar(2),Parent varchar(50),Relation char,Species varchar,[Date] varchar,Remarks varchar)", GOTable.GeneOntologyStage.getCreate());
         assertEquals("create table \"UniProt-GOCount\" (GO VARCHAR(50) NOT NULL,Count Int,Total Long)", GOTable.UniProt_GoCount.getCreate());
         assertEquals("create table GeneOntologyCount (ID VARCHAR(50) NOT NULL,Count Int)", GOTable.GeneOntologyCount.getCreate());
-        assertEquals("create table \"UniProt-GeneOntology\" (\"Primary\" VARCHAR(50) NOT NULL,Related VARCHAR(50) NOT NULL,Bridge VARCHAR(3) NOT NULL)", GOTable.UniProt_Go.getCreate());
+        assertEquals("create table \"UniProt-GeneOntology\" ([Primary] VARCHAR(50) NOT NULL,Related VARCHAR(50) NOT NULL,Bridge VARCHAR(3) NOT NULL)", GOTable.UniProt_Go.getCreate());
     }
 
     /**
@@ -54,10 +54,10 @@ public class GOTableTest {
     public void testGetInsertMap() {
         // Verify each command.
         assertEquals("insert into GeneOntologyTree (OrderNo,\"Level\",ID,Name) values (?,?,?,?)", GOTable.GeneOntologyTree.getInsert());
-        assertEquals("insert into GeneOntology (ID,Name,Type,Parent,Relation,Species,\"Date\",Remarks) values (?,?,?,?,?,?,?,?)", GOTable.GeneOntology.getInsert());
-        assertEquals("insert into GeneOntologyStage (ID,Name,Type,Parent,Relation,Species,\"Date\",Remarks) values (?,?,?,?,?,?,?,?)", GOTable.GeneOntologyStage.getInsert());
+        assertEquals("insert into GeneOntology (ID,Name,Type,Parent,Relation,Species,[Date],Remarks) values (?,?,?,?,?,?,?,?)", GOTable.GeneOntology.getInsert());
+        assertEquals("insert into GeneOntologyStage (ID,Name,Type,Parent,Relation,Species,[Date],Remarks) values (?,?,?,?,?,?,?,?)", GOTable.GeneOntologyStage.getInsert());
         assertEquals("insert into \"UniProt-GOCount\" (GO,Count,Total) values (?,?,?)", GOTable.UniProt_GoCount.getInsert());
         assertEquals("insert into GeneOntologyCount (ID,Count) values (?,?)", GOTable.GeneOntologyCount.getInsert());
-        assertEquals("insert into \"UniProt-GeneOntology\" (\"Primary\",Related,Bridge) values (?,?,?)", GOTable.UniProt_Go.getInsert());
+        assertEquals("insert into \"UniProt-GeneOntology\" ([Primary],Related,Bridge) values (?,?,?)", GOTable.UniProt_Go.getInsert());
     }
 }

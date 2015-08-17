@@ -40,7 +40,7 @@ public class TableManager {
 		 * Constructor
 		 */
 		protected Row() {
-            row = new HashMap<String, String>();
+            row = new HashMap<String, Object>();
         }
 		
 		/**
@@ -48,7 +48,7 @@ public class TableManager {
 		 * @param columnName
 		 * @param value
 		 */
-		protected void add(String columnName, String value) {
+		protected void add(String columnName, Object value) {
 			row.put(columnName, value);
 		}
 		
@@ -57,7 +57,7 @@ public class TableManager {
 		 * @param columnName
 		 * @return
 		 */
-		public String getValue(String columnName) {
+		public Object getValue(String columnName) {
 			return row.get(columnName);
 		}
 		
@@ -65,7 +65,7 @@ public class TableManager {
 		 * Returns this row as a map.
 		 * @return
 		 */
-		public Map<String, String> getRowAsMap() {
+		public Map<String, Object> getRowAsMap() {
 			return row;
 		}
 		
@@ -82,7 +82,7 @@ public class TableManager {
 		 * @param columnName
 		 * @return
 		 */
-		protected boolean containsKey(String columnName){
+		protected boolean containsKey(String columnName) {
 			return row.containsKey(columnName);
 		}
 		
@@ -110,11 +110,11 @@ public class TableManager {
 		 * Return this row as a Map.
 		 * @return
 		 */
-		private Map<String, String> asMap() {
+		private Map<String, Object> asMap() {
 			return row;
 		}
 
-        private Map<String, String> row;
+        private Map<String, Object> row;
     }
 	
 	public static enum QueryType {update, insert};
@@ -157,7 +157,7 @@ public class TableManager {
      * @param columnNamesToValues
      * @throws Exception
      */
-    public void submit(String tableName, QueryType queryType, String[][] columnNamesToValues) {
+    public void submit(String tableName, QueryType queryType, Object[][] columnNamesToValues) {
         // Add the table name to the set. Since it's a set, we don't have to
         // worry about repeats.
         tableNames.add(tableName);
@@ -173,7 +173,10 @@ public class TableManager {
             }
 
             // add the column to the new row.
-            newRow.add(columnNamesToValues[i][0], columnNamesToValues[i][1]);
+            // TODO The cast to String is an expediency hack to allow conveyance of dates.
+            // This whole framework needs a redesign so that dates and other types can
+            // be accommodated cleanly.
+            newRow.add((String)columnNamesToValues[i][0], columnNamesToValues[i][1]);
         }
 
         if (primaryKeys.size() > 0) {

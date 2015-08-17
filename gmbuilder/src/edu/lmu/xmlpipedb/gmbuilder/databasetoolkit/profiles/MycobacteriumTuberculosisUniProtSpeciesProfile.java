@@ -9,7 +9,6 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
-import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 public class MycobacteriumTuberculosisUniProtSpeciesProfile extends UniProtSpeciesProfile {
@@ -37,24 +36,30 @@ public class MycobacteriumTuberculosisUniProtSpeciesProfile extends UniProtSpeci
      * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.UniProtSpeciesProfile#getSystemTableManagerCustomizations(edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager, java.util.Date)
      */
     @Override
-    public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws SQLException, InvalidParameterException {
-        // Build the base query; we use 'ordered locus' and 'ORF' and ids that begin with "Rv."
+    public TableManager getSystemTableManagerCustomizations(TableManager tableManager,
+            TableManager primarySystemTableManager, Date version) throws SQLException, InvalidParameterException {
+        // Build the base query; we use 'ordered locus' and 'ORF' and ids that
+        // begin with "Rv."
         PreparedStatement ps = ConnectionManager.getRelationalDBConnection().prepareStatement("SELECT value, type " +
             "FROM genenametype INNER JOIN genetype " +
-            "ON (genetype_name_hjid = genetype.hjid) " +
-            "WHERE (type = 'ordered locus' or type = 'ORF') and (value like 'Rv%'and not value = 'Rv3346/55c') and entrytype_gene_hjid = ?");
-        ResultSet result;
+            "ON (genetype_name_hjid = genetype.hjid) " + "WHERE (type = 'ordered locus' or type = 'ORF') and (value like 'Rv%'and not value = 'Rv3346/55c') and entrytype_gene_hjid = ?");
 
-        for (Row row : primarySystemTableManager.getRows()) {
-            ps.setInt(1, Integer.parseInt(row.getValue("UID")));
+        ResultSet result;
+        for (Row row: primarySystemTableManager.getRows()) {
+            ps.setInt(1, Integer.parseInt((String)row.getValue("UID")));
             result = ps.executeQuery();
 
             // We actually want to keep the case where multiple names appear.
             while (result.next()) {
                 // We want this name to appear in the OrderedLocusNames
                 // system table.
-                for (String id : result.getString("value").split("/")) {
-                    tableManager.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
+                for (String id: result.getString("value").split("/")) {
+                    tableManager.submit("OrderedLocusNames", QueryType.insert, new Object[][] {
+                        { "ID", id },
+                        { "Species", "|" + getSpeciesName() + "|" },
+                        { "[Date]", version },
+                        { "UID", row.getValue("UID") }
+                    });
                 }
             }
         }

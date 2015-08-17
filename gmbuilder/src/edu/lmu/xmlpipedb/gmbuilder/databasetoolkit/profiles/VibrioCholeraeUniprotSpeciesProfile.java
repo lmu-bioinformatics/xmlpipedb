@@ -12,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
-import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
@@ -60,7 +59,6 @@ public class VibrioCholeraeUniprotSpeciesProfile extends UniProtSpeciesProfile {
         final String vcID = "VC_*";
         String sqlQuery = "select d.entrytype_gene_hjid as hjid, c.value " + "from genenametype c inner join genetype d " + "on (c.genetype_name_hjid = d.hjid) " + "where (c.value similar to ?)" + "and type <> 'ordered locus names' " + "group by d.entrytype_gene_hjid, c.value";
 
-        String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);
         Connection c = ConnectionManager.getRelationalDBConnection();
         PreparedStatement ps;
         ResultSet rs;
@@ -82,7 +80,7 @@ public class VibrioCholeraeUniprotSpeciesProfile extends UniProtSpeciesProfile {
                     new_id = substrings[i].replace("_", "");
 
                     _Log.debug("Remove '_' from " + id + " to create: " + new_id + " for surrogate " + hjid);
-                    result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", dateToday }, { "UID", hjid } });
+                    result.submit("OrderedLocusNames", QueryType.insert, new Object[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", version }, { "UID", hjid } });
                 }
             }
         } catch(SQLException sqlexc) {

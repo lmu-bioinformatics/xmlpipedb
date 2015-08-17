@@ -149,7 +149,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
         ResultSet result;
 
         for (Row row : primarySystemTableManager.getRows()) {
-            ps.setInt(1, Integer.parseInt(row.getValue("UID")));
+            ps.setInt(1, Integer.parseInt((String)row.getValue("UID")));
             result = ps.executeQuery();
 
             // We actually want to keep the case where multiple ordered locus
@@ -163,7 +163,12 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 
                     	// Only add the ids that do not match the filter
                     	if (!id.matches(filter)) {
-                            tableManager.submit(substituteTable, QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(version) }, { "UID", row.getValue("UID") } });
+                            tableManager.submit(substituteTable, QueryType.insert, new Object[][] {
+                                { "ID", id },
+                                { "Species", "|" + getSpeciesName() + "|" },
+                                { "[Date]", version },
+                                { "UID", row.getValue("UID") }
+                            });
                     	}
                     }
                 }
@@ -181,7 +186,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 			String systemTable1, String systemTable2,
 			Map<String, String> templateDefinedSystemToSystemCode,
 			TableManager tableManager) {
-	    String relation = systemTable1 + "-" + systemTable2;
+	    String relation = systemTable1 + "_" + systemTable2;
         String type = null;
 
         if ("UniProt".equals(systemTable1) || "UniProt".equals(systemTable2)) {
@@ -241,12 +246,12 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
             ResultSet result;
             for (Row row : systemTableManager.getRows()) {
                 if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(criteria)) {
-                    ps.setInt(2, Integer.parseInt(row.getValue("UID")));
+                    ps.setInt(2, Integer.parseInt((String)row.getValue("UID")));
                     result = ps.executeQuery();
                     while (result.next()) {
                         tableManager.submit(relationshipTable,
-                            QueryType.insert, new String[][] {
-                                { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, row.getValue("ID")) },
+                            QueryType.insert, new Object[][] {
+                                { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, (String)row.getValue("ID")) },
                                 { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, result.getString("id")) },
                                 // TODO This is hard-coded. Fix it.
                                 { finalColumnName, finalColumnValue }
@@ -262,19 +267,18 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
         		getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
         	_Log.debug("THIS IS WHERE IT COMES OUT3: " + relationshipTable);
         	// Maps to contain the primary, related ids of the species specific tables
-        	HashMap<String, String> ss1 = new HashMap<String, String>();
-        	HashMap<String, String> ss2 = new HashMap<String, String>();
+        	Map<String, String> ss1 = new HashMap<String, String>();
+        	Map<String, String> ss2 = new HashMap<String, String>();
 
         	for (Row row : systemTableManager.getRows()) {
-
         		// Load up the proper maps so we can begin searching for matching UIDs
                 if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(stp.systemTable1) &&
                 		row.getValue("UID") != null) {
-                   	ss1.put(row.getValue("UID"), row.getValue("ID"));
+                   	ss1.put((String)row.getValue("UID"), (String)row.getValue("ID"));
                    	_Log.debug(row.getValue("UID") + " NO " + row.getValue("ID"));
                 } else if(row.getValue(TableManager.TABLE_NAME_COLUMN).equals(stp.systemTable2) &&
                 		row.getValue("UID") != null) {
-                	ss2.put(row.getValue("UID"), row.getValue("ID"));
+                	ss2.put((String)row.getValue("UID"), (String)row.getValue("ID"));
                 	_Log.debug(row.getValue("UID") + " YES " + row.getValue("ID"));
                 }
 
@@ -283,21 +287,20 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 
         	// Now we just find the UIDs that are in ss1 and ss2 and load the proper
         	// relationship table
-        	Set<String> uids = ss1.keySet();
-        	for(String uid : uids) {
-        		System.out.println("uid : " + uid);
-        		if(ss2.containsKey(uid)) {
-
+            Set<String> uids = ss1.keySet();
+            for (String uid: uids) {
+                System.out.println("uid : " + uid);
+                if (ss2.containsKey(uid)) {
         			_Log.debug("Added related id " + ss2.get(uid) + " for primary " + ss1.get(uid) + "to table " + stp);
         			System.out.println("Added related id " + ss2.get(uid) + " for primary " + ss1.get(uid) + "to table " + stp);
         			tableManager.submit(relationshipTable,
-                            QueryType.insert, new String[][] {
-                                { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, ss1.get(uid)) },
-                                { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, ss2.get(uid)) },
-                                // TODO This is hard-coded. Fix it.
-                                { finalColumnName, finalColumnValue }
-                            }
-                        );
+                        QueryType.insert, new String[][] {
+                            { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, ss1.get(uid)) },
+                            { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, ss2.get(uid)) },
+                            // TODO This is hard-coded. Fix it.
+                            { finalColumnName, finalColumnValue }
+                        }
+                    );
         		}
         	}
 
@@ -319,7 +322,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
                     if (row.getValue(TableManager.TABLE_NAME_COLUMN).equals(criteria)
                     		&& row.getValue("UID") != null
                     		&& row.getValue("UID").equals(related)) {
-                        for (String id : row.getValue("ID").split("/")) {
+                        for (String id : ((String)row.getValue("ID")).split("/")) {
                             tableManager.submit(relationshipTable,
                                 QueryType.insert, new String[][] {
                                     { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, primary) },
@@ -349,8 +352,8 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 
                             tableManager.submit(relationshipTable,
                                 QueryType.insert, new String[][] {
-                                    { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, row2.getValue("ID")) },
-                                    { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, row1.getValue("ID")) },
+                                    { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, (String)row2.getValue("ID")) },
+                                    { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, (String)row1.getValue("ID")) },
                                     // TODO This is hard-coded.  Fix it.
                                     { finalColumnName, finalColumnValue }
                                 }

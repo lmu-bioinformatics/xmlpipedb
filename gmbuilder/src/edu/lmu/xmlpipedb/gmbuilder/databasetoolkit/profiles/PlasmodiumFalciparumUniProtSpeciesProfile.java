@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
-import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
@@ -69,7 +68,6 @@ public class PlasmodiumFalciparumUniProtSpeciesProfile extends UniProtSpeciesPro
             "where c.type = 'ORF'" +
             "group by d.entrytype_gene_hjid, c.value";
 
-        String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);
         Connection c = ConnectionManager.getRelationalDBConnection();
         PreparedStatement ps;
         ResultSet rs;
@@ -95,16 +93,16 @@ public class PlasmodiumFalciparumUniProtSpeciesProfile extends UniProtSpeciesPro
                     new_id = substrings[i].replace("_", "");
 
                     _Log.debug("Remove '_' from " + id + " to create: " + new_id + " for surrogate " + hjid);
-                    result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", dateToday }, { "UID", hjid } });
+                    result.submit("OrderedLocusNames", QueryType.insert, new Object[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", version }, { "UID", hjid } });
                     
                     _Log.debug("Keep '_' from " + id + " to create: " + old_id + " for surrogate " + hjid);
-                    result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", old_id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", dateToday }, { "UID", hjid } });
+                    result.submit("OrderedLocusNames", QueryType.insert, new Object[][] { { "ID", old_id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", version }, { "UID", hjid } });
                 }
                 }
                 // otherwise process as normal
                     else {
                     _Log.debug("Processing raw ID: " + id + " for surrogate " + hjid);
-                    tableManager.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", dateToday }, { "UID", hjid } });
+                    tableManager.submit("OrderedLocusNames", QueryType.insert, new Object[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", version }, { "UID", hjid } });
                 }
             }
             

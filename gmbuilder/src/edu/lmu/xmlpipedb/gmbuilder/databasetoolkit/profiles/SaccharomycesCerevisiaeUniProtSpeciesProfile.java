@@ -14,7 +14,6 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
-import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 public class SaccharomycesCerevisiaeUniProtSpeciesProfile extends
@@ -108,13 +107,13 @@ public class SaccharomycesCerevisiaeUniProtSpeciesProfile extends
                 symbol = result.getString("orf");
             }
             
-            tableManager.submit("SGD", QueryType.insert, new String[][] {
+            tableManager.submit("SGD", QueryType.insert, new Object[][] {
                 { "UID", result.getString("hjid") },
                 { "ID", result.getString("id") },
                 { "Symbol", symbol }, 
                 { "ORF", result.getString("orf") },
                 { "Species", "|" + getSpeciesName() + "|" },
-                { "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(version) }
+                { "[Date]", version }
             });
         }
         ps.close();

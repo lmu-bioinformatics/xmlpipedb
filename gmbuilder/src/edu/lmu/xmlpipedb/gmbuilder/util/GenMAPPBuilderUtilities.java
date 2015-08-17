@@ -97,7 +97,7 @@ public class GenMAPPBuilderUtilities {
      *         relationship table name
      */
     public static SystemTablePair parseRelationshipTableName(String relationshipTableName) {
-        String[] splits = relationshipTableName.split("-");
+        String[] splits = relationshipTableName.split("_");
         SystemTablePair result = new SystemTablePair();
         result.systemTable1 = splits[0];
         result.systemTable2 = splits[1];

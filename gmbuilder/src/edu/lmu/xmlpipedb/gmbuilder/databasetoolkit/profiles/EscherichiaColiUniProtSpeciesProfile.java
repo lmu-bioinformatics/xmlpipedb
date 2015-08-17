@@ -127,7 +127,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 				continue;
 			}
 			
-			tableManager.submit("UniProt", QueryType.insert, new String[][] {
+			tableManager.submit("UniProt", QueryType.insert, new Object[][] {
 					{ "UID", result.getString("hjid") },
 					{ "ID", result.getString("accession") },
 					{ "EntryName", result.getString("entryname") },	
@@ -135,8 +135,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 					{ "ProteinName", result.getString("protein") },
 					{ "Function", result.getString("function") },
 					{ "Species", "|" + getSpeciesName() + "|" },
-					{ "[Date]", GenMAPPBuilderUtilities
-									.getSystemsDateString(version) }
+					{ "[Date]", version }
 			});
 		}
 		ps.close();

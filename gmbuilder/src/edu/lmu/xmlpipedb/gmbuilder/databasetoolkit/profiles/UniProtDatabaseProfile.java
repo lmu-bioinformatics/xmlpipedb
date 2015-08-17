@@ -45,11 +45,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 	private List<String> produceLastRelationshipTables = new ArrayList<String>();
 
-	/**
-	 * Constuctor.
-	 */
 	public UniProtDatabaseProfile() {
-
 		// Why are we creating all objects up front, instead of
 		// waiting for the user to choose one? We need to abstract just the
 		// profile name out and access it later.
@@ -78,16 +74,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		        });
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#
-	 * isAvailable(java.sql.Connection)
-	 */
 	@Override
 	public boolean isAvailable(Connection connection) throws SQLException {
-
 		PreparedStatement ps = connection
 				.prepareStatement("select hjtype from uniprottype");
 		ResultSet result = ps.executeQuery();
@@ -99,19 +87,11 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#
-	 * checkRequirements(java.sql.Connection)
-	 */
 	@Override
     public void checkRequirements(Connection connection) throws SQLException {
-
         // Get the species(s) contained in the database. We include the name in
-        // the query,
-        // in case we have to create a generic species profile for it.
+        // the query, in case we have to create a generic species profile for
+        // it.
         PreparedStatement ps = connection.prepareStatement("select distinct " +
                 "dbreferencetype.id as taxonid, organismnametype.value as speciesname " +
                 "from dbreferencetype inner join organismtype on " +
@@ -160,25 +140,15 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         ps.close();
     }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#
-	 * getMODSystem()
-	 */
 	@Override
 	public String getMODSystem() {
 		return "UniProt";
 	}
 
-	/**
-	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getDefaultDisplayOrder()
-	 */
 	@Override
 	public String getDefaultDisplayOrder() {
 		List<String> systemCodes = new ArrayList<String>();
-		_Log.debug("System Codes: [" + systemCodes + "]");
+		LOG.debug("System Codes: [" + systemCodes + "]");
 		Map<String, SystemType> uniprotSpecificSystemTables = getDatabaseSpecificSystemTables();
 		Map<String, SystemType> speciesSpecificSystemTables = speciesProfile
 				.getSpeciesSpecificSystemTables();
@@ -186,42 +156,42 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			if (!uniprotSpecificSystemTables.containsKey(systemTable.getKey())
 					&& !speciesSpecificSystemTables.containsKey(systemTable
 							.getKey())) {
-				_Log.info("System Table: ["
+				LOG.info("System Table: ["
 						+ systemTable.getKey()
 						+ "] System Code: ["
 						+ templateDefinedSystemToSystemCode.get(systemTable
 								.getKey()) + "]");
-				_Log.debug("System Codes: [" + systemCodes + "]");
+				LOG.debug("System Codes: [" + systemCodes + "]");
 				systemCodes.add(templateDefinedSystemToSystemCode
 						.get(systemTable.getKey()));
-				_Log.debug("System Codes: [" + systemCodes + "]");
+				LOG.debug("System Codes: [" + systemCodes + "]");
 			}
 		}
 
 		switch (displayOrderPreset) {
 		case alphabetical:
 			Collections.sort(systemCodes, new CaseInsensitiveStringComparator());
-			_Log.debug("System Codes: [" + systemCodes + "]");
+			LOG.debug("System Codes: [" + systemCodes + "]");
 			break;
 		}
 
 		systemCodes.add(0, templateDefinedSystemToSystemCode.get("UniProt"));
-		_Log.debug("System Codes: [" + systemCodes + "]");
+		LOG.debug("System Codes: [" + systemCodes + "]");
 		systemCodes.add(1, templateDefinedSystemToSystemCode
 				.get("GeneOntology"));
-		_Log.debug("System Codes: [" + systemCodes + "]");
+		LOG.debug("System Codes: [" + systemCodes + "]");
 
 		systemCodes = speciesProfile.getSpeciesSpecificSystemCode(systemCodes,
 				templateDefinedSystemToSystemCode);
-		_Log.info("System Codes: [" + systemCodes + "]");
+		LOG.info("System Codes: [" + systemCodes + "]");
 
 		StringBuffer defaultDisplayOrder = new StringBuffer();
 		for (String systemCode : systemCodes) {
 			defaultDisplayOrder.append("|").append(systemCode);
-			_Log.debug("Default Display Order: [" + defaultDisplayOrder + "]");
+			LOG.debug("Default Display Order: [" + defaultDisplayOrder + "]");
 		}
 		defaultDisplayOrder.append("|");
-		_Log.info("Default Display Order: [" + defaultDisplayOrder + "]");
+		LOG.info("Default Display Order: [" + defaultDisplayOrder + "]");
 		return defaultDisplayOrder.toString();
 	}
 
@@ -229,13 +199,6 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 	 * This method adds Uniprot and GeneOntology to the list of "Uniprot"
 	 * tables. It also adds whatever has been defined as a species specific
 	 * table in the SpeciesProfile (e.g. TAIR)
-	 */
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#
-	 * getDatabaseSpecificSystemTables()
 	 */
 	@Override
 	public Map<String, SystemType> getDatabaseSpecificSystemTables() {
@@ -274,20 +237,20 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		 * all entries. Additional processing is done below.
 		 */
 		for (Entry<String, SystemType> systemTable : systemTables.entrySet()) {
-			_Log.debug("Adding system table for " + systemTable.getKey());
+			LOG.debug("Adding system table for " + systemTable.getKey());
 			if (templateDefinedSystemToSystemCode.get(systemTable.getKey()) == null) {
-				_Log.warn("No system code found for " + systemTable.getKey());
+				LOG.warn("No system code found for " + systemTable.getKey());
 			}
-			tableManager.submit("Systems", QueryType.update, new String[][] {
+			tableManager.submit("Systems", QueryType.update, new Object[][] {
 				{ "SystemCode", templateDefinedSystemToSystemCode.get(systemTable.getKey()) },
-				{ "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(version) }
+				{ "[Date]", version }
 			});
 		}
 
 		// The "Other" table also needs a date: the date of export.
-		tableManager.submit("Systems", QueryType.update, new String[][] {
+		tableManager.submit("Systems", QueryType.update, new Object[][] {
             { "SystemCode", templateDefinedSystemToSystemCode.get("Other") },
-            { "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(new Date()) }
+            { "[Date]", new Date() }
         });
 
 		/*
@@ -306,15 +269,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         return tableManager;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#
-	 * getPrimarySystemTableManager()
-	 */
-	public @Override
-	TableManager getPrimarySystemTableManager() throws SQLException {
+	@Override
+	public TableManager getPrimarySystemTableManager() throws SQLException {
 		if (primarySystemTableManager != null) {
 			return primarySystemTableManager;
 		}
@@ -368,56 +324,56 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         
         		// Step 1 - populate the TableManager with records from the
         		// entrytype_accession table
-        		_Log.info("\nSQL Query: [" + accessionSQL + "]");
+        		LOG.info("\nSQL Query: [" + accessionSQL + "]");
         		while (result.next()) {
-        			_Log.debug("Record: [" + ++recordCounter + "]");
-        			_Log.debug("entrytype_accession_hjid: ["
+        			LOG.debug("Record: [" + ++recordCounter + "]");
+        			LOG.debug("entrytype_accession_hjid: ["
         					+ result.getString("entrytype_accession_hjid")
         					+ "], hjvalue: [" + result.getString("hjvalue") + "]");
         			
         			// We also know the species name and date at this point, so throw it in here.
-        			tableManager.submit("UniProt", QueryType.insert, new String[][] {
+        			tableManager.submit("UniProt", QueryType.insert, new Object[][] {
     					{ "UID", result.getString("entrytype_accession_hjid") },
     					{ "ID", result.getString("hjvalue") },
                         { "Species", "|" + speciesProfile.getSpeciesName() + "|" },
-                        { "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(version) }
+                        { "[Date]", version }
     				});
         		}
 
-        		_Log.info("Total Records: [" + recordCounter + "]");
+        		LOG.info("Total Records: [" + recordCounter + "]");
         		Row[] rows = tableManager.getRows();
-        		_Log.info("Step 1 - Number of rows in TM: [" + rows.length + "]");
+        		LOG.info("Step 1 - Number of rows in TM: [" + rows.length + "]");
         
         		// Step 2 - if the record exists in the entrytype_name table,
         		// get the entrytype_name value.
-        		_Log.info("\nSQL Query: [" + nameSQL + "]");
+        		LOG.info("\nSQL Query: [" + nameSQL + "]");
         		recordCounter = 0;
         		for (Row row : tableManager.getRows()) {
-        			_Log.debug("UID (entrytype_accession_hjid): ["
+        			LOG.debug("UID (entrytype_accession_hjid): ["
         					+ row.getValue("UID") + "]");
         			ps = ConnectionManager.getRelationalDBConnection()
         					.prepareStatement(nameSQL);
-        			ps.setInt(1, Integer.parseInt(row.getValue("UID")));
-        			_Log.debug("Species: [" + row.getValue("Species") + "]");
-        			_Log.debug(ps.toString());
+        			ps.setInt(1, Integer.parseInt((String)row.getValue("UID")));
+        			LOG.debug("Species: [" + row.getValue("Species") + "]");
+        			LOG.debug(ps.toString());
         			result = ps.executeQuery();
         			while (result.next()) {
-        				_Log.debug("Record: [" + ++recordCounter + "]");
-        				_Log.debug("hjvalue: [" + result.getString("hjvalue") + "]");
+        				LOG.debug("Record: [" + ++recordCounter + "]");
+        				LOG.debug("hjvalue: [" + result.getString("hjvalue") + "]");
         				tableManager.submit("UniProt", QueryType.insert,
-        						new String[][] { { "UID", row.getValue("UID") },
+        						new String[][] { { "UID", (String)row.getValue("UID") },
         								{ "EntryName", result.getString("hjvalue") } });
         			}
         
         			// Step 3 - GeneName
-        			_Log.debug("\nGeneName\nSQL Query: [" + geneSQL + "]");
+        			LOG.debug("\nGeneName\nSQL Query: [" + geneSQL + "]");
         			ps = ConnectionManager.getRelationalDBConnection()
         					.prepareStatement(geneSQL);
-        			ps.setInt(1, Integer.parseInt(row.getValue("UID")));
+        			ps.setInt(1, Integer.parseInt((String)row.getValue("UID")));
         			result = ps.executeQuery();
         			Map<String, String> typeToValue = new HashMap<String, String>();
         			while (result.next()) {
-        				_Log.debug("type: [" + result.getString("type") + "] value: ["
+        				LOG.debug("type: [" + result.getString("type") + "] value: ["
         						+ result.getString("value") + "]");
         				typeToValue.put(result.getString("type"), result
         						.getString("value"));
@@ -434,9 +390,9 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         				geneName = typeToValue.get("synonym");
         				geneNameType = "synonym";
         			}
-        			_Log.debug("Type: [" + geneNameType + "] GeneName: [" + geneName
+        			LOG.debug("Type: [" + geneNameType + "] GeneName: [" + geneName
         					+ "]");
-        			tableManager.submit("UniProt", QueryType.insert, new String[][] {
+        			tableManager.submit("UniProt", QueryType.insert, new Object[][] {
         					{ "UID", row.getValue("UID") }, { "GeneName", geneName } });
         
         			// Step 4 -- Add the ProteinName
@@ -450,11 +406,11 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         							+ "on (proteintype.recommendedname = proteinnamegrouprecommendednametype.hjid) "
         							+ "inner join evidencedstringtype on (proteinnamegrouprecommendednametype.fullname = evidencedstringtype.hjid) "
         							+ "where entrytype.hjid = ? order by evidencedstringtype.value;");
-        			ps.setInt(1, Integer.parseInt(row.getValue("UID")));
+        			ps.setInt(1, Integer.parseInt((String)row.getValue("UID")));
         			result = ps.executeQuery();
         			while (result.next()) {
         				tableManager.submit("UniProt", QueryType.insert,
-        						new String[][] { { "UID", row.getValue("UID") },
+        						new Object[][] { { "UID", row.getValue("UID") },
         								{ "ProteinName", result.getString("value") } });
         			}
         
@@ -469,17 +425,17 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         									+ "on (commenttype.hjid = commenttype_text_hjid) "
         									+ "where type = 'function' "
         									+ "and entrytype_comment_hjid = ?");
-        			ps.setInt(1, Integer.parseInt(row.getValue("UID")));
+        			ps.setInt(1, Integer.parseInt((String)row.getValue("UID")));
         			result = ps.executeQuery();
         			while (result.next()) {
         				tableManager.submit("UniProt", QueryType.insert,
-        						new String[][] { { "UID", row.getValue("UID") },
+        						new Object[][] { { "UID", row.getValue("UID") },
         								{ "Function", result.getString("value") } });
         			}
         		}
         		ps.close();
         
-        		_Log.info("End of Method - Number of rows in TM: [" +
+        		LOG.info("End of Method - Number of rows in TM: [" +
         		        tableManager.getRows().length + "]");
 		    }
 		}
@@ -492,9 +448,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 	 * @throws InvalidParameterException
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getSystemTableManager()
 	 */
-	public @Override
-	TableManager getSystemTableManager() throws SQLException,
-			InvalidParameterException {
+	@Override
+	public TableManager getSystemTableManager() throws SQLException, InvalidParameterException {
 		// If this work has already been done (and a non-null object exists)
 		// just return it.
 		if (systemTableManager != null) {
@@ -520,17 +475,17 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		// RB - SQL should return the results ALREADY processed in query, 
 		// to be fixed later.
 		for (Entry<String, SystemType> systemTable : systemTables.entrySet()) {
-			_Log.info("systemTable.getKey(): " + systemTable.getKey());
+			LOG.info("systemTable.getKey(): " + systemTable.getKey());
 			/*
 			 * JN 2/15/2007 I think the second part of this if is redundant,
 			 * since the species specific tables are already included in the Map
 			 * returned by getDatabaseSpecificSystemTables()
 			 */
-			_Log.info("getSystemTableManager(): for loop: systemTable.getKey() = "
+			LOG.info("getSystemTableManager(): for loop: systemTable.getKey() = "
 				+ systemTable.getKey());
 			
 			if (( !getDatabaseSpecificSystemTables().containsKey( systemTable.getKey() ) ) ) {
-				_Log.info("getSystemTableManager(): for loop: "
+				LOG.info("getSystemTableManager(): for loop: "
 						+ systemTable.getKey()
 						+ " is not in the list of DatabaseSpecificSystemTables or SpeciesSpecificSystemTables.");
 				/*
@@ -563,7 +518,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		        		   "WHERE type = ?");
 		    	
 		        // RB - added query statement logging
-		        _Log.info("getSystemTableManager(): query used: " + basePrepareStatement);
+		        LOG.info("getSystemTableManager(): query used: " + basePrepareStatement);
 		        
 				ps = ConnectionManager.getRelationalDBConnection()
 						.prepareStatement( basePrepareStatement.toString() );
@@ -583,13 +538,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				while (result.next()) {
 					
 					// RB - Modified logging to bring in line with above changes.
-					_Log.debug("getSystemTableManager(): while loop: ID:: "
+					LOG.debug("getSystemTableManager(): while loop: ID:: "
 						// RB - from SQL query result: get string "id" 
 					    // + species name from column 2.
 						+ result.getString("id") + "  Species:: "
 						+ result.getString(2));
 					    
-					tableManager.submit(systemTable.getKey(), QueryType.insert, new String[][] {
+					tableManager.submit(systemTable.getKey(), QueryType.insert, new Object[][] {
 					    { "ID", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(systemTable.getKey(),
 						    result.getString("id"))
 						},
@@ -597,7 +552,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						//RB - get string from column 2SQL query result.
 						{ "Species", "|" + result.getString(2) + "|" },
 
-						{ "[Date]", GenMAPPBuilderUtilities.getSystemsDateString(version) }
+						{ "[Date]", version }
                     });
 				}
 			}
@@ -637,12 +592,12 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			// like UniProt-GeneOntology).
 			if (stp.systemTable1.equals(getPrimarySystemTable())
 					&& stp.systemTable2.equals("GeneOntology")) {
-				_Log.info("Relationship table manager skipping "
+				LOG.info("Relationship table manager skipping "
 						+ relationshipTable);
 				continue;
 			} else if (stp.systemTable2.equals("GeneOntology")) {
 				// produce last X-geneontology anything
-				_Log.info("Relationship table manager saving "
+				LOG.info("Relationship table manager saving "
 						+ relationshipTable + " for second pass");
 				produceLastRelationshipTables.add(relationshipTable);
 				continue;
@@ -653,22 +608,24 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			// ExportWizard.updateExportProgress(65, "Preparing tables - " +
 			// "Relationship table - " + relationshipTable + "...");
 
-			tableManager = new TableManager(
-					new String[][] { { "[Primary]", "VARCHAR(50) NOT NULL" },
-					                 { "Related", "VARCHAR(50) NOT NULL" },
-					                 { "Bridge", "VARCHAR(3)" } },
-					new String[] { "[Primary]", "Related" } );
+            tableManager = new TableManager(
+                new String[][] {
+                    { "[Primary]", "VARCHAR(50) NOT NULL" },
+                    { "Related", "VARCHAR(50) NOT NULL" },
+                    { "Bridge", "VARCHAR(3)" }
+                },
+                new String[] { "[Primary]", "Related" }
+            );
 			
 			tableManager.getTableNames().add(relationshipTable);
 
-			if ("UniProt".equals(stp.systemTable1)
-					&& !getDatabaseSpecificSystemTables().containsKey(
-							stp.systemTable2)) {
+            if ("UniProt".equals(stp.systemTable1) &&
+                    !getDatabaseSpecificSystemTables().containsKey(stp.systemTable2)) {
 				
 				// UniProt-X conditional
 				
 				// RB - Added logging
-				_Log.info("getRelationshipTable(): if (UniProt - X) {}");
+				LOG.info("getRelationshipTable(): if (UniProt - X) {}");
 				
 				// RB - Programmatically create the SQL string for
 				// variable number of species.
@@ -696,7 +653,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						"WHERE type = ?");
 		    	
 		        // RB - added query statement logging
-		        _Log.info("getRelationshipTableManager(): query used: " + basePrepareStatement);
+		        LOG.info("getRelationshipTableManager(): query used: " + basePrepareStatement);
 				
 		        PreparedStatement ps = ConnectionManager.getRelationalDBConnection()
 				.prepareStatement( basePrepareStatement.toString() );
@@ -714,23 +671,18 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 				String primary = "";
 				String related = "";
-				while (result.next()) {
-					primary = result.getString("hjvalue");
-					related = GenMAPPBuilderUtilities
-							.checkAndPruneVersionSuffix(stp.systemTable2,
-									result.getString("id"));
+                while (result.next()) {
+                    primary = result.getString("hjvalue");
+                    related = GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2,
+                            result.getString("id"));
 
-					tableManager.submit(
-							relationshipTable,
-							QueryType.insert,
-							new String[][] {
-									{ "[Primary]", primary != null ? primary : "" },
-									{ "Related", related != null ? related : "" },
-									// TODO This is hard-coded. Fix it.
-									{ "Bridge", "S" }
-									       }
-									    );
-				}
+                    tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
+                        { "[Primary]", primary != null ? primary : "" },
+                        { "Related", related != null ? related : "" },
+                        // TODO This is hard-coded. Fix it.
+                        { "Bridge", "S" }
+                    });
+                }
 				ps.close();
 			} else if (!getDatabaseSpecificSystemTables().containsKey(
 							stp.systemTable1) &&
@@ -740,7 +692,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				// X-X conditional
 				
 				// RB - added logging
-				_Log.info("getRelationshipTable(): else if (X - X) {}");
+				LOG.info("getRelationshipTable(): else if (X - X) {}");
 				
 				
 				// RB - Programmatically create the SQL string for
@@ -773,7 +725,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 					")) AS species_entry ON (dbrefcomp.dbrefhjid = species_entry.hjid)");
 				
 		        // RB - added query statement logging
-		        _Log.info("getRelationshipTableManager(): query used: " + basePrepareStatement);
+		        LOG.info("getRelationshipTableManager(): query used: " + basePrepareStatement);
 				
 				PreparedStatement ps = ConnectionManager
 						.getRelationalDBConnection()
@@ -790,75 +742,60 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				}	
 								
 				ResultSet result = ps.executeQuery();
-				while (result.next()) {
-					String primary = GenMAPPBuilderUtilities
-							.checkAndPruneVersionSuffix(stp.systemTable1,
-									result.getString("id1"));
-					String related = GenMAPPBuilderUtilities
-							.checkAndPruneVersionSuffix(stp.systemTable2,
-									result.getString("id2"));
+                while (result.next()) {
+                    String primary = GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1,
+                            result.getString("id1"));
+                    String related = GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2,
+                            result.getString("id2"));
 
-					tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
-					    { "[Primary]", primary != null ? primary : "" },
-						{ "Related", related != null ? related : "" },
-						// FIXME This is hard-coded. Fix it.
-						{ "Bridge", "S" } 
-					});
-				}
+                    tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
+                        { "[Primary]", primary != null ? primary : "" },
+                        { "Related", related != null ? related : "" },
+                        // FIXME This is hard-coded. Fix it.
+                        { "Bridge", "S" }
+                    });
+                }
 				ps.close();
-			
 			} else {
-				
 				boolean relationshipTableWasHandled = false;
 
 				// Species-X or X-Species conditional, excluding GeneOntology
-				
-				for(SpeciesProfile species : selectedSpeciesProfiles) {
-				
-					if( (species.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) || 
-						 species.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) &&
-						 !stp.systemTable2.equals("GeneOntology") ) {
-					
-						// RB - added logging
-						_Log.info("getRelationshipTable(): else (Species - X or X - Species) {} " +
-							" excluding GeneOntology");							
+                for (SpeciesProfile species: selectedSpeciesProfiles) {
 
-						_Log.info("( species.getSpeciesSpecificSystemTables().containsKey(" +
-							stp.systemTable1 + ") || species.getSpeciesSpecificSystemTables()" +
-							".containsKey(" + stp.systemTable2 + " )) && !" + stp.systemTable2 + 
-							" equals GeneOnotology.");						
-						
-						tableManager = species
-						   .getSpeciesSpecificRelationshipTable(
-						      relationshipTable,
-							  getPrimarySystemTableManager(),
-							  getSystemTableManager(),
-							  tableManager);							
-						
-						relationshipTableWasHandled = true;
-					}
-				}
-				if ( !relationshipTableWasHandled ) {
-				// No way currently of producing these
-				
-				// RB - added logging
-				_Log.info("getRelationshipTable(): else - No way of currently producing these.");
-				
-				tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
-				    { "[Primary]", "" },
-					{ "Related", "" },
-					// FIXME: This is hard-coded. Fix it.
-					{ "Bridge", "" }
-				});
+                    if ((species.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) ||
+                            species.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) &&
+                            !stp.systemTable2.equals("GeneOntology")) {
+                        // RB - added logging
+                        LOG.info("getRelationshipTable(): else (Species - X or X - Species) {} " +
+                                " excluding GeneOntology");
+                        LOG.info("( species.getSpeciesSpecificSystemTables().containsKey(" + stp.systemTable1 +
+                                ") || species.getSpeciesSpecificSystemTables()" + ".containsKey(" + stp.systemTable2 +
+                                " )) && !" + stp.systemTable2 + " equals GeneOnotology.");
+
+                        tableManager = species.getSpeciesSpecificRelationshipTable(relationshipTable,
+                                getPrimarySystemTableManager(), getSystemTableManager(), tableManager);
+
+                        relationshipTableWasHandled = true;
+                    }
+                }
+                if (!relationshipTableWasHandled) {
+    				// No way currently of producing these
+    				
+    				// RB - added logging
+    				LOG.info("getRelationshipTable(): else - No way of currently producing these.");
+    				tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
+				        { "[Primary]", "" },
+    			        { "Related", "" },
+    					// FIXME: This is hard-coded. Fix it.
+    					{ "Bridge", "" }
+    				});
 				}
 			}
 
-		tableManagers.add(tableManager);
+            tableManagers.add(tableManager);
 		}
-
 		return tableManagers;
-	
-	} // END getRelationshipTableManager()
+	}
 
 	/**
 	 * @see edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile#getSecondPassTableManagers()
@@ -883,71 +820,65 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 	 * @throws SQLException
 	 * @throws Exception
 	 */
-	private TableManager getSecondPassRelationshipTables() {
-		TableManager tableManager = new TableManager(new String[][] {
-				{ "[Primary]", "VARCHAR(50) NOT NULL" },
-				{ "Related", "VARCHAR(50) NOT NULL" },
-				{ "Bridge", "VARCHAR(3)" } }, new String[] { "[Primary]",
-				"Related" });
+    private TableManager getSecondPassRelationshipTables() {
+        TableManager tableManager = new TableManager(new String[][] {
+                { "[Primary]", "VARCHAR(50) NOT NULL" },
+                { "Related", "VARCHAR(50) NOT NULL" },
+                { "Bridge", "VARCHAR(3)" }
+            }, new String[] { "[Primary]", "Related" });
 
-		PreparedStatement ps = null;
-		ResultSet result = null;
-		String sqlStatement = null;
+        PreparedStatement ps = null;
+        ResultSet result = null;
+        String sqlStatement = null;
 
-		try {
-			for (String relationshipTable : produceLastRelationshipTables) {
-				SystemTablePair stp = GenMAPPBuilderUtilities
-						.parseRelationshipTableName(relationshipTable);
+        try {
+            for (String relationshipTable: produceLastRelationshipTables) {
+                SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
 
-				sqlStatement = "SELECT [UniProt-" + stp.systemTable1
-						+ "].Related as id1, "
-						+ "[UniProt-GeneOntology].Related as id2 "
-						+ "FROM [UniProt-" + stp.systemTable1 + "] "
-						+ "INNER JOIN [UniProt-GeneOntology] " + "ON [UniProt-"
-						+ stp.systemTable1
-						+ "].Primary = [UniProt-GeneOntology].Primary";
+                sqlStatement = "SELECT [UniProt_" + stp.systemTable1 + "].Related as id1, " +
+                        "[UniProt_GeneOntology].Related as id2 " +
+                        "FROM [UniProt_" + stp.systemTable1 + "] " +
+                        "INNER JOIN [UniProt_GeneOntology] " +
+                        "ON [UniProt_" + stp.systemTable1 + "].[Primary] = [UniProt_GeneOntology].[Primary]";
 
-				// Alternative query when using a database other than Access.
-				// String sqlStatement = "SELECT \"" + tableName +
-				// "\".Related, " +
-				// "\"UniProt-GeneOntology\".Related " +
-				// "FROM \"" + tableName + "\" " +
-				// "INNER JOIN \"UniProt-GeneOntology\" " +
-				// "ON \"" + tableName + "\".\"Primary\" =
-				// \"UniProt-GeneOntology\".\"Primary\"";
-				_Log.info("Second-pass query: " + sqlStatement);
-				ps = getExportConnection().prepareStatement(sqlStatement);
+                // Alternative query when using a database other than Access.
+                // String sqlStatement = "SELECT \"" + tableName +
+                // "\".Related, " +
+                // "\"UniProt-GeneOntology\".Related " +
+                // "FROM \"" + tableName + "\" " +
+                // "INNER JOIN \"UniProt-GeneOntology\" " +
+                // "ON \"" + tableName + "\".\"Primary\" =
+                // \"UniProt-GeneOntology\".\"Primary\"";
+                LOG.info("Second-pass query: " + sqlStatement);
+                ps = getExportConnection().prepareStatement(sqlStatement);
 
-				result = ps.executeQuery();
-				while (result.next()) {
-					tableManager.submit(relationshipTable, QueryType.insert,
-							new String[][] {
-									{ "[Primary]", result.getString("id1") },
-									{ "Related", result.getString("id2") },
-									// TODO This is hard-coded. Fix it.
-									{ "Bridge", "S" } });
-				}
-			}
-		} catch (SQLException e) {
-			StringBuffer errText = new StringBuffer(
-					"An SQLException occurred in getSecondPassRelationshipTables() while reading from the database. ");
-			errText.append(" Error Code: " + e.getErrorCode());
-			errText.append(" Message: " + e.getMessage());
-			_Log.error(errText);
-			_Log.error(sqlStatement);
-		} finally {
-			try {
-				ps.close();
-			} catch (Exception exc) {
-				_Log.warn("Problem closing PreparedStatement");
-			}
-		}
-		return tableManager;
-	}
+                result = ps.executeQuery();
+                while (result.next()) {
+                    tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
+                        { "[Primary]", result.getString("id1") },
+                        { "Related", result.getString("id2") },
+                        // TODO This is hard-coded. Fix it.
+                        { "Bridge", "S" }
+                    });
+                }
+            }
+        } catch (SQLException e) {
+            StringBuffer errText = new StringBuffer("An SQLException occurred in getSecondPassRelationshipTables() " +
+                    "while reading from the database. ");
+            errText.append(" Error Code: " + e.getErrorCode());
+            errText.append(" Message: " + e.getMessage());
+            LOG.error(errText);
+            LOG.error(sqlStatement);
+        } finally {
+            try {
+                ps.close();
+            } catch (Exception exc) {
+                LOG.warn("Problem closing PreparedStatement");
+            }
+        }
 
-	/**
-	 * The log object for UniProtDatabaseProfile.
-	 */
-	private static final Log _Log = LogFactory
-			.getLog(UniProtDatabaseProfile.class);
+        return tableManager;
+    }
+
+	private static final Log LOG = LogFactory.getLog(UniProtDatabaseProfile.class);
 }

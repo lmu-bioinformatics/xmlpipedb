@@ -137,7 +137,6 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 
         PreparedStatement ps;
         ResultSet result;
-        String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);
         String sqlQuery;
 
         // step 5 - extract the complete list of TAIR IDs into a resultset
@@ -150,7 +149,11 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
             for (; result.next(); i++) {
                 _Log.debug("getSystemTableManagerCustomizations(): TAIR ID" + result.getString("id"));
                 _Log.debug("Row #: [" + i + "]");
-                tableManager.submit(SPECIES_TABLE, QueryType.insert, new String[][] { { "ID", result.getString("id") }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", dateToday } });
+                tableManager.submit(SPECIES_TABLE, QueryType.insert, new Object[][] {
+                    { "ID", result.getString("id") },
+                    { "Species", "|" + getSpeciesName() + "|" },
+                    { "[Date]", version }
+                });
             }
             _Log.info("TAIR Records Written to TableManger: [" + i + "]");
         } catch(SQLException e) {

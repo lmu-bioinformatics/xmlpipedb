@@ -850,7 +850,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 // "ON \"" + tableName + "\".\"Primary\" =
                 // \"UniProt-GeneOntology\".\"Primary\"";
                 LOG.info("Second-pass query: " + sqlStatement);
-                ps = getExportConnection().prepareStatement(sqlStatement);
+                ps = ConnectionManager.getGenMAPPDBConnection().prepareStatement(sqlStatement);
 
                 result = ps.executeQuery();
                 while (result.next()) {

@@ -26,6 +26,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cfg.Configuration;
 
+import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.DatabaseBuilder;
+
 /**
  * @author Joey J. Barrett
  */
@@ -42,6 +45,7 @@ public class ConnectionManager {
     private static Connection relationalDBConnection = null;
     private static Connection genMAPPDBConnection = null;
     private static Connection genMAPPTemplateDBConnection = null;
+    private static Database genMAPPDB = null;
 
     static {
         URL u = null;
@@ -88,43 +92,16 @@ public class ConnectionManager {
         if (genMAPPDatabase != null) {
             if (genMAPPDBConnection == null) {
                 try {
-                    copyFile(GENMAPP_DATABASE_TEMPLATE, new File(genMAPPDatabase));
+                    File genMAPPDatabaseFile = new File(genMAPPDatabase);
+                    copyFile(GENMAPP_DATABASE_TEMPLATE, genMAPPDatabaseFile);
                     genMAPPDBConnection = openAccessDatabaseConnection(genMAPPDatabase);
+                    genMAPPDB = DatabaseBuilder.open(genMAPPDatabaseFile);
                 } catch (IOException e) {
                     LOG.error("Unable to copy file", e);
                 } catch (ClassNotFoundException e) {
                     LOG.error("Unable to instantiate Access connection", e);
                 } catch (SQLException e) {
                     LOG.error("Unable to open Access connection", e);
-                }
-            } else {
-                LOG.error("A GenMAPP database connection cannot be created " +
-                        "while a previous connection is still open.");
-            }
-        } else {
-            LOG.error("A GenMAPP database connection is not specified.");
-        }
-    }
-
-    /**
-     * Opens a connection to the GenMAPP relational database. If the parameter
-     * is null an exception is thrown. If the connection is still open, an
-     * exception is thrown.
-     *
-     * @param connectionConfiguration
-     * @throws Exception
-     */
-    public static void openGenMAPPDB(ConnectionConfiguration connectionConfiguration) {
-        // Open a connection to the GenMAPP database, requires a connection
-        // configuration.
-        if (connectionConfiguration != null) {
-            if (genMAPPDBConnection == null) {
-                try {
-                    DriverManager.registerDriver(connectionConfiguration.getDriver());
-                    genMAPPDBConnection = DriverManager.getConnection(connectionConfiguration.getConnectionURL(),
-                            connectionConfiguration.getUserName(), connectionConfiguration.getPassword());
-                } catch (SQLException e) {
-                    LOG.error("Unable to open connection to " + connectionConfiguration.getConnectionURL(), e);
                 }
             } else {
                 LOG.error("A GenMAPP database connection cannot be created " +
@@ -192,16 +169,11 @@ public class ConnectionManager {
         return genMAPPTemplateDBConnection;
     }
 
-    public static boolean isGenMAPPDBConnectionOpen() {
-        return genMAPPDBConnection != null;
-    }
-
-    public static boolean isRelationalDBConnectionOpen() {
-        return relationalDBConnection != null;
-    }
-
-    public static boolean isGenMAPPTemplateDBConnectionOpen() {
-        return genMAPPTemplateDBConnection != null;
+    public static Database getGenMAPPDB() {
+        if (genMAPPDB == null) {
+            LOG.error("A GenMAPP database is not open.");
+        }
+        return genMAPPDB;
     }
 
     /**
@@ -210,10 +182,15 @@ public class ConnectionManager {
      *
      * @throws SQLException
      */
-    public static void closeGenMAPPDB() throws SQLException {
+    public static void closeGenMAPPDB() throws SQLException, IOException {
         if (genMAPPDBConnection != null) {
             genMAPPDBConnection.close();
             genMAPPDBConnection = null;
+        }
+        
+        if (genMAPPDB != null) {
+            genMAPPDB.close();
+            genMAPPDB = null;
         }
     }
 
@@ -250,7 +227,7 @@ public class ConnectionManager {
      *
      * @throws SQLException
      */
-    public static void closeAll() throws SQLException {
+    public static void closeAll() throws SQLException, IOException {
         closeRelationalDB();
         closeGenMAPPDB();
         closeGenMAPPTemplateDB();

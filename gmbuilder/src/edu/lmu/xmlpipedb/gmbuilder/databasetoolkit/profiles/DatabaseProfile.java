@@ -11,7 +11,6 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,7 +18,6 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +27,8 @@ import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionConfiguration;
+import com.healthmarketscience.jackcess.Database;
+
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
@@ -88,7 +87,6 @@ public abstract class DatabaseProfile extends Profile {
     protected String displayOrder;
     protected String notes;
     protected String genMAPPDatabase = null; // jn - changed from File to String
-    protected ConnectionConfiguration connectionConfiguration = null;
     protected Map<String, SystemType> systemTables;
     protected String[] relationshipTables;
     protected List<GOAspect> chosenAspects;
@@ -263,14 +261,6 @@ public abstract class DatabaseProfile extends Profile {
         return genMAPPDatabase;
     }
 
-    /**
-     * Returns the alternate connection chosen in the export wizard. (not
-     * finished implementation)
-     */
-    public ConnectionConfiguration getConnectionConfiguration() {
-        return connectionConfiguration;
-    }
-
     public List<GOAspect> getChosenAspects() {
         return chosenAspects;
     }
@@ -368,28 +358,14 @@ public abstract class DatabaseProfile extends Profile {
     }
 
     /**
-     * Convenience method for automatically selecting the "all" aspect.
-     */
-    public void setDatabaseProperties(String genMAPPDatabase, ConnectionConfiguration connectionConfiguration) {
-        setDatabaseProperties(genMAPPDatabase, connectionConfiguration,
-                Arrays.asList(GOAspect.Component, GOAspect.Function, GOAspect.Process));
-    }
-
-    /**
      * Sets the connections and aspect chosen in the export wizard.
      *
      * @param genMAPPDatabase
      * @param connectionConfiguration
      * @param chosenAspect
      */
-    public void setDatabaseProperties(String genMAPPDatabase, ConnectionConfiguration connectionConfiguration,
-            List<GOAspect> chosenAspects) {
+    public void setDatabaseProperties(String genMAPPDatabase, List<GOAspect> chosenAspects) {
         this.genMAPPDatabase = genMAPPDatabase;
-        this.connectionConfiguration = connectionConfiguration;
-        this.chosenAspects = chosenAspects;
-    }
-
-    public void setChosenAspects(List<GOAspect> chosenAspects) {
         this.chosenAspects = chosenAspects;
     }
 
@@ -590,21 +566,18 @@ public abstract class DatabaseProfile extends Profile {
         return tableManager;
     }
 
+    public void prepareForExport() {
+        ConnectionManager.openGenMAPPDB(genMAPPDatabase);
+    }
+
     /**
      * Returns the chosen export connection from the export wizard.
      */
     public Connection getExportConnection() {
-        if (genMAPPDatabase != null) {
-            if (!ConnectionManager.isGenMAPPDBConnectionOpen()) {
-                ConnectionManager.openGenMAPPDB(genMAPPDatabase);
-            }
-            return ConnectionManager.getGenMAPPDBConnection();
-        } else if (connectionConfiguration != null) {
-            if (!ConnectionManager.isGenMAPPDBConnectionOpen()) {
-                ConnectionManager.openGenMAPPDB(connectionConfiguration);
-            }
-            return ConnectionManager.getGenMAPPDBConnection();
-        }
-        return null;
+        return ConnectionManager.getGenMAPPDBConnection();
+    }
+    
+    public Database getExportDatabase() {
+        return ConnectionManager.getGenMAPPDB();
     }
 }

@@ -63,7 +63,6 @@ import edu.lmu.xmlpipedb.util.exceptions.XpdException;
 import edu.lmu.xmlpipedb.util.gui.ConfigurationPanel;
 import edu.lmu.xmlpipedb.util.gui.HQLPanel;
 import edu.lmu.xmlpipedb.util.gui.XMLPipeDBGUIUtils;
-
 import shag.App;
 import shag.dialog.ModalDialog;
 import shag.table.BeanColumn;
@@ -109,7 +108,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         // greater flexibility and control over our logging
         // Set up logging. next line just uses basic logging
         BasicConfigurator.configure();
-        _Log.info("***** GenMAPP Builder started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
+        LOG.info("***** GenMAPP Builder started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(System.currentTimeMillis()));
 
         Configuration hc = createHibernateConfiguration();
         if (hc == null) {
@@ -193,9 +192,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             JMenu helpMenu = new JMenu("Help");
             helpMenu.add(new AbstractAction("About " + getAppName()) {
 
-                /**
-                 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-                 */
+                private static final long serialVersionUID = -3452852552674481129L;
+
                 public void actionPerformed(ActionEvent aevt) {
                     showAboutBox();
                 }
@@ -230,6 +228,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      * Creates the actions performed by the application.
      *
      */
+    @SuppressWarnings("serial")
     private void createActions() {
         _configureDBAction = new AbstractAction(AppResources.messageString("configure.database.command") + "...") {
             /**
@@ -405,7 +404,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 _queryPanel.setHibernateConfiguration(createHibernateConfiguration());
             }
         } catch(Exception exc) {
-            _Log.error(exc);
+            LOG.error(exc);
             ModalDialog.showErrorDialog(AppResources.messageString("error.cannotconfig.title"),
                 AppResources.messageString("error.cannotconfig.message"));
         }
@@ -468,16 +467,16 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 return false;
             }
         } catch(HibernateException e) {
-            _Log.error(e);
+            LOG.error(e);
             handleErroneousHibernateConfiguration();
         } catch(JAXBException e) {
-            _Log.error(e);
+            LOG.error(e);
             handleErroneousHibernateConfiguration();
         } catch(SAXException e) {
-            _Log.error(e);
+            LOG.error(e);
             handleErroneousHibernateConfiguration();
         } catch(IOException e) {
-            _Log.error(e);
+            LOG.error(e);
             handleErroneousHibernateConfiguration();
         }
 
@@ -518,7 +517,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                             .replaceAll("\\$FILE", file.toString().replaceAll("\\\\", "\\\\\\\\")));
                 }
             } catch(HibernateException hexc) {
-                _Log.error(hexc);
+                LOG.error(hexc);
                 handleErroneousHibernateConfiguration();
             }
         } else {
@@ -549,18 +548,18 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         public Boolean doInBackground() {
             try {
                 startTime = System.currentTimeMillis();
-                _Log.info("Importing Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(startTime));
+                LOG.info("Importing Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(startTime));
                 importGoaEngine.importToSQL(goaFile);
                 endTime = System.currentTimeMillis();
-                _Log.info("Importing Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(endTime));
+                LOG.info("Importing Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(endTime));
                 return true;
             } catch(IOException ioexc) {
                 exc = ioexc;
-                _Log.error("I/O exception", ioexc);
+                LOG.error("I/O exception", ioexc);
                 return false;
             } catch(SQLException sqlexc) {
                 exc = sqlexc;
-                _Log.error("SQL exception", sqlexc);
+                LOG.error("SQL exception", sqlexc);
                 return false;
             }
         }
@@ -587,10 +586,10 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 }
             } catch(InterruptedException e) {
                 // Extremely unlikely exception, so we just log.
-                _Log.error(e);
+                LOG.error(e);
             } catch(ExecutionException e) {
                 // Extremely unlikely exception, so we just log.
-                _Log.error(e);
+                LOG.error(e);
             }
         }
     }
@@ -664,7 +663,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 break;
 
             default:
-                _Log.error("Unknown property attribute.");
+                LOG.error("Unknown property attribute.");
         }
 
         setTallyCriterion(criteria, mainPropertyString);
@@ -696,7 +695,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         // any specific strain details. The first element in the
         // split array corresponds with the proper species name.
         species = getSpeciesNameFromString(species);
-        _Log.debug("Setting tally criterion for: " + species);
+        LOG.debug("Setting tally criterion for: " + species);
 
         String speciesAmount = AppResources.optionString(species + "_level_amount");
         if (speciesAmount == null || "".equals(speciesAmount)) {
@@ -733,7 +732,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             }
 
         } catch(InvalidParameterException e) {
-            _Log.error(e);
+            LOG.error(e);
         }
 
     }
@@ -809,13 +808,13 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         try {
             te.getXmlFileCounts(xmlFile);
         } catch(InvalidParameterException e) {
-            _Log.error(e);
+            LOG.error(e);
             ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
         } catch(XpdException e) {
-            _Log.error(e);
+            LOG.error(e);
             ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
         } catch(Exception e) {
-            _Log.error(e);
+            LOG.error(e);
             ModalDialog.showErrorDialog(e.getClass().getName(), "An unexpected Exception was caught. Exception text: " + e.getMessage());
         }
     }
@@ -832,15 +831,15 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
              */
             te.getDbCounts(new QueryEngine(hibernateConfiguration));
         } catch(InvalidParameterException e) {
-            _Log.error(e);
+            LOG.error(e);
             ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
         } catch(XpdException e) {
-            _Log.error(e);
+            LOG.error(e);
             ModalDialog.showErrorDialog(e.getClass().getName(), e.getMessage());
         } catch(HibernateException e) {
             handleErroneousHibernateConfiguration();
         } catch(Exception e) {
-            _Log.error(e);
+            LOG.error(e);
             ModalDialog.showErrorDialog(e.getClass().getName(), "An unexpected Exception was caught. Exception text: " + e.getMessage());
         }
     }
@@ -862,7 +861,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         // we want to remove the species Criterion from
         // this list
         _currentCriteria.removeBucket(AppResources.optionString("uniprot_element_level0"));
-        _Log.info("Setting XML body " + body);
+        LOG.info("Setting XML body " + body);
         return _currentCriteria;
     }
 
@@ -878,7 +877,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             return;
         }
 
-        _Log.info("Getting DB column " + column);
+        LOG.info("Getting DB column " + column);
         setTallyCriterion(_currentCriteria, column);
     }
 
@@ -924,7 +923,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                     }
                 }
             } catch(HibernateException e) {
-                _Log.error(e);
+                LOG.error(e);
                 handleErroneousHibernateConfiguration();
             }
         } else {
@@ -1079,20 +1078,20 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
                 // OK, go.
                 startTime = System.currentTimeMillis();
-                _Log.info("Processing Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(startTime));
+                LOG.info("Processing Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(startTime));
                 session = sessionFactory.openSession();
                 (new ExportGoData(session.connection())).populateGeneOntologyStage(hibernateConfiguration);
                 endTime = System.currentTimeMillis();
-                _Log.info("Processing Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(endTime));
+                LOG.info("Processing Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(endTime));
 
                 return true;
             } catch(HibernateException hexc) {
                 exc = hexc;
-                _Log.error(hexc);
+                LOG.error(hexc);
                 return false;
             } catch(SQLException sqlexc) {
                 exc = sqlexc;
-                _Log.error(sqlexc);
+                LOG.error(sqlexc);
                 return false;
             } finally {
                 try { session.close(); } catch(Exception exc) { /* No-op: just clean-up. */ }
@@ -1119,10 +1118,10 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 }
             } catch(InterruptedException e) {
                 // Extremely unlikely exception, so we just log.
-                _Log.error(e);
+                LOG.error(e);
             } catch(ExecutionException e) {
                 // Extremely unlikely exception, so we just log.
-                _Log.error(e);
+                LOG.error(e);
             }
         }
     }
@@ -1151,15 +1150,21 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 getFrontmostWindow().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 new ExportWizard(this.getFrontmostWindow());
             } catch(HibernateException e) {
-                _Log.error(e);
+                LOG.error(e);
                 handleErroneousHibernateConfiguration();
             } catch(Exception e) {
-                _Log.error(e);
+                LOG.error(e);
                 ModalDialog.showErrorDialog("Unexpected Export Error",
                 		"An unexpected error has occurred during export.\n" +
                 		"Please consult the log for technical details.");
             } finally {
-                try { ExportToGenMAPP.cleanup(); } catch(SQLException e) { /* ignored */ }
+                try {
+                    ExportToGenMAPP.cleanup();
+                } catch (SQLException e) {
+                    LOG.error(e);
+                } catch (IOException e) {
+                    LOG.error(e);
+                }
             }
         } else {
             handleMissingHibernateConfiguration();
@@ -1204,7 +1209,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             // This may be a normal occurrence (particularly when starting up
             // for the first time), so we don't do anything in this case.
             // Thus, we report this via DEBUG level only.
-            _Log.debug(exc);
+            LOG.debug(exc);
         }
 
         return hibernateConfiguration;
@@ -1230,7 +1235,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * The GenMAPPBuilder log.
      */
-    private static final Log _Log = LogFactory.getLog(GenMAPPBuilder.class);
+    private static final Log LOG = LogFactory.getLog(GenMAPPBuilder.class);
 
     /**
      * Action object for configuring the database.

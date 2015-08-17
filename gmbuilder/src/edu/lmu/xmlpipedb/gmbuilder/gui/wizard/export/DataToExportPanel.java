@@ -1,14 +1,3 @@
-/********************************************************
- * Filename: ExportPanel2.java
- * Author: Joey J. Barrett
- * Program: gmBuilder
- * Description: The second panel displayed in the export
- * wizard.
- *
- * Revision History:
- * 20060620: Initial Revision.
- * *****************************************************/
-
 package edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export;
 
 import java.awt.BorderLayout;
@@ -41,10 +30,8 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.GOAs
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile.SystemType;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 
-
 /**
  * @author Joey J. Barrett
- * Class: ExportPanel2
  */
 public class DataToExportPanel extends JPanel {
 
@@ -60,9 +47,6 @@ public class DataToExportPanel extends JPanel {
 	private JCheckBox onlyCAspectCheckBox;
 	private JCheckBox onlyPAspectCheckBox;
 
-	/**
-	 * Constructor.
-	 */
 	protected DataToExportPanel(DataToExportDescriptor descriptor) {
         super();
         this.descriptor = descriptor;
@@ -80,10 +64,6 @@ public class DataToExportPanel extends JPanel {
         add(contentPanel, BorderLayout.CENTER);
     }
 
-    /**
-     * Provides the content for the panel.
-     * @return
-     */
     private JPanel getContentPanel() {
 
     	JPanel genmappFilePanel = new JPanel();
@@ -130,7 +110,10 @@ public class DataToExportPanel extends JPanel {
     	goaAspectPanel.add(onlyPAspectCheckBox);
     	goaAspectPanel.add(Box.createVerticalStrut(10));
     	goaAspectPanel.add(new JButton(new AbstractAction("Export All Terms") {
-    	    public void actionPerformed(ActionEvent actionEvent) {
+
+            private static final long serialVersionUID = -7958956533563071206L;
+
+            public void actionPerformed(ActionEvent actionEvent) {
     	        onlyFAspectCheckBox.setSelected(true);
                 onlyCAspectCheckBox.setSelected(true);
                 onlyPAspectCheckBox.setSelected(true);
@@ -174,13 +157,10 @@ public class DataToExportPanel extends JPanel {
 
 	}
 
-	/**
-	 * Displays a file chooser for creating
-	 * a GenMAPP database file.
-	 */
 	protected void chooseGenMAPPDatabase() {
 
-		String defaultFileName = GenMAPPBuilderUtilities.getDefaultGDBFilename(ExportToGenMAPP.getDatabaseProfile().getSelectedSpeciesProfile().getSpeciesName(), new Date());
+		String defaultFileName = GenMAPPBuilderUtilities.getDefaultGDBFilename(ExportToGenMAPP.getDatabaseProfile()
+		        .getSelectedSpeciesProfile().getSpeciesName(), new Date());
 		JFileChooser chooser = new JFileChooser();
 		File defaultFile = new File(defaultFileName);
         chooser.setSelectedFile(defaultFile);
@@ -195,11 +175,6 @@ public class DataToExportPanel extends JPanel {
 
 	}
 
-	/**
-     * Verifies if all information is entered.
-     *
-     * @return
-     */
     protected boolean isAllInformationEntered() {
         return (genmappDatabaseFile != null) &&            // A file must be chosen.
                 (onlyCAspectCheckBox.isSelected() ||
@@ -207,9 +182,6 @@ public class DataToExportPanel extends JPanel {
                         onlyPAspectCheckBox.isSelected()); // At least one aspect must be included.
     }
 
-	/**
-	 * Submits all information collected on the panel.
-	 */
 	protected void submitInformationEntered() {
 	    // Build the list of chosen aspects.  With just 3 checkboxes, we go ahead and inline.
 	    List<DatabaseProfile.GOAspect> aspects = new ArrayList<DatabaseProfile.GOAspect>();
@@ -227,10 +199,7 @@ public class DataToExportPanel extends JPanel {
 	    DatabaseProfile databaseProfile = ExportToGenMAPP.getDatabaseProfile();
 	    
 	    // Export file and GO "aspects."
-		databaseProfile.setDatabaseProperties(
-				(genmappDatabaseFile != null) ? genmappDatabaseFile.getAbsolutePath() : null,
-				null,
-				aspects);
+		databaseProfile.setDatabaseProperties(genmappDatabaseFile.getAbsolutePath(), aspects);
 
         // System tables: This used to be customizable, but ultimately we always
         // want everything anyway, so the customization interface was removed.

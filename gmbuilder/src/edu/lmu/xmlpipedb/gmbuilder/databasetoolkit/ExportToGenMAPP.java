@@ -23,6 +23,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
+import com.healthmarketscience.jackcess.Database;
+
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
@@ -89,7 +91,9 @@ public class ExportToGenMAPP {
 
         // RB - Modified ExportGoData second argument to be a List of taxon ids,
         // from a single taxon id.
+        selectedDatabaseProfile.prepareForExport();
         Connection exportConnection = selectedDatabaseProfile.getExportConnection();
+        Database exportDatabase = selectedDatabaseProfile.getExportDatabase();
         new ExportGoData(exportConnection)
             .export(selectedDatabaseProfile.getChosenAspects(), selectedDatabaseProfile.getTaxonIds());
 
@@ -172,7 +176,7 @@ public class ExportToGenMAPP {
         LOG.info("Done with ExportToGenMAPP.export()");
     }
 
-    public static void cleanup() throws SQLException {
+    public static void cleanup() throws SQLException, IOException {
         ConnectionManager.closeAll();
     }
 }

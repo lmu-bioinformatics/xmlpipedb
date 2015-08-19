@@ -93,16 +93,16 @@ public class PlasmodiumFalciparumUniProtSpeciesProfile extends UniProtSpeciesPro
                     new_id = substrings[i].replace("_", "");
 
                     _Log.debug("Remove '_' from " + id + " to create: " + new_id + " for surrogate " + hjid);
-                    result.submit("OrderedLocusNames", QueryType.insert, new Object[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", version }, { "UID", hjid } });
+                    result.submit("OrderedLocusNames", QueryType.insert, new Object[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "Date", version }, { "UID", hjid } });
                     
                     _Log.debug("Keep '_' from " + id + " to create: " + old_id + " for surrogate " + hjid);
-                    result.submit("OrderedLocusNames", QueryType.insert, new Object[][] { { "ID", old_id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", version }, { "UID", hjid } });
+                    result.submit("OrderedLocusNames", QueryType.insert, new Object[][] { { "ID", old_id }, { "Species", "|" + getSpeciesName() + "|" }, { "Date", version }, { "UID", hjid } });
                 }
                 }
                 // otherwise process as normal
                     else {
                     _Log.debug("Processing raw ID: " + id + " for surrogate " + hjid);
-                    tableManager.submit("OrderedLocusNames", QueryType.insert, new Object[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "[Date]", version }, { "UID", hjid } });
+                    tableManager.submit("OrderedLocusNames", QueryType.insert, new Object[][] { { "ID", id }, { "Species", "|" + getSpeciesName() + "|" }, { "Date", version }, { "UID", hjid } });
                 }
             }
             

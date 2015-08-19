@@ -43,9 +43,8 @@ public class ConnectionManager {
             "/GeneMAPPBuilder.db");
 
     private static Connection relationalDBConnection = null;
-    private static Connection genMAPPDBConnection = null;
     private static Connection genMAPPTemplateDBConnection = null;
-    private static Database genMAPPDB = null;
+    private static File genMAPPDatabaseFile = null;
 
     static {
         URL u = null;
@@ -80,36 +79,9 @@ public class ConnectionManager {
         }
     }
 
-    /**
-     * Opens a connection to the GenMAPP Access database. If the parameter is
-     * null an exception is thrown. If the connection is still open, an
-     * exception is thrown.
-     *
-     * @param genMAPPDatabase
-     * @throws Exception
-     */
-    public static void openGenMAPPDB(String genMAPPDatabase) {
-        if (genMAPPDatabase != null) {
-            if (genMAPPDBConnection == null) {
-                try {
-                    File genMAPPDatabaseFile = new File(genMAPPDatabase);
-                    copyFile(GENMAPP_DATABASE_TEMPLATE, genMAPPDatabaseFile);
-                    genMAPPDBConnection = openAccessDatabaseConnection(genMAPPDatabase);
-                    genMAPPDB = DatabaseBuilder.open(genMAPPDatabaseFile);
-                } catch (IOException e) {
-                    LOG.error("Unable to copy file", e);
-                } catch (ClassNotFoundException e) {
-                    LOG.error("Unable to instantiate Access connection", e);
-                } catch (SQLException e) {
-                    LOG.error("Unable to open Access connection", e);
-                }
-            } else {
-                LOG.error("A GenMAPP database connection cannot be created " +
-                        "while a previous connection is still open.");
-            }
-        } else {
-            LOG.error("A GenMAPP database connection is not specified.");
-        }
+    public static void setGenMAPPDB(String genMAPPDatabase) throws IOException {
+        genMAPPDatabaseFile = new File(genMAPPDatabase);
+        copyFile(GENMAPP_DATABASE_TEMPLATE, genMAPPDatabaseFile);
     }
 
     /**
@@ -143,11 +115,8 @@ public class ConnectionManager {
         }
     }
 
-    public static Connection getGenMAPPDBConnection() {
-        if (genMAPPDBConnection == null) {
-            LOG.error("A GenMAPP database connection is not open.");
-        }
-        return genMAPPDBConnection;
+    public static Connection getGenMAPPDBConnection() throws IOException, SQLException, ClassNotFoundException {
+        return openAccessDatabaseConnection(genMAPPDatabaseFile.getCanonicalPath());
     }
 
     public static Connection getRelationalDBConnection() {
@@ -169,29 +138,8 @@ public class ConnectionManager {
         return genMAPPTemplateDBConnection;
     }
 
-    public static Database getGenMAPPDB() {
-        if (genMAPPDB == null) {
-            LOG.error("A GenMAPP database is not open.");
-        }
-        return genMAPPDB;
-    }
-
-    /**
-     * Close and set null the open GenMAPP database and connection. If the
-     * connection is null nothing happens.
-     *
-     * @throws SQLException
-     */
-    public static void closeGenMAPPDB() throws SQLException, IOException {
-        if (genMAPPDBConnection != null) {
-            genMAPPDBConnection.close();
-            genMAPPDBConnection = null;
-        }
-        
-        if (genMAPPDB != null) {
-            genMAPPDB.close();
-            genMAPPDB = null;
-        }
+    public static Database getGenMAPPDB() throws IOException {
+        return DatabaseBuilder.open(genMAPPDatabaseFile);
     }
 
     /**
@@ -229,7 +177,6 @@ public class ConnectionManager {
      */
     public static void closeAll() throws SQLException, IOException {
         closeRelationalDB();
-        closeGenMAPPDB();
         closeGenMAPPTemplateDB();
     }
 
@@ -255,6 +202,7 @@ public class ConnectionManager {
             SQLException {
         StringBuffer databaseConnectionString = new StringBuffer("jdbc:ucanaccess://");
         databaseConnectionString.append(databaseFile);
+        databaseConnectionString.append(";sysSchema=true");
 
         LOG.info("Using database connection string: " + databaseConnectionString.toString());
         return DriverManager.getConnection(databaseConnectionString.toString(), "", "");

@@ -135,7 +135,7 @@ public class EscherichiaColiUniProtSpeciesProfile extends UniProtSpeciesProfile 
 					{ "ProteinName", result.getString("protein") },
 					{ "Function", result.getString("function") },
 					{ "Species", "|" + getSpeciesName() + "|" },
-					{ "[Date]", version }
+					{ "Date", version }
 			});
 		}
 		ps.close();

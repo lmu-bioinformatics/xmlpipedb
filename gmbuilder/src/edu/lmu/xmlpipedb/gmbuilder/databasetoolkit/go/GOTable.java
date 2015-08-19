@@ -14,7 +14,7 @@ public enum GOTable {
             "insert into GeneOntologyTree (OrderNo,Level,ID,Name) values (?,?,?,?)"),
             
     GeneOntology("GeneOntology",
-            "create table GeneOntology (ID VARCHAR(50) NOT NULL,Name MEMO,Type VARCHAR(2),Parent VARCHAR(50),Relation CHAR,Species MEMO,Date DATE,Remarks MEMO)",
+            "create table GeneOntology (ID VARCHAR(50) NOT NULL,Name MEMO,Type VARCHAR(2),Parent VARCHAR(50),Relation CHAR,Species MEMO,Date VARCHAR,Remarks MEMO)",
             // Non-Access column types
 //          {"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO */
             "insert into GeneOntology (ID,Name,Type,Parent,Relation,Species,Date,Remarks) values (?,?,?,?,?,?,?,?)"),

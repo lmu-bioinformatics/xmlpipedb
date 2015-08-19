@@ -11,6 +11,7 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,8 +27,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.healthmarketscience.jackcess.Database;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
@@ -527,57 +526,59 @@ public abstract class DatabaseProfile extends Profile {
      * than the few hardcoded values and a compiling of the other tables assumed
      * created.
      */
-    public TableManager getRowCountsTableManager() throws SQLException {
-        TableManager tableManager;
-
-        tableManager = new TableManager(new String[][] {
-            { "\"Table\"", "VARCHAR(50) NOT NULL" },
-            { "Rows", "VARCHAR(50) NOT NULL" }
-        },  new String[] { "\"Table\"" });
+    public TableManager getRowCountsTableManager() throws SQLException, IOException, ClassNotFoundException {
+        TableManager tableManager = new TableManager(new String[][] {
+                { "Table", "VARCHAR(50) NOT NULL" },
+                { "Rows", "VARCHAR(50) NOT NULL" }
+            },  new String[] { "Table" });
 
         List<String> allTables = new ArrayList<String>();
 
-        PreparedStatement ps = ConnectionManager.getGenMAPPDBConnection()
-                .prepareStatement("select name from MSysObjects where ((type=1) and (flags=0))");
-
-        ResultSet result = ps.executeQuery();
-        while (result.next()) {
-            allTables.add(result.getString("name").trim());
-        }
-
-        String sqlStatement;
-        for (String tableName: allTables) {
-            sqlStatement = "SELECT Count(*) as count FROM [" + tableName + "]";
-            // Alternative query when using a database other than Access.
-            // String delimiter = (tableName.indexOf("-") > -1) ? "\"" : "";
-            // sqlStatement = "SELECT Count(*) FROM " + delimiter + tableName +
-            // delimiter;
-            ps = ConnectionManager.getGenMAPPDBConnection().prepareStatement(sqlStatement);
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet result = null;
+        try {
+            c = ConnectionManager.getGenMAPPDBConnection();
+            ps = c.prepareStatement("select name from sys.MSysObjects where ((type=1) and (flags=0))");
+    
             result = ps.executeQuery();
             while (result.next()) {
-                tableManager.submit("OriginalRowCounts", QueryType.insert, new String[][] {
-                    { "\"Table\"", tableName },
-                    { "Rows", result.getString("count") }
-                });
+                allTables.add(result.getString("name").trim());
+            }
+            result.close();
+            ps.close();
+    
+            String sqlStatement;
+            for (String tableName: allTables) {
+                sqlStatement = "SELECT Count(*) as count FROM [" + tableName + "]";
+                // Alternative query when using a database other than Access.
+                // String delimiter = (tableName.indexOf("-") > -1) ? "\"" : "";
+                // sqlStatement = "SELECT Count(*) FROM " + delimiter + tableName +
+                // delimiter;
+                ps = c.prepareStatement(sqlStatement);
+                result = ps.executeQuery();
+                while (result.next()) {
+                    tableManager.submit("OriginalRowCounts", QueryType.insert, new String[][] {
+                        { "Table", tableName },
+                        { "Rows", result.getString("count") }
+                    });
+                }
+            }
+        } finally {
+            try {
+                result.close();
+                ps.close();
+                c.close();
+            } catch (Exception e) {
+                // No-op---in finally clause already.
             }
         }
-        ps.close();
 
         return tableManager;
     }
 
-    public void prepareForExport() {
-        ConnectionManager.openGenMAPPDB(genMAPPDatabase);
+    public void prepareForExport() throws IOException {
+        ConnectionManager.setGenMAPPDB(genMAPPDatabase);
     }
 
-    /**
-     * Returns the chosen export connection from the export wizard.
-     */
-    public Connection getExportConnection() {
-        return ConnectionManager.getGenMAPPDBConnection();
-    }
-    
-    public Database getExportDatabase() {
-        return ConnectionManager.getGenMAPPDB();
-    }
 }

@@ -57,7 +57,7 @@ public class MycobacteriumTuberculosisUniProtSpeciesProfile extends UniProtSpeci
                     tableManager.submit("OrderedLocusNames", QueryType.insert, new Object[][] {
                         { "ID", id },
                         { "Species", "|" + getSpeciesName() + "|" },
-                        { "[Date]", version },
+                        { "Date", version },
                         { "UID", row.getValue("UID") }
                     });
                 }

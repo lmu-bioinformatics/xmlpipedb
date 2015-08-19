@@ -15,6 +15,7 @@
  * *****************************************************/
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -30,6 +31,11 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.healthmarketscience.jackcess.ColumnBuilder;
+import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.TableBuilder;
+
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.Row;
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
@@ -134,13 +140,15 @@ public class Table {
         }
     }
 
-    public void export(Connection exportConnection) throws SQLException {
+    public void export() throws SQLException, IOException, ClassNotFoundException {
         // First Create any objects requiring creation
         if (tableAttributes != null) {
-
             for (String tableName: tableManager.getTableNames()) {
                 LOG.info("Create Table in GDB. Table Name: [" + tableName + "]");
-                create(tableName);
+                Database exportDatabase = ConnectionManager.getGenMAPPDB();
+                create(tableName, exportDatabase);
+                exportDatabase.flush();
+                exportDatabase.close();
             }
         }
 
@@ -163,7 +171,10 @@ public class Table {
         LOG.info("Insert Count: [" + insertCount + "]");
         LOG.info("Update Count: [" + updateCount + "]");
         LOG.info("Flushing tables...");
+        
+        Connection exportConnection = ConnectionManager.getGenMAPPDBConnection();
         flush(exportConnection);
+        exportConnection.close();
     }
 
     /**
@@ -172,15 +183,34 @@ public class Table {
      * 
      * @param tableName
      */
-    private void create(String tableName) {
-
-        StringBuffer sqlStatement = new StringBuffer("CREATE TABLE [" + tableName + "] (");
+    private void create(String tableName, Database exportDatabase) throws IOException {
+        TableBuilder tableBuilder = new TableBuilder(tableName);
         for (String columnName: tableAttributes.nameSet()) {
-            sqlStatement.append(columnName + " " + tableAttributes.get(columnName) + ",");
+            String typeSpec = tableAttributes.get(columnName);
+            ColumnBuilder columnBuilder = new ColumnBuilder(columnName, GenMAPPBuilderUtilities.getDataType(typeSpec));
+            if (GenMAPPBuilderUtilities.getDataTypeLength(typeSpec) != null) {
+                columnBuilder.setLengthInUnits(GenMAPPBuilderUtilities.getDataTypeLength(typeSpec).intValue());
+            }
+            tableBuilder.addColumn(columnBuilder);
         }
-        sqlStatement = new StringBuffer(sqlStatement.substring(0, sqlStatement.length() - 1));
-        sqlStatement.append(")");
-        sqlBuffer.add(new SQLStatement(sqlStatement.toString(), null));
+        
+        // FIXME Jackcess property-setting appears to corrupt the table. Need to revisit sometime.
+        /*com.healthmarketscience.jackcess.Table table =*/ tableBuilder.toTable(exportDatabase);
+//        for (Column column: table.getColumns()) {
+//            PropertyMap propertyMap = column.getProperties();
+//            if (GenMAPPBuilderUtilities.specifiesDataTypeNotNull(tableAttributes.get(column.getName()))) {
+//                propertyMap.put(PropertyMap.REQUIRED_PROP, DataType.BOOLEAN, Boolean.TRUE);
+//            }
+//            propertyMap.save();
+//        }
+
+//        StringBuffer sqlStatement = new StringBuffer("CREATE TABLE [" + tableName + "] (");
+//        for (String columnName: tableAttributes.nameSet()) {
+//            sqlStatement.append(columnName + " " + tableAttributes.get(columnName) + ",");
+//        }
+//        sqlStatement = new StringBuffer(sqlStatement.substring(0, sqlStatement.length() - 1));
+//        sqlStatement.append(")");
+//        sqlBuffer.add(new SQLStatement(sqlStatement.toString(), null));
     }
 
     /**
@@ -199,7 +229,7 @@ public class Table {
             if (!nameAndValue.getKey().equals(TableManager.QUERY_TYPE_COLUMN) &&
                     !nameAndValue.getKey().equals(TableManager.TABLE_NAME_COLUMN)) {
                 if (tableAttributes == null || tableAttributes.validName(nameAndValue.getKey())) {
-                    sqlStatement.append(nameAndValue.getKey() + ",");
+                    sqlStatement.append("[" + nameAndValue.getKey() + "],");
                     valueBag.add(nameAndValue.getValue());
                 }
             }
@@ -279,8 +309,9 @@ public class Table {
                                // that executed without exception
 
         // If there are no records to process, just bail!
-        if (sqlBuffer.size() <= 0)
+        if (sqlBuffer.size() <= 0) {
             return;
+        }
 
         PreparedStatement ps = null;
         LOG.info("Number of records to process: sqlBuffer.size():: " + sqlBuffer.size());
@@ -288,9 +319,6 @@ public class Table {
         for (SQLStatement sqlStatement: sqlBuffer) {
             try {
                 ps = connection.prepareStatement(sqlStatement.getSQL());
-                if (sqlStatement.getSQL().startsWith("CREATE")) {
-                    System.out.println(sqlStatement.getSQL());
-                }
                 if (sqlStatement.getValues() != null) {
                     Object[] values = sqlStatement.getValues();
                     for (int i = 0; i < values.length; i++) {
@@ -312,7 +340,6 @@ public class Table {
                 ps.executeUpdate();
                 forLoopPasses++;
             } catch (SQLException e) {
-                System.out.println(ps);
                 StringBuffer errText = new StringBuffer("An SQLException occurred while writing to the database. ");
                 errText.append(" Error Code: " + e.getErrorCode());
                 errText.append(" Message: " + e.getMessage());
@@ -322,23 +349,13 @@ public class Table {
                     System.out.println("    " + ste);
                 }
 
-                // start - rebuild the query that failed
-                String values = "";
+                LOG.error(sqlStatement.getSQL());
                 if (sqlStatement.getValues() != null) {
-                    for (int i = 0; i < sqlStatement.getValues().length; i++) {
-                        values += "\'" + GenMAPPBuilderUtilities.straightToCurly(sqlStatement.getValues()[i] + "\', ");
+                    for (Object value: sqlStatement.getValues()) {
+                        LOG.error(" - " + value);
                     }
                 }
-                // remove the last comma
-                if (values.lastIndexOf(",") >= 0)
-                    values = values.substring(0, values.lastIndexOf(","));
 
-                String sql = sqlStatement.getSQL();
-                sql = sql.substring(0, sql.indexOf("VALUES"));
-                sql += "VALUES( " + values + " )";
-                // end - rebuild
-
-                LOG.error(sql);
                 errorCounter++;
             } finally {
                 try {

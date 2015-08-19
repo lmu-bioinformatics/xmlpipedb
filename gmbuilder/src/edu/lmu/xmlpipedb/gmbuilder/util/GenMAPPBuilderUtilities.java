@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.healthmarketscience.jackcess.DataType;
+
 /**
  * GenMAPPBuilderUtilities is a general placeholder for standalone utility
  * methods needed by GenMAPP Builder.
@@ -146,7 +148,7 @@ public class GenMAPPBuilderUtilities {
     public static String checkAndPruneVersionSuffix(String systemName, String id) {
         // Catch nulls here, because we'll call trim() later.
         if (id == null) {
-            _Log.warn("A null ID was passed for " + systemName);
+            LOG.warn("A null ID was passed for " + systemName);
             return id;
         }
 
@@ -155,12 +157,12 @@ public class GenMAPPBuilderUtilities {
         
         // The "exception clause" for RefSeq (and maybe others one day).
         if ("RefSeq".equals(systemName)) {
-            _Log.info("Pruning .n version from [" + trimmedID + "]");
+            LOG.debug("Pruning .n version from [" + trimmedID + "]");
             // Prevent possible exceptions from halting the export.
             try {
                 return getNonVersionedID(trimmedID);
             } catch(RuntimeException rtexc) {
-                _Log.error("Runtime exception: returning ID [" + trimmedID + "] unmodified", rtexc);
+                LOG.error("Runtime exception: returning ID [" + trimmedID + "] unmodified", rtexc);
                 return trimmedID;
             }
         } else {
@@ -169,9 +171,35 @@ public class GenMAPPBuilderUtilities {
     }
     
     /**
+     * Jackcess support methods.
+     */
+    private static final Pattern NOT_NULL_PATTERN = Pattern.compile("not null", Pattern.CASE_INSENSITIVE |
+            Pattern.UNICODE_CASE);
+    private static final Pattern LENGTH_PATTERN = Pattern.compile("\\((\\d+)\\)");
+
+    public static DataType getDataType(String typeSpec) {
+        String type = typeSpec.split("\\(")[0];
+        return "VARCHAR".equalsIgnoreCase(type) ? DataType.TEXT : ("DATE".equalsIgnoreCase(type) ?
+                DataType.SHORT_DATE_TIME : DataType.valueOf(type.toUpperCase()));
+    }
+
+    public static boolean specifiesDataTypeNotNull(String typeSpec) {
+        return NOT_NULL_PATTERN.matcher(typeSpec).find();
+    }
+
+    public static Integer getDataTypeLength(String typeSpec) {
+        Matcher lengthMatcher = LENGTH_PATTERN.matcher(typeSpec);
+        if (lengthMatcher.find()) {
+            return Integer.valueOf(lengthMatcher.group(1));
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * The log object for GenMAPPBuilderUtilities.
      */
-    private static final Log _Log = LogFactory.getLog(GenMAPPBuilderUtilities.class);
+    private static final Log LOG = LogFactory.getLog(GenMAPPBuilderUtilities.class);
 
     /**
      * Date format used for default GDB filenames.

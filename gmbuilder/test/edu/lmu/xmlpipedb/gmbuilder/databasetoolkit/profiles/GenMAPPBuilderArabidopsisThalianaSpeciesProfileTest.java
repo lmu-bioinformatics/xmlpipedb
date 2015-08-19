@@ -194,7 +194,7 @@ public class GenMAPPBuilderArabidopsisThalianaSpeciesProfileTest {
         	while(i.hasNext()){
         		String s = (String)i.next();
         		_Log.warn(s + "     " + r.getValue(s) + "  |x|   ");
-        		if(s.equalsIgnoreCase("[Date]")){
+        		if(s.equalsIgnoreCase("Date")){
         			if(r.getValue(s)!= null && !r.getValue(s).equals(""))
         				hasDate = true;
         		}
@@ -256,7 +256,7 @@ public class GenMAPPBuilderArabidopsisThalianaSpeciesProfileTest {
         	while(i.hasNext()){
         		String s = (String)i.next();
         		_Log.warn(s + "     " + r.getValue(s) + "  |x|   ");
-//        		if(s.equalsIgnoreCase("[Date]")){
+//        		if(s.equalsIgnoreCase("Date")){
 //        			//if(r.getValue(s)!= null && !r.getValue(s).equals(""))
 //        				//hasDate = true;
 //        		}

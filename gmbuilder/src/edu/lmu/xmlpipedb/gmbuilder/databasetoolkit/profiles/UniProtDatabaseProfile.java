@@ -12,6 +12,7 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -243,14 +244,14 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			}
 			tableManager.submit("Systems", QueryType.update, new Object[][] {
 				{ "SystemCode", templateDefinedSystemToSystemCode.get(systemTable.getKey()) },
-				{ "[Date]", version }
+				{ "Date", version }
 			});
 		}
 
 		// The "Other" table also needs a date: the date of export.
 		tableManager.submit("Systems", QueryType.update, new Object[][] {
             { "SystemCode", templateDefinedSystemToSystemCode.get("Other") },
-            { "[Date]", new Date() }
+            { "Date", new Date() }
         });
 
 		/*
@@ -282,7 +283,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             { "ProteinName", "MEMO" },
             { "Function", "MEMO" },
             { "Species", "MEMO" },
-            { "[Date]", "DATE" },
+            { "Date", "DATE" },
             { "Remarks", "MEMO" }
         }, new String[] { "UID" });
 
@@ -336,7 +337,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     					{ "UID", result.getString("entrytype_accession_hjid") },
     					{ "ID", result.getString("hjvalue") },
                         { "Species", "|" + speciesProfile.getSpeciesName() + "|" },
-                        { "[Date]", version }
+                        { "Date", version }
     				});
         		}
 
@@ -360,9 +361,10 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         			while (result.next()) {
         				LOG.debug("Record: [" + ++recordCounter + "]");
         				LOG.debug("hjvalue: [" + result.getString("hjvalue") + "]");
-        				tableManager.submit("UniProt", QueryType.insert,
-        						new String[][] { { "UID", (String)row.getValue("UID") },
-        								{ "EntryName", result.getString("hjvalue") } });
+        				tableManager.submit("UniProt", QueryType.insert, new String[][] {
+    				        { "UID", (String)row.getValue("UID") },
+							{ "EntryName", result.getString("hjvalue") }
+    				    });
         			}
         
         			// Step 3 - GeneName
@@ -462,7 +464,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		    = new TableManager(new String[][] 
 		        { { "ID", "VARCHAR(50) NOT NULL" },
 		          { "Species", "MEMO" },
-		          { "[Date]", "DATE" },
+		          { "Date", "DATE" },
 		          { "Remarks", "MEMO" } },
 		        new String[] { "ID" } );
 
@@ -552,7 +554,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						//RB - get string from column 2SQL query result.
 						{ "Species", "|" + result.getString(2) + "|" },
 
-						{ "[Date]", version }
+						{ "Date", version }
                     });
 				}
 			}
@@ -610,11 +612,11 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
             tableManager = new TableManager(
                 new String[][] {
-                    { "[Primary]", "VARCHAR(50) NOT NULL" },
+                    { "Primary", "VARCHAR(50) NOT NULL" },
                     { "Related", "VARCHAR(50) NOT NULL" },
                     { "Bridge", "VARCHAR(3)" }
                 },
-                new String[] { "[Primary]", "Related" }
+                new String[] { "Primary", "Related" }
             );
 			
 			tableManager.getTableNames().add(relationshipTable);
@@ -677,7 +679,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                             result.getString("id"));
 
                     tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
-                        { "[Primary]", primary != null ? primary : "" },
+                        { "Primary", primary != null ? primary : "" },
                         { "Related", related != null ? related : "" },
                         // TODO This is hard-coded. Fix it.
                         { "Bridge", "S" }
@@ -749,7 +751,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                             result.getString("id2"));
 
                     tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
-                        { "[Primary]", primary != null ? primary : "" },
+                        { "Primary", primary != null ? primary : "" },
                         { "Related", related != null ? related : "" },
                         // FIXME This is hard-coded. Fix it.
                         { "Bridge", "S" }
@@ -784,7 +786,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
     				// RB - added logging
     				LOG.info("getRelationshipTable(): else - No way of currently producing these.");
     				tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
-				        { "[Primary]", "" },
+				        { "Primary", "" },
     			        { "Related", "" },
     					// FIXME: This is hard-coded. Fix it.
     					{ "Bridge", "" }
@@ -822,11 +824,12 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 	 */
     private TableManager getSecondPassRelationshipTables() {
         TableManager tableManager = new TableManager(new String[][] {
-                { "[Primary]", "VARCHAR(50) NOT NULL" },
+                { "Primary", "VARCHAR(50) NOT NULL" },
                 { "Related", "VARCHAR(50) NOT NULL" },
                 { "Bridge", "VARCHAR(3)" }
-            }, new String[] { "[Primary]", "Related" });
+            }, new String[] { "Primary", "Related" });
 
+        Connection c = null;
         PreparedStatement ps = null;
         ResultSet result = null;
         String sqlStatement = null;
@@ -850,12 +853,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 // "ON \"" + tableName + "\".\"Primary\" =
                 // \"UniProt-GeneOntology\".\"Primary\"";
                 LOG.info("Second-pass query: " + sqlStatement);
-                ps = ConnectionManager.getGenMAPPDBConnection().prepareStatement(sqlStatement);
+                c = ConnectionManager.getGenMAPPDBConnection();
+                ps = c.prepareStatement(sqlStatement);
 
                 result = ps.executeQuery();
                 while (result.next()) {
                     tableManager.submit(relationshipTable, QueryType.insert, new String[][] {
-                        { "[Primary]", result.getString("id1") },
+                        { "Primary", result.getString("id1") },
                         { "Related", result.getString("id2") },
                         // TODO This is hard-coded. Fix it.
                         { "Bridge", "S" }
@@ -869,9 +873,14 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             errText.append(" Message: " + e.getMessage());
             LOG.error(errText);
             LOG.error(sqlStatement);
+        } catch (IOException e) {
+            LOG.error(e);
+        } catch (ClassNotFoundException e) {
+            LOG.error(e);
         } finally {
             try {
                 ps.close();
+                c.close();
             } catch (Exception exc) {
                 LOG.warn("Problem closing PreparedStatement");
             }

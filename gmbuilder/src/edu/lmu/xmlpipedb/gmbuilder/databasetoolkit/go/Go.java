@@ -40,7 +40,7 @@ public class Go {
                 }
             }
         } finally {
-            try { s.close(); } catch(Exception exc) { _Log.error(exc); }
+            try { s.close(); } catch(Exception exc) { LOG.error(exc); }
         }
 	}
 	
@@ -55,20 +55,24 @@ public class Go {
 	 * 				go data 
 	 * @throws SQLException
 	 */
-	public void insert(Connection connection, GOTable table, String[] values) throws SQLException {
+    public void insert(Connection connection, GOTable table, String[] values) throws SQLException {
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(table.getInsert());
             for (int index = 1; index <= values.length; index++) {
-                ps.setString(index, GenMAPPBuilderUtilities.straightToCurly(values[index-1]));
+                ps.setString(index, GenMAPPBuilderUtilities.straightToCurly(values[index - 1]));
             }
-            
-            _Log.debug("Performing insert: " + ps);
+
+            LOG.debug("Performing insert: " + ps);
             ps.executeUpdate();
         } finally {
-            try { ps.close(); } catch(Exception exc) { _Log.error(exc); }
+            try {
+                ps.close();
+            } catch (Exception exc) {
+                LOG.error(exc);
+            }
         }
- 	}
+    }
 	
 	/**
 	 * Updates the date for GO in the Systems table 
@@ -93,5 +97,5 @@ public class Go {
     /**
      * Go class log.
      */
-    private static final Log _Log = LogFactory.getLog(Go.class);
+    private static final Log LOG = LogFactory.getLog(Go.class);
 }

@@ -152,7 +152,7 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
                 tableManager.submit(SPECIES_TABLE, QueryType.insert, new Object[][] {
                     { "ID", result.getString("id") },
                     { "Species", "|" + getSpeciesName() + "|" },
-                    { "[Date]", version }
+                    { "Date", version }
                 });
             }
             _Log.info("TAIR Records Written to TableManger: [" + i + "]");
@@ -232,7 +232,7 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
             while (result.next()) {
                 tableManager.submit(relationshipTable,
                     QueryType.insert, new String[][] {
-                        { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, result.getString("primary")) },
+                        { "Primary", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, result.getString("primary")) },
                         { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, result.getString("related")) },
                         // TODO This is hard-coded. Fix it.
                         { finalColumnName, finalColumnValue }
@@ -255,7 +255,7 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
             while (result.next()) {
                 tableManager.submit(relationshipTable,
                     QueryType.insert, new String[][] {
-                        { "[Primary]", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, result.getString("primary")) },
+                        { "Primary", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1, result.getString("primary")) },
                         { "Related", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable2, result.getString("related")) },
                         // TODO This is hard-coded. Fix it.
                         { finalColumnName, finalColumnValue }
@@ -279,7 +279,7 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
                 ResultSet result = ps.executeQuery();
 
                 while (result.next()) {
-                	tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "[Primary]", result.getString("primary") }, { "Related", result.getString("related") },
+                	tableManager.submit(relationshipTable, QueryType.insert, new String[][] { { "Primary", result.getString("primary") }, { "Related", result.getString("related") },
                     //TODO This is hard-coded.  Fix it. 
                     { finalColumnName, finalColumnValue } });
                 }
@@ -381,7 +381,7 @@ public class ArabidopsisThalianaUniProtSpeciesProfile extends UniProtSpeciesProf
 					{ "ProteinName", result.getString("protein") },
 					{ "Function", result.getString("function") },
 					{ "Species", "|" + getSpeciesName() + "|" },
-					{ "[Date]", GenMAPPBuilderUtilities
+					{ "Date", GenMAPPBuilderUtilities
 									.getSystemsDateString(version) }
 			});
 		}

@@ -36,9 +36,6 @@ public class TableManager {
 	 * virtual table.
 	 */
 	public class Row {
-		/**
-		 * Constructor
-		 */
 		protected Row() {
             row = new HashMap<String, Object>();
         }
@@ -169,7 +166,7 @@ public class TableManager {
 
         for (int i = 0; i < columnNamesToValues.length; i++) {
             if (columnNamesToValues[i].length != 2) {
-                _Log.fatal("Incorrect number of arguments in DataSet submission.");
+                LOG.fatal("Incorrect number of arguments in DataSet submission.");
             }
 
             // add the column to the new row.
@@ -240,11 +237,11 @@ public class TableManager {
             }
         }
         
-        _Log.debug("Removing rows for table named " + tableName + "...");
-        _Log.debug("Initial row count: " + dataSet.size());
+        LOG.debug("Removing rows for table named " + tableName + "...");
+        LOG.debug("Initial row count: " + dataSet.size());
         dataSet.removeAll(rowsToRemove);
         tableNames.remove(tableName);
-        _Log.debug("Post-remove row count: " + dataSet.size());
+        LOG.debug("Post-remove row count: " + dataSet.size());
     }
 
     /**
@@ -289,7 +286,7 @@ public class TableManager {
 	private void addRowWithPrimaryKey(Row newRow) {
 		//Check new row for required primary keys.
 		if(!newRow.getColumnNames().containsAll(primaryKeys)) {
-			_Log.fatal("Primary key(s) required for DataSet submission.");
+			LOG.fatal("Primary key(s) required for DataSet submission.");
 		}
 		
 		//Look for a primary key match.
@@ -336,13 +333,7 @@ public class TableManager {
 	 * @return
 	 */
 	private boolean rowsEqualOnPK(Row row1, Row row2) {
-        for (String primaryKey : primaryKeys) {
-            if (_Log.isDebugEnabled()) {
-                //_Log.debug("Processing " + primaryKey + " for rows " + row1 + " and " + row2);
-                //_Log.debug("Row 1 value for primary key: " + row1.getValue(primaryKey));
-                //_Log.debug("Row 2 value for primary key: " + row2.getValue(primaryKey));
-            }
-
+        for (String primaryKey: primaryKeys) {
             if (!row1.getValue(primaryKey).equals(row2.getValue(primaryKey))) {
                 return false;
             }
@@ -350,7 +341,7 @@ public class TableManager {
         return true;
     }
 
-    private static final Log _Log = LogFactory.getLog(TableManager.class);
+    private static final Log LOG = LogFactory.getLog(TableManager.class);
     
     private String[][] tableDefinition;
     private List<String> primaryKeys;

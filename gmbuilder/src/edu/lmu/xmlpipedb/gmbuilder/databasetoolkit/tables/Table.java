@@ -16,12 +16,8 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +27,11 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.healthmarketscience.jackcess.Column;
 import com.healthmarketscience.jackcess.ColumnBuilder;
+import com.healthmarketscience.jackcess.DataType;
 import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.PropertyMap;
 import com.healthmarketscience.jackcess.TableBuilder;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
@@ -98,38 +97,31 @@ public class Table {
             }
         }
 
-        /**
-         * Returns whether a name is an attribute.
-         * 
-         * @param name
-         * @return
-         */
         protected boolean validName(String name) {
             return nameToType.containsKey(name);
         }
 
-        /**
-         * @return
-         */
         protected Set<String> nameSet() {
             return nameToType.keySet();
         }
 
-        /**
-         * @param name
-         * @return
-         */
         protected String get(String name) {
             return nameToType.get(name);
         }
     }
 
-    /**
-     * Constructor.
-     * 
-     * @param tableManager
-     * @throws Exception
-     */
+    // TODO This is somewhat redundant with the information in TableManager itself.
+    // We may be able to go directly to TableManager instead, simplifying the code.
+    public class InsertSpecification {
+        String tableName;
+        Map<String, Object> values;
+        
+        public InsertSpecification(String tableName, Map<String, Object> values) {
+            this.tableName = tableName;
+            this.values = values;
+        }
+    }
+
     public Table(TableManager tableManager) {
         this.tableManager = tableManager;
 
@@ -143,13 +135,13 @@ public class Table {
     public void export() throws SQLException, IOException, ClassNotFoundException {
         // First Create any objects requiring creation
         if (tableAttributes != null) {
+            Database exportDatabase = ConnectionManager.getGenMAPPDB();
             for (String tableName: tableManager.getTableNames()) {
                 LOG.info("Create Table in GDB. Table Name: [" + tableName + "]");
-                Database exportDatabase = ConnectionManager.getGenMAPPDB();
                 create(tableName, exportDatabase);
-                exportDatabase.flush();
-                exportDatabase.close();
             }
+            exportDatabase.flush();
+            exportDatabase.close();
         }
 
         // Then create all insert and update statements
@@ -172,9 +164,10 @@ public class Table {
         LOG.info("Update Count: [" + updateCount + "]");
         LOG.info("Flushing tables...");
         
-        Connection exportConnection = ConnectionManager.getGenMAPPDBConnection();
-        flush(exportConnection);
-        exportConnection.close();
+        Database exportDatabase = ConnectionManager.getGenMAPPDB();
+        flush(exportDatabase);
+        exportDatabase.flush();
+        exportDatabase.close();
     }
 
     /**
@@ -193,24 +186,16 @@ public class Table {
             }
             tableBuilder.addColumn(columnBuilder);
         }
-        
-        // FIXME Jackcess property-setting appears to corrupt the table. Need to revisit sometime.
-        /*com.healthmarketscience.jackcess.Table table =*/ tableBuilder.toTable(exportDatabase);
-//        for (Column column: table.getColumns()) {
-//            PropertyMap propertyMap = column.getProperties();
-//            if (GenMAPPBuilderUtilities.specifiesDataTypeNotNull(tableAttributes.get(column.getName()))) {
-//                propertyMap.put(PropertyMap.REQUIRED_PROP, DataType.BOOLEAN, Boolean.TRUE);
-//            }
-//            propertyMap.save();
-//        }
 
-//        StringBuffer sqlStatement = new StringBuffer("CREATE TABLE [" + tableName + "] (");
-//        for (String columnName: tableAttributes.nameSet()) {
-//            sqlStatement.append(columnName + " " + tableAttributes.get(columnName) + ",");
-//        }
-//        sqlStatement = new StringBuffer(sqlStatement.substring(0, sqlStatement.length() - 1));
-//        sqlStatement.append(")");
-//        sqlBuffer.add(new SQLStatement(sqlStatement.toString(), null));
+        // FIXME Jackcess property-setting appears to corrupt the table. Need to revisit sometime.
+        com.healthmarketscience.jackcess.Table table = tableBuilder.toTable(exportDatabase);
+        for (Column column: table.getColumns()) {
+            if (GenMAPPBuilderUtilities.specifiesDataTypeNotNull(tableAttributes.get(column.getName()))) {
+                PropertyMap propertyMap = column.getProperties();
+                propertyMap.put(PropertyMap.REQUIRED_PROP, DataType.BOOLEAN, Boolean.TRUE);
+                propertyMap.save();
+            }
+        }
     }
 
     /**
@@ -222,30 +207,9 @@ public class Table {
      * @throws Exception
      */
     private void insert(String tableName, Map<String, Object> namesAndValues) {
-        List<Object> valueBag = new ArrayList<Object>();
-        StringBuffer sqlStatement = new StringBuffer("INSERT INTO [" + tableName + "] (");
-
-        for (Entry<String, Object> nameAndValue: namesAndValues.entrySet()) {
-            if (!nameAndValue.getKey().equals(TableManager.QUERY_TYPE_COLUMN) &&
-                    !nameAndValue.getKey().equals(TableManager.TABLE_NAME_COLUMN)) {
-                if (tableAttributes == null || tableAttributes.validName(nameAndValue.getKey())) {
-                    sqlStatement.append("[" + nameAndValue.getKey() + "],");
-                    valueBag.add(nameAndValue.getValue());
-                }
-            }
-        }
-
-        sqlStatement = new StringBuffer(sqlStatement.substring(0, sqlStatement.length() - 1));
-        sqlStatement.append(") VALUES (");
-
-        for (int i = 0; i < valueBag.size(); i++) {
-            sqlStatement.append("?,");
-        }
-
-        sqlStatement = new StringBuffer(sqlStatement.substring(0, sqlStatement.length() - 1));
-        sqlStatement.append(")");
-
-        sqlBuffer.add(new SQLStatement(sqlStatement.toString(), valueBag.toArray(new Object[0])));
+        // TODO Very possibly, this method can be eliminated, when the insert specification
+        // is replaced by the TableManager's own Row objects.
+        insertSpecifications.add(new InsertSpecification(tableName, namesAndValues));
         insertCount++;
     }
 
@@ -298,7 +262,7 @@ public class Table {
      * @param connection
      * @throws SQLException
      */
-    private void flush(Connection connection) {
+    private void flush(Database exportDatabase/*Connection connection*/) throws IOException {
         /*
          * The code was not written to submit and commit batches of records.
          * Rather it goes record by record. This is a possible area of
@@ -308,67 +272,24 @@ public class Table {
         int forLoopPasses = 0; // used for counting # of passes through for loop
                                // that executed without exception
 
-        // If there are no records to process, just bail!
-        if (sqlBuffer.size() <= 0) {
+        if (insertSpecifications.isEmpty()) {
             return;
         }
-
-        PreparedStatement ps = null;
-        LOG.info("Number of records to process: sqlBuffer.size():: " + sqlBuffer.size());
-        LOG.info("Number of records to process: sqlBuffer.toArray().length:: " + sqlBuffer.toArray().length);
-        for (SQLStatement sqlStatement: sqlBuffer) {
-            try {
-                ps = connection.prepareStatement(sqlStatement.getSQL());
-                if (sqlStatement.getValues() != null) {
-                    Object[] values = sqlStatement.getValues();
-                    for (int i = 0; i < values.length; i++) {
-                        // TODO Unfortunate, necessary evil due to the need to
-                        // extend the prior design
-                        // so that it can accommodate proper setting of dates.
-                        // This entire Table/TableManager
-                        // framework really needs to be rewritten, almost
-                        // entirely from the ground up.
-                        Object value = values[i];
-                        if (value instanceof String) {
-                            ps.setString(i + 1, GenMAPPBuilderUtilities.straightToCurly((String)value));
-                        } else if (value instanceof Date) {
-                            ps.setTimestamp(i + 1, new Timestamp(((Date)value).getTime()));
-                        }
-                    }
-                }
-
-                ps.executeUpdate();
-                forLoopPasses++;
-            } catch (SQLException e) {
-                StringBuffer errText = new StringBuffer("An SQLException occurred while writing to the database. ");
-                errText.append(" Error Code: " + e.getErrorCode());
-                errText.append(" Message: " + e.getMessage());
-                LOG.error(errText);
-
-                for (StackTraceElement ste: e.getStackTrace()) {
-                    System.out.println("    " + ste);
-                }
-
-                LOG.error(sqlStatement.getSQL());
-                if (sqlStatement.getValues() != null) {
-                    for (Object value: sqlStatement.getValues()) {
-                        LOG.error(" - " + value);
-                    }
-                }
-
-                errorCounter++;
-            } finally {
-                try {
-                    ps.close();
-                } catch (Exception exc) {
-                    LOG.warn("Problem closing PreparedStatement");
-                }
+        
+        LOG.info("Number of records to process: insertSpecifications.size():: " + insertSpecifications.size());
+        for (InsertSpecification insertSpecification: insertSpecifications) {
+            com.healthmarketscience.jackcess.Table table = exportDatabase.getTable(insertSpecification.tableName);
+            List<Object> valuesInOrder = new ArrayList<Object>();
+            for (Column column: table.getColumns()) {
+                valuesInOrder.add(insertSpecification.values.get(column.getName()));
             }
+            table.addRow(valuesInOrder.toArray());
+            forLoopPasses++;
         }
 
         // print a log entry if any errors were encountered.
         if (errorCounter > 0) {
-            LOG.error(errorCounter + " number of eroneous records were captured.");
+            LOG.error(errorCounter + " number of erroneous records were captured.");
         }
 
         // Always print out the number of successful passes through the for loop
@@ -380,6 +301,7 @@ public class Table {
     private TableManager tableManager;
     private Attributes tableAttributes;
     private List<SQLStatement> sqlBuffer = new ArrayList<SQLStatement>();
+    private List<InsertSpecification> insertSpecifications = new ArrayList<InsertSpecification>();
     private int insertCount = 0;
     private int updateCount = 0;
 }

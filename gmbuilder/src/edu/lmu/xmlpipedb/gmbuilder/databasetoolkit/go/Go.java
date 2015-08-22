@@ -10,15 +10,19 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.healthmarketscience.jackcess.Database;
 
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 
@@ -30,37 +34,41 @@ public class Go {
 	 * 			The database connection
 	 * @throws SQLException
 	 */
-	public void createTables(Connection connection) throws SQLException {
-        Statement s = null;
-        try {
-            s = connection.createStatement();
-            for (GOTable goTable: GOTable.values()) {
-                if (!goTable.equals(GOTable.GeneOntologyStage)) {
-                    s.execute(goTable.getCreate());
-                }
+	public void createTables(Database database) throws IOException {
+        for (GOTable goTable: GOTable.values()) {
+            if (!goTable.equals(GOTable.GeneOntologyStage)) {
+                GenMAPPBuilderUtilities.createAccessTableDirectly(database, goTable.getName(),
+                        goTable.getColumnsToTypes());
             }
-        } finally {
-            try { s.close(); } catch(Exception exc) { LOG.error(exc); }
         }
 	}
 	
-	/**
-	 * Insert data into a GO table
-	 * 
-	 * @param connection
-	 * 				The database connection
-	 * @param table
-	 * 				Go table name 
-	 * @param values
-	 * 				go data 
-	 * @throws SQLException
-	 */
-    public void insert(Connection connection, GOTable table, String[] values) throws SQLException {
+    public void insert(Database database, GOTable table, Object[] values) throws IOException {
+        Map<String, Object> columnsToValues = new HashMap<String, Object>();
+
+        int i = 0;
+        for (String column: table.columnsInOrder()) {
+            Object value = values[i];
+            columnsToValues.put(column, value instanceof String ?
+                    GenMAPPBuilderUtilities.straightToCurly((String)value) : value);
+            i++;
+        }
+
+        GenMAPPBuilderUtilities.insertAccessRowDirectly(database, table.getName(), columnsToValues);
+    }
+
+    public void insert(Connection connection, GOTable table, Object[] values) throws SQLException {
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(table.getInsert());
             for (int index = 1; index <= values.length; index++) {
-                ps.setString(index, GenMAPPBuilderUtilities.straightToCurly(values[index - 1]));
+                Object value = values[index - 1];
+                if (value instanceof Date) {
+                    ps.setDate(index, new java.sql.Date(((Date)value).getTime()));
+                } else {
+                    ps.setString(index, value == null ? null :
+                            GenMAPPBuilderUtilities.straightToCurly(value.toString()));
+                }
             }
 
             LOG.debug("Performing insert: " + ps);
@@ -73,8 +81,8 @@ public class Go {
             }
         }
     }
-	
-	/**
+
+    /**
 	 * Updates the date for GO in the Systems table 
 	 * 
 	 * @param connection
@@ -94,8 +102,5 @@ public class Go {
     	ps.close();
 	}
 
-    /**
-     * Go class log.
-     */
     private static final Log LOG = LogFactory.getLog(Go.class);
 }

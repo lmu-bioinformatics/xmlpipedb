@@ -1,9 +1,14 @@
 // Created by xmlpipedb, Jul 3, 2006.
 package edu.lmu.xmlpipedb.gmbuilder.util;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,7 +16,12 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.healthmarketscience.jackcess.Column;
+import com.healthmarketscience.jackcess.ColumnBuilder;
 import com.healthmarketscience.jackcess.DataType;
+import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.PropertyMap;
+import com.healthmarketscience.jackcess.TableBuilder;
 
 /**
  * GenMAPPBuilderUtilities is a general placeholder for standalone utility
@@ -99,7 +109,7 @@ public class GenMAPPBuilderUtilities {
      *         relationship table name
      */
     public static SystemTablePair parseRelationshipTableName(String relationshipTableName) {
-        String[] splits = relationshipTableName.split("_");
+        String[] splits = relationshipTableName.split("-");
         SystemTablePair result = new SystemTablePair();
         result.systemTable1 = splits[0];
         result.systemTable2 = splits[1];
@@ -179,8 +189,8 @@ public class GenMAPPBuilderUtilities {
 
     public static DataType getDataType(String typeSpec) {
         String type = typeSpec.split("\\(")[0];
-        return "VARCHAR".equalsIgnoreCase(type) ? DataType.TEXT : ("DATE".equalsIgnoreCase(type) ?
-                DataType.SHORT_DATE_TIME : DataType.valueOf(type.toUpperCase()));
+        return "VARCHAR".equalsIgnoreCase(type) || "CHAR".equalsIgnoreCase(type) ? DataType.TEXT :
+            ("DATE".equalsIgnoreCase(type) ? DataType.SHORT_DATE_TIME : DataType.valueOf(type.toUpperCase()));
     }
 
     public static boolean specifiesDataTypeNotNull(String typeSpec) {
@@ -194,6 +204,53 @@ public class GenMAPPBuilderUtilities {
         } else {
             return null;
         }
+    }
+
+    public static Map<String, String> string2DArrayToMap(String[][] mapAsArray) {
+        Map<String, String> result = new LinkedHashMap<String, String>();
+
+        for (int i = 0; i < mapAsArray.length; i++) {
+            if (mapAsArray[i].length != 2) {
+                throw new IllegalArgumentException("Incorrect number of arguments");
+            }
+
+            result.put(mapAsArray[i][0], mapAsArray[i][1]);
+        }
+        
+        return result;
+    }
+
+    public static void createAccessTableDirectly(Database database, String tableName,
+            Map<String, String> columnsToTypes) throws IOException {
+        TableBuilder tableBuilder = new TableBuilder(tableName);
+        for (String columnName: columnsToTypes.keySet()) {
+            String typeSpec = columnsToTypes.get(columnName);
+            ColumnBuilder columnBuilder = new ColumnBuilder(columnName, GenMAPPBuilderUtilities.getDataType(typeSpec));
+            if (GenMAPPBuilderUtilities.getDataTypeLength(typeSpec) != null) {
+                columnBuilder.setLengthInUnits(GenMAPPBuilderUtilities.getDataTypeLength(typeSpec).intValue());
+            }
+            tableBuilder.addColumn(columnBuilder);
+        }
+
+        // FIXME Jackcess property-setting appears to corrupt the table. Need to revisit sometime.
+        com.healthmarketscience.jackcess.Table table = tableBuilder.toTable(database);
+        for (Column column: table.getColumns()) {
+            if (GenMAPPBuilderUtilities.specifiesDataTypeNotNull(columnsToTypes.get(column.getName()))) {
+                PropertyMap propertyMap = column.getProperties();
+                propertyMap.put(PropertyMap.REQUIRED_PROP, DataType.BOOLEAN, Boolean.TRUE);
+                propertyMap.save();
+            }
+        }
+    }
+
+    public static void insertAccessRowDirectly(Database database, String tableName,
+            Map<String, Object> columnsToValues) throws IOException {
+        com.healthmarketscience.jackcess.Table table = database.getTable(tableName);
+        List<Object> valuesInOrder = new ArrayList<Object>();
+        for (Column column: table.getColumns()) {
+            valuesInOrder.add(columnsToValues.get(column.getName()));
+        }
+        table.addRow(valuesInOrder.toArray());
     }
 
     /**

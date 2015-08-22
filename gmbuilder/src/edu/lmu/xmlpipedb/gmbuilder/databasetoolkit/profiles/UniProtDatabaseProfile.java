@@ -838,11 +838,11 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
             for (String relationshipTable: produceLastRelationshipTables) {
                 SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationshipTable);
 
-                sqlStatement = "SELECT [UniProt_" + stp.systemTable1 + "].Related as id1, " +
-                        "[UniProt_GeneOntology].Related as id2 " +
-                        "FROM [UniProt_" + stp.systemTable1 + "] " +
-                        "INNER JOIN [UniProt_GeneOntology] " +
-                        "ON [UniProt_" + stp.systemTable1 + "].[Primary] = [UniProt_GeneOntology].[Primary]";
+                sqlStatement = "SELECT [UniProt-" + stp.systemTable1 + "].Related as id1, " +
+                        "[UniProt-GeneOntology].Related as id2 " +
+                        "FROM [UniProt-" + stp.systemTable1 + "] " +
+                        "INNER JOIN [UniProt-GeneOntology] " +
+                        "ON [UniProt-" + stp.systemTable1 + "].[Primary] = [UniProt-GeneOntology].[Primary]";
 
                 // Alternative query when using a database other than Access.
                 // String sqlStatement = "SELECT \"" + tableName +

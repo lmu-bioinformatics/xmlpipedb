@@ -217,8 +217,8 @@ public abstract class DatabaseProfile extends Profile {
             if (systemTable1.getValue() == SystemType.Primary) {
                 for (Entry<String, SystemType> systemTable2: systemTables.entrySet()) {
                     if (!systemTable1.getKey().equals(systemTable2.getKey()) &&
-                            !relationshipTablesAvailable.contains(systemTable2.getKey() + "_" + systemTable1.getKey())) {
-                        relationshipTablesAvailable.add(0, systemTable1.getKey() + "_" + systemTable2.getKey());
+                            !relationshipTablesAvailable.contains(systemTable2.getKey() + "-" + systemTable1.getKey())) {
+                        relationshipTablesAvailable.add(0, systemTable1.getKey() + "-" + systemTable2.getKey());
                     }
                 }
                 break;
@@ -229,9 +229,9 @@ public abstract class DatabaseProfile extends Profile {
             if (systemTable1.getValue() == SystemType.Proper) {
                 for (Entry<String, SystemType> systemTable2: systemTables.entrySet()) {
                     if (!systemTable1.getKey().equals(systemTable2.getKey()) &&
-                            !relationshipTablesAvailable.contains(systemTable2.getKey() + "_" + systemTable1.getKey())) {
+                            !relationshipTablesAvailable.contains(systemTable2.getKey() + "-" + systemTable1.getKey())) {
                         relationshipTablesAvailable.add(relationshipTablesAvailable.size() == 0 ? 0 :
-                            relationshipTablesAvailable.size(), systemTable1.getKey() + "_" + systemTable2.getKey());
+                            relationshipTablesAvailable.size(), systemTable1.getKey() + "-" + systemTable2.getKey());
                     }
                 }
             }

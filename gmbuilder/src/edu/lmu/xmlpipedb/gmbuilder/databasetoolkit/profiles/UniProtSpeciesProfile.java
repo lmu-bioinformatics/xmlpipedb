@@ -186,7 +186,7 @@ public class UniProtSpeciesProfile extends SpeciesProfile {
 			String systemTable1, String systemTable2,
 			Map<String, String> templateDefinedSystemToSystemCode,
 			TableManager tableManager) {
-	    String relation = systemTable1 + "_" + systemTable2;
+	    String relation = systemTable1 + "-" + systemTable2;
         String type = null;
 
         if ("UniProt".equals(systemTable1) || "UniProt".equals(systemTable2)) {

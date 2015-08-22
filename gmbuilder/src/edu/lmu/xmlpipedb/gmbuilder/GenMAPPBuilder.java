@@ -1080,7 +1080,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                 startTime = System.currentTimeMillis();
                 LOG.info("Processing Started at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(startTime));
                 session = sessionFactory.openSession();
-                (new ExportGoData(session.connection())).populateGeneOntologyStage(hibernateConfiguration);
+                new ExportGoData().populateGeneOntologyStage(session.connection(), hibernateConfiguration);
                 endTime = System.currentTimeMillis();
                 LOG.info("Processing Finished at: " + DateFormat.getTimeInstance(DateFormat.LONG).format(endTime));
 

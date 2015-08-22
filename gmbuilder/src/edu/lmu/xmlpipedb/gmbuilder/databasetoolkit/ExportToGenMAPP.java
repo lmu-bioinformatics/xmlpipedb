@@ -11,7 +11,6 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DateFormat;
 
@@ -22,6 +21,8 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
+
+import com.healthmarketscience.jackcess.Database;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
@@ -90,10 +91,7 @@ public class ExportToGenMAPP {
         // RB - Modified ExportGoData second argument to be a List of taxon ids,
         // from a single taxon id.
         selectedDatabaseProfile.prepareForExport();
-        Connection exportConnection = ConnectionManager.getGenMAPPDBConnection();
-        new ExportGoData(exportConnection)
-            .export(selectedDatabaseProfile.getChosenAspects(), selectedDatabaseProfile.getTaxonIds());
-        exportConnection.close();
+        new ExportGoData().export(selectedDatabaseProfile.getChosenAspects(), selectedDatabaseProfile.getTaxonIds());
 
         exportInProgressPanel.setProgress(50, "Finished GeneOntology export...");
         exportInProgressPanel.setProgress(51, "Starting first pass table creation...");

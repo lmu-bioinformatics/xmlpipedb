@@ -1,104 +1,102 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
+
 /**
  * GOTable represents the information needed for creating and inserting into a
  * particular GO-related table.
- * 
- * @author dondi
  */
 public enum GOTable {
-    GeneOntologyTree("GeneOntologyTree",
-            "create table GeneOntologyTree (OrderNo LONG,Level Int,ID VARCHAR(50),Name MEMO)",
-            // Non-Access column types
-//          {"varchar", "varchar", "VARCHAR(50)", "varchar"}, /* GOTree */
-            "insert into GeneOntologyTree (OrderNo,Level,ID,Name) values (?,?,?,?)"),
-            
-    GeneOntology("GeneOntology",
-            "create table GeneOntology (ID VARCHAR(50) NOT NULL,Name MEMO,Type VARCHAR(2),Parent VARCHAR(50),Relation CHAR,Species MEMO,Date VARCHAR,Remarks MEMO)",
-            // Non-Access column types
-//          {"VARCHAR(50) NOT NULL", "varchar", "VARCHAR(2)","VARCHAR(50)","CHAR","varchar", "varchar", "varchar"}, /* GO */
-            "insert into GeneOntology (ID,Name,Type,Parent,Relation,Species,Date,Remarks) values (?,?,?,?,?,?,?,?)"),
-            
-    GeneOntologyStage("GeneOntologyStage",
-            "create table GeneOntologyStage (ID varchar(50) not null,Name varchar,Type varchar(2),Parent varchar(50),Relation char,Species varchar,Date varchar,Remarks varchar)",
-            // Access table DDL
-//            "create table GeneOntologyStage (ID VARCHAR(50) NOT NULL,Name MEMO,Type VARCHAR(2),Parent VARCHAR(50),Relation CHAR,Species MEMO,Date DATE,Remarks MEMO)",
-            "insert into GeneOntologyStage (ID,Name,Type,Parent,Relation,Species,Date,Remarks) values (?,?,?,?,?,?,?,?)"),
-            
-    UniProt_GoCount("UniProt_GOCount",
-            "create table UniProt_GOCount (GO VARCHAR(50) NOT NULL,[Count] Int,Total Long)",
-            // Non-Access column types
-//          {"VARCHAR(50) NOT NULL", "varchar", "varchar"}  /* UniProt-GoCount */
-            "insert into UniProt_GOCount (GO,Count,Total) values (?,?,?)"),
-            
-    GeneOntologyCount("GeneOntologyCount",
-            "create table GeneOntologyCount (ID VARCHAR(50) NOT NULL,[Count] Int)",
-            // Non-Access column types
-//          {"VARCHAR(50) NOT NULL", "varchar"}, /* GOCount */
-            "insert into GeneOntologyCount (ID,Count) values (?,?)"),
-            
-    UniProt_Go("[UniProt_GeneOntology]",
-            "create table [UniProt_GeneOntology] ([Primary] VARCHAR(50) NOT NULL,Related VARCHAR(50) NOT NULL,Bridge VARCHAR(3) NOT NULL)",
-            // Non-Access column types
-//          {"VARCHAR(50) NOT NULL", "VARCHAR(50) NOT NULL", "VARCHAR(3) NOT NULL"},  /* UniProt-Go */
-            "insert into [UniProt_GeneOntology] ([Primary],Related,Bridge) values (?,?,?)");
 
-    /**
-     * Returns the table's name.
-     * 
-     * @return The table's name
-     */
+    GeneOntologyTree("GeneOntologyTree", new String[][] {
+                { "OrderNo", "LONG" }, { "Level", "INT" }, { "ID", "VARCHAR(50)" }, { "Name", "MEMO" }
+            }),
+            
+    GeneOntology("GeneOntology", new String[][] {
+                { "ID", "VARCHAR(50) NOT NULL" }, { "Name", "MEMO" }, { "Type", "VARCHAR(2)" },
+                { "Parent", "VARCHAR(50)" }, { "Relation", "CHAR" }, { "Species", "MEMO" },
+                { "Date", "DATE" }, { "Remarks", "MEMO" }
+            }),
+            
+    GeneOntologyStage("GeneOntologyStage", new String[][] {
+                { "ID", "VARCHAR(50) NOT NULL" }, { "Name", "VARCHAR" }, { "Type", "VARCHAR(2)" },
+                { "Parent", "VARCHAR(50)" }, { "Relation", "CHAR" }, { "Species", "VARCHAR" },
+                { "Date", "DATE" }, { "Remarks", "VARCHAR" }
+            }),
+            
+    UniProt_GoCount("UniProt-GOCount", new String[][] {
+                { "GO", "VARCHAR(50) NOT NULL" }, { "Count", "INT" }, { "Total", "LONG" }
+            }),
+            
+    GeneOntologyCount("GeneOntologyCount", new String[][] {
+                { "ID", "VARCHAR(50) NOT NULL" }, { "Count", "INT" }
+            }),
+            
+    UniProt_Go("UniProt-GeneOntology", new String[][] {
+                { "Primary", "VARCHAR(50) NOT NULL" }, { "Related", "VARCHAR(50) NOT NULL" },
+                { "Bridge", "VARCHAR(3) NOT NULL" }
+            });
+
     public String getName() {
-        return _name;
+        return name;
     }
 
-    /**
-     * Returns the SQL string for creating this table.
-     * 
-     * @return SQL string for creating the table
-     */
+    public Map<String, String> getColumnsToTypes() {
+        return columnsToTypes;
+    }
+
+    public List<String> columnsInOrder() {
+        return columnsInOrder;
+    }
+
     public String getCreate() {
-        return _create;
-    }
-    
-    /**
-     * Returns the SQL string for inserting into this table.
-     * 
-     * @return SQL string for inserting into the table
-     */
-    public String getInsert() {
-        return _insert;
-    }
-    
-    /**
-     * Private constructor for building a GOTable enum instance.
-     */
-    private GOTable(String name, String create, String insert) {
-        _name = name;
-        _create = create;
-        _insert = insert;
+        StringBuilder sb = new StringBuilder("CREATE TABLE ")
+            .append(name)
+            .append(" (");
+        
+        sb.append(String.join(",", columnsInOrder.stream().map(
+                columnName -> columnName + " " + columnsToTypes.get(columnName)
+            ).toArray(String[]::new)))
+            .append(")");
+
+        return sb.toString();
     }
 
-    /**
-     * @see java.lang.Enum#toString()
-     */
+    public String getInsert() {
+        StringBuilder sb = new StringBuilder("INSERT INTO ");
+        sb.append(name);
+        sb.append(" (");
+        sb.append(String.join(",", columnsInOrder));
+        sb.append(") VALUES (");
+        
+        String[] placeholders = new String[columnsInOrder.size()];
+        for (int i = 0; i < placeholders.length; i++) {
+            placeholders[i] = "?";
+        }
+        sb.append(String.join(",", placeholders));
+        sb.append(")");
+        return sb.toString();
+    }
+
+    private GOTable(String name, String[][] columnsToTypesAsArray) {
+        this.name = name;
+        columnsToTypes = GenMAPPBuilderUtilities.string2DArrayToMap(columnsToTypesAsArray);
+        columnsInOrder = new ArrayList<String>(columnsToTypesAsArray.length);
+        for (String[] columnToType: columnsToTypesAsArray) {
+            columnsInOrder.add(columnToType[0]);
+        }
+    }
+
     @Override
     public String toString() {
         return getName();
     }
 
-    /**
-     * This table's name.
-     */
-    private String _name;
-
-    /**
-     * This table's creation command.
-     */
-    private String _create;
-    
-    /**
-     * This tables insert command.
-     */
-    private String _insert;
+    private String name;
+    private Map<String, String> columnsToTypes;
+    private List<String> columnsInOrder;
 }

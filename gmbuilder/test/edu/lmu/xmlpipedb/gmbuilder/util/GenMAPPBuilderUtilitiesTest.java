@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Calendar;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -106,7 +107,7 @@ public class GenMAPPBuilderUtilitiesTest {
      */
     @Test
     public void testParseRelationshipTableName() {
-        SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName("UniProt_EMBL");
+        SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName("UniProt-EMBL");
         assertEquals("UniProt", stp.systemTable1);
         assertEquals("EMBL", stp.systemTable2);
         
@@ -193,7 +194,22 @@ public class GenMAPPBuilderUtilitiesTest {
     }
     
     @Test
-    public void testDateDataTypeIsCorrectlyConverted() {
+    public void testAliasDataTypesAreCorrectlyConverted() {
         assertEquals(DataType.SHORT_DATE_TIME, GenMAPPBuilderUtilities.getDataType("DATE"));
+        assertEquals(DataType.TEXT, GenMAPPBuilderUtilities.getDataType("ChaR"));
+    }
+    
+    @Test
+    public void testString2DArrayConvertsToMapCorrectly() {
+        Map<String, String> convertedMap = GenMAPPBuilderUtilities.string2DArrayToMap(new String[][] {
+                { "a", "b" },
+                { "c", "d" }
+            });
+
+        assertEquals(2, convertedMap.size());
+        assertEquals("b", convertedMap.get("a"));
+        assertEquals("d", convertedMap.get("c"));
+        assertNull(convertedMap.get("b"));
+        assertNull(convertedMap.get("d"));
     }
 }

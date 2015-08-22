@@ -18,7 +18,6 @@ package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,12 +26,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.healthmarketscience.jackcess.Column;
-import com.healthmarketscience.jackcess.ColumnBuilder;
-import com.healthmarketscience.jackcess.DataType;
 import com.healthmarketscience.jackcess.Database;
-import com.healthmarketscience.jackcess.PropertyMap;
-import com.healthmarketscience.jackcess.TableBuilder;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
@@ -86,15 +80,7 @@ public class Table {
          * @throws Exception
          */
         public Attributes(String[][] attributes) {
-
-            nameToType = new LinkedHashMap<String, String>();
-
-            for (int i = 0; i < attributes.length; i++) {
-                if (attributes[i].length != 2) {
-                    LOG.error("Incorrect number of arguments");
-                }
-                nameToType.put(attributes[i][0], attributes[i][1]);
-            }
+            nameToType = GenMAPPBuilderUtilities.string2DArrayToMap(attributes);
         }
 
         protected boolean validName(String name) {
@@ -177,25 +163,7 @@ public class Table {
      * @param tableName
      */
     private void create(String tableName, Database exportDatabase) throws IOException {
-        TableBuilder tableBuilder = new TableBuilder(tableName);
-        for (String columnName: tableAttributes.nameSet()) {
-            String typeSpec = tableAttributes.get(columnName);
-            ColumnBuilder columnBuilder = new ColumnBuilder(columnName, GenMAPPBuilderUtilities.getDataType(typeSpec));
-            if (GenMAPPBuilderUtilities.getDataTypeLength(typeSpec) != null) {
-                columnBuilder.setLengthInUnits(GenMAPPBuilderUtilities.getDataTypeLength(typeSpec).intValue());
-            }
-            tableBuilder.addColumn(columnBuilder);
-        }
-
-        // FIXME Jackcess property-setting appears to corrupt the table. Need to revisit sometime.
-        com.healthmarketscience.jackcess.Table table = tableBuilder.toTable(exportDatabase);
-        for (Column column: table.getColumns()) {
-            if (GenMAPPBuilderUtilities.specifiesDataTypeNotNull(tableAttributes.get(column.getName()))) {
-                PropertyMap propertyMap = column.getProperties();
-                propertyMap.put(PropertyMap.REQUIRED_PROP, DataType.BOOLEAN, Boolean.TRUE);
-                propertyMap.save();
-            }
-        }
+        GenMAPPBuilderUtilities.createAccessTableDirectly(exportDatabase, tableName, tableAttributes.nameToType);
     }
 
     /**
@@ -256,13 +224,7 @@ public class Table {
         updateCount++;
     }
 
-    /**
-     * Flush the sqlBuffer to the database given by the connection.
-     * 
-     * @param connection
-     * @throws SQLException
-     */
-    private void flush(Database exportDatabase/*Connection connection*/) throws IOException {
+    private void flush(Database exportDatabase) throws IOException {
         /*
          * The code was not written to submit and commit batches of records.
          * Rather it goes record by record. This is a possible area of
@@ -278,12 +240,8 @@ public class Table {
         
         LOG.info("Number of records to process: insertSpecifications.size():: " + insertSpecifications.size());
         for (InsertSpecification insertSpecification: insertSpecifications) {
-            com.healthmarketscience.jackcess.Table table = exportDatabase.getTable(insertSpecification.tableName);
-            List<Object> valuesInOrder = new ArrayList<Object>();
-            for (Column column: table.getColumns()) {
-                valuesInOrder.add(insertSpecification.values.get(column.getName()));
-            }
-            table.addRow(valuesInOrder.toArray());
+            GenMAPPBuilderUtilities.insertAccessRowDirectly(exportDatabase,
+                    insertSpecification.tableName, insertSpecification.values);
             forLoopPasses++;
         }
 

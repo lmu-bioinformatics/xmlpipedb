@@ -16,8 +16,12 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -151,29 +155,19 @@ public class Table {
         LOG.info("Flushing tables...");
         
         Database exportDatabase = ConnectionManager.getGenMAPPDB();
-        flush(exportDatabase);
+        flushInserts(exportDatabase);
         exportDatabase.flush();
         exportDatabase.close();
+        
+        Connection exportConnection = ConnectionManager.getGenMAPPDBConnection();
+        flushUpdates(exportConnection);
+        exportConnection.close();
     }
 
-    /**
-     * Create Table. This call will prepare the create table sql statement and
-     * submit it to the buffer, flush() will still need to be called.
-     * 
-     * @param tableName
-     */
     private void create(String tableName, Database exportDatabase) throws IOException {
         GenMAPPBuilderUtilities.createAccessTableDirectly(exportDatabase, tableName, tableAttributes.nameToType);
     }
 
-    /**
-     * Adds an sql insert statement to the sqlBuffer given a row in a
-     * TableManager and a table name.
-     * 
-     * @param tableName
-     * @param namesAndValues
-     * @throws Exception
-     */
     private void insert(String tableName, Map<String, Object> namesAndValues) {
         // TODO Very possibly, this method can be eliminated, when the insert specification
         // is replaced by the TableManager's own Row objects.
@@ -181,14 +175,6 @@ public class Table {
         insertCount++;
     }
 
-    /**
-     * Creates an SQL update query given a row in a TableManager and a table
-     * name.
-     * 
-     * @param tableName
-     * @param namesAndValues
-     * @throws Exception
-     */
     private void update(String tableName, Map<String, Object> namesAndValues) {
         if (tableAttributes == null && tableManager.getPrimaryKeys().size() == 0) {
             LOG.error("Cannot do an update query with out a table definition or primary keys for table: " + tableName);
@@ -224,34 +210,86 @@ public class Table {
         updateCount++;
     }
 
-    private void flush(Database exportDatabase) throws IOException {
-        /*
-         * The code was not written to submit and commit batches of records.
-         * Rather it goes record by record. This is a possible area of
-         * performance enhancement later on.
-         */
-        int errorCounter = 0; // used for counting SQLExceptions
-        int forLoopPasses = 0; // used for counting # of passes through for loop
-                               // that executed without exception
+    private void flushInserts(Database exportDatabase) throws IOException {
+        int forLoopPasses = 0;
 
         if (insertSpecifications.isEmpty()) {
             return;
         }
         
-        LOG.info("Number of records to process: insertSpecifications.size():: " + insertSpecifications.size());
+        LOG.info("Number of records to insert: insertSpecifications.size():: " + insertSpecifications.size());
         for (InsertSpecification insertSpecification: insertSpecifications) {
             GenMAPPBuilderUtilities.insertAccessRowDirectly(exportDatabase,
                     insertSpecification.tableName, insertSpecification.values);
             forLoopPasses++;
         }
 
-        // print a log entry if any errors were encountered.
+        // Always print out the number of successful passes through the for loop
+        LOG.info("Number of successful inserts: [" + forLoopPasses + "]");
+    }
+
+    private void flushUpdates(Connection connection) {
+        int errorCounter = 0;
+        int forLoopPasses = 0;
+
+        if (sqlBuffer.isEmpty()) {
+            return;
+        }
+        
+        PreparedStatement ps = null;
+        LOG.info("Number of records to update: sqlBuffer.size():: " + sqlBuffer.size());
+        for (SQLStatement sqlStatement: sqlBuffer) {
+            try {
+                ps = connection.prepareStatement(sqlStatement.getSQL());
+                if (sqlStatement.getValues() != null) {
+                    Object[] values = sqlStatement.getValues();
+                    for (int i = 0; i < values.length; i++) {
+                        // TODO Unfortunate, necessary evil due to the need to extend the prior design
+                        // so that it can accommodate proper setting of dates. This entire Table/TableManager
+                        // framework really needs to be redesigned for greater type-awareness.
+                        Object value = values[i];
+                        if (value instanceof String) {
+                            ps.setString(i + 1, GenMAPPBuilderUtilities.straightToCurly((String)value));
+                        } else if (value instanceof Date) {
+                            ps.setTimestamp(i + 1, new Timestamp(((Date)value).getTime()));
+                        }
+                    }
+                }
+
+                ps.executeUpdate();
+                forLoopPasses++;
+            } catch (SQLException e) {
+                StringBuffer errText = new StringBuffer("An SQLException occurred while writing to the database. ");
+                errText.append(" Error Code: " + e.getErrorCode());
+                errText.append(" Message: " + e.getMessage());
+                LOG.error(errText);
+
+                for (StackTraceElement ste: e.getStackTrace()) {
+                    System.out.println("    " + ste);
+                }
+
+                LOG.error(sqlStatement.getSQL());
+                if (sqlStatement.getValues() != null) {
+                    for (Object value: sqlStatement.getValues()) {
+                        LOG.error(" - " + value);
+                    }
+                }
+
+                errorCounter++;
+            } finally {
+                try {
+                    ps.close();
+                } catch (Exception exc) {
+                    LOG.warn("Problem closing PreparedStatement");
+                }
+            }
+        }
+
         if (errorCounter > 0) {
             LOG.error(errorCounter + " number of erroneous records were captured.");
         }
 
-        // Always print out the number of successful passes through the for loop
-        LOG.info("Number of successful passes through for loop: [" + forLoopPasses + "]");
+        LOG.info("Number of successful updates: [" + forLoopPasses + "]");
     }
 
     private static final Log LOG = LogFactory.getLog(Table.class);

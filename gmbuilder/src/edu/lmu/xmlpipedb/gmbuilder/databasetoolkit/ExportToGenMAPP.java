@@ -22,8 +22,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
 
-import com.healthmarketscience.jackcess.Database;
-
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go.ExportGoData;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;

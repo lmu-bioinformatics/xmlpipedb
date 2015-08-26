@@ -496,21 +496,23 @@ public class ExportGoData {
      * @throws SQLException
      */
     private void populateGeneOntologyTree() throws SQLException, IOException, ClassNotFoundException {
-        String[] root_ids = { "0003674", "0005575", "0008150" };
+        String[] rootIds = { "0003674", "0005575", "0008150" };
         String[] names = { "molecular_function", "cellular_component", "biological_process" };
 
         // Traverse the graph beginning with each root ID
         LOG.info("creating: " + GOTable.GeneOntologyTree);
         Database gdb = ConnectionManager.getGenMAPPDB();
         Connection gdbConnection = ConnectionManager.getGenMAPPDBConnection();
-        for (int index = 0; index < root_ids.length; index++) {
-            String id = root_ids[index];
+        for (int index = 0; index < rootIds.length; index++) {
+            String id = rootIds[index];
             String name = names[index];
             goCount.put(id, 1);
             godb.insert(gdb, GOTable.GeneOntologyTree, new Object[] { orderNo++, 1, id, name });
             insertChildren(gdbConnection, gdb, id, 2);
         }
         gdbConnection.close();
+        
+        LOG.info("Total number of GeneOntologyTree records: " + (orderNo - 1));
     }
 
     private void populateGeneOntologyCount() throws SQLException, IOException {
@@ -553,7 +555,12 @@ public class ExportGoData {
             } else {
                 goCount.put(id, 1);
             }
+
             LOG.debug("Inserting child row (" + id + ", " + name + ")");
+            if (orderNo % 250 == 0) {
+                LOG.info("Child rows inserted so far: " + orderNo);
+            }
+
             godb.insert(gdb, GOTable.GeneOntologyTree, new Object[] { orderNo++, level, id, name });
             insertChildren(gdbConnection, gdb, id, level + 1);
         }

@@ -9,7 +9,6 @@
  * Revision History:
  * 20060620: Initial Revision.
  * *****************************************************/
-
 package edu.lmu.xmlpipedb.gmbuilder.gui.wizard.export;
 
 import java.awt.Cursor;
@@ -31,7 +30,6 @@ import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
  * @author Joey J. Barrett
- * Class: ExportPanel5Descriptor
  */
 public class ExportInProgressDescriptor extends WizardPanelDescriptor {
 
@@ -39,33 +37,23 @@ public class ExportInProgressDescriptor extends WizardPanelDescriptor {
 
     ExportInProgressPanel exportInProgressPanel;
 
-    /**
-     * Constructor.
-     */
     public ExportInProgressDescriptor() {
         exportInProgressPanel = new ExportInProgressPanel();
         setPanelDescriptorIdentifier(IDENTIFIER);
         setPanelComponent(exportInProgressPanel);
     }
 
-    /* (non-Javadoc)
-     * @see com.nexes.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
-     */
+    @Override
     public Object getNextPanelDescriptor() {
         return FINISH;
     }
 
-    /* (non-Javadoc)
-     * @see com.nexes.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
-     */
+    @Override
     public Object getBackPanelDescriptor() {
         return null;
     }
 
-
-    /* (non-Javadoc)
-     * @see com.nexes.wizard.WizardPanelDescriptor#aboutToDisplayPanel()
-     */
+    @Override
     public void aboutToDisplayPanel() {
         exportInProgressPanel.setProgress(0, "Preparing for export...");
         getWizard().setNextFinishButtonEnabled(false);
@@ -77,9 +65,7 @@ public class ExportInProgressDescriptor extends WizardPanelDescriptor {
      * @see com.nexes.wizard.WizardPanelDescriptor#displayingPanel()
      */
     public void displayingPanel() {
-
         Thread t = new Thread() {
-
             public void run() {
                 try {
                     getWizard().getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -87,19 +73,19 @@ public class ExportInProgressDescriptor extends WizardPanelDescriptor {
                     exportInProgressPanel.setProgress(100, "Export completed successfully.");
                     getWizard().setNextFinishButtonEnabled(true);
                 } catch(HibernateException e) {
-                    _Log.fatal("Export problem", e);
+                    LOG.fatal("Export problem", e);
                 } catch(ClassNotFoundException e) {
-                    _Log.fatal("Export problem", e);
+                    LOG.fatal("Export problem", e);
                 } catch(SQLException e) {
-                    _Log.fatal("Export problem", e);
+                    LOG.fatal("Export problem", e);
                 } catch(SAXException e) {
-                    _Log.fatal("Export problem", e);
+                    LOG.fatal("Export problem", e);
                 } catch(IOException e) {
-                    _Log.fatal("Export problem", e);
+                    LOG.fatal("Export problem", e);
                 } catch(JAXBException e) {
-                    _Log.fatal("Export problem", e);
+                    LOG.fatal("Export problem", e);
                 } catch (InvalidParameterException e) {
-                	_Log.fatal("Export problem", e);
+                	LOG.fatal("Export problem", e);
 				} finally {
                     getWizard().getDialog().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 }
@@ -109,5 +95,5 @@ public class ExportInProgressDescriptor extends WizardPanelDescriptor {
         t.start();
     }
 
-    private static final Log _Log = LogFactory.getLog(ExportInProgressDescriptor.class);
+    private static final Log LOG = LogFactory.getLog(ExportInProgressDescriptor.class);
 }

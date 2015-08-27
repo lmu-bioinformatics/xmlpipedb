@@ -501,14 +501,13 @@ public class ExportGoData {
 
         // Traverse the graph beginning with each root ID
         LOG.info("creating: " + GOTable.GeneOntologyTree);
-        Database gdb = ConnectionManager.getGenMAPPDB();
         Connection gdbConnection = ConnectionManager.getGenMAPPDBConnection();
         for (int index = 0; index < rootIds.length; index++) {
             String id = rootIds[index];
             String name = names[index];
             goCount.put(id, 1);
-            godb.insert(gdb, GOTable.GeneOntologyTree, new Object[] { orderNo++, 1, id, name });
-            insertChildren(gdbConnection, gdb, id, 2);
+            godb.insert(gdbConnection, GOTable.GeneOntologyTree, new Object[] { orderNo++, 1, id, name });
+            insertChildren(gdbConnection, id, 2);
         }
         gdbConnection.close();
         
@@ -538,7 +537,7 @@ public class ExportGoData {
      *            The level in the tree
      * @throws SQLException
      */
-    private void insertChildren(Connection gdbConnection, Database gdb, String parent, int level)
+    private void insertChildren(Connection gdbConnection, String parent, int level)
             throws SQLException, IOException {
         String sqlStatement = "SELECT name,id from " + GOTable.GeneOntology + " where parent = ? order by parent";
 
@@ -561,8 +560,8 @@ public class ExportGoData {
                 LOG.info("Child rows inserted so far: " + orderNo);
             }
 
-            godb.insert(gdb, GOTable.GeneOntologyTree, new Object[] { orderNo++, level, id, name });
-            insertChildren(gdbConnection, gdb, id, level + 1);
+            godb.insert(gdbConnection, GOTable.GeneOntologyTree, new Object[] { orderNo++, level, id, name });
+            insertChildren(gdbConnection, id, level + 1);
         }
         results.close();
         ps.close();

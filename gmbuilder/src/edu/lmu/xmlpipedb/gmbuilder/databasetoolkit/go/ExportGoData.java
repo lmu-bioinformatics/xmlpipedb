@@ -400,10 +400,12 @@ public class ExportGoData {
         String stageSQL = "select * from " + GOTable.GeneOntologyStage + " where Id = ? order by Id";
 
         Database gdb = null;
+        Connection gdbConnection = null;
         PreparedStatement stagePS = null;
         LOG.info("creating: " + GOTable.GeneOntology);
         try {
             gdb = ConnectionManager.getGenMAPPDB();
+            gdbConnection = ConnectionManager.getGenMAPPDBConnection();
 
             stagePS = ConnectionManager.getRelationalDBConnection().prepareStatement(stageSQL);
 
@@ -419,7 +421,7 @@ public class ExportGoData {
                     seenRelateds.add(relatedString);
                     LOG.debug("Processing related term: " + relatedString);
                     stagePS.setString(1, relatedString);
-                    processIDs(gdb, stagePS);
+                    processIDs(gdbConnection, stagePS);
                 }
             }
         } catch(SQLException sqlexc) {
@@ -432,6 +434,17 @@ public class ExportGoData {
         } finally {
             try {
                 stagePS.close();
+            } catch (Exception exc) {
+                LOG.error(exc);
+            }
+
+            try {
+                gdbConnection.close();
+            } catch (Exception exc) {
+                LOG.error(exc);
+            }
+
+            try {
                 gdb.flush();
                 gdb.close();
             } catch (Exception exc) {
@@ -447,13 +460,13 @@ public class ExportGoData {
      *            parent ID
      * @throws SQLException
      */
-    private void insertParents(Database gdb, String id) throws SQLException, IOException {
+    private void insertParents(Connection gdbConnection, String id) throws SQLException, IOException {
         String sql = "select * from " + GOTable.GeneOntologyStage + " where Id = ? order by Id";
         PreparedStatement ps = null;
         try {
             ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sql);
             ps.setString(1, id);
-            processIDs(gdb, ps);
+            processIDs(gdbConnection, ps);
         } finally {
             try {
                 ps.close();
@@ -463,7 +476,7 @@ public class ExportGoData {
         }
     }
 
-    private void processIDs(Database gdb, PreparedStatement stagePS) throws SQLException, IOException {
+    private void processIDs(Connection gdbConnection, PreparedStatement stagePS) throws SQLException, IOException {
         ResultSet stageRS = null;
         try {
             stageRS = stagePS.executeQuery();
@@ -472,8 +485,8 @@ public class ExportGoData {
                 String key = values[ID_COL] + "," + values[PARENT_COL];
                 if (!duplicates.containsKey(key)) {
                     duplicates.put(key, true);
-                    godb.insert(gdb, GOTable.GeneOntology, values);
-                    insertParents(gdb, (String)values[PARENT_COL]);
+                    godb.insert(gdbConnection, GOTable.GeneOntology, values);
+                    insertParents(gdbConnection, (String)values[PARENT_COL]);
                 }
             }
         } finally {
@@ -514,18 +527,17 @@ public class ExportGoData {
         LOG.info("Total number of GeneOntologyTree records: " + (orderNo - 1));
     }
 
-    private void populateGeneOntologyCount() throws SQLException, IOException {
+    private void populateGeneOntologyCount() throws SQLException, IOException, ClassNotFoundException {
         LOG.info("creating: " + GOTable.GeneOntologyCount);
         Iterator<String> iter = goCount.keySet().iterator();
-        Database gdb = ConnectionManager.getGenMAPPDB();
+        Connection gdbConnection = ConnectionManager.getGenMAPPDBConnection();
         while (iter.hasNext()) {
             String id = iter.next();
             int count = goCount.get(id);
             LOG.debug("Inserting GeneOntology count record (" + id + ", " + count + ")");
-            godb.insert(gdb, GOTable.GeneOntologyCount, new Object[] { id, count });
+            godb.insert(gdbConnection, GOTable.GeneOntologyCount, new Object[] { id, count });
         }
-        gdb.flush();
-        gdb.close();
+        gdbConnection.close();
     }
 
     /**

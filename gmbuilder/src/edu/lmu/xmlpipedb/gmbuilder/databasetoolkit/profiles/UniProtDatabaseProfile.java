@@ -19,7 +19,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -251,7 +250,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		// The "Other" table also needs a date: the date of export.
 		tableManager.submit("Systems", QueryType.update, new Object[][] {
             { "SystemCode", templateDefinedSystemToSystemCode.get("Other") },
-            { "Date", new Date() }
+            { "Date", version }
         });
 
 		/*

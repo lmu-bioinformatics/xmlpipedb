@@ -31,7 +31,7 @@ public class VibrioCholeraeUniprotSpeciesProfile extends UniProtSpeciesProfile {
 
         tableManager.submit("Systems", QueryType.update, new String[][] {
             { "SystemCode", "N" },
-            { "Link", "http://cmr.jcvi.org/tigr-scripts/CMR/shared/GenePage.cgi?locus=~" }
+            { "Link", "http://bacteria.ensembl.org/Multi/Search/Results?species=all;idx=;q=~;site=ensemblunit" }
         });
 
         return tableManager;

@@ -188,7 +188,7 @@ public class GenMAPPBuilderEscherichiaColiSpeciesProfileTest {
         	while(i.hasNext()){
         		String s = (String)i.next();
         		_Log.debug(s + "     " + r.getValue(s) + "  |x|   ");
-        		if(s.equalsIgnoreCase("\"Date\"")){
+        		if(s.equalsIgnoreCase("Date")){
         			if(r.getValue(s)!= null && !r.getValue(s).equals(""))
         				hasDate = true;
         		}
@@ -250,7 +250,7 @@ public class GenMAPPBuilderEscherichiaColiSpeciesProfileTest {
         	while(i.hasNext()){
         		String s = (String)i.next();
         		_Log.debug(s + "     " + r.getValue(s) + "  |x|   ");
-//        		if(s.equalsIgnoreCase("\"Date\"")){
+//        		if(s.equalsIgnoreCase("Date")){
 //        			//if(r.getValue(s)!= null && !r.getValue(s).equals(""))
 //        				//hasDate = true;
 //        		}

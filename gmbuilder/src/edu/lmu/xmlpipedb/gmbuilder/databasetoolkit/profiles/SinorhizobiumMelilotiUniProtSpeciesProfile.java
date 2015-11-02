@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
-import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 
@@ -63,7 +62,6 @@ public class SinorhizobiumMelilotiUniProtSpeciesProfile extends UniProtSpeciesPr
                 "and (type = 'ORF' or type = 'ordered locus') " +
                 "group by d.entrytype_gene_hjid, c.value";
 
-        String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);
         Connection c = ConnectionManager.getRelationalDBConnection();
         PreparedStatement ps;
         ResultSet rs;
@@ -93,7 +91,7 @@ public class SinorhizobiumMelilotiUniProtSpeciesProfile extends UniProtSpeciesPr
                     
                     for (String variant: variants) {
                         _Log.debug("Original ID: " + substrings[i] + " converted to: " + variant + " for surrogate " + hjid);
-                        result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", variant }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                        result.submit("OrderedLocusNames", QueryType.insert, new Object[][] { { "ID", variant }, { "Species", "|" + getSpeciesName() + "|" }, { "Date", version }, { "UID", hjid } });
                     }
                 }
             }

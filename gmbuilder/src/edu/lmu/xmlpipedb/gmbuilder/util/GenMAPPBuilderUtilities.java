@@ -1,15 +1,27 @@
 // Created by xmlpipedb, Jul 3, 2006.
 package edu.lmu.xmlpipedb.gmbuilder.util;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.healthmarketscience.jackcess.Column;
+import com.healthmarketscience.jackcess.ColumnBuilder;
+import com.healthmarketscience.jackcess.DataType;
+import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.PropertyMap;
+import com.healthmarketscience.jackcess.TableBuilder;
 
 /**
  * GenMAPPBuilderUtilities is a general placeholder for standalone utility
@@ -146,7 +158,7 @@ public class GenMAPPBuilderUtilities {
     public static String checkAndPruneVersionSuffix(String systemName, String id) {
         // Catch nulls here, because we'll call trim() later.
         if (id == null) {
-            _Log.warn("A null ID was passed for " + systemName);
+            LOG.warn("A null ID was passed for " + systemName);
             return id;
         }
 
@@ -155,12 +167,12 @@ public class GenMAPPBuilderUtilities {
         
         // The "exception clause" for RefSeq (and maybe others one day).
         if ("RefSeq".equals(systemName)) {
-            _Log.info("Pruning .n version from [" + trimmedID + "]");
+            LOG.debug("Pruning .n version from [" + trimmedID + "]");
             // Prevent possible exceptions from halting the export.
             try {
                 return getNonVersionedID(trimmedID);
             } catch(RuntimeException rtexc) {
-                _Log.error("Runtime exception: returning ID [" + trimmedID + "] unmodified", rtexc);
+                LOG.error("Runtime exception: returning ID [" + trimmedID + "] unmodified", rtexc);
                 return trimmedID;
             }
         } else {
@@ -169,9 +181,82 @@ public class GenMAPPBuilderUtilities {
     }
     
     /**
+     * Jackcess support methods.
+     */
+    private static final Pattern NOT_NULL_PATTERN = Pattern.compile("not null", Pattern.CASE_INSENSITIVE |
+            Pattern.UNICODE_CASE);
+    private static final Pattern LENGTH_PATTERN = Pattern.compile("\\((\\d+)\\)");
+
+    public static DataType getDataType(String typeSpec) {
+        String type = typeSpec.split("\\(")[0];
+        return "VARCHAR".equalsIgnoreCase(type) || "CHAR".equalsIgnoreCase(type) ? DataType.TEXT :
+            ("DATE".equalsIgnoreCase(type) ? DataType.SHORT_DATE_TIME : DataType.valueOf(type.toUpperCase()));
+    }
+
+    public static boolean specifiesDataTypeNotNull(String typeSpec) {
+        return NOT_NULL_PATTERN.matcher(typeSpec).find();
+    }
+
+    public static Integer getDataTypeLength(String typeSpec) {
+        Matcher lengthMatcher = LENGTH_PATTERN.matcher(typeSpec);
+        if (lengthMatcher.find()) {
+            return Integer.valueOf(lengthMatcher.group(1));
+        } else {
+            return null;
+        }
+    }
+
+    public static Map<String, String> string2DArrayToMap(String[][] mapAsArray) {
+        Map<String, String> result = new LinkedHashMap<String, String>();
+
+        for (int i = 0; i < mapAsArray.length; i++) {
+            if (mapAsArray[i].length != 2) {
+                throw new IllegalArgumentException("Incorrect number of arguments");
+            }
+
+            result.put(mapAsArray[i][0], mapAsArray[i][1]);
+        }
+        
+        return result;
+    }
+
+    public static void createAccessTableDirectly(Database database, String tableName,
+            Map<String, String> columnsToTypes) throws IOException {
+        TableBuilder tableBuilder = new TableBuilder(tableName);
+        for (String columnName: columnsToTypes.keySet()) {
+            String typeSpec = columnsToTypes.get(columnName);
+            ColumnBuilder columnBuilder = new ColumnBuilder(columnName, GenMAPPBuilderUtilities.getDataType(typeSpec));
+            if (GenMAPPBuilderUtilities.getDataTypeLength(typeSpec) != null) {
+                columnBuilder.setLengthInUnits(GenMAPPBuilderUtilities.getDataTypeLength(typeSpec).intValue());
+            }
+            tableBuilder.addColumn(columnBuilder);
+        }
+
+        // FIXME Jackcess property-setting appears to corrupt the table. Need to revisit sometime.
+        com.healthmarketscience.jackcess.Table table = tableBuilder.toTable(database);
+        for (Column column: table.getColumns()) {
+            if (GenMAPPBuilderUtilities.specifiesDataTypeNotNull(columnsToTypes.get(column.getName()))) {
+                PropertyMap propertyMap = column.getProperties();
+                propertyMap.put(PropertyMap.REQUIRED_PROP, DataType.BOOLEAN, Boolean.TRUE);
+                propertyMap.save();
+            }
+        }
+    }
+
+    public static void insertAccessRowDirectly(Database database, String tableName,
+            Map<String, Object> columnsToValues) throws IOException {
+        com.healthmarketscience.jackcess.Table table = database.getTable(tableName);
+        List<Object> valuesInOrder = new ArrayList<Object>();
+        for (Column column: table.getColumns()) {
+            valuesInOrder.add(columnsToValues.get(column.getName()));
+        }
+        table.addRow(valuesInOrder.toArray());
+    }
+
+    /**
      * The log object for GenMAPPBuilderUtilities.
      */
-    private static final Log _Log = LogFactory.getLog(GenMAPPBuilderUtilities.class);
+    private static final Log LOG = LogFactory.getLog(GenMAPPBuilderUtilities.class);
 
     /**
      * Date format used for default GDB filenames.

@@ -11,7 +11,7 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
-import java.net.URL;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,7 +19,6 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +28,6 @@ import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionConfiguration;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
@@ -38,44 +36,45 @@ import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 /**
- * DatabaseProfiles contain the SpeciesProfiles for the species supported by that
- * database that are available in our system for export. For example, if the
- * DatabaseProfile is for Uniprot and we have imported data for E.coli and
+ * DatabaseProfiles contain the SpeciesProfiles for the species supported by
+ * that database that are available in our system for export. For example, if
+ * the DatabaseProfile is for Uniprot and we have imported data for E.coli and
  * A.thaliana, there would be 2 SpeciesProfiles in the speciesProfilesAvailable
- * array. Once one of those is selected, that SpeciesProfile will be set in
- * the speciesProfile object.
+ * array. Once one of those is selected, that SpeciesProfile will be set in the
+ * speciesProfile object.
  *
- * Currently, DatabaseProfile objects are created by the ExportToGenMAPP
- * in the static initializer. The DP objects are then updated by getting
- * references to them through static methods in ExportToGenMAPP.
+ * Currently, DatabaseProfile objects are created by the ExportToGenMAPP in the
+ * static initializer. The DP objects are then updated by getting references to
+ * them through static methods in ExportToGenMAPP.
  *
  * @author Joey J. Barrett Class: DatabaseProfile
  * @author Jeffrey Nicholas
  * @author Richard Brous: multi-species export
  */
 public abstract class DatabaseProfile extends Profile {
-    
-    public enum GOAspect { Function, Component, Process }
 
-	// these are used in the EportWizard GUI
-	public static enum DisplayOrderPreset {
+    public enum GOAspect {
+        Function, Component, Process
+    }
+
+    // these are used in the EportWizard GUI
+    public static enum DisplayOrderPreset {
         alphabetical
-    };
+    }
 
     public static enum SystemType {
         Proper, Improper, Primary
-    };
+    }
 
-    private static final Log _Log = LogFactory.getLog(DatabaseProfile.class);
+    private static final Log LOG = LogFactory.getLog(DatabaseProfile.class);
 
     protected static Map<String, SystemType> templateDefinedSystemTables = new HashMap<String, SystemType>();
     protected static Map<String, String> templateDefinedSystemToSystemCode = new HashMap<String, String>();
 
-    // Instance Variables
     protected final SpeciesProfile[] speciesProfilesAvailable;
     protected List<SpeciesProfile> speciesProfilesFound = new ArrayList<SpeciesProfile>();
     protected List<String> systemTablesFound = new ArrayList<String>();
-	protected List<Integer> taxonIds = new ArrayList<Integer>();
+    protected List<Integer> taxonIds = new ArrayList<Integer>();
 
     protected String owner;
     protected Date version;
@@ -87,20 +86,19 @@ public abstract class DatabaseProfile extends Profile {
     protected String displayOrder;
     protected String notes;
     protected String genMAPPDatabase = null; // jn - changed from File to String
-    protected ConnectionConfiguration connectionConfiguration = null;
     protected Map<String, SystemType> systemTables;
     protected String[] relationshipTables;
     protected List<GOAspect> chosenAspects;
 
     protected TableManager primarySystemTableManager = null;
     protected TableManager systemTableManager = null;
-    public static URL url = null;
 
     // Get the systems and system types from the template file.
     static {
         try {
             ConnectionManager.openGenMAPPTemplateDB();
-            PreparedStatement ps = ConnectionManager.getGenMAPPTemplateDBConnection().prepareStatement("select System, SystemCode, Misc from Systems");
+            PreparedStatement ps = ConnectionManager.getGenMAPPTemplateDBConnection()
+                    .prepareStatement("select System, SystemCode, Misc from Systems");
             ResultSet result = ps.executeQuery();
 
             while (result.next()) {
@@ -108,14 +106,16 @@ public abstract class DatabaseProfile extends Profile {
                 String systemCode = result.getString("SystemCode").trim();
                 String misc = result.getString("Misc");
                 templateDefinedSystemToSystemCode.put(system, systemCode);
-                templateDefinedSystemTables.put(system, misc == null ? SystemType.Proper : misc.contains("|I|") ? SystemType.Improper : SystemType.Proper);
+                templateDefinedSystemTables.put(system, misc == null ? SystemType.Proper : misc.contains("|I|") ?
+                        SystemType.Improper : SystemType.Proper);
             }
+
             result.close();
             ps.close();
             ConnectionManager.closeGenMAPPTemplateDB();
-        } catch(SQLException unhandled) {
+        } catch (SQLException unhandled) {
             unhandled.printStackTrace();
-        } catch(Exception unhandled) {
+        } catch (Exception unhandled) {
             unhandled.printStackTrace();
         }
     }
@@ -132,23 +132,6 @@ public abstract class DatabaseProfile extends Profile {
         super(name, description);
         this.speciesProfilesAvailable = speciesProfilesAvailable;
         this.displayOrderPreset = DisplayOrderPreset.alphabetical;
-
-		//FIXME jn -- TEMP CODE START
-//        	URL u = getClass().getResource("/edu/lmu/xmlpipedb/gmbuilder/resource/dbfiles/GeneDBTmpl.mdb");
-//        	URI uri = null;
-//        	try {
-//				 uri = new URI(u.getFile());
-//			} catch (URISyntaxException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			uri.getPath();
-//			File f = new File(uri.getPath());
-//			f.exists();
-//			f.getAbsoluteFile();
-
-		//FIXME jn -- TEMP CODE END
-
     }
 
     /**
@@ -201,7 +184,7 @@ public abstract class DatabaseProfile extends Profile {
 
         Map<String, SystemType> systemTablesAvailable = new HashMap<String, SystemType>();
 
-        for (String systemTableName : templateDefinedSystemTables.keySet()) {
+        for (String systemTableName: templateDefinedSystemTables.keySet()) {
             if (systemTablesFound.contains(systemTableName)) {
                 systemTablesAvailable.put(systemTableName, templateDefinedSystemTables.get(systemTableName));
             }
@@ -230,10 +213,11 @@ public abstract class DatabaseProfile extends Profile {
 
         List<String> relationshipTablesAvailable = new ArrayList<String>();
 
-        for (Entry<String, SystemType> systemTable1 : systemTables.entrySet()) {
+        for (Entry<String, SystemType> systemTable1: systemTables.entrySet()) {
             if (systemTable1.getValue() == SystemType.Primary) {
-                for (Entry<String, SystemType> systemTable2 : systemTables.entrySet()) {
-                    if (!systemTable1.getKey().equals(systemTable2.getKey()) && !relationshipTablesAvailable.contains(systemTable2.getKey() + "-" + systemTable1.getKey())) {
+                for (Entry<String, SystemType> systemTable2: systemTables.entrySet()) {
+                    if (!systemTable1.getKey().equals(systemTable2.getKey()) &&
+                            !relationshipTablesAvailable.contains(systemTable2.getKey() + "-" + systemTable1.getKey())) {
                         relationshipTablesAvailable.add(0, systemTable1.getKey() + "-" + systemTable2.getKey());
                     }
                 }
@@ -241,11 +225,13 @@ public abstract class DatabaseProfile extends Profile {
             }
         }
 
-        for (Entry<String, SystemType> systemTable1 : systemTables.entrySet()) {
+        for (Entry<String, SystemType> systemTable1: systemTables.entrySet()) {
             if (systemTable1.getValue() == SystemType.Proper) {
-                for (Entry<String, SystemType> systemTable2 : systemTables.entrySet()) {
-                    if (!systemTable1.getKey().equals(systemTable2.getKey()) && !relationshipTablesAvailable.contains(systemTable2.getKey() + "-" + systemTable1.getKey())) {
-                        relationshipTablesAvailable.add(relationshipTablesAvailable.size() == 0 ? 0 : relationshipTablesAvailable.size(), systemTable1.getKey() + "-" + systemTable2.getKey());
+                for (Entry<String, SystemType> systemTable2: systemTables.entrySet()) {
+                    if (!systemTable1.getKey().equals(systemTable2.getKey()) &&
+                            !relationshipTablesAvailable.contains(systemTable2.getKey() + "-" + systemTable1.getKey())) {
+                        relationshipTablesAvailable.add(relationshipTablesAvailable.size() == 0 ? 0 :
+                            relationshipTablesAvailable.size(), systemTable1.getKey() + "-" + systemTable2.getKey());
                     }
                 }
             }
@@ -254,65 +240,28 @@ public abstract class DatabaseProfile extends Profile {
         return relationshipTablesAvailable.toArray(new String[0]);
     }
 
-    /**
-     * Returns the profile name.
-     *
-     * @return
-     */
     public String getProfileName() {
         return getName();
     }
 
-    /**
-     * Returns the profile description.
-     *
-     * @return
-     */
     public String getProfileDescription() {
         return getDescription();
     }
 
-    /**
-     * Returns the MODSystem for this X-centric database.
-     *
-     * @return
-     */
     public abstract String getMODSystem();
 
     /**
      * Returns the display order of the chosen system tables using the display
      * order option chosen in the export wizard.
-     *
-     * @return
      */
     public abstract String getDefaultDisplayOrder();
 
-    /**
-     * Returns the GenMAPP database chosen in the export wizard.
-     *
-     * @return
-     */
     public String getGenMAPPDatabase() {
         return genMAPPDatabase;
     }
 
-    /**
-     * Returns the alternate connection chosen in the export wizard. (not
-     * finished implementation)
-     *
-     * @return
-     */
-    public ConnectionConfiguration getConnectionConfiguration() {
-        return connectionConfiguration;
-    }
-
-    /**
-     * Returns the aspect chosen in the export wizard.
-     *
-     * @return
-     */
     public List<GOAspect> getChosenAspects() {
-    	return chosenAspects;
+        return chosenAspects;
     }
 
     /**
@@ -322,18 +271,19 @@ public abstract class DatabaseProfile extends Profile {
      * @return
      */
     public String getPrimarySystemTable() {
-        for (Entry<String, SystemType> systemTable : getDatabaseSpecificSystemTables().entrySet()) {
+        for (Entry<String, SystemType> systemTable: getDatabaseSpecificSystemTables().entrySet()) {
             if (systemTable.getValue() == SystemType.Primary) {
                 return systemTable.getKey();
             }
         }
+
         return "";
     }
 
     /**
-     * Returns a map of the chosen system tables from the export wizard.
-     * System tables may include: UniProt, PDB, Pfam, InterPro, or GeneOntology
-     * for UniProt's E.coli database, for example.
+     * Returns a map of the chosen system tables from the export wizard. System
+     * tables may include: UniProt, PDB, Pfam, InterPro, or GeneOntology for
+     * UniProt's E.coli database, for example.
      *
      * @return Map
      */
@@ -341,154 +291,71 @@ public abstract class DatabaseProfile extends Profile {
         return systemTables;
     }
 
-    /**
-     * Returns the selected species profile chosen in the export wizard.
-     *
-     * @param selectedProfile
-     */
     public SpeciesProfile getSelectedSpeciesProfile() {
         return speciesProfile;
     }
-    
-    /**
-     * Returns the multi-selected species profiles chosen in the export wizard.
-     *
-     * @param selectedProfiles
-     */
+
     public List<SpeciesProfile> getSelectedSpeciesProfiles() {
         return selectedSpeciesProfiles;
-    }    
-    
-    /**
-     * Sets the selected species profile chosen in the export wizard.
-     *
-     * @param selectedProfile
-     */
+    }
+
     public void setSelectedSpeciesProfile(SpeciesProfile selectedProfile) {
         this.speciesProfile = selectedProfile;
     }
 
-    /**
-     * Sets the collection of selected species profiles in the export
-     * wizard.
-     * 
-     * @param selectedProfiles
-     */
     public void setSelectedSpeciesProfiles(List<SpeciesProfile> selectedProfiles) {
         this.selectedSpeciesProfiles = selectedProfiles;
     }
-        
-    /**
-	 * @param taxonIds the taxonIds to set
-	 */
-	public void setTaxonIds(List<Integer> taxonIds) {
-		this.taxonIds = taxonIds;
-	}
 
-	/**
-	 * @return the taxonIds
-	 */
-	public List<Integer> getTaxonIds() {
-		return taxonIds;
-	}
+    public void setTaxonIds(List<Integer> taxonIds) {
+        this.taxonIds = taxonIds;
+    }
 
-	public static List<Integer> taxonsFromSelectedSpeciesList( List<SpeciesProfile> selectedSpecies ) {
-		List<Integer> taxons = new ArrayList<Integer>();
-		for ( SpeciesProfile species: selectedSpecies ) {
-			taxons.add( species.getTaxon() );
-		}
-		return taxons;
-	}
-	
-	
-	/**
-     * Sets the owner string for the Gene Database to be exported.
-     *
-     * @param owner
-     *            The owner string
-     */
+    public List<Integer> getTaxonIds() {
+        return taxonIds;
+    }
+
+    public static List<Integer> taxonsFromSelectedSpeciesList(List<SpeciesProfile> selectedSpecies) {
+        List<Integer> taxons = new ArrayList<Integer>();
+        for (SpeciesProfile species: selectedSpecies) {
+            taxons.add(species.getTaxon());
+        }
+        return taxons;
+    }
+
     public void setOwner(String owner) {
         this.owner = owner;
     }
 
-    /**
-     * Returns the version date for the Gene Database to be exported.
-     *
-     * @return The version date for the Gene Database to be exported
-     */
     public Date getVersion() {
         return this.version;
     }
 
-    /**
-     * Sets the version date for the Gene Database to be exported.
-     *
-     * @param version
-     *            The version date
-     */
     public void setVersion(Date version) {
         this.version = version;
     }
 
-    /**
-     * Sets the MOD system name for the Gene Database to be exported.
-     *
-     * @param modSystem
-     *            The MOD system name
-     */
     public void setMODSystem(String modSystem) {
         this.modSystem = modSystem;
     }
 
-    /**
-     * Sets the species name for the Gene Database to be exported.
-     *
-     * @param speciesName
-     *            The species name to use
-     */
     public void setSpeciesName(String speciesName) {
         speciesProfile.setCustomizedName(speciesName);
     }
 
-    /**
-     * Sets the modify date to use for the Gene Database to be exported.
-     *
-     * @param modify
-     *            The modify date to use
-     */
     public void setModify(Date modify) {
         this.modify = modify;
     }
 
-    /**
-     * Sets the display order string for the Gene Database to be exported.
-     *
-     * @param displayOrder
-     *            The display order string to use
-     */
     public void setDisplayOrder(String displayOrder) {
         this.displayOrder = displayOrder;
-        _Log.info("Display order to use: " + displayOrder);
+        LOG.info("Display order to use: " + displayOrder);
     }
 
-    /**
-     * Sets the note string for the Gene Database to be exported.
-     *
-     * @param notes
-     *            The notes to include
-     */
     public void setNotes(String notes) {
         this.notes = notes;
     }
 
-    /**
-     * Convenience method for automatically selecting the "all" aspect.
-     */
-    public void setDatabaseProperties(String genMAPPDatabase, ConnectionConfiguration connectionConfiguration) {
-        setDatabaseProperties(genMAPPDatabase, connectionConfiguration,
-                Arrays.asList(GOAspect.Component, GOAspect.Function, GOAspect.Process));
-    }
-    
     /**
      * Sets the connections and aspect chosen in the export wizard.
      *
@@ -496,32 +363,18 @@ public abstract class DatabaseProfile extends Profile {
      * @param connectionConfiguration
      * @param chosenAspect
      */
-    public void setDatabaseProperties(String genMAPPDatabase,
-            ConnectionConfiguration connectionConfiguration, List<GOAspect> chosenAspects) {
+    public void setDatabaseProperties(String genMAPPDatabase, List<GOAspect> chosenAspects) {
         this.genMAPPDatabase = genMAPPDatabase;
-        this.connectionConfiguration = connectionConfiguration;
         this.chosenAspects = chosenAspects;
-    }
-
-    /**
-     * Sets the aspect chosen in the export wizard.
-     *
-     * @param chosenAspect
-     */
-    public void setChosenAspects(List<GOAspect> chosenAspects) {
-    	this.chosenAspects = chosenAspects;
     }
 
     /**
      * Sets the table properties, specifically the system tables (both proper
      * and improper) from the export wizard. ExportPanel3 gets these values
-     *
-     * @param properSystemTables
-     * @param improperSystemTables
      */
     public void setTableProperties(String[] properSystemTables, String[] improperSystemTables) {
         systemTables = new HashMap<String, SystemType>();
-        
+
         StringBuilder exportReport = new StringBuilder("Proper system tables to export:\n");
         for (String properSystemTable: properSystemTables) {
             exportReport.append(" - ").append(properSystemTable);
@@ -531,78 +384,61 @@ public abstract class DatabaseProfile extends Profile {
             } else {
                 systemTables.put(properSystemTable, SystemType.Proper);
             }
+
             exportReport.append("\n");
         }
-        
+
         exportReport.append("\nImproper system tables to export:\n");
         for (String improperSystemTable: improperSystemTables) {
             exportReport.append(" - ").append(improperSystemTable).append("\n");
             systemTables.put(improperSystemTable, SystemType.Improper);
         }
-        
-        _Log.info(exportReport.toString());
+
+        LOG.info(exportReport.toString());
     }
 
-    /**
-     * Sets the relationship tables chosen in the export wizard.
-     *
-     * @param relationshipTables
-     */
     public void setRelationshipTableProperties(String[] relationshipTables) {
         this.relationshipTables = relationshipTables;
-        
+
         // Report on the relationship tables to export.
         StringBuilder exportReport = new StringBuilder("Relationship tables to export:\n");
         for (String relationshipTable: relationshipTables) {
             exportReport.append(" - ").append(relationshipTable).append("\n");
         }
-        
-        _Log.info(exportReport.toString());
+
+        LOG.info(exportReport.toString());
     }
 
     /**
      * Returns table managers associated with the second pass through the tables
      * to be created. This is to be defined by a X-centric database.
-     *
-     * @return
-     * @throws SQLException
-     * @throws Exception
      */
     public abstract TableManager[] getSecondPassTableManagers() throws SQLException;
 
     /**
      * Prepares a TableManager for this database.
-     *
-     * @return TableManager
-     * @throws Exception
      */
     public TableManager getInfoTableManager() {
         // Concatenate the selected species into a single compound name then use
-    	// for species submit.
+        // for species submit.
         StringBuilder speciesStringBuilder = new StringBuilder();
         boolean firstSpecies = true;
         for (SpeciesProfile speciesProfile: selectedSpeciesProfiles) {
-            speciesStringBuilder
-                .append(firstSpecies ? "" : "|")
-                .append(speciesProfile.getSpeciesName());
+            speciesStringBuilder.append(firstSpecies ? "" : "|").append(speciesProfile.getSpeciesName());
             firstSpecies = false;
         }
 
         final DateFormat infoDateFormat = new SimpleDateFormat("yyyyMMdd");
-        TableManager tableManager = new TableManager(null, new String[] {});
-        tableManager.submit(
-            "Info",
-            QueryType.insert,
-            new String[][] {
-                { "Owner", owner },
-                { "Version", infoDateFormat.format(version) },
-                { "MODSystem", modSystem },
-                { "Species", speciesStringBuilder.toString() },
-                { "Modify", infoDateFormat.format(modify) },
-                { "DisplayOrder", displayOrder },
-                { "Notes", notes }
-            }
-        );
+        TableManager tableManager = new TableManager(null, new String[] { });
+        tableManager.submit("Info", QueryType.insert, new String[][] {
+            { "Owner", owner },
+            { "Version", infoDateFormat.format(version) },
+            { "MODSystem", modSystem },
+            { "Species", speciesStringBuilder.toString() },
+            { "Modify", infoDateFormat.format(modify) },
+            { "DisplayOrder", displayOrder },
+            { "Notes", notes }
+        });
 
         return tableManager;
     }
@@ -611,69 +447,54 @@ public abstract class DatabaseProfile extends Profile {
      * Prepares the relations TableManager for this database. If a species
      * specific change is required the getRelationTableManagerCustomization()
      * function is called.
-     *
-     * @return
-     * @throws Exception
      */
     public TableManager getRelationsTableManager() {
         TableManager tableManager = new TableManager(null, new String[] { "SystemCode", "RelatedCode" });
-        for (String relationTable : relationshipTables) {
-        	 
-        	// RB - added logging here. 
-        	_Log.info("getRelationsTableManager() For loop: Relation Table used for " 
-        			   + "parseRelationshipTableName is: " + relationTable);
-        	
-        	SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationTable);
-            // The reason why it is not short-circuit, is that we must process both systemTable1 and systemTable2
-            
-        	// RB - added logging here. 
-        	_Log.info("SystemTablePair stp system tables properties are: "
-        			  + "systemTable1: "+ stp.systemTable1
-        			  + "  systemTable2: " + stp.systemTable2);
-        	
-        	for (SpeciesProfile speciesProfile: selectedSpeciesProfiles) {
-        	
-                if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) | 
-                    speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {	
-            	
-            	    tableManager = speciesProfile.getRelationsTableManagerCustomizations(stp.systemTable1, 
-                	    stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
-                
+        for (String relationTable: relationshipTables) {
+
+            // RB - added logging here.
+            LOG.info("getRelationsTableManager() For loop: Relation Table used for " +
+                    "parseRelationshipTableName is: " + relationTable);
+
+            SystemTablePair stp = GenMAPPBuilderUtilities.parseRelationshipTableName(relationTable);
+            // The reason why it is not short-circuit, is that we must process
+            // both systemTable1 and systemTable2
+
+            // RB - added logging here.
+            LOG.info("SystemTablePair stp system tables properties are: " +
+                    "systemTable1: " + stp.systemTable1 + "  systemTable2: " + stp.systemTable2);
+
+            for (SpeciesProfile speciesProfile: selectedSpeciesProfiles) {
+                if (speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable1) |
+                        speciesProfile.getSpeciesSpecificSystemTables().containsKey(stp.systemTable2)) {
+                    tableManager = speciesProfile.getRelationsTableManagerCustomizations(stp.systemTable1,
+                            stp.systemTable2, templateDefinedSystemToSystemCode, tableManager);
                 } else {
-                    tableManager.submit(
-                	    "Relations", 
-                	    QueryType.insert, 
-                	    new String[][] { 
-                		    { "SystemCode", templateDefinedSystemToSystemCode.get(stp.systemTable1) }, 
-                		    { "RelatedCode", templateDefinedSystemToSystemCode.get(stp.systemTable2) }, 
-                		    { "Relation", relationTable }, 
-                		    { "Type", stp.systemTable1.equals(getPrimarySystemTable()) || 
-                			   stp.systemTable2.equals(getPrimarySystemTable()) ? "Direct" : "Inferred" }, 
-                		    { "Source", "" } 
-                        }
-                    );
+                    tableManager.submit("Relations", QueryType.insert, new String[][] {
+                        { "SystemCode", templateDefinedSystemToSystemCode.get(stp.systemTable1) },
+                        { "RelatedCode", templateDefinedSystemToSystemCode.get(stp.systemTable2) },
+                        { "Relation", relationTable },
+                        { "Type", stp.systemTable1.equals(getPrimarySystemTable()) ||
+                            stp.systemTable2.equals(getPrimarySystemTable()) ? "Direct" : "Inferred" },
+                        { "Source", "" }
+                    });
                 }
 
-        	}
-       }
+            }
+        }
         return tableManager;
     }
 
     /**
      * Returns a TableManager for the "Other" table.
-     *
-     * @return
      */
     public TableManager getOtherTableManager() {
-        return new TableManager(null, new String[] {});
+        return new TableManager(null, new String[] { });
     }
 
     /**
      * This function must be implemented by an X-centric database and should the
      * return the systems table manager associated with that database.
-     *
-     * @return
-     * @throws Exception
      */
     public abstract TableManager getSystemsTableManager();
 
@@ -681,19 +502,12 @@ public abstract class DatabaseProfile extends Profile {
      * This function must be implemented by an X-centric database and should
      * return a TableManager with the primary system table information
      * associated with that database.
-     *
-     * @return
-     * @throws Exception
      */
     public abstract TableManager getPrimarySystemTableManager() throws SQLException;
 
     /**
      * This function must be implemented by an X-centric database and should
      * return a TableManager with all system tables.
-     *
-     * @return
-     * @throws InvalidParameterException
-     * @throws Exception
      */
     public abstract TableManager getSystemTableManager() throws SQLException, InvalidParameterException;
 
@@ -703,10 +517,6 @@ public abstract class DatabaseProfile extends Profile {
      * database. Relationship tables are tables like: UniProt-EMBL, UniProt-PDB,
      * and UniProt-Blattner. There are likely to be several tables of this type
      * in an Export.
-     *
-     * @return
-     * @throws InvalidParameterException
-     * @throws Exception
      */
     public abstract List<TableManager> getRelationshipTableManager() throws SQLException, InvalidParameterException;
 
@@ -715,73 +525,60 @@ public abstract class DatabaseProfile extends Profile {
      * to query the database for which tables have actually been created rather
      * than the few hardcoded values and a compiling of the other tables assumed
      * created.
-     *
-     * @return
-     * @throws Exception
      */
-    public TableManager getRowCountsTableManager() throws SQLException {
-        TableManager tableManager;
-
-        tableManager = new TableManager(new String[][] {
-            { "\"Table\"", "VARCHAR(50) NOT NULL" },
-        	{ "Rows", "VARCHAR(50) NOT NULL" }
-        }, new String[] { "\"Table\"" }
-        );
+    public TableManager getRowCountsTableManager() throws SQLException, IOException, ClassNotFoundException {
+        TableManager tableManager = new TableManager(new String[][] {
+                { "Table", "VARCHAR(50) NOT NULL" },
+                { "Rows", "VARCHAR(50) NOT NULL" }
+            },  new String[] { "Table" });
 
         List<String> allTables = new ArrayList<String>();
 
-        PreparedStatement ps = ConnectionManager.getGenMAPPDBConnection()
-        	.prepareStatement("select name from MSysObjects where ((type=1) and (flags=0))");
-        ResultSet result = ps.executeQuery();
-
-        while (result.next()) {
-            allTables.add(result.getString("name").trim());
-        }
-
-        String sqlStatement;
-
-        for (String tableName : allTables) {
-            sqlStatement = "SELECT Count(*) as count FROM [" + tableName + "]";
-            // Alternative query when using a database other than Access.
-            // String delimiter = (tableName.indexOf("-") > -1) ? "\"" : "";
-            // sqlStatement = "SELECT Count(*) FROM " + delimiter + tableName +
-            // delimiter;
-            ps = ConnectionManager.getGenMAPPDBConnection().prepareStatement(sqlStatement);
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet result = null;
+        try {
+            c = ConnectionManager.getGenMAPPDBConnection();
+            ps = c.prepareStatement("select name from sys.MSysObjects where ((type=1) and (flags=0))");
+    
             result = ps.executeQuery();
             while (result.next()) {
-                tableManager.submit("OriginalRowCounts", QueryType.insert, new String[][] {
-                    { "\"Table\"", tableName },
-                    { "Rows", result.getString("count") }
-                });
+                allTables.add(result.getString("name").trim());
+            }
+            result.close();
+            ps.close();
+    
+            String sqlStatement;
+            for (String tableName: allTables) {
+                sqlStatement = "SELECT Count(*) as count FROM [" + tableName + "]";
+                // Alternative query when using a database other than Access.
+                // String delimiter = (tableName.indexOf("-") > -1) ? "\"" : "";
+                // sqlStatement = "SELECT Count(*) FROM " + delimiter + tableName +
+                // delimiter;
+                ps = c.prepareStatement(sqlStatement);
+                result = ps.executeQuery();
+                while (result.next()) {
+                    tableManager.submit("OriginalRowCounts", QueryType.insert, new String[][] {
+                        { "Table", tableName },
+                        { "Rows", result.getString("count") }
+                    });
+                }
+            }
+        } finally {
+            try {
+                result.close();
+                ps.close();
+                c.close();
+            } catch (Exception e) {
+                // No-op---in finally clause already.
             }
         }
-        ps.close();
 
         return tableManager;
     }
 
-    /**
-     * Returns the chosen export connection from the export wizard.
-     *
-     * @return Connection
-     * @throws Exception
-     */
-    public Connection getExportConnection() {
-        if (genMAPPDatabase != null) {
-            if (ConnectionManager.isGenMAPPDBConnectionOpen()) {
-                return ConnectionManager.getGenMAPPDBConnection();
-            } else {
-                ConnectionManager.openGenMAPPDB(genMAPPDatabase);
-                return ConnectionManager.getGenMAPPDBConnection();
-            }
-        } else if (connectionConfiguration != null) {
-            if (ConnectionManager.isGenMAPPDBConnectionOpen()) {
-                return ConnectionManager.getGenMAPPDBConnection();
-            } else {
-                ConnectionManager.openGenMAPPDB(connectionConfiguration);
-                return ConnectionManager.getGenMAPPDBConnection();
-            }
-        }
-        return null;
+    public void prepareForExport() throws IOException {
+        ConnectionManager.setGenMAPPDB(genMAPPDatabase);
     }
+
 }

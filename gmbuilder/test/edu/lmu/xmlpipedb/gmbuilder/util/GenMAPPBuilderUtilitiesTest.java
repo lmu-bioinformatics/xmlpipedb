@@ -2,12 +2,17 @@
 package edu.lmu.xmlpipedb.gmbuilder.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Calendar;
+import java.util.Map;
 
 import org.junit.Test;
+
+import com.healthmarketscience.jackcess.DataType;
 
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities.SystemTablePair;
 
@@ -154,5 +159,57 @@ public class GenMAPPBuilderUtilitiesTest {
         assertEquals("\u2019apostrophe in the beginning", GenMAPPBuilderUtilities.straightToCurly("'apostrophe in the beginning"));
         assertEquals("two \u2019apostrophes\u2019 here", GenMAPPBuilderUtilities.straightToCurly("two 'apostrophes' here"));
         assertEquals("more than \u2019two\u2019 apos\u2019tro\u2019phe\u2019s", GenMAPPBuilderUtilities.straightToCurly("more than 'two' apos'tro'phe's"));
+    }
+    
+    @Test
+    public void testBareDataTypeProvidesCorrectValues() {
+        String type = "MEMO";
+        assertEquals(DataType.MEMO, GenMAPPBuilderUtilities.getDataType(type));
+        assertFalse(GenMAPPBuilderUtilities.specifiesDataTypeNotNull(type));
+        assertNull(GenMAPPBuilderUtilities.getDataTypeLength(type));
+    }
+    
+    @Test
+    public void testBareDataTypeIsCaseInsensitive() {
+        String type = "meMo";
+        assertEquals(DataType.MEMO, GenMAPPBuilderUtilities.getDataType(type));
+        assertFalse(GenMAPPBuilderUtilities.specifiesDataTypeNotNull(type));
+        assertNull(GenMAPPBuilderUtilities.getDataTypeLength(type));
+    }
+    
+    @Test
+    public void testFullVarCharDataTypeProvidesCorrectValues() {
+        String type = "VARCHAR(50) NOT NULL";
+        assertEquals(DataType.TEXT, GenMAPPBuilderUtilities.getDataType(type));
+        assertTrue(GenMAPPBuilderUtilities.specifiesDataTypeNotNull(type));
+        assertEquals(new Integer(50), GenMAPPBuilderUtilities.getDataTypeLength(type));
+    }
+    
+    @Test
+    public void testFullVarCharDataTypeIsCaseInsensitive() {
+        String type = "varChar(50) not Null";
+        assertEquals(DataType.TEXT, GenMAPPBuilderUtilities.getDataType(type));
+        assertTrue(GenMAPPBuilderUtilities.specifiesDataTypeNotNull(type));
+        assertEquals(new Integer(50), GenMAPPBuilderUtilities.getDataTypeLength(type));
+    }
+    
+    @Test
+    public void testAliasDataTypesAreCorrectlyConverted() {
+        assertEquals(DataType.SHORT_DATE_TIME, GenMAPPBuilderUtilities.getDataType("DATE"));
+        assertEquals(DataType.TEXT, GenMAPPBuilderUtilities.getDataType("ChaR"));
+    }
+    
+    @Test
+    public void testString2DArrayConvertsToMapCorrectly() {
+        Map<String, String> convertedMap = GenMAPPBuilderUtilities.string2DArrayToMap(new String[][] {
+                { "a", "b" },
+                { "c", "d" }
+            });
+
+        assertEquals(2, convertedMap.size());
+        assertEquals("b", convertedMap.get("a"));
+        assertEquals("d", convertedMap.get("c"));
+        assertNull(convertedMap.get("b"));
+        assertNull(convertedMap.get("d"));
     }
 }

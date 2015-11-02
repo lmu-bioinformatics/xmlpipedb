@@ -12,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
-import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 public class HelicobacterPyloriUniProtSpeciesProfile extends UniProtSpeciesProfile {
@@ -33,7 +32,7 @@ public class HelicobacterPyloriUniProtSpeciesProfile extends UniProtSpeciesProfi
 
 	    tableManager.submit("Systems", QueryType.update, new String[][] {
 	        { "SystemCode", "N" },
-	        { "Link", "http://cmr.jcvi.org/tigr-scripts/CMR/shared/GenePage.cgi?locus=~" }
+	        { "Link", "http://bacteria.ensembl.org/Multi/Search/Results?species=all;idx=;q=~;site=ensemblunit" }
 	    });
 
 	    return tableManager;
@@ -55,7 +54,6 @@ public class HelicobacterPyloriUniProtSpeciesProfile extends UniProtSpeciesProfi
         final String hpID = "HP_*";
         String sqlQuery = "select d.entrytype_gene_hjid as hjid, c.value " + "from genenametype c inner join genetype d " + "on (c.genetype_name_hjid = d.hjid) " + "where (c.value similar to ?)" + "group by d.entrytype_gene_hjid, c.value";
 
-        String dateToday = GenMAPPBuilderUtilities.getSystemsDateString(version);
         Connection c = ConnectionManager.getRelationalDBConnection();
         PreparedStatement ps;
         ResultSet rs;
@@ -74,7 +72,7 @@ public class HelicobacterPyloriUniProtSpeciesProfile extends UniProtSpeciesProfi
                 for (int i = 0; i < substrings.length; i++) {
                     new_id = substrings[i].replace("_", "");
                     _Log.debug("Remove '_' from " + id + " to create: " + new_id + " for surrogate " + hjid);
-                    result.submit("OrderedLocusNames", QueryType.insert, new String[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "\"Date\"", dateToday }, { "UID", hjid } });
+                    result.submit("OrderedLocusNames", QueryType.insert, new Object[][] { { "ID", new_id }, { "Species", "|" + getSpeciesName() + "|" }, { "Date", version }, { "UID", hjid } });
                 }
             }
         } catch(SQLException sqlexc) {

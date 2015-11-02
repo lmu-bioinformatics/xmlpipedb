@@ -14,11 +14,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -29,6 +32,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.xml.sax.SAXException;
+
+import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.Row;
+import com.healthmarketscience.jackcess.Table;
 
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles.DatabaseProfile;
@@ -41,18 +48,9 @@ import generated.impl.TermImpl;
 import generated.impl.ToImpl;
 
 public class ExportGoData {
-    /**
-     * Constructor
-     *
-     * @param outputFile
-     *            The genMAPP file to populate
-     * @throws IOException
-     *             I/O error
-     */
 
-	public ExportGoData(Connection connection) {
+	public ExportGoData() {
         orderNo = 1;
-        this.connection = connection;
         godb = new Go();
         namespace = new HashMap<String, String>();
         goCount = new HashMap<String, Integer>();
@@ -60,30 +58,6 @@ public class ExportGoData {
         createNamespaceMappings();
     }
 
-    /**
-     * Staring point for exporting go data to genMAPP
-     *
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     * @throws HibernateException
-     * @throws SAXException
-     * @throws IOException
-     * @throws JAXBException
-     */
-/*    public void export(char chosenAspect, int taxon) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
-        String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(3, "GeneOntology export - creating tables...");
-        godb.createTables(connection);
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(10, "GeneOntology export - populating tables...");
-        populateGoTables(chosenAspect, taxon);
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(40, "GeneOntology export - flushing tables...");
-        godb.updateSystemsTable(connection, Date, "T");
-        _Log.info("done!");
-    }
-*/
     /**
      * Staring point for exporting go data to genMAPP with multiple species
      *
@@ -94,18 +68,20 @@ public class ExportGoData {
      * @throws IOException
      * @throws JAXBException
      */
-    public void export(List<DatabaseProfile.GOAspect> chosenAspects, List<Integer> taxonIds) throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
-        String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(3, "GeneOntology export - creating tables...");
-        godb.createTables(connection);
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(10, "GeneOntology export - populating tables...");
+    public void export(List<DatabaseProfile.GOAspect> chosenAspects, List<Integer> taxonIds)
+            throws ClassNotFoundException, SQLException, HibernateException, SAXException, IOException, JAXBException {
+        Database exportDatabase = ConnectionManager.getGenMAPPDB();
+        godb.createTables(exportDatabase);
+        exportDatabase.flush();
+        exportDatabase.close();
+
         populateGoTables(chosenAspects, taxonIds);
-//      FIXME: This must be done non-statically with a check to see if the object is null OR not done here at all.
-//        ExportWizard.updateExportProgress(40, "GeneOntology export - flushing tables...");
-        godb.updateSystemsTable(connection, Date, "T");
-        _Log.info("done!");
+        
+        Connection exportConnection = ConnectionManager.getGenMAPPDBConnection();
+        godb.updateSystemsTable(exportConnection, new Date(), "T");
+        exportConnection.close();
+
+        LOG.info("done!");
     }
     
     /**
@@ -114,24 +90,26 @@ public class ExportGoData {
      *
      * @param session
      *            A hibernate session (needed for HQL queries)
-     * @throws SQLException
      */
-    public void populateGeneOntologyStage(Configuration hibernateConfiguration) throws SQLException {
+    // FIXME Design-wise, this is somewhat out of place because this operation pertains to the
+    // *source* relational database, not the destination export database.
+    public void populateGeneOntologyStage(Connection connection, Configuration hibernateConfiguration)
+            throws SQLException {
         SessionFactory sessionFactory = hibernateConfiguration.buildSessionFactory();
         // open Hibernate session
         Session session = sessionFactory.openSession();
 
-        _Log.info("creating: " + GOTable.GeneOntologyStage);
+        LOG.info("creating: " + GOTable.GeneOntologyStage);
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement("drop table " + GOTable.GeneOntologyStage);
             ps.executeUpdate();
         } catch(SQLException sqlexc) {
             // This may occur if the table does not exist yet.
-            _Log.info("Exception when dropping stage table", sqlexc);
-            try { connection.rollback(); } catch(Exception exc) { _Log.error(exc); }
+            LOG.info("Exception when dropping stage table", sqlexc);
+            try { connection.rollback(); } catch(Exception exc) { LOG.error(exc); }
         } finally {
-            try { ps.close(); } catch(Exception exc) { _Log.error(exc); }
+            try { ps.close(); } catch(Exception exc) { LOG.error(exc); }
         }
 
         // We don't catch this one because table creation MUST succeed.
@@ -139,7 +117,11 @@ public class ExportGoData {
             ps = connection.prepareStatement(GOTable.GeneOntologyStage.getCreate());
             ps.executeUpdate();
         } finally {
-            try { ps.close(); } catch(Exception exc) { _Log.error(exc); }
+            try {
+                ps.close();
+            } catch (Exception exc) {
+                LOG.error(exc);
+            }
         }
 
         Iterator<?> iter = null;
@@ -147,23 +129,23 @@ public class ExportGoData {
         String Remarks = null;
 
         // Get today's date
-        String Date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
+        Date date = new Date();
 
         // Grab all term object
-        _Log.debug("Performing query...");
+        LOG.debug("Performing query...");
         iter = (Iterator<?>)session.createQuery("from generated.impl.TermImpl").iterate();
 
-        _Log.debug("Beginning iteration...");
-        _Log.debug("Beginning " + GOTable.GeneOntologyStage + " transaction");
+        LOG.debug("Beginning iteration...");
+        LOG.debug("Beginning " + GOTable.GeneOntologyStage + " transaction");
         connection.setAutoCommit(false);
         long counter = 0;
         while (iter.hasNext()) {
             TermImpl term = (TermImpl)iter.next();
             List<?> content = term.getContent();
-            _Log.debug("Processing term " + term.getHjid() +", content size = " + content.size());
+            LOG.debug("Processing term " + term.getHjid() +", content size = " + content.size());
             counter++;
             if (counter % 1000 == 0) {
-                _Log.info("Now at term " + counter);
+                LOG.info("Now at term " + counter);
             }
 
             // Each term may contain a number of objects
@@ -172,14 +154,15 @@ public class ExportGoData {
             String Type = "";
             String Parent = "";
             String Relation = "";
-            boolean is_root = false;
+            boolean isRoot = false;
+
             /*
              * Each Term may have more than one parent (is_a) and a part_of. In
              * that case, create an entry for each object. Thus each term may
              * have max of three entries: two parents and one part of
              */
             for (Object o: content) {
-                _Log.debug("Term content: " + o);
+                LOG.debug("Term content: " + o);
                 if (o instanceof generated.impl.IdImpl) {
                     // Strip off "GO:" from ID
                     Id = (((IdImpl)o).getContent()).substring(3);
@@ -188,7 +171,7 @@ public class ExportGoData {
                 } else if (o instanceof generated.impl.NamespaceImpl) {
                     Type = namespace.get(((NamespaceImpl)o).getContent());
                 } else if (o instanceof generated.impl.IsRootImpl) {
-                    is_root = true;
+                    isRoot = true;
                 } else if (o instanceof generated.impl.IsAImpl) {
                     // Strip off "GO:" from parent
                     Parent = (((IsAImpl)o).getContent()).substring(3);
@@ -200,14 +183,14 @@ public class ExportGoData {
                 }
 
                 if (Id != "" && Name != "" && Type != "") {
-                    if (is_root) {
+                    if (isRoot) {
                         // create root ID entry
-                        String[] values = { Id, Name, Type, null, null, null, Date, null };
+                        Object[] values = { Id, Name, Type, null, null, null, date, null };
                         godb.insert(connection, GOTable.GeneOntologyStage, values);
-                        is_root = false;
+                        isRoot = false;
                     } else if (Parent != "" && Relation != "") {
                         // create child ID
-                        String[] values = { Id, Name, Type, Parent, Relation, Species, Date, Remarks };
+                        Object[] values = { Id, Name, Type, Parent, Relation, Species, date, Remarks };
                         godb.insert(connection, GOTable.GeneOntologyStage, values);
                         Relation = "";
                     }
@@ -215,7 +198,7 @@ public class ExportGoData {
             }
         }
 
-        _Log.info("Committing " + GOTable.GeneOntologyStage);
+        LOG.info("Committing " + GOTable.GeneOntologyStage);
         connection.commit();
 
         session.close();
@@ -230,105 +213,57 @@ public class ExportGoData {
         namespace.put("cellular_component", "C");
     }
 
-
-    /**
-     * Populate genMAPP's GO tables
-     *
-     * @throws SQLException
-     * @throws HibernateException
-     * @throws SAXException
-     * @throws IOException
-     * @throws JAXBException
-     */
-    /*    
-    private void populateGoTables(char chosenAspect, int taxon) throws SQLException, HibernateException, SAXException, IOException, JAXBException {
-        _Log.info("Populating UniProt-GO table...");
-        //populateUniprotGoTable(goaFile);
-        populateUniprotGoTableFromSQL(chosenAspect, taxon);
-        _Log.info("Populating GeneOntology table...");
-        populateGeneOntology();
-        _Log.info("Populating GeneOntologyTree...");
-        populateGeneOntologyTree();
-        _Log.info("Populating GeneOntologyCount...");
-        populateGeneOntologyCount();
-        _Log.info("Populating UniProt-GO count...");
-        populateUniProtGoCount();
-//        _Log.info("Dropping GO stage...");
-//        dropGOStage();
-    }
-*/
-    /**
-     * Populate genMAPP's GO tables with multiple species data
-     *
-     * @throws SQLException
-     * @throws HibernateException
-     * @throws SAXException
-     * @throws IOException
-     * @throws JAXBException
-     */
-    private void populateGoTables(List<DatabaseProfile.GOAspect> chosenAspects, List<Integer> taxonIds) throws SQLException, HibernateException, SAXException, IOException, JAXBException {
-        _Log.info("Populating UniProt-GO table...");
-        //populateUniprotGoTable(goaFile);
+    private void populateGoTables(List<DatabaseProfile.GOAspect> chosenAspects, List<Integer> taxonIds)
+            throws SQLException, HibernateException, SAXException, IOException, JAXBException, ClassNotFoundException {
+        LOG.info("Populating UniProt-GO table...");
         populateUniprotGoTableFromSQL(chosenAspects, taxonIds);
-        _Log.info("Populating GeneOntology table...");
+        LOG.info("Populating GeneOntology table...");
         populateGeneOntology();
-        _Log.info("Populating GeneOntologyTree...");
+        LOG.info("Populating GeneOntologyTree...");
         populateGeneOntologyTree();
-        _Log.info("Populating GeneOntologyCount...");
+        LOG.info("Populating GeneOntologyCount...");
         populateGeneOntologyCount();
-        _Log.info("Populating UniProt-GO count...");
+        LOG.info("Populating UniProt-GO count...");
         populateUniProtGoCount();
-//        _Log.info("Dropping GO stage...");
-//        dropGOStage();
-    }
-    
-    private QueryHolder getUniProtIDs(String sql, String id) throws SQLException {
-        QueryHolder qh = new QueryHolder();
-        qh.ps = connection.prepareStatement(sql);
-        qh.ps.setString(1, id);
-        qh.rs = qh.ps.executeQuery();
-        return qh;
     }
 
-    /**
-     * Populates genMAPP's Uniprot-GOCount table
-     *
-     * @throws SQLException
-     */
-    private void populateUniProtGoCount() throws SQLException {
-        _Log.info("creating: " + GOTable.UniProt_GoCount);
+    private void populateUniProtGoCount() throws SQLException, IOException, ClassNotFoundException {
+        LOG.info("creating: " + GOTable.UniProt_GoCount);
         // Create an entry for each unique GO ID
-        String sql = "select Id from " + GOTable.GeneOntologyCount;
-        ResultSet goids = connection.prepareStatement(sql).executeQuery();
+        String sql = "select ID from " + GOTable.GeneOntologyCount;
+
+        Database gdb = ConnectionManager.getGenMAPPDB();
+        Connection gdbConnection = ConnectionManager.getGenMAPPDBConnection();
+        ResultSet goids = gdbConnection.prepareStatement(sql).executeQuery();
         while (goids.next()) {
             String id = goids.getString(1);
-            QueryHolder qh = getUniProtIDs("select \"Primary\" from " + GOTable.UniProt_Go + " where Related = ?", id);
             int count = 0;
-            HashMap<String, Boolean> uniprot_IDs = new HashMap<String, Boolean>();
-            // Count the number of times each GO ID maps to a unique UP ID
-            // as defined in the Uniprot-GO table
-            while (qh.rs.next()) {
-                ++count;
-                uniprot_IDs.put(qh.rs.getString(1), true);
+            Set<String> uniprotIds = new HashSet<String>();
+            for (Row row: gdb.getTable(GOTable.UniProt_Go.getName())) {
+                if (id.equals(row.getString("Related"))) {
+                    count++;
+                    uniprotIds.add(row.getString("Primary"));
+                }
             }
-            qh.close();
+
             // Count the number of times each GO ID child maps to a unique UP ID
             // as defined in the Uniprot-GO table
-            getTotalCount(id, uniprot_IDs);
-            _Log.debug("Inserting UniProt-GO count record (" + id + ", " + count + ")");
-            String[] values = new String[] { id, count + "", uniprot_IDs.size() + "" };
-            godb.insert(connection, GOTable.UniProt_GoCount, values);
+            getTotalCount(gdb, id, uniprotIds);
+            LOG.debug("Inserting UniProt-GO count record (" + id + ", " + count + ")");
+            godb.insert(gdb, GOTable.UniProt_GoCount, new Object[] { id, count, uniprotIds.size() });
         }
 
         // Get Overall Totals for Entire GO Tree
-        sql = "select COUNT(Primary) as total from (select DISTINCT Primary from " + GOTable.UniProt_Go + ")";
-        // Alternative query when using a database other than Access.
-        // sql = "select COUNT(\"Primary\") as total from (select DISTINCT
-        // \"Primary\" from " + GOTable.UniProt_Go + ") as primaries";
-        ResultSet r = connection.prepareStatement(sql).executeQuery();
-        r.next();
-        String total = r.getString(1);
-        godb.insert(connection, GOTable.UniProt_GoCount, new String[] { "GO", 0 + "", total });
+        Table uniProtGoTable = gdb.getTable(GOTable.UniProt_Go.getName());
+        Set<String> seenPrimaries = new HashSet<String>();
+        for (Row row: uniProtGoTable) {
+            seenPrimaries.add(row.getString("Primary"));
+        }
+        godb.insert(gdb, GOTable.UniProt_GoCount, new Object[] { "GO", 0, (long)seenPrimaries.size() });
+
+        gdbConnection.close();
+        gdb.flush();
+        gdb.close();
     }
 
     /**
@@ -337,203 +272,61 @@ public class ExportGoData {
      *
      * @param parent
      *            parent GO ID
-     * @param uniprot_IDs
+     * @param uniprotIds
      *            map of existing Uniprot IDs
      * @throws SQLException
      */
-    private void getTotalCount(String parent, HashMap<String, Boolean> uniprot_IDs) throws SQLException {
-        QueryHolder qh = getUniProtIDs("select Id from " + GOTable.GeneOntology + " where Parent = ?", parent);
-        while (qh.rs.next()) {
-            String id = qh.rs.getString(1);
-
-            String mysql = "select \"Primary\" from " + GOTable.UniProt_Go + " where Related = ?";
-            PreparedStatement myps = connection.prepareStatement(mysql);
-            myps.setString(1, id);
-            ResultSet upResults = myps.executeQuery();
-            while (upResults.next()) {
-                uniprot_IDs.put(upResults.getString(1), true);
-            }
-            myps.close();
-            getTotalCount(id, uniprot_IDs);
-
-        }
-        qh.close();
-
-    }
-
-    /**
-     * Populate genMAPP's Uniprot-GeneOntology table
-     *
-     * @throws IOException
-     * @throws SQLException
-     */
-/*    private void populateUniprotGoTable(File goaFile) throws IOException, SQLException {
-        _Log.debug("Processing GOA file: " + goaFile);
-        populateUniprotGoTable(new BufferedReader(new FileReader(goaFile.getCanonicalPath())), godb, connection);
-    }
-*/
-
-    /**
-     * The actual GOA reader; null godb and connection arguments interpret this
-     * as a test call, and produce debug statements instead.
-     */
-/*    protected static void populateUniprotGoTable(BufferedReader in, Go godb, Connection connection) throws IOException, SQLException {
-        String line = null;
-        HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
-
-        Pattern idPattern1 = Pattern.compile("UniProtKB/[\\w-]+:(\\w+)");
-        Pattern idPattern1a = Pattern.compile("UniProtKB/[\\w-]+\\s+(\\w+)");
-        Pattern idPattern2 = Pattern.compile("UniProt(KB)?\\s+(\\w{6})");
-        Pattern goIDPattern = Pattern.compile("GO:(\\w+)");
-        while ((line = in.readLine()) != null) {
-            _Log.debug("Processing GOA line: " + line);
-
-            // Grab the Uniprot ID --- the multiple patterns are needed to accommodate various known GOA file formats.
-            Matcher m1 = idPattern1.matcher(line);
-            Matcher m1a = idPattern1a.matcher(line);
-            Matcher m2 = idPattern2.matcher(line);
-            boolean regexp1 = m1.find();
-            boolean regexp1a = m1a.find();
-            boolean regexp2 = m2.find();
-            if (regexp1 || regexp1a || regexp2) {
-                String uniprotID = regexp1 ? m1.group(1) : (regexp1a ? m1a.group(1) : m2.group(2));
-                // Grab the GO ID(s).
-                Matcher match = goIDPattern.matcher(line);
-                while (match.find()) {
-                    String goID = match.group(1);
-                    String key = uniprotID + "," + goID;
-                    if (!unique.containsKey(key)) {
-                        unique.put(key, true);
-                        String[] values = new String[] { uniprotID, goID, "" };
-                        if ((godb != null) && (connection != null)) {
-                            godb.insert(connection, GOTable.UniProt_Go, values);
-                        } else {
-                            _Log.debug("UniProt-GO pair: " + uniprotID + ", " + goID);
+    private void getTotalCount(Database gdb, String parent, Set<String> uniprotIds)
+            throws IOException {
+        gdb.getTable(GOTable.GeneOntology.getName()).forEach(row -> {
+            if (parent.equals(row.getString("Parent"))) {
+                String id = row.getString("ID");
+                try {
+                    gdb.getTable(GOTable.UniProt_Go.getName()).forEach(pairRow -> {
+                        if (id.equals(pairRow.getString("Related"))) {
+                            uniprotIds.add(pairRow.getString("Primary"));
                         }
-                    }
+                    });
+                    getTotalCount(gdb, id, uniprotIds);
+                } catch (IOException ioe) {
+                    throw new RuntimeException(ioe);
                 }
             }
-        }
-
-        // Potential query for use with new export from GOA in PostgreSQL database:
-        // select with_or_from, go_id
-        // from goa
-        // where with_or_from like 'UniProtKB:%' or with_or_from like 'UniProt:%';
+        });
     }
-*/
 
-    /**
-     * Populates GenMAPP's UniProt-GeneOnotlogy table, using a GOA table from
-     * a PostgreSQL database instead of a GOA file
-     *
-     * @throws SQLException
-     */
-/*
-    private void populateUniprotGoTableFromSQL(char chosenAspect, int taxon) throws SQLException {
-    	HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
-    	String uniProtAndGOIDSQL = "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%' and taxon = 'taxon:" + taxon + "'";
-
-    	PreparedStatement uniProtAndGOIDPS = null;
-    	_Log.info("creating: " + GOTable.UniProt_Go);
-
-    	if (chosenAspect != 'A') {
-    		if (chosenAspect == 'C') {
-    			uniProtAndGOIDSQL = uniProtAndGOIDSQL + " and aspect = 'C'";
-    		} else if (chosenAspect == 'F') {
-    			uniProtAndGOIDSQL = uniProtAndGOIDSQL + " and aspect = 'F'";
-    		} else if (chosenAspect == 'P') {
-    			uniProtAndGOIDSQL = uniProtAndGOIDSQL + " and aspect = 'P'";
-    		}
-    	}
-
-    	try {
-    		uniProtAndGOIDPS = ConnectionManager.getRelationalDBConnection().prepareStatement(uniProtAndGOIDSQL);
-    		ResultSet uniProtAndGOIDRS = uniProtAndGOIDPS.executeQuery();
-    		while (uniProtAndGOIDRS.next()) {
-
-    			String uniProtID = uniProtAndGOIDRS.getString("db_object_id");
-    			uniProtID = uniProtID.trim();
-
-    			String goID = uniProtAndGOIDRS.getString("go_id");
-    			if (goID.startsWith("GO:")) {
-    				goID = goID.substring(3);
-    			}
-    			goID = goID.trim();
-
-    			String evidenceCode = uniProtAndGOIDRS.getString("evidence_code");
-    			evidenceCode = evidenceCode.trim();
-
-    			String withOrFrom = uniProtAndGOIDRS.getString("with_or_from");
-    			if (withOrFrom.startsWith("GO:")) {
-    				withOrFrom = withOrFrom.substring(3);
-    			}
-    			withOrFrom = withOrFrom.trim();
-
-    			String key = uniProtID + "," + goID;
-    			if (!unique.containsKey(key)) {
-    				unique.put(key, true);
-                    String[] values = new String[] { uniProtID, goID, "" };
-                    if ((godb != null) && (connection != null)) {
-                        godb.insert(connection, GOTable.UniProt_Go, values);
-                    } else {
-                        _Log.debug("UniProt-GO pair: " + uniProtID + ", " + goID);
-                    }
-    			}
-
-    			if (evidenceCode == "IC") {
-    				key = uniProtID + "," + withOrFrom;
-        			if (!unique.containsKey(key)) {
-        				unique.put(key, true);
-                        String[] values = new String[] { uniProtID, withOrFrom, "" };
-                        if ((godb != null) && (connection != null)) {
-                            godb.insert(connection, GOTable.UniProt_Go, values);
-                        } else {
-                            _Log.debug("UniProt-GO pair: " + uniProtID + ", " + goID);
-                        }
-        			}
-    			}
-
-    		}
-        } catch(SQLException sqlexc) {
-            throw sqlexc;
-        } catch(Exception exc) {
-            _Log.error(exc);
-        } finally {
-        	try { uniProtAndGOIDPS.close(); } catch(Exception exc) { _Log.error(exc); }
-        }
-    }
-*/
     /**
      * Populates GenMAPP's UniProt-GeneOnotlogy table for multiple species, 
      * using a GOA table from a PostgreSQL database instead of a GOA file
      *
      * @throws SQLException
      */
-
     private void populateUniprotGoTableFromSQL(List<DatabaseProfile.GOAspect> chosenAspects, List<Integer> taxonIds) throws SQLException {
     	HashMap<String, Boolean> unique = new HashMap<String, Boolean>();
-    	// String uniProtAndGOIDSQL = "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%' and taxon = 'taxon:" + taxonIds + "'";
         StringBuilder baseQueryBuilder = 
         	new StringBuilder( "select db_object_id, go_id, evidence_code, with_or_from from goa where db like '%UniProt%'" );
         boolean first = true;
         
-        for ( int taxon: taxonIds ) {
-            baseQueryBuilder.append(first ? " and (" : " or ");
+        for (int taxon: taxonIds) {
             baseQueryBuilder
+                .append(first ? " and (" : " or ")
                 .append("taxon = 'taxon:")
-                .append(taxon).append("'");
+                .append(taxon)
+                .append("'");
+
             first = false;
         }
+
         baseQueryBuilder.append(")");
-    	
+
     	PreparedStatement uniProtAndGOIDPS = null;
-    	_Log.info("creating: " + GOTable.UniProt_Go);
+    	LOG.info("creating: " + GOTable.UniProt_Go);
 
     	if (chosenAspects.size() < 3) { // Not all aspects were chosen.
     	    first = true;
             for (DatabaseProfile.GOAspect aspect: chosenAspects) {
-                baseQueryBuilder.append(first ? " and (" : " or ");
                 baseQueryBuilder
+                    .append(first ? " and (" : " or ")
                     .append("aspect = '")
                     .append(aspect.name().charAt(0)) // The aspect code is the enum's first character.
                     .append("'");
@@ -542,12 +335,12 @@ public class ExportGoData {
             baseQueryBuilder.append(")");
     	}
 
+    	Database exportDatabase = null;
     	try {
-    		// uniProtAndGOIDPS = ConnectionManager.getRelationalDBConnection().prepareStatement(uniProtAndGOIDSQL);
+    	    exportDatabase = ConnectionManager.getGenMAPPDB();
     		uniProtAndGOIDPS = ConnectionManager.getRelationalDBConnection().prepareStatement(baseQueryBuilder.toString());
     		ResultSet uniProtAndGOIDRS = uniProtAndGOIDPS.executeQuery();
     		while (uniProtAndGOIDRS.next()) {
-
     			String uniProtID = uniProtAndGOIDRS.getString("db_object_id");
     			uniProtID = uniProtID.trim();
 
@@ -555,6 +348,7 @@ public class ExportGoData {
     			if (goID.startsWith("GO:")) {
     				goID = goID.substring(3);
     			}
+
     			goID = goID.trim();
 
     			String evidenceCode = uniProtAndGOIDRS.getString("evidence_code");
@@ -569,68 +363,93 @@ public class ExportGoData {
     			String key = uniProtID + "," + goID;
     			if (!unique.containsKey(key)) {
     				unique.put(key, true);
-                    String[] values = new String[] { uniProtID, goID, "" };
-                    if ((godb != null) && (connection != null)) {
-                        godb.insert(connection, GOTable.UniProt_Go, values);
-                    } else {
-                        _Log.debug("UniProt-GO pair: " + uniProtID + ", " + goID);
-                    }
+    				LOG.debug("UniProt-GO pair: " + uniProtID + ", " + goID);
+                    godb.insert(exportDatabase, GOTable.UniProt_Go, new String[] { uniProtID, goID, "" });
     			}
 
-    			if (evidenceCode == "IC") {
+    			if ("IC".equals(evidenceCode)) {
     				key = uniProtID + "," + withOrFrom;
         			if (!unique.containsKey(key)) {
         				unique.put(key, true);
-                        String[] values = new String[] { uniProtID, withOrFrom, "" };
-                        if ((godb != null) && (connection != null)) {
-                            godb.insert(connection, GOTable.UniProt_Go, values);
-                        } else {
-                            _Log.debug("UniProt-GO pair: " + uniProtID + ", " + goID);
-                        }
+        				LOG.debug("UniProt-GO pair: " + uniProtID + ", " + goID);
+                        godb.insert(exportDatabase, GOTable.UniProt_Go, new String[] { uniProtID, withOrFrom, "" });
         			}
     			}
-
     		}
         } catch(SQLException sqlexc) {
             throw sqlexc;
         } catch(Exception exc) {
-            _Log.error(exc);
+            LOG.error(exc);
         } finally {
-        	try { uniProtAndGOIDPS.close(); } catch(Exception exc) { _Log.error(exc); }
+            try {
+                uniProtAndGOIDPS.close();
+                exportDatabase.flush();
+                exportDatabase.close();
+            } catch (Exception exc) {
+                LOG.error(exc);
+            }
         }
     }
-    
+
     /**
      * Populates genMAPP's GeneOntology table based on a user selected species
      *
      * @throws SQLException
      */
     private void populateGeneOntology() throws SQLException {
-        String relatedIDSQL = "select distinct(Related) from " + GOTable.UniProt_Go + " order by Related";
         String stageSQL = "select * from " + GOTable.GeneOntologyStage + " where Id = ? order by Id";
-        PreparedStatement relatedPS = null;
+
+        Database gdb = null;
+        Connection gdbConnection = null;
         PreparedStatement stagePS = null;
-        _Log.info("creating: " + GOTable.GeneOntology);
+        LOG.info("creating: " + GOTable.GeneOntology);
         try {
-            // Grab the distinct related IDs from UniProt-GeneOntology.
-            relatedPS = connection.prepareStatement(relatedIDSQL);
+            gdb = ConnectionManager.getGenMAPPDB();
+            gdbConnection = ConnectionManager.getGenMAPPDBConnection();
+
             stagePS = ConnectionManager.getRelationalDBConnection().prepareStatement(stageSQL);
 
+            // Grab the distinct related IDs from UniProt-GeneOntology.
             // For each of these IDs, grab the corresponding stage records, and process.
-            ResultSet relatedRS = relatedPS.executeQuery();
-            while (relatedRS.next()) {
-                String relatedString = relatedRS.getString("Related");
-                _Log.debug("Processing related term: " + relatedString);
-                stagePS.setString(1, relatedString);
-                processIDs(stagePS);
+            Table uniProtGoTable = gdb.getTable(GOTable.UniProt_Go.getName());
+            Set<String> seenRelateds = new HashSet<String>();
+            for (Row row: uniProtGoTable) {
+                // Note: Difference from original is that order is no longer guaranteed here.
+                // May need to restore order if that somehow mattered.
+                String relatedString = row.getString("Related");
+                if (!seenRelateds.contains(relatedString)) {
+                    seenRelateds.add(relatedString);
+                    LOG.debug("Processing related term: " + relatedString);
+                    stagePS.setString(1, relatedString);
+                    processIDs(gdbConnection, stagePS);
+                }
             }
         } catch(SQLException sqlexc) {
             throw sqlexc;
         } catch(Exception exc) {
-            _Log.error(exc);
+            LOG.error(exc);
+            for (StackTraceElement stackTraceElement: exc.getStackTrace()) {
+                LOG.error("    " + stackTraceElement);
+            }
         } finally {
-            try { stagePS.close(); } catch(Exception exc) { _Log.error(exc); }
-            try { relatedPS.close(); } catch(Exception exc) { _Log.error(exc); }
+            try {
+                stagePS.close();
+            } catch (Exception exc) {
+                LOG.error(exc);
+            }
+
+            try {
+                gdbConnection.close();
+            } catch (Exception exc) {
+                LOG.error(exc);
+            }
+
+            try {
+                gdb.flush();
+                gdb.close();
+            } catch (Exception exc) {
+                LOG.error(exc);
+            }
         }
     }
 
@@ -641,34 +460,33 @@ public class ExportGoData {
      *            parent ID
      * @throws SQLException
      */
-    private void insertParents(String id) throws SQLException {
+    private void insertParents(Connection gdbConnection, String id) throws SQLException, IOException {
         String sql = "select * from " + GOTable.GeneOntologyStage + " where Id = ? order by Id";
         PreparedStatement ps = null;
         try {
             ps = ConnectionManager.getRelationalDBConnection().prepareStatement(sql);
             ps.setString(1, id);
-            processIDs(ps);
-
-        } catch(SQLException sqlexc) {
-            throw sqlexc;
-        } catch(Exception exc) {
-            _Log.error(exc);
+            processIDs(gdbConnection, ps);
         } finally {
-            try { ps.close(); } catch(Exception exc) { _Log.error(exc); }
+            try {
+                ps.close();
+            } catch (Exception exc) {
+                LOG.error(exc);
+            }
         }
     }
 
-    private void processIDs(PreparedStatement stagePS) throws SQLException {
+    private void processIDs(Connection gdbConnection, PreparedStatement stagePS) throws SQLException, IOException {
         ResultSet stageRS = null;
         try {
             stageRS = stagePS.executeQuery();
             while (stageRS.next()) {
-                String[] values = getGoValues(stageRS);
+                Object[] values = getGoValues(stageRS);
                 String key = values[ID_COL] + "," + values[PARENT_COL];
                 if (!duplicates.containsKey(key)) {
                     duplicates.put(key, true);
-                    godb.insert(connection, GOTable.GeneOntology, values);
-                    insertParents(values[PARENT_COL]);
+                    godb.insert(gdbConnection, GOTable.GeneOntology, values);
+                    insertParents(gdbConnection, (String)values[PARENT_COL]);
                 }
             }
         } finally {
@@ -676,15 +494,13 @@ public class ExportGoData {
         }
     }
 
-    private String[] getGoValues(ResultSet results) throws SQLException {
-        String[] values = new String[NUM_OF_GO_COLS];
-        for (int x = 0; x < values.length; x++) {
-            try {
-                values[x] = results.getString(x + 1).trim();
-            } catch(NullPointerException ex) {
-            }
+    private Object[] getGoValues(ResultSet results) throws SQLException {
+        List<Object> values = new ArrayList<Object>(GOTable.GeneOntology.columnsInOrder().size());
+        for (String columnName: GOTable.GeneOntology.columnsInOrder()) {
+            Object value = results.getObject(columnName);
+            values.add(value instanceof String ? ((String)value).trim() : value);
         }
-        return values;
+        return values.toArray();
     }
 
     /**
@@ -692,37 +508,36 @@ public class ExportGoData {
      *
      * @throws SQLException
      */
-    private void populateGeneOntologyTree() throws SQLException {
-        String[] root_ids = { "0003674", "0005575", "0008150" };
+    private void populateGeneOntologyTree() throws SQLException, IOException, ClassNotFoundException {
+        String[] rootIds = { "0003674", "0005575", "0008150" };
         String[] names = { "molecular_function", "cellular_component", "biological_process" };
-        _Log.info("creating: " + GOTable.GeneOntologyTree);
 
         // Traverse the graph beginning with each root ID
-        for (int index = 0; index < root_ids.length; index++) {
-            String id = root_ids[index];
+        LOG.info("creating: " + GOTable.GeneOntologyTree);
+        Connection gdbConnection = ConnectionManager.getGenMAPPDBConnection();
+        for (int index = 0; index < rootIds.length; index++) {
+            String id = rootIds[index];
             String name = names[index];
             goCount.put(id, 1);
-            godb.insert(connection, GOTable.GeneOntologyTree, new String[] { orderNo++ + "", 1 + "", id, name });
-            insertChildren(id, 2);
+            godb.insert(gdbConnection, GOTable.GeneOntologyTree, new Object[] { orderNo++, 1, id, name });
+            insertChildren(gdbConnection, id, 2);
         }
+        gdbConnection.close();
+        
+        LOG.info("Total number of GeneOntologyTree records: " + (orderNo - 1));
     }
 
-    /**
-     * Populate genMAPP's populateGeneOntologyCount
-     *
-     * @throws SQLException
-     */
-    private void populateGeneOntologyCount() throws SQLException {
+    private void populateGeneOntologyCount() throws SQLException, IOException, ClassNotFoundException {
+        LOG.info("creating: " + GOTable.GeneOntologyCount);
         Iterator<String> iter = goCount.keySet().iterator();
-        String id;
-        int count;
-        _Log.info("creating: " + GOTable.GeneOntologyCount);
+        Connection gdbConnection = ConnectionManager.getGenMAPPDBConnection();
         while (iter.hasNext()) {
-            id = iter.next();
-            count = goCount.get(id);
-            _Log.debug("Inserting GeneOntology count record (" + id + ", " + count + ")");
-            godb.insert(connection, GOTable.GeneOntologyCount, new String[] { id, count + "" });
+            String id = iter.next();
+            int count = goCount.get(id);
+            LOG.debug("Inserting GeneOntology count record (" + id + ", " + count + ")");
+            godb.insert(gdbConnection, GOTable.GeneOntologyCount, new Object[] { id, count });
         }
+        gdbConnection.close();
     }
 
     /**
@@ -734,9 +549,11 @@ public class ExportGoData {
      *            The level in the tree
      * @throws SQLException
      */
-    private void insertChildren(String parent, int level) throws SQLException {
+    private void insertChildren(Connection gdbConnection, String parent, int level)
+            throws SQLException, IOException {
         String sqlStatement = "SELECT name,id from " + GOTable.GeneOntology + " where parent = ? order by parent";
-        PreparedStatement ps = connection.prepareStatement(sqlStatement);
+
+        PreparedStatement ps = gdbConnection.prepareStatement(sqlStatement);
         ps.setString(1, parent);
         ResultSet results = ps.executeQuery();
         while (results.next()) {
@@ -749,45 +566,29 @@ public class ExportGoData {
             } else {
                 goCount.put(id, 1);
             }
-            _Log.debug("Inserting child row (" + id + ", " + name + ")");
-            godb.insert(connection, GOTable.GeneOntologyTree, new String[] { orderNo++ + "", level + "", id, name });
-            insertChildren(id, level + 1);
+
+            LOG.debug("Inserting child row (" + id + ", " + name + ")");
+            if (orderNo % 250 == 0) {
+                LOG.info("Child rows inserted so far: " + orderNo);
+            }
+
+            godb.insert(gdbConnection, GOTable.GeneOntologyTree, new Object[] { orderNo++, level, id, name });
+            insertChildren(gdbConnection, id, level + 1);
         }
+        results.close();
         ps.close();
     }
 
-    private class QueryHolder {
-        public PreparedStatement ps;
-        public ResultSet rs;
 
-        public void close() {
-            try {
-                rs.close();
-            } catch(Exception exc) {
-                exc.printStackTrace();
-            }
-            try {
-                ps.close();
-            } catch(Exception exc) {
-                exc.printStackTrace();
-            }
-        }
-    }
-    
-    /**
-     * Log object for ExportGoData.
-     */
-    private static final Log _Log = LogFactory.getLog(ExportGoData.class);
+    private static final Log LOG = LogFactory.getLog(ExportGoData.class);
 
-    // GO DB variables
-    private static final int NUM_OF_GO_COLS = 8;
     private static final int PARENT_COL = 4 - 1;
     private static final int ID_COL 	= 1 - 1;
 
-    private int orderNo;
-    private Connection connection;
+    private long orderNo;
+
     private Go godb;
-    private HashMap<String, String> namespace;
-    private HashMap<String, Integer> goCount;
-    private HashMap<String, Boolean> duplicates;
+    private Map<String, String> namespace;
+    private Map<String, Integer> goCount;
+    private Map<String, Boolean> duplicates;
 }

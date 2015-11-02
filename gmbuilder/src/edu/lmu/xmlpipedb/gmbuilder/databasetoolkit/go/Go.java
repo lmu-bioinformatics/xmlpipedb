@@ -10,13 +10,19 @@
 
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.go;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.healthmarketscience.jackcess.Database;
 
 import edu.lmu.xmlpipedb.gmbuilder.util.GenMAPPBuilderUtilities;
 
@@ -28,47 +34,55 @@ public class Go {
 	 * 			The database connection
 	 * @throws SQLException
 	 */
-	public void createTables(Connection connection) throws SQLException {
-        Statement s = null;
-        try {
-            s = connection.createStatement();
-            for (GOTable goTable: GOTable.values()) {
-                if (!goTable.equals(GOTable.GeneOntologyStage)) {
-                    s.execute(goTable.getCreate());
-                }
+	public void createTables(Database database) throws IOException {
+        for (GOTable goTable: GOTable.values()) {
+            if (!goTable.equals(GOTable.GeneOntologyStage)) {
+                GenMAPPBuilderUtilities.createAccessTableDirectly(database, goTable.getName(),
+                        goTable.getColumnsToTypes());
             }
-        } finally {
-            try { s.close(); } catch(Exception exc) { _Log.error(exc); }
         }
 	}
 	
-	/**
-	 * Insert data into a GO table
-	 * 
-	 * @param connection
-	 * 				The database connection
-	 * @param table
-	 * 				Go table name 
-	 * @param values
-	 * 				go data 
-	 * @throws SQLException
-	 */
-	public void insert(Connection connection, GOTable table, String[] values) throws SQLException {
+    public void insert(Database database, GOTable table, Object[] values) throws IOException {
+        Map<String, Object> columnsToValues = new HashMap<String, Object>();
+
+        int i = 0;
+        for (String column: table.columnsInOrder()) {
+            Object value = values[i];
+            columnsToValues.put(column, value instanceof String ?
+                    GenMAPPBuilderUtilities.straightToCurly((String)value) : value);
+            i++;
+        }
+
+        GenMAPPBuilderUtilities.insertAccessRowDirectly(database, table.getName(), columnsToValues);
+    }
+
+    public void insert(Connection connection, GOTable table, Object[] values) throws SQLException {
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(table.getInsert());
             for (int index = 1; index <= values.length; index++) {
-                ps.setString(index, GenMAPPBuilderUtilities.straightToCurly(values[index-1]));
+                Object value = values[index - 1];
+                if (value instanceof Date) {
+                    ps.setDate(index, new java.sql.Date(((Date)value).getTime()));
+                } else {
+                    ps.setString(index, value == null ? null :
+                            GenMAPPBuilderUtilities.straightToCurly(value.toString()));
+                }
             }
-            
-            _Log.debug("Performing insert: " + ps);
+
+            LOG.debug("Performing insert: " + ps);
             ps.executeUpdate();
         } finally {
-            try { ps.close(); } catch(Exception exc) { _Log.error(exc); }
+            try {
+                ps.close();
+            } catch (Exception exc) {
+                LOG.error(exc);
+            }
         }
- 	}
-	
-	/**
+    }
+
+    /**
 	 * Updates the date for GO in the Systems table 
 	 * 
 	 * @param connection
@@ -79,17 +93,14 @@ public class Go {
 	 * 				Unique identifier for the GO table
 	 * @throws SQLException
 	 */
-	public void updateSystemsTable(Connection connection, String date, String systemCode) throws SQLException {
-		String stmt = "UPDATE Systems SET \"Date\" = ? WHERE SystemCode = ?";
+	public void updateSystemsTable(Connection connection, Date date, String systemCode) throws SQLException {
+		String stmt = "UPDATE Systems SET [Date] = ? WHERE SystemCode = ?";
 		PreparedStatement ps = connection.prepareStatement(stmt);
-		ps.setString(1, date);
+		ps.setTimestamp(1, new Timestamp(date.getTime()));
 		ps.setString(2, systemCode);
     	ps.executeUpdate();
     	ps.close();
 	}
 
-    /**
-     * Go class log.
-     */
-    private static final Log _Log = LogFactory.getLog(Go.class);
+    private static final Log LOG = LogFactory.getLog(Go.class);
 }

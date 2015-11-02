@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -110,7 +111,7 @@ public class ATSpeciesProfileTest {
 		 * @throws InvalidParameterException 
 		 */
 	
-		public void testGetRelationsTableManager() throws FileNotFoundException, InvalidParameterException {
+		public void testGetRelationsTableManager() throws FileNotFoundException, InvalidParameterException, IOException {
 	        Row[] rows = null;
 			
 			// setup environment
@@ -183,7 +184,7 @@ public class ATSpeciesProfileTest {
 	 * @throws InvalidParameterException 
 	 */
 	////@Test
-	public void testGetDefaultDisplayOrder() throws FileNotFoundException, InvalidParameterException {
+	public void testGetDefaultDisplayOrder() throws FileNotFoundException, InvalidParameterException, IOException {
 	
 		// setup environment
         if( dp == null )
@@ -215,7 +216,7 @@ public class ATSpeciesProfileTest {
 	 * @throws InvalidParameterException 
 	 */
 	////@Test
-	public void testSystemsTableOutput() throws FileNotFoundException, InvalidParameterException {
+	public void testSystemsTableOutput() throws FileNotFoundException, InvalidParameterException, IOException {
         Row[] rows = null;
         int count=0;		
 		// setup environment
@@ -248,7 +249,7 @@ public class ATSpeciesProfileTest {
         	while(i.hasNext()){
         		String s = (String)i.next();
         		_Log.warn(s + "     " + r.getValue(s) + "  |x|   ");
-        		if(s.equalsIgnoreCase("\"Date\"")){
+        		if(s.equalsIgnoreCase("Date")){
         			if(r.getValue(s)!= null && !r.getValue(s).equals(""))
         				hasDate = true;
         		}
@@ -288,7 +289,7 @@ public class ATSpeciesProfileTest {
 	}// end testSystemsTableOutput...
 
 	////@Test
-		public void testRelationsTableOutput() throws FileNotFoundException, InvalidParameterException {
+		public void testRelationsTableOutput() throws FileNotFoundException, InvalidParameterException, IOException {
 	        Row[] rows = null;
 			
 			// setup environment
@@ -357,34 +358,28 @@ public class ATSpeciesProfileTest {
 		}// end testGetReleations...
 
 	@Test
-	public void testGetPrimarySystemTableManager() throws FileNotFoundException, InvalidParameterException {
+	public void testGetPrimarySystemTableManager() throws FileNotFoundException, InvalidParameterException,
+	        SQLException, IOException, ClassNotFoundException {
 	    Row[] rows = null;
 		
 		// setup environment
-	    if( dp == null)
-	    	dp = doSetupOfExportEnvironment();
-	    
+        if (dp == null) {
+            dp = doSetupOfExportEnvironment();
+        }	    
 		
 		// do tests
-	    try {
-			TableManager uniprotTM = dp.getPrimarySystemTableManager();
-			rows = uniprotTM.getRows();
-			TableCoordinator.exportTable(dp.getExportConnection(), uniprotTM);
-			assertEquals(184, rows.length);
+		TableManager uniprotTM = dp.getPrimarySystemTableManager();
+		rows = uniprotTM.getRows();
+		TableCoordinator.exportTable(uniprotTM);
+		assertEquals(184, rows.length);
 
-			// Clean-up after yourself! (or myself in this case)			
-			ConnectionManager.closeRelationalDB();
-		} catch (SQLException e) {
-			_Log.error("An SQL Exception occured during processing. See stack trace for details.");
-			e.printStackTrace();
-		}
-		
-		
-	}// end testGetReleations...
+		// Clean-up after yourself! (or myself in this case)			
+		ConnectionManager.closeRelationalDB();
+	}
 
 
 	//@Test
-	public void testSystemTableOutput() throws FileNotFoundException, InvalidParameterException {
+	public void testSystemTableOutput() throws FileNotFoundException, InvalidParameterException, IOException {
 	    Row[] rows = null;
 		
 		// setup environment
@@ -411,7 +406,7 @@ public class ATSpeciesProfileTest {
 
 
 	////@Test
-	public void testDefaultDisplayOrderOutput() throws FileNotFoundException, InvalidParameterException {
+	public void testDefaultDisplayOrderOutput() throws FileNotFoundException, InvalidParameterException, IOException {
 		// setup environment
 	    if( dp == null)
 	    	dp = doSetupOfExportEnvironment();
@@ -434,7 +429,7 @@ public class ATSpeciesProfileTest {
 
 
 	////@Test
-	public void testRelationshipTableOutput() throws FileNotFoundException, InvalidParameterException {
+	public void testRelationshipTableOutput() throws FileNotFoundException, InvalidParameterException, IOException {
         Row[] rows = null;
 		
 		// setup environment
@@ -457,7 +452,7 @@ public class ATSpeciesProfileTest {
 				rows = tm.getRows();
 				int tmRecordCount = rows.length;
 		        for( Row r: rows){
-		        	String relation = r.getValue("TABLE_NAME_COLUMN");
+		        	String relation = r.getValue("TABLE_NAME_COLUMN").toString();
 		        	_Log.warn("Relations in TableManager List: [" + relation + "]");
 		        	if( relationships.containsKey(relation)){
 		        		if( relationships.get(relation).intValue() == tmRecordCount){
@@ -543,7 +538,7 @@ public class ATSpeciesProfileTest {
 	 * 
 	 * @return DatabaseProfile
 	 */
-	private DatabaseProfile doSetupOfExportEnvironment(){
+	private DatabaseProfile doSetupOfExportEnvironment() throws IOException {
 		if(_hibernateConfiguration == null) getHibernateConfig();
 		DatabaseProfile result = null;
 		// do stuff
@@ -615,7 +610,7 @@ public class ATSpeciesProfileTest {
 		       
 		       // Note To Self: This call will move up to the calling method...
 		       //ExportToGenMAPP.setDatabaseProfile(result);
-		
+		result.prepareForExport();
 		return result;
 	}// end doSetup...
 	
@@ -638,7 +633,7 @@ public class ATSpeciesProfileTest {
 
 
 	//@Test
-	public void testGetSystemTableManagerCustomizations() throws FileNotFoundException, InvalidParameterException {
+	public void testGetSystemTableManagerCustomizations() throws FileNotFoundException, InvalidParameterException, IOException {
 	    Row[] rows = null;
 		
 		// setup environment
@@ -651,7 +646,7 @@ public class ATSpeciesProfileTest {
 	    	SpeciesProfile sp = dp.getSelectedSpeciesProfile();
 	    	TableManager tairTM = new TableManager(new String[][] {
 					{ "ID", "VARCHAR(50) NOT NULL" }, { "Species", "MEMO" },
-					{ "\"Date\"", "DATE" }, { "Remarks", "MEMO" } },
+					{ "Date", "DATE" }, { "Remarks", "MEMO" } },
 					new String[] { "ID" });
 			sp.getSystemTableManagerCustomizations(tairTM, null, dp.getVersion());
 			rows = tairTM.getRows();

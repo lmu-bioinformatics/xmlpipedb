@@ -1,10 +1,4 @@
-
-
-**GenMAPP Gene Database for**  **Vibrio cholerae**  **O1 biovar El Tor str. N16961**
-
-Vc-Std\_External\_20131122.gdb
-
-ReadMe
+ReadMe for GenMAPP Gene Database for  *Vibrio cholerae*  O1 biovar El Tor str. N16961, Vc-Std\_External\_20131122.gdb
 
 Last revised:  11/26/13
 

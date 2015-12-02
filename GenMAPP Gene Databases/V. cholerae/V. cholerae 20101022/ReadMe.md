@@ -1,25 +1,25 @@
-ReadMe for GenMAPP Gene Database for  *Vibrio cholerae*  O1 biovar El Tor str. N16961, Vc-Std\_External\_20131122.gdb
+**ReadMe for GenMAPP Gene Database for  *Vibrio cholerae*  O1 biovar El Tor str. N16961, Vc-Std\_External\_20131122.gdb**
 
-Last revised:  11/26/13
+Last revised:  12/1/15
 
 This document contains the following:
 
-1. **1.** Overview of GenMAPP application and accessory programs
-2. **2.** System Requirements and Compatibility
-3. **3.** Installation Instructions
-4. **4.** Gene Database Specifications
-  1. a.Gene ID Systems
-  2. b.Species
-  3. c.Data Sources and Versions
-  4. d.Database Report
-5. **5.** Contact Information for support, bug reports, feature requests
-6. **6.** Release notes
-  1. a.Current version: Vc-Std\_External\_20131122.gdb
-  2. b.Previous version: Vc-Std\_External\_20101022.gdb
-  3. c.Previous version: Vc-Std\_External\_20090622.gdb
-7. **7.** Database Schema Diagram
+1. Overview of GenMAPP application and accessory programs
+2. System Requirements and Compatibility
+3. Installation Instructions
+4. Gene Database Specifications
+  a. Gene ID Systems
+  b. Species
+  c. Data Sources and Versions
+  d. Database Report
+5. Contact Information for support, bug reports, feature requests
+6. Release notes
+  a. Current version: Vc-Std\_External\_20131122.gdb
+  b. Previous version: Vc-Std\_External\_20101022.gdb
+  c. Previous version: Vc-Std\_External\_20090622.gdb
+7. Database Schema Diagram
 
-1. **1.** Overview of the GenMAPP application and accessory programs
+1. Overview of the GenMAPP application and accessory programs
 
 GenMAPP (Gene Map Annotator and Pathway Profiler) is a free computer application for viewing and analyzing DNA microarray and other genomic and proteomic data on biological pathways.  MAPPFinder is an accessory program that works with GenMAPP and Gene Ontology to identify global biological trends in gene expression data.  The GenMAPP Gene Database (file with the extension _.gdb_) is used to relate gene IDs on MAPPs (_.mapp_, representations of pathways and other functional groupings of genes) to data in Expression Datasets (_.gex_, DNA microarray or other high-throughput data).  GenMAPP is a stand-alone application that requires the Gene Database, MAPPs, and Expression Dataset files to be stored on the user's computer.  GenMAPP and its accessory programs and files may be downloaded from <http://www.GenMAPP.org>.  GenMAPP requires a separate Gene Database for each species.  This ReadMe describes a Gene Database for _Vibrio cholerae_ O1 biovar El Tor str. N16961 that was built by the Loyola Marymount University (LMU) Bioinformatics Group using the program GenMAPP Builder 2.0, part of the open source XMLPipeDB project <http://xmlpipedb.cs.lmu.edu/>.
 

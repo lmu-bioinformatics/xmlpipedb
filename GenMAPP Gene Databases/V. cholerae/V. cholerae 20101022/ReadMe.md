@@ -23,10 +23,10 @@ This document contains the following:
 
 GenMAPP (Gene Map Annotator and Pathway Profiler) is a free computer application for viewing and analyzing DNA microarray and other genomic and proteomic data on biological pathways.  MAPPFinder is an accessory program that works with GenMAPP and Gene Ontology to identify global biological trends in gene expression data.  The GenMAPP Gene Database (file with the extension _.gdb_) is used to relate gene IDs on MAPPs (_.mapp_, representations of pathways and other functional groupings of genes) to data in Expression Datasets (_.gex_, DNA microarray or other high-throughput data).  GenMAPP is a stand-alone application that requires the Gene Database, MAPPs, and Expression Dataset files to be stored on the user's computer.  GenMAPP and its accessory programs and files may be downloaded from <http://www.GenMAPP.org>.  GenMAPP requires a separate Gene Database for each species.  This ReadMe describes a Gene Database for _Vibrio cholerae_ O1 biovar El Tor str. N16961 that was built by the Loyola Marymount University (LMU) Bioinformatics Group using the program GenMAPP Builder 2.0, part of the open source XMLPipeDB project <http://xmlpipedb.cs.lmu.edu/>.
 
-1. **2.** System Requirements and Compatibility:
+2. System Requirements and Compatibility:
 
-- .This Gene Database is compatible with GenMAPP 2.0 and 2.1 and MAPPFinder 2.0.  These programs can be downloaded from <http://www.genmapp.org>.
-- .System Requirements for GenMAPP 2.0/2.1 and MAPPFinder 2.0:
+- this Gene Database is compatible with GenMAPP 2.0 and 2.1 and MAPPFinder 2.0.  These programs can be downloaded from <http://www.genmapp.org>.
+- ystem Requirements for GenMAPP 2.0/2.1 and MAPPFinder 2.0:
 
 Operating System: Windows 98 or higher, Windows NT 4.0 or higher (2000, XP, etc)
 

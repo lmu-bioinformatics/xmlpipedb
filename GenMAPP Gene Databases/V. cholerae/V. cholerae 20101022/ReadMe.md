@@ -24,28 +24,19 @@ This document contains the following:
 GenMAPP (Gene Map Annotator and Pathway Profiler) is a free computer application for viewing and analyzing DNA microarray and other genomic and proteomic data on biological pathways.  MAPPFinder is an accessory program that works with GenMAPP and Gene Ontology to identify global biological trends in gene expression data.  The GenMAPP Gene Database (file with the extension _.gdb_) is used to relate gene IDs on MAPPs (_.mapp_, representations of pathways and other functional groupings of genes) to data in Expression Datasets (_.gex_, DNA microarray or other high-throughput data).  GenMAPP is a stand-alone application that requires the Gene Database, MAPPs, and Expression Dataset files to be stored on the user's computer.  GenMAPP and its accessory programs and files may be downloaded from <http://www.GenMAPP.org>.  GenMAPP requires a separate Gene Database for each species.  This ReadMe describes a Gene Database for _Vibrio cholerae_ O1 biovar El Tor str. N16961 that was built by the Loyola Marymount University (LMU) Bioinformatics Group using the program GenMAPP Builder 2.0, part of the open source XMLPipeDB project <http://xmlpipedb.cs.lmu.edu/>.
 
 2\. System Requirements and Compatibility:
-
-- this Gene Database is compatible with GenMAPP 2.0 and 2.1 and MAPPFinder 2.0.  These programs can be downloaded from <http://www.genmapp.org>.
-- ystem Requirements for GenMAPP 2.0/2.1 and MAPPFinder 2.0:
-
-Operating System: Windows 98 or higher, Windows NT 4.0 or higher (2000, XP, etc)
-
-Monitor Resolution: 800 X 600 screen or greater (SVGA)
-
-Internet Browser: Microsoft Internet Explorer 5.0 or later
-
-Minimum hardware configuration:
-
- Memory: 128 MB (512 MB or more recommended)
-
- Processor: Pentium III
-
- Disk Space: 300 MB disk (more recommended if multiple databases will be used)
+- This Gene Database is compatible with GenMAPP 2.0 and 2.1 and MAPPFinder 2.0.  These programs can be downloaded from <http://www.genmapp.org>.
+- System Requirements for GenMAPP 2.0/2.1 and MAPPFinder 2.0:
+- Operating System: Windows 98 or higher, Windows NT 4.0 or higher (2000, XP, etc)
+- Monitor Resolution: 800 X 600 screen or greater (SVGA)
+- Internet Browser: Microsoft Internet Explorer 5.0 or later
+- Minimum hardware configuration:
+- Memory: 128 MB (512 MB or more recommended)
+- Processor: Pentium III
+- Disk Space: 300 MB disk (more recommended if multiple databases will be used)
 
 3\. Installation Instructions
-
-- .Extract the zipped archive and place the file "Vc-Std\_External\_20131122.gdb" in the folder you use to store Gene Databases for GenMAPP.  If you accept the default folder during the GenMAPP installation process, this folder will be C:\GenMAPP 2 Data\Gene Databases.
-- .To use the Gene Database, launch GenMAPP and go to the menu item _Data > Choose Gene Database_.  Alternatively, you can launch MAPPFinder and go to the menu item _File > Choose Gene Database_.
+- Extract the zipped archive and place the file "Vc-Std\_External\_20131122.gdb" in the folder you use to store Gene Databases for GenMAPP.  If you accept the default folder during the GenMAPP installation process, this folder will be C:\GenMAPP 2 Data\Gene Databases.
+- To use the Gene Database, launch GenMAPP and go to the menu item _Data > Choose Gene Database_.  Alternatively, you can launch MAPPFinder and go to the menu item _File > Choose Gene Database_.
 
 4\. Gene Database Specifications
 
@@ -79,10 +70,10 @@ Filename: "go\_daily-termdb.obo-xml.gz".
 
 1. **d.** Database Report
 
-- .UniProt is the primary ID system for the _Vibrio cholerae_ Gene Database. The UniProt table contains all 3784 UniProt IDs contained in the UniProt proteome set for this species.
-- .The OrderedLocusNames ID system was derived from the cross-references in the UniProt proteome set.  Each ID appears twice, once in the form of VC\_#### and once in the form of VC####, (e.g., VC0001 and VC\_0001) because IDs of both forms can be found in the literature. We compared this table with the list of gene IDs in the JCVI Comprehensive Microbial Resource (CMR) at
+- UniProt is the primary ID system for the _Vibrio cholerae_ Gene Database. The UniProt table contains all 3784 UniProt IDs contained in the UniProt proteome set for this species.
+- The OrderedLocusNames ID system was derived from the cross-references in the UniProt proteome set.  Each ID appears twice, once in the form of VC\_#### and once in the form of VC####, (e.g., VC0001 and VC\_0001) because IDs of both forms can be found in the literature. We compared this table with the list of gene IDs in the JCVI Comprehensive Microbial Resource (CMR) at
 <http://cmr.jcvi.org/cgi-bin/CMR/GenomePage.cgi?org=gvc>.  There are 3887 protein coding genes listed there.  Of the protein coding genes, 55 gene IDs do not appear in our Gene Database because they are not cross-listed in the UniProt XML file.
-- .The following table lists the numbers of gene IDs found in each gene ID system:
+- The following table lists the numbers of gene IDs found in each gene ID system:
 
 | ID System | ID CountCurrent version | ID Count20101022 version | ID Count20090622 version |
 | --- | --- | --- | --- |
@@ -100,9 +91,9 @@ Filename: "go\_daily-termdb.obo-xml.gz".
 
 5\. Contact Information for support, bug reports, feature requests
 
-- .The Gene Database for _Vibrio cholerae_ was built by the Loyola Marymount University (LMU) Bioinformatics Group using the program GenMAPP Builder, part of the open source XMLPipeDB project <http://xmlpipedb.cs.lmu.edu/>.
-- .For support, bug reports, or feature requests relating to XMLPipeDB or GenMAPP Builder, please consult the XMLPipeDB Manual found at <http://xmlpipedb.cs.lmu.edu/documentation.shtml> or go to our SourceForge site <http://sourceforge.net/projects/xmlpipedb/>.
-- .For issues related to the _Vibrio cholerae_ Gene Database, please contact:
+- The Gene Database for _Vibrio cholerae_ was built by the Loyola Marymount University (LMU) Bioinformatics Group using the program GenMAPP Builder, part of the open source XMLPipeDB project <http://xmlpipedb.cs.lmu.edu/>.
+- For support, bug reports, or feature requests relating to XMLPipeDB or GenMAPP Builder, please consult the XMLPipeDB Manual found at <http://xmlpipedb.cs.lmu.edu/documentation.shtml> or go to our SourceForge site <http://sourceforge.net/projects/xmlpipedb/>.
+- For issues related to the _Vibrio cholerae_ Gene Database, please contact:
 
 Kam D. Dahlquist, PhD.
 
@@ -116,19 +107,19 @@ Los Angeles, CA 90045-2659
 
 kdahlquist@lmu.edu
 
-- .For issues related to GenMAPP 2.0/2.1 or MAPPFinder 2.0 please contact GenMAPP support directly by e-mailing genmapp@gladstone.ucsf.edu or GenMAPP@googlegroups.com.
+- For issues related to GenMAPP 2.0/2.1 or MAPPFinder 2.0 please contact GenMAPP support directly by e-mailing genmapp@gladstone.ucsf.edu or GenMAPP@googlegroups.com.
 
 6\. Release Notes
 
 **        a.        Current version:  Vc-Std\_External\_20131122.gdb**
 
-- .Kam D. Dahlquist and John David N. Dionisio contributed to this release.
+- Kam D. Dahlquist and John David N. Dionisio contributed to this release.
 
 **b.        Previous version:  Vc-Std\_External\_20101022.gdb**
 
-- .Kam D. Dahlquist and John David N. Dionisio contributed to this release.
+- Kam D. Dahlquist and John David N. Dionisio contributed to this release.
 
 **c.        Previous version:  Vc-Std\_External\_20090622.gdb**
 
-- .Alexandrea Alphonso, Derek Smith, John David N. Dionisio, and Kam D. Dahlquist contributed to the first release.
+- Alexandrea Alphonso, Derek Smith, John David N. Dionisio, and Kam D. Dahlquist contributed to the first release.
 

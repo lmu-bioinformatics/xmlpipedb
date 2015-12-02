@@ -19,11 +19,11 @@ This document contains the following:
   3. Previous version: Vc-Std\_External\_20090622.gdb
 7. Database Schema Diagram
 
-1. Overview of the GenMAPP application and accessory programs
+1\. Overview of the GenMAPP application and accessory programs
 
 GenMAPP (Gene Map Annotator and Pathway Profiler) is a free computer application for viewing and analyzing DNA microarray and other genomic and proteomic data on biological pathways.  MAPPFinder is an accessory program that works with GenMAPP and Gene Ontology to identify global biological trends in gene expression data.  The GenMAPP Gene Database (file with the extension _.gdb_) is used to relate gene IDs on MAPPs (_.mapp_, representations of pathways and other functional groupings of genes) to data in Expression Datasets (_.gex_, DNA microarray or other high-throughput data).  GenMAPP is a stand-alone application that requires the Gene Database, MAPPs, and Expression Dataset files to be stored on the user's computer.  GenMAPP and its accessory programs and files may be downloaded from <http://www.GenMAPP.org>.  GenMAPP requires a separate Gene Database for each species.  This ReadMe describes a Gene Database for _Vibrio cholerae_ O1 biovar El Tor str. N16961 that was built by the Loyola Marymount University (LMU) Bioinformatics Group using the program GenMAPP Builder 2.0, part of the open source XMLPipeDB project <http://xmlpipedb.cs.lmu.edu/>.
 
-2/. System Requirements and Compatibility:
+2\. System Requirements and Compatibility:
 
 - this Gene Database is compatible with GenMAPP 2.0 and 2.1 and MAPPFinder 2.0.  These programs can be downloaded from <http://www.genmapp.org>.
 - ystem Requirements for GenMAPP 2.0/2.1 and MAPPFinder 2.0:
@@ -42,12 +42,12 @@ Minimum hardware configuration:
 
  Disk Space: 300 MB disk (more recommended if multiple databases will be used)
 
-1. **3.**** Installation Instructions**
+3\. Installation Instructions
 
 - .Extract the zipped archive and place the file "Vc-Std\_External\_20131122.gdb" in the folder you use to store Gene Databases for GenMAPP.  If you accept the default folder during the GenMAPP installation process, this folder will be C:\GenMAPP 2 Data\Gene Databases.
 - .To use the Gene Database, launch GenMAPP and go to the menu item _Data > Choose Gene Database_.  Alternatively, you can launch MAPPFinder and go to the menu item _File > Choose Gene Database_.
 
-1. **4.** Gene Database Specifications
+4\. Gene Database Specifications
 
 1. **a.** Gene ID Systems
 
@@ -98,7 +98,7 @@ Filename: "go\_daily-termdb.obo-xml.gz".
 
 \*There are 3832 unique genes/proteins in the current version of the Gene Database; the 7664 count represents the total number of IDs due to duplicate IDs of the form VC#### and VC\_####.
 
-1. **5.** Contact Information for support, bug reports, feature requests
+5\. Contact Information for support, bug reports, feature requests
 
 - .The Gene Database for _Vibrio cholerae_ was built by the Loyola Marymount University (LMU) Bioinformatics Group using the program GenMAPP Builder, part of the open source XMLPipeDB project <http://xmlpipedb.cs.lmu.edu/>.
 - .For support, bug reports, or feature requests relating to XMLPipeDB or GenMAPP Builder, please consult the XMLPipeDB Manual found at <http://xmlpipedb.cs.lmu.edu/documentation.shtml> or go to our SourceForge site <http://sourceforge.net/projects/xmlpipedb/>.
@@ -118,7 +118,7 @@ kdahlquist@lmu.edu
 
 - .For issues related to GenMAPP 2.0/2.1 or MAPPFinder 2.0 please contact GenMAPP support directly by e-mailing genmapp@gladstone.ucsf.edu or GenMAPP@googlegroups.com.
 
-1. **6.** Release Notes
+6\. Release Notes
 
 **        a.        Current version:  Vc-Std\_External\_20131122.gdb**
 

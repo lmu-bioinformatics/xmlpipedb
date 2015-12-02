@@ -51,10 +51,12 @@ This _Vibrio__cholerae_ Gene Database is UniProt-centric in that the main data s
 | GeneID (NCBI) | L |
 | RefSeq | Q |
 
- ii. Species
+  ii. Species
+ 
 - This Gene Database is based on the UniProt proteome set for _Vibrio cholera_e O1 biovar El Tor str. N16961 (ATCC 39315), taxon ID 243277.
 
- iii. Data Sources and Versions
+  iii. Data Sources and Versions
+ 
 - This _Vibrio cholerae_ Gene Database was built on October 24, 2013; this build date is reflected in the filename Vc-Std\_External\_20131122.gdb. All date fields internal to the Gene Database (and not usually seen by regular GenMAPP users) have been filled with this build date.
 - UniProt complete proteome set for _Vibrio cholera_e O1 biovar El Tor str. N16961, downloaded from this page: <http://www.uniprot.org/uniprot/?query=organism%3a243277+keyword%3a1185&format=\*&compress=yes>
 Filename: "uniprot-organism%3A243277+keyword%3A1185.xml" (downloaded as a compressed .gz file and extracted)
@@ -66,7 +68,8 @@ Filename: "46.V\_cholerae\_ATCC\_39315.goa".  Version 10/15/2013 6:09:00 PM.
 Data is released daily.  For this version of the _Vibrio cholerae_ Gene Database we used the ontology version 2013-10-21 12:54:57 PM.
 Filename: "go\_daily-termdb.obo-xml.gz".
 
- iv. Database Report
+  iv. Database Report
+ 
 - UniProt is the primary ID system for the _Vibrio cholerae_ Gene Database. The UniProt table contains all 3784 UniProt IDs contained in the UniProt proteome set for this species.
 - The OrderedLocusNames ID system was derived from the cross-references in the UniProt proteome set.  Each ID appears twice, once in the form of VC\_#### and once in the form of VC####, (e.g., VC0001 and VC\_0001) because IDs of both forms can be found in the literature. We compared this table with the list of gene IDs in the JCVI Comprehensive Microbial Resource (CMR) at
 <http://cmr.jcvi.org/cgi-bin/CMR/GenomePage.cgi?org=gvc>.  There are 3887 protein coding genes listed there.  Of the protein coding genes, 55 gene IDs do not appear in our Gene Database because they are not cross-listed in the UniProt XML file.
@@ -92,17 +95,18 @@ Filename: "go\_daily-termdb.obo-xml.gz".
 - For support, bug reports, or feature requests relating to XMLPipeDB or GenMAPP Builder, please consult the XMLPipeDB Manual found at <http://xmlpipedb.cs.lmu.edu/documentation.shtml> or go to our SourceForge site <http://sourceforge.net/projects/xmlpipedb/>.
 - For issues related to the _Vibrio cholerae_ Gene Database, please contact:
 
-    Kam D. Dahlquist, PhD.
+
+      Kam D. Dahlquist, PhD.
     
-    Department of Biology
+      Department of Biology
     
-    Loyola Marymount University
+      Loyola Marymount University
     
-    1 LMU Drive, MS 8888
+      1 LMU Drive, MS 8888
     
-    Los Angeles, CA 90045-2659
+      Los Angeles, CA 90045-2659
     
-    kdahlquist at lmu dot edu
+      kdahlquist at lmu dot edu
 
 - For issues related to GenMAPP 2.0/2.1 or MAPPFinder 2.0 please contact GenMAPP support directly by e-mailing genmapp@gladstone.ucsf.edu or GenMAPP@googlegroups.com.
 

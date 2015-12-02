@@ -8,15 +8,15 @@ This document contains the following:
 2. System Requirements and Compatibility
 3. Installation Instructions
 4. Gene Database Specifications
-  a. Gene ID Systems
-  b. Species
-  c. Data Sources and Versions
-  d. Database Report
+  1. Gene ID Systems
+  2. Species
+  3. Data Sources and Versions
+  4. Database Report
 5. Contact Information for support, bug reports, feature requests
 6. Release notes
-  a. Current version: Vc-Std\_External\_20131122.gdb
-  b. Previous version: Vc-Std\_External\_20101022.gdb
-  c. Previous version: Vc-Std\_External\_20090622.gdb
+  1. Current version: Vc-Std\_External\_20131122.gdb
+  2. Previous version: Vc-Std\_External\_20101022.gdb
+  3. Previous version: Vc-Std\_External\_20090622.gdb
 7. Database Schema Diagram
 
 1. Overview of the GenMAPP application and accessory programs

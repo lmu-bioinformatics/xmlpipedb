@@ -114,8 +114,10 @@ iv. Database Report
 
 i. Current version:  Vc-Std\_External\_20131122.gdb
 - Kam D. Dahlquist and John David N. Dionisio contributed to this release.
+
 ii. Previous version:  Vc-Std\_External\_20101022.gdb
 - Kam D. Dahlquist and John David N. Dionisio contributed to this release.
+
 iii. Previous version:  Vc-Std\_External\_20090622.gdb
 - Alexandrea Alphonso, Derek Smith, John David N. Dionisio, and Kam D. Dahlquist contributed to the first release.
 

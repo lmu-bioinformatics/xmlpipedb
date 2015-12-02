@@ -40,7 +40,7 @@ GenMAPP (Gene Map Annotator and Pathway Profiler) is a free computer application
 
 4\. Gene Database Specifications
  
- i. Gene ID Systems
+i. Gene ID Systems
 
 This _Vibrio__cholerae_ Gene Database is UniProt-centric in that the main data source (primary ID System) for gene IDs and annotation is the UniProt complete proteome set for _Vibrio cholerae_, made available as an XML download. In addition to UniProt IDs, this database provides the following proper gene ID systems that were cross-referenced by the UniProt data: OrderedLocusNames, GeneID (NCBI), and RefSeq (protein IDs of the form NP\_######). It also supplies UniProt-derived annotation links from the following systems: EMBL, InterPro, PDB, and Pfam.  The Gene Ontology data has been acquired directly from the Gene Ontology Project. The GOA project was used to link Gene Ontology terms to UniProt IDs. Links to data sources are listed in the section below.
 
@@ -51,11 +51,11 @@ This _Vibrio__cholerae_ Gene Database is UniProt-centric in that the main data s
 | GeneID (NCBI) | L |
 | RefSeq | Q |
 
-  ii. Species
+ii. Species
  
 - This Gene Database is based on the UniProt proteome set for _Vibrio cholera_e O1 biovar El Tor str. N16961 (ATCC 39315), taxon ID 243277.
 
-  iii. Data Sources and Versions
+iii. Data Sources and Versions
  
 - This _Vibrio cholerae_ Gene Database was built on October 24, 2013; this build date is reflected in the filename Vc-Std\_External\_20131122.gdb. All date fields internal to the Gene Database (and not usually seen by regular GenMAPP users) have been filled with this build date.
 - UniProt complete proteome set for _Vibrio cholera_e O1 biovar El Tor str. N16961, downloaded from this page: <http://www.uniprot.org/uniprot/?query=organism%3a243277+keyword%3a1185&format=\*&compress=yes>
@@ -68,7 +68,7 @@ Filename: "46.V\_cholerae\_ATCC\_39315.goa".  Version 10/15/2013 6:09:00 PM.
 Data is released daily.  For this version of the _Vibrio cholerae_ Gene Database we used the ontology version 2013-10-21 12:54:57 PM.
 Filename: "go\_daily-termdb.obo-xml.gz".
 
-  iv. Database Report
+iv. Database Report
  
 - UniProt is the primary ID system for the _Vibrio cholerae_ Gene Database. The UniProt table contains all 3784 UniProt IDs contained in the UniProt proteome set for this species.
 - The OrderedLocusNames ID system was derived from the cross-references in the UniProt proteome set.  Each ID appears twice, once in the form of VC\_#### and once in the form of VC####, (e.g., VC0001 and VC\_0001) because IDs of both forms can be found in the literature. We compared this table with the list of gene IDs in the JCVI Comprehensive Microbial Resource (CMR) at
@@ -112,10 +112,10 @@ Filename: "go\_daily-termdb.obo-xml.gz".
 
 6\. Release Notes
 
- i. Current version:  Vc-Std\_External\_20131122.gdb
+i. Current version:  Vc-Std\_External\_20131122.gdb
 - Kam D. Dahlquist and John David N. Dionisio contributed to this release.
- ii. Previous version:  Vc-Std\_External\_20101022.gdb
+ii. Previous version:  Vc-Std\_External\_20101022.gdb
 - Kam D. Dahlquist and John David N. Dionisio contributed to this release.
- iii. Previous version:  Vc-Std\_External\_20090622.gdb
+iii. Previous version:  Vc-Std\_External\_20090622.gdb
 - Alexandrea Alphonso, Derek Smith, John David N. Dionisio, and Kam D. Dahlquist contributed to the first release.
 

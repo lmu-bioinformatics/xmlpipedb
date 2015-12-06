@@ -44,24 +44,15 @@ public class BurkholderiaCenocepaciaUniProtSpeciesProfile extends UniProtSpecies
 	}
 	
 	/**
-	 * Modified code form MycobacteriumTuberculosisUniProtSpeciesProfile.java
+	 * Modified code from LeishmaniaMajorUniProtSpeciesProfile.java
 	 */
     @Override
-    public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) throws SQLException, InvalidParameterException {
-        /*
-         * This method is only called (and therefore this bit 'o logic is only
-         * invoked) when the species specific class has not overridden this
-         * method.
-         */
+    public TableManager getSystemTableManagerCustomizations(TableManager tableManager, TableManager primarySystemTableManager, Date version) 
+    		throws SQLException, InvalidParameterException {
         List<String> comparisonList = new ArrayList<String>(1);
         comparisonList.add("ORF");
 
-        return systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "OrderedLocusNames", comparisonList);
+        return systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "ORF", comparisonList);
     }
-	
-	
-//	"SELECT value, type " +
-//    "FROM genenametype INNER JOIN genetype " +
-//    "ON (genetype_name_hjid = genetype.hjid) " + "WHERE (type = 'ORF' or type = 'ordered locus') and "
-//    		+ "(value like 'p?BCA[]') and entrytype_gene_hjid = ?"
 }
+

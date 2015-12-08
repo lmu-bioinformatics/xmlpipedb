@@ -6,7 +6,7 @@ import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType
 public class ShigellaflexneriUniProtSpeciesProfile extends UniProtSpeciesProfile {
 	public ShigellaflexneriUniProtSpeciesProfile() {
 	    super("Shigella flexneri",
-	        198214,
+	        623,
 	        "This profile customizes the GenMAPP Builder export for " +
 	            "Shigella flexneri" +
 	            " data loaded from a UniProt XML file.");

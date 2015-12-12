@@ -70,8 +70,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                     new SinorhizobiumMelilotiUniProtSpeciesProfile(),
                     new StreptococcusPneumoniaeTIGR4UniProtSpeciesProfile(),
                     new StreptococcusPneumoniaeG54UniProtSpeciesProfile(),
-                    new StreptococcusPneumoniaeR6UniProtSpeciesProfile(),
-                    new ShigellaflexneriUniProtSpeciesProfile()
+                    new StreptococcusPneumoniaeR6UniProtSpeciesProfile()
 		        });
 	}
 

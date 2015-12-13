@@ -1,7 +1,18 @@
 package edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.profiles;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.ConnectionManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager;
 import edu.lmu.xmlpipedb.gmbuilder.databasetoolkit.tables.TableManager.QueryType;
+import edu.lmu.xmlpipedb.util.exceptions.InvalidParameterException;
 
 public class ShigellaflexneriUniProtSpeciesProfile extends UniProtSpeciesProfile {
 	public ShigellaflexneriUniProtSpeciesProfile() {
@@ -27,4 +38,58 @@ public class ShigellaflexneriUniProtSpeciesProfile extends UniProtSpeciesProfile
 
 	    return tableManager;
 	}
+
+    @Override
+    public TableManager getSystemTableManagerCustomizations(TableManager tableManager,
+            TableManager primarySystemTableManager, Date version) throws SQLException, InvalidParameterException {
+        // Start with the default OrderedLocusNames behavior.
+        TableManager result = super.getSystemTableManagerCustomizations(tableManager, primarySystemTableManager,
+                version);
+
+        String sqlQuery = "select dbreferencetype.entrytype_dbreference_hjid as hjid, " +
+                "propertytype.value from propertytype inner join dbreferencetype on " +
+                "propertytype.dbreferencetype_property_hjid = dbreferencetype.hjid " +
+                "where dbreferencetype.type = 'EnsemblBacteria' and " +
+                "dbreferencetype.id ~ 'AAN[0-9][0-9][0-9][0-9][0-9]' and " +
+                "propertytype.type = 'gene ID' and " +
+                "propertytype.value ~ 'SF[0-9][0-9][0-9][0-9]' order by propertytype.value";
+
+        Connection c = ConnectionManager.getRelationalDBConnection();
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            // Query, iterate, add to table manager.
+            ps = c.prepareStatement(sqlQuery);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                String hjid = Long.valueOf(rs.getLong("hjid")).toString();
+                String id = rs.getString("value");
+                String[] substrings = id.split("/");
+                for (int i = 0; i < substrings.length; i++) {
+                    result.submit("OrderedLocusNames", QueryType.insert, new Object[][] {
+                        { "ID", id },
+                        { "Species", "|" + getSpeciesName() + "|" },
+                        { "Date", version },
+                        { "UID", hjid }
+                    });
+                }
+            }
+        } catch(SQLException sqlexc) {
+            logSQLException(sqlexc, sqlQuery);
+        }
+
+        return result;
+    }
+
+    private void logSQLException(SQLException sqlexc, String sqlQuery) {
+        LOG.error("Exception trying to execute query: " + sqlQuery);
+        while (sqlexc != null) {
+            LOG.error("Error code: [" + sqlexc.getErrorCode() + "]");
+            LOG.error("Error message: [" + sqlexc.getMessage() + "]");
+            LOG.error("Error SQL State: [" + sqlexc.getSQLState() + "]");
+            sqlexc = sqlexc.getNextException();
+        }
+    }
+
+    private static final Log LOG = LogFactory.getLog(ShigellaflexneriUniProtSpeciesProfile.class);
 }

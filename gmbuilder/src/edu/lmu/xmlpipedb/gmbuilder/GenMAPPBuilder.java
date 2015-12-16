@@ -80,7 +80,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "3.0.0-build-5_Shewanella_oneidensis";
+    public static final String VERSION = "3.0.0-build-5_Shewanella_oneidensis_20151214";
 
     /**
      * Starts the application.

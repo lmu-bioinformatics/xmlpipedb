@@ -52,7 +52,7 @@ public class BurkholderiaCenocepaciaUniProtSpeciesProfile extends UniProtSpecies
         List<String> comparisonList = new ArrayList<String>(1);
         comparisonList.add("ORF");
 
-        return systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "ORF", comparisonList);
+        return systemTableManagerCustomizationsHelper(tableManager, primarySystemTableManager, version, "OrderedLocusNames", comparisonList);
     }
 }
 

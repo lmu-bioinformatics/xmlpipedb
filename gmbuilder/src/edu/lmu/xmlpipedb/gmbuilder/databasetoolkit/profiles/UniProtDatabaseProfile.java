@@ -72,7 +72,9 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                     new StreptococcusPneumoniaeG54UniProtSpeciesProfile(),
                     new StreptococcusPneumoniaeR6UniProtSpeciesProfile(),
                     new BordetellaPertussisUniProtSpeciesProfile(),
-                    new ShewanellaOneidensisUniProtSpeciesProfile()
+                    new ShigellaflexneriUniProtSpeciesProfile(),
+                    new ShewanellaOneidensisUniProtSpeciesProfile(),
+                    new BurkholderiaCenocepaciaUniProtSpeciesProfile()
 		        });
 	}
 

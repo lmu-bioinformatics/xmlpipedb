@@ -268,10 +268,10 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         	/**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
-        	@Override
+            @Override
             public void actionPerformed(ActionEvent aevt) {
-        		doGoAssociationImport();
-        	}
+                doGoAssociationImport();
+            }
         };
 
         _runTalliesAction = new AbstractAction(AppResources.messageString("tally.monty.command") + "...") {

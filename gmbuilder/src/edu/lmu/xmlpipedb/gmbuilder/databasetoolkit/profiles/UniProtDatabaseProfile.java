@@ -59,7 +59,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                     new VibrioCholeraeUniprotSpeciesProfile(),
                     new SaccharomycesCerevisiaeUniProtSpeciesProfile(),
                     new MycobacteriumTuberculosisUniProtSpeciesProfile(),
-                    new PseudomonasAeruginosaUniProtSpeciesProfile(), 
+                    new PseudomonasAeruginosaUniProtSpeciesProfile(),
                     new StaphylococcusAureusMRSA252UniProtSpeciesProfile(),
                     new MycobacteriumSmegmatisUniProtSpeciesProfile(),
                     new HelicobacterPyloriUniProtSpeciesProfile(),
@@ -71,7 +71,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                     new StreptococcusPneumoniaeTIGR4UniProtSpeciesProfile(),
                     new StreptococcusPneumoniaeG54UniProtSpeciesProfile(),
                     new StreptococcusPneumoniaeR6UniProtSpeciesProfile(),
-                    new BordetellaPertussisUniProtSpeciesProfile()
+                    new BordetellaPertussisUniProtSpeciesProfile(),
+                    new ShewanellaOneidensisUniProtSpeciesProfile()
 		        });
 	}
 
@@ -295,7 +296,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		    if (!speciesProfile.getPrimarySystemTableManagerCustomizations(tableManager, version)) {
 		        // No customizations, so we use the generic approach.
         		int recordCounter = 0;
-        		
+
         		// TODO (long-term): The current code consists of an initial "master" query
         		// that gathers entrytype_accession_hjid and uses that as a top-level key for
         		// deriving other values.  AFTER this query is performed, EVERY ROW IN MEMORY
@@ -317,12 +318,12 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         			"AND dbreferencetype.id = ?";
         		String nameSQL = "SELECT hjvalue FROM entrytype_name WHERE entrytype_name_hjid = ?";
         		String geneSQL = "SELECT value, type FROM genenametype INNER JOIN genetype ON (genetype_name_hjid = genetype.hjid) WHERE entrytype_gene_hjid = ?";
-        
+
         		PreparedStatement ps = ConnectionManager.getRelationalDBConnection()
         				.prepareStatement(accessionSQL);
         		ps.setString(1, "" + speciesProfile.getTaxon());
         		ResultSet result = ps.executeQuery();
-        
+
         		// Step 1 - populate the TableManager with records from the
         		// entrytype_accession table
         		LOG.info("\nSQL Query: [" + accessionSQL + "]");
@@ -331,7 +332,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         			LOG.debug("entrytype_accession_hjid: ["
         					+ result.getString("entrytype_accession_hjid")
         					+ "], hjvalue: [" + result.getString("hjvalue") + "]");
-        			
+
         			// We also know the species name and date at this point, so throw it in here.
         			tableManager.submit("UniProt", QueryType.insert, new Object[][] {
     					{ "UID", result.getString("entrytype_accession_hjid") },
@@ -344,7 +345,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         		LOG.info("Total Records: [" + recordCounter + "]");
         		Row[] rows = tableManager.getRows();
         		LOG.info("Step 1 - Number of rows in TM: [" + rows.length + "]");
-        
+
         		// Step 2 - if the record exists in the entrytype_name table,
         		// get the entrytype_name value.
         		LOG.info("\nSQL Query: [" + nameSQL + "]");
@@ -366,7 +367,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 							{ "EntryName", result.getString("hjvalue") }
     				    });
         			}
-        
+
         			// Step 3 - GeneName
         			LOG.debug("\nGeneName\nSQL Query: [" + geneSQL + "]");
         			ps = ConnectionManager.getRelationalDBConnection()
@@ -396,7 +397,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         					+ "]");
         			tableManager.submit("UniProt", QueryType.insert, new Object[][] {
         					{ "UID", row.getValue("UID") }, { "GeneName", geneName } });
-        
+
         			// Step 4 -- Add the ProteinName
         			ps = ConnectionManager
         					.getRelationalDBConnection()
@@ -415,7 +416,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         						new Object[][] { { "UID", row.getValue("UID") },
         								{ "ProteinName", result.getString("value") } });
         			}
-        
+
         			// Step 5 -- add the function from entrytype_comment
         			ps = ConnectionManager
         					.getRelationalDBConnection()
@@ -436,7 +437,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
         			}
         		}
         		ps.close();
-        
+
         		LOG.info("End of Method - Number of rows in TM: [" +
         		        tableManager.getRows().length + "]");
 		    }
@@ -460,8 +461,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 		// create a new TableManager, which will define the columns and key for
 		// the table.
-		TableManager tableManager 
-		    = new TableManager(new String[][] 
+		TableManager tableManager
+		    = new TableManager(new String[][]
 		        { { "ID", "VARCHAR(50) NOT NULL" },
 		          { "Species", "MEMO" },
 		          { "Date", "DATE" },
@@ -473,8 +474,8 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 
 		// loop through the list of System tables and for each one, ... do some
 		// evaluation then processing if necessary.
-		
-		// RB - SQL should return the results ALREADY processed in query, 
+
+		// RB - SQL should return the results ALREADY processed in query,
 		// to be fixed later.
 		for (Entry<String, SystemType> systemTable : systemTables.entrySet()) {
 			LOG.info("systemTable.getKey(): " + systemTable.getKey());
@@ -485,7 +486,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 			 */
 			LOG.info("getSystemTableManager(): for loop: systemTable.getKey() = "
 				+ systemTable.getKey());
-			
+
 			if (( !getDatabaseSpecificSystemTables().containsKey( systemTable.getKey() ) ) ) {
 				LOG.info("getSystemTableManager(): for loop: "
 						+ systemTable.getKey()
@@ -506,7 +507,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				         "INNER JOIN dbreferencetype " +
 				            "ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
 				         "WHERE dbreferencetype.type = 'NCBI Taxonomy' ");
-				
+
 		        // Dondi - You are not actually using the elements here; just their count.
 		        // So, the old-school for loop is more appropriate.
 		        for (int i = 0; i < selectedSpeciesProfiles.size(); i++) {
@@ -518,39 +519,39 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		        		")) AS species_entry " +
 		        		   "ON dbreferencetype.entrytype_dbreference_hjid = species_entry.hjid " +
 		        		   "WHERE type = ?");
-		    	
+
 		        // RB - added query statement logging
 		        LOG.info("getSystemTableManager(): query used: " + basePrepareStatement);
-		        
+
 				ps = ConnectionManager.getRelationalDBConnection()
 						.prepareStatement( basePrepareStatement.toString() );
-				
+
 			   /*
 				* RB - Programmatically create the set string for variable number of
 				* species then cap it with the current system type.
 				*/
 				for ( int i = 0; i < selectedSpeciesProfiles.size(); i++ ) {
-	
+
 					ps.setString( i + 1, Integer.toString( selectedSpeciesProfiles.get( i ).getTaxon() ) );
-				}	
+				}
 				ps.setString( selectedSpeciesProfiles.size() + 1, systemTable.getKey());
-				
+
 				result = ps.executeQuery();
 
 				while (result.next()) {
-					
+
 					// RB - Modified logging to bring in line with above changes.
 					LOG.debug("getSystemTableManager(): while loop: ID:: "
-						// RB - from SQL query result: get string "id" 
+						// RB - from SQL query result: get string "id"
 					    // + species name from column 2.
 						+ result.getString("id") + "  Species:: "
 						+ result.getString(2));
-					    
+
 					tableManager.submit(systemTable.getKey(), QueryType.insert, new Object[][] {
 					    { "ID", GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(systemTable.getKey(),
 						    result.getString("id"))
 						},
-									   
+
 						//RB - get string from column 2SQL query result.
 						{ "Species", "|" + result.getString(2) + "|" },
 
@@ -571,7 +572,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				      version
 				      );
 		}
-		
+
 		systemTableManager = tableManager;
 		return tableManager;
 	}
@@ -618,17 +619,17 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 },
                 new String[] { "Primary", "Related" }
             );
-			
+
 			tableManager.getTableNames().add(relationshipTable);
 
             if ("UniProt".equals(stp.systemTable1) &&
                     !getDatabaseSpecificSystemTables().containsKey(stp.systemTable2)) {
-				
+
 				// UniProt-X conditional
-				
+
 				// RB - Added logging
 				LOG.info("getRelationshipTable(): if (UniProt - X) {}");
-				
+
 				// RB - Programmatically create the SQL string for
 				// variable number of species.
 				StringBuilder basePrepareStatement = new StringBuilder
@@ -639,13 +640,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 					      "INNER JOIN dbreferencetype " +
 					         "ON (organismtype.hjid = dbreferencetype.organismtype_dbreference_hjid) " +
 					      "WHERE dbreferencetype.type LIKE '%NCBI Taxonomy%' ");
-				
+
 				for (int i = 0; i < selectedSpeciesProfiles.size(); i++) {
 		        	basePrepareStatement
 		        	    .append((i == 0) ? "AND (" : " OR ")
 		                .append("id = ?");
 		        }
-				
+
 				basePrepareStatement.append(
 					")) AS species_entry " +
 						"INNER JOIN dbreferencetype " +
@@ -653,22 +654,22 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 						"INNER JOIN entrytype_accession " +
 						   "ON (entrytype_dbreference_hjid = entrytype_accession_hjid) " +
 						"WHERE type = ?");
-		    	
+
 		        // RB - added query statement logging
 		        LOG.info("getRelationshipTableManager(): query used: " + basePrepareStatement);
-				
+
 		        PreparedStatement ps = ConnectionManager.getRelationalDBConnection()
 				.prepareStatement( basePrepareStatement.toString() );
-		        
+
 		        // RB - Programmatically create set string for variable number of
 				// species then cap it with the systemTable2.
-				
+
 				for ( int i = 0; i < selectedSpeciesProfiles.size(); i++ ) {
-	
+
 					ps.setString( i + 1, Integer.toString( selectedSpeciesProfiles.get( i ).getTaxon() ) );
-				}	
+				}
 				ps.setString(selectedSpeciesProfiles.size() + 1, stp.systemTable2);
-				
+
 				ResultSet result = ps.executeQuery();
 
 				String primary = "";
@@ -690,13 +691,13 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 							stp.systemTable1) &&
 					   !getDatabaseSpecificSystemTables().containsKey(
 							stp.systemTable2)) {
-				
+
 				// X-X conditional
-				
+
 				// RB - added logging
 				LOG.info("getRelationshipTable(): else if (X - X) {}");
-				
-				
+
+
 				// RB - Programmatically create the SQL string for
 				// variable number of species.
 				StringBuilder basePrepareStatement = new StringBuilder
@@ -717,7 +718,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 					     "INNER JOIN dbreferencetype " +
 					     "ON (dbreferencetype.organismtype_dbreference_hjid = organismtype.hjid) " +
 					     "WHERE dbreferencetype.type = 'NCBI Taxonomy'");
-					     
+
 				for (int i = 0; i < selectedSpeciesProfiles.size(); i++) {
 		        	basePrepareStatement
 		        	    .append((i == 0) ? "AND (" : " OR ")
@@ -725,10 +726,10 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 		        }
 				basePrepareStatement.append(
 					")) AS species_entry ON (dbrefcomp.dbrefhjid = species_entry.hjid)");
-				
+
 		        // RB - added query statement logging
 		        LOG.info("getRelationshipTableManager(): query used: " + basePrepareStatement);
-				
+
 				PreparedStatement ps = ConnectionManager
 						.getRelationalDBConnection()
 						.prepareStatement( basePrepareStatement.toString() );
@@ -739,10 +740,10 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
 				// RB - Programmatically create the set string for variable number of
 				// species then cap it with the systemTable2.
 				for ( int i = 0; i < selectedSpeciesProfiles.size(); i++ ) {
-	
+
 					ps.setString( i + 3, Integer.toString( selectedSpeciesProfiles.get( i ).getTaxon() ) );
-				}	
-								
+				}
+
 				ResultSet result = ps.executeQuery();
                 while (result.next()) {
                     String primary = GenMAPPBuilderUtilities.checkAndPruneVersionSuffix(stp.systemTable1,
@@ -782,7 +783,7 @@ public class UniProtDatabaseProfile extends DatabaseProfile {
                 }
                 if (!relationshipTableWasHandled) {
     				// No way currently of producing these
-    				
+
     				// RB - added logging
     				LOG.info("getRelationshipTable(): else - No way of currently producing these.");
     				tableManager.submit(relationshipTable, QueryType.insert, new String[][] {

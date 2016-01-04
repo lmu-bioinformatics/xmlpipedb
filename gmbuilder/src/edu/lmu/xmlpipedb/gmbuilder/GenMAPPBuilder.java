@@ -80,7 +80,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
     /**
      * Version string.
      */
-    public static final String VERSION = "3.0.0-build-5";
+    public static final String VERSION = "3.0.0-build-5-cw20151210";
 
     /**
      * Starts the application.
@@ -194,6 +194,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
 
                 private static final long serialVersionUID = -3452852552674481129L;
 
+                @Override
                 public void actionPerformed(ActionEvent aevt) {
                     showAboutBox();
                 }
@@ -234,6 +235,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
+            @Override
             public void actionPerformed(ActionEvent aevt) {
                 doConfigureDatabase();
             }
@@ -243,6 +245,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
+            @Override
             public void actionPerformed(ActionEvent aevt) {
                 doUniprotImport("org.uniprot.uniprot");
             }
@@ -252,6 +255,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
+            @Override
             public void actionPerformed(ActionEvent aevt) {
                 if (doGoImport("generated") && ModalDialog.showQuestionDialog(AppResources.messageString("process.go.command") + "?",
                     AppResources.messageString("process.go.confirmation"))) {
@@ -264,7 +268,8 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
         	/**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
-        	public void actionPerformed(ActionEvent aevt) {
+        	@Override
+            public void actionPerformed(ActionEvent aevt) {
         		doGoAssociationImport();
         	}
         };
@@ -273,6 +278,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
+            @Override
             public void actionPerformed(ActionEvent aevt) {
                 doTallies();
             }
@@ -282,6 +288,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
+            @Override
             public void actionPerformed(ActionEvent aevt) {
                 ModalDialog.showErrorDialog("Function not yet implemented.");
             }
@@ -291,6 +298,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
+            @Override
             public void actionPerformed(ActionEvent aevt) {
                 Configuration hibernateConfiguration = getCurrentHibernateConfiguration();
                 if (hibernateConfiguration != null) {
@@ -333,6 +341,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
+            @Override
             public void actionPerformed(ActionEvent aevt) {
                 doTallyResultsXml(TallyType.GO, "tally.go.title");
             }
@@ -342,12 +351,14 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
+            @Override
             public void actionPerformed(ActionEvent aevt) {
                 doTallyResultsXml(TallyType.UNIPROT, "tally.uniprot.title");
             }
         };
 
         _processGOAction = new AbstractAction(AppResources.messageString("process.go.command")) {
+            @Override
             public void actionPerformed(ActionEvent aevt) {
                 doProcessGO();
             }
@@ -374,8 +385,10 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             /**
              * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
              */
+            @Override
             public void actionPerformed(ActionEvent aevt) {
                 SwingUtilities.invokeLater(new Runnable() {
+                    @Override
                     public void run() {
                         doExportToGenMAPP();
                     }
@@ -505,6 +518,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
                     /**
                      * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
                      */
+                    @Override
                     public boolean accept(File dir, String name) {
                         return name.endsWith("goa") || name.endsWith("goa.txt");
                     }
@@ -619,6 +633,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
             /**
              * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
              */
+            @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith("xml");
             }
@@ -848,6 +863,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      * @see edu.lmu.xmlpipedb.util.engines.TallyEngineDelegate
      *      :processXMLBody(String)
      */
+    @Override
     public CriterionList processXMLBody(String body) {
 
         // This is where we will search for the species specific
@@ -869,6 +885,7 @@ public class GenMAPPBuilder extends App implements TallyEngineDelegate {
      * @see edu.lmu.xmlpipedb.util.engines.TallyEngineDelegate
      *      :processDBColumn(String)
      */
+    @Override
     public void processDBColumn(String column) {
 
         // This is where we will search for the species specific

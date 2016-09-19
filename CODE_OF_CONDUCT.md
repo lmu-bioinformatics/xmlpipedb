@@ -61,7 +61,7 @@ further defined and clarified by project maintainers.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the Principal Investigators, Kam D. Dahlquist ([kdahlquist@lmu.edu](mailto:kdahlquist@lmu.edu)) or Ben G. Fitzpatrick ([bfitzpatrick@lmu.edu](mailto:bfitzpatrick@lmu.edu)). All
+reported by contacting the Principal Investigators, Kam D. Dahlquist ([kdahlquist@lmu.edu](mailto:kdahlquist@lmu.edu)) or John David N. Dionsio ([dondi@lmu.edu](mailto:dondi@lmu.edu)). All
 complaints will be reviewed and investigated and will result in a response that
 is deemed necessary and appropriate to the circumstances. The project team is
 obligated to maintain confidentiality with regard to the reporter of an incident.

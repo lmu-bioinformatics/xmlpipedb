@@ -103,7 +103,7 @@
 <!-- TYPEDEF : this element represents relationship types and
 properties in an ontology -->
 
-<!ELEMENT typedef (id|name|namespace|is_a*|def?|domain?|range?|inverse_of?|is_transitive?|is_symmetric?|is_anti_symmetric?|is_reflexive?|transitive_over?|xref_analog?|expand_assertion_to?|is_metadata_tag?|is_class_level?)+>
+<!ELEMENT typedef (id|name|namespace|is_a*|def?|domain?|range?|inverse_of?|is_transitive?|is_symmetric?|is_anti_symmetric?|is_reflexive?|transitive_over?|xref_analog?|holds_over_chain?|expand_assertion_to?|is_metadata_tag?|is_class_level?)+>
 
   <!ELEMENT inverse_of (#PCDATA)>
   <!ELEMENT domain (#PCDATA)>

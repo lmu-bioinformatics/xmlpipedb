@@ -128,3 +128,6 @@ properties in an ontology -->
 
 <!ELEMENT synonym_category (id|name|namespace)+>
 
+<!-- HOLDS_OVER_CHAIN -->
+<!ELEMENT holds_over_chain (relation)>
+  <!ELEMENT relation (#PCDATA)+>

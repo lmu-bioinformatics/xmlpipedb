@@ -156,6 +156,12 @@ create table Header_Content (
     Header_Content_Hjindex int4 not null,
     primary key (Header_Content_Hjid, Header_Content_Hjindex)
 );
+create table HoldsOverChain (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    primary key (Hjid)
+);
 create table Id (
     Hjid int8 not null,
     Hjtype varchar not null,
@@ -326,6 +332,15 @@ create table Range (
     Hjtype varchar not null,
     Hjversion int8 not null,
     Content varchar,
+    primary key (Hjid)
+);
+create table Relation (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    HoldsOverChain_Relation_Hjid int8,
+    HoldsOverChain_Relation_Hjindex int4,
     primary key (Hjid)
 );
 create table Relationship (
@@ -623,6 +638,10 @@ alter table Obo_Content
     add constraint FKE8DC0BF63FB25803 
     foreign key (Obo_Content_Hjid) 
     references Obo;
+alter table Relation 
+    add constraint FKE2CE5E1CA5A60D12 
+    foreign key (HoldsOverChain_Relation_Hjid) 
+    references HoldsOverChain;
 alter table Relationship_Content 
     add constraint FK7ACB6572C102B4A1 
     foreign key (Relationship_Content_Hjid) 

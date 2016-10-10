@@ -4,6 +4,7 @@ alter table Header_Content drop constraint FK43AA44C77ED8EA01;
 alter table Idspace_Content drop constraint FKE7560CC5798D57E3;
 alter table IntersectionOf_Content drop constraint FK7E0B957A6EF53E01;
 alter table Obo_Content drop constraint FKE8DC0BF63FB25803;
+alter table Relation drop constraint FKE2CE5E1CA5A60D12;
 alter table Relationship_Content drop constraint FK7ACB6572C102B4A1;
 alter table Source_Content drop constraint FK97A65C558D7EE0C1;
 alter table Subsetdef_Content drop constraint FK77A1429DEBB8FAA3;
@@ -37,6 +38,7 @@ drop table FormatVersion;
 drop table Global;
 drop table Header;
 drop table Header_Content;
+drop table HoldsOverChain;
 drop table Id;
 drop table Idspace;
 drop table Idspace_Content;
@@ -62,6 +64,7 @@ drop table Obo_Content;
 drop table Ontology;
 drop table PropertyValue;
 drop table Range;
+drop table Relation;
 drop table Relationship;
 drop table Relationship_Content;
 drop table Remark;
@@ -258,6 +261,12 @@ create table Header_Content (
     Header_Content_Hjindex int4 not null,
     primary key (Header_Content_Hjid, Header_Content_Hjindex)
 );
+create table HoldsOverChain (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    primary key (Hjid)
+);
 create table Id (
     Hjid int8 not null,
     Hjtype varchar not null,
@@ -428,6 +437,15 @@ create table Range (
     Hjtype varchar not null,
     Hjversion int8 not null,
     Content varchar,
+    primary key (Hjid)
+);
+create table Relation (
+    Hjid int8 not null,
+    Hjtype varchar not null,
+    Hjversion int8 not null,
+    Content varchar,
+    HoldsOverChain_Relation_Hjid int8,
+    HoldsOverChain_Relation_Hjindex int4,
     primary key (Hjid)
 );
 create table Relationship (
@@ -704,6 +722,10 @@ alter table Obo_Content
     add constraint FKE8DC0BF63FB25803 
     foreign key (Obo_Content_Hjid) 
     references Obo;
+alter table Relation 
+    add constraint FKE2CE5E1CA5A60D12 
+    foreign key (HoldsOverChain_Relation_Hjid) 
+    references HoldsOverChain;
 alter table Relationship_Content 
     add constraint FK7ACB6572C102B4A1 
     foreign key (Relationship_Content_Hjid) 

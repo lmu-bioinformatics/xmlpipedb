@@ -8,33 +8,31 @@
 
 package generated;
 
-public interface XrefUnknown {
+public interface HoldsOverChain {
 
 
     /**
-     * Gets the value of the Content property.
+     * Gets the value of the Relation property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the Content property.
+     * This is why there is not a <CODE>set</CODE> method for the Relation property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getContent().add(newItem);
+     *    getRelation().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link generated.Acc}
-     * {@link generated.Name}
-     * {@link generated.Dbname}
+     * {@link generated.Relation}
      * 
      */
-    java.util.List getContent();
+    java.util.List getRelation();
 
     /**
      * Gets the value of the hjid property.

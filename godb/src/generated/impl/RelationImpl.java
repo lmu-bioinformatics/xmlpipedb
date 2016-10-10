@@ -8,7 +8,7 @@
 
 package generated.impl;
 
-public class IsSymmetricImpl implements generated.IsSymmetric, com.sun.xml.bind.RIElement, com.sun.xml.bind.JAXBObject, generated.impl.runtime.UnmarshallableObject, generated.impl.runtime.XMLSerializable, generated.impl.runtime.ValidatableObject
+public class RelationImpl implements generated.Relation, com.sun.xml.bind.RIElement, com.sun.xml.bind.JAXBObject, generated.impl.runtime.UnmarshallableObject, generated.impl.runtime.XMLSerializable, generated.impl.runtime.ValidatableObject
 {
 
     protected java.lang.String _Content;
@@ -18,7 +18,7 @@ public class IsSymmetricImpl implements generated.IsSymmetric, com.sun.xml.bind.
     protected java.lang.Long _Hjversion;
 
     private final static java.lang.Class PRIMARY_INTERFACE_CLASS() {
-        return (generated.IsSymmetric.class);
+        return (generated.Relation.class);
     }
 
     public java.lang.String ____jaxb_ri____getNamespaceURI() {
@@ -26,7 +26,7 @@ public class IsSymmetricImpl implements generated.IsSymmetric, com.sun.xml.bind.
     }
 
     public java.lang.String ____jaxb_ri____getLocalName() {
-        return "is_symmetric";
+        return "relation";
     }
 
     public java.lang.String getContent() {
@@ -38,13 +38,13 @@ public class IsSymmetricImpl implements generated.IsSymmetric, com.sun.xml.bind.
     }
 
     public generated.impl.runtime.UnmarshallingEventHandler createUnmarshaller(generated.impl.runtime.UnmarshallingContext context) {
-        return new generated.impl.IsSymmetricImpl.Unmarshaller(context);
+        return new generated.impl.RelationImpl.Unmarshaller(context);
     }
 
     public void serializeBody(generated.impl.runtime.XMLSerializer context)
         throws org.xml.sax.SAXException
     {
-        context.startElement("", "is_symmetric");
+        context.startElement("", "relation");
         context.endNamespaceDecls();
         context.endAttributes();
         try {
@@ -66,7 +66,7 @@ public class IsSymmetricImpl implements generated.IsSymmetric, com.sun.xml.bind.
     }
 
     public java.lang.Class getPrimaryInterface() {
-        return (generated.IsSymmetric.class);
+        return (generated.Relation.class);
     }
 
     public com.sun.msv.verifier.DocumentDeclaration createRawValidator() {
@@ -93,12 +93,12 @@ public class IsSymmetricImpl implements generated.IsSymmetric, com.sun.xml.bind.
 +".sun.msv.util.StringPair\u00d0t\u001ejB\u008f\u008d\u00a0\u0002\u0000\u0002L\u0000\tlocalNameq\u0000~\u0000\u000fL\u0000\fnames"
 +"paceURIq\u0000~\u0000\u000fxpq\u0000~\u0000\u0013q\u0000~\u0000\u0012sr\u0000#com.sun.msv.grammar.SimpleNameCl"
 +"ass\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001\u0002\u0000\u0002L\u0000\tlocalNameq\u0000~\u0000\u000fL\u0000\fnamespaceURIq\u0000~\u0000\u000fxr\u0000\u001dcom.s"
-+"un.msv.grammar.NameClass\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001\u0002\u0000\u0000xpt\u0000\fis_symmetrict\u0000\u0000sr\u0000\"c"
-+"om.sun.msv.grammar.ExpressionPool\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001\u0002\u0000\u0001L\u0000\bexpTablet\u0000/Lc"
-+"om/sun/msv/grammar/ExpressionPool$ClosedHash;xpsr\u0000-com.sun.m"
-+"sv.grammar.ExpressionPool$ClosedHash\u00d7j\u00d0N\u00ef\u00e8\u00ed\u001c\u0003\u0000\u0003I\u0000\u0005countB\u0000\rst"
-+"reamVersionL\u0000\u0006parentt\u0000$Lcom/sun/msv/grammar/ExpressionPool;x"
-+"p\u0000\u0000\u0000\u0000\u0001px"));
++"un.msv.grammar.NameClass\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001\u0002\u0000\u0000xpt\u0000\brelationt\u0000\u0000sr\u0000\"com.s"
++"un.msv.grammar.ExpressionPool\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001\u0002\u0000\u0001L\u0000\bexpTablet\u0000/Lcom/s"
++"un/msv/grammar/ExpressionPool$ClosedHash;xpsr\u0000-com.sun.msv.g"
++"rammar.ExpressionPool$ClosedHash\u00d7j\u00d0N\u00ef\u00e8\u00ed\u001c\u0003\u0000\u0003I\u0000\u0005countB\u0000\rstream"
++"VersionL\u0000\u0006parentt\u0000$Lcom/sun/msv/grammar/ExpressionPool;xp\u0000\u0000\u0000"
++"\u0000\u0001px"));
         }
         return new com.sun.msv.verifier.regexp.REDocumentDeclaration(schemaFragment);
     }
@@ -107,10 +107,10 @@ public class IsSymmetricImpl implements generated.IsSymmetric, com.sun.xml.bind.
         if (this == obj) {
             return true;
         }
-        if ((null == obj)||(!(obj instanceof generated.IsSymmetric))) {
+        if ((null == obj)||(!(obj instanceof generated.Relation))) {
             return false;
         }
-        generated.impl.IsSymmetricImpl target = ((generated.impl.IsSymmetricImpl) obj);
+        generated.impl.RelationImpl target = ((generated.impl.RelationImpl) obj);
         {
             java.lang.String value = this.getContent();
             java.lang.String targetValue = target.getContent();
@@ -161,7 +161,7 @@ public class IsSymmetricImpl implements generated.IsSymmetric, com.sun.xml.bind.
         }
 
         public java.lang.Object owner() {
-            return generated.impl.IsSymmetricImpl.this;
+            return generated.impl.RelationImpl.this;
         }
 
         public void enterElement(java.lang.String ___uri, java.lang.String ___local, java.lang.String ___qname, org.xml.sax.Attributes __atts)
@@ -171,16 +171,16 @@ public class IsSymmetricImpl implements generated.IsSymmetric, com.sun.xml.bind.
             outer:
             while (true) {
                 switch (state) {
+                    case  3 :
+                        revertToParentFromEnterElement(___uri, ___local, ___qname, __atts);
+                        return ;
                     case  0 :
-                        if (("is_symmetric" == ___local)&&("" == ___uri)) {
+                        if (("relation" == ___local)&&("" == ___uri)) {
                             context.pushAttributes(__atts, true);
                             state = 1;
                             return ;
                         }
                         break;
-                    case  3 :
-                        revertToParentFromEnterElement(___uri, ___local, ___qname, __atts);
-                        return ;
                 }
                 super.enterElement(___uri, ___local, ___qname, __atts);
                 break;
@@ -194,16 +194,16 @@ public class IsSymmetricImpl implements generated.IsSymmetric, com.sun.xml.bind.
             outer:
             while (true) {
                 switch (state) {
+                    case  3 :
+                        revertToParentFromLeaveElement(___uri, ___local, ___qname);
+                        return ;
                     case  2 :
-                        if (("is_symmetric" == ___local)&&("" == ___uri)) {
+                        if (("relation" == ___local)&&("" == ___uri)) {
                             context.popAttributes();
                             state = 3;
                             return ;
                         }
                         break;
-                    case  3 :
-                        revertToParentFromLeaveElement(___uri, ___local, ___qname);
-                        return ;
                 }
                 super.leaveElement(___uri, ___local, ___qname);
                 break;

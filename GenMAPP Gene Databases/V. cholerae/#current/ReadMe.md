@@ -1,6 +1,6 @@
-**ReadMe for GenMAPP Gene Database for  *Vibrio cholerae*  O1 biovar El Tor str. N16961, Vc-Std\_External\_20131122.gdb**
+**ReadMe for GenMAPP Gene Database for  *Vibrio cholerae*  O1 biovar El Tor str. N16961, Vc-Std\_External\_20161009.gdb**
 
-Last revised:  12/1/15
+Last revised:  10/24/16
 
 This document contains the following:
 
@@ -14,19 +14,19 @@ This document contains the following:
   4. Database Report
 5. Contact Information for support, bug reports, feature requests
 6. Release notes
-  1. Current version: Vc-Std\_External\_20131122.gdb
+  1. Current version: Vc-Std\_External\_20161009.gdb
   2. Previous version: Vc-Std\_External\_20101022.gdb
   3. Previous version: Vc-Std\_External\_20090622.gdb
 7. Database Schema Diagram
 
 1\. Overview of the GenMAPP application and accessory programs
 
-GenMAPP (Gene Map Annotator and Pathway Profiler) is a free computer application for viewing and analyzing DNA microarray and other genomic and proteomic data on biological pathways.  MAPPFinder is an accessory program that works with GenMAPP and Gene Ontology to identify global biological trends in gene expression data.  The GenMAPP Gene Database (file with the extension _.gdb_) is used to relate gene IDs on MAPPs (_.mapp_, representations of pathways and other functional groupings of genes) to data in Expression Datasets (_.gex_, DNA microarray or other high-throughput data).  GenMAPP is a stand-alone application that requires the Gene Database, MAPPs, and Expression Dataset files to be stored on the user's computer.  GenMAPP and its accessory programs and files may be downloaded from <http://www.GenMAPP.org>.  GenMAPP requires a separate Gene Database for each species.  This ReadMe describes a Gene Database for _Vibrio cholerae_ O1 biovar El Tor str. N16961 that was built by the Loyola Marymount University (LMU) Bioinformatics Group using the program GenMAPP Builder 2.0, part of the open source XMLPipeDB project <http://xmlpipedb.cs.lmu.edu/>.
+GenMAPP (Gene Map Annotator and Pathway Profiler) is a free computer application for viewing and analyzing DNA microarray and other genomic and proteomic data on biological pathways.  MAPPFinder is an accessory program that works with GenMAPP and Gene Ontology to identify global biological trends in gene expression data.  The GenMAPP Gene Database (file with the extension _.gdb_) is used to relate gene IDs on MAPPs (_.mapp_, representations of pathways and other functional groupings of genes) to data in Expression Datasets (_.gex_, DNA microarray or other high-throughput data).  GenMAPP is a stand-alone application that requires the Gene Database, MAPPs, and Expression Dataset files to be stored on the user's computer.  GenMAPP and its accessory programs and files may be downloaded from <http://www.GenMAPP.org>.  GenMAPP requires a separate Gene Database for each species.  This ReadMe describes a Gene Database for _Vibrio cholerae_ O1 biovar El Tor str. N16961 that was built by the Loyola Marymount University (LMU) Bioinformatics Group using the program GenMAPP Builder 3.0.0, part of the open source XMLPipeDB project <http://xmlpipedb.cs.lmu.edu/>.
 
 2\. System Requirements and Compatibility:
-- This Gene Database is compatible with GenMAPP 2.0 and 2.1 and MAPPFinder 2.0.  These programs can be downloaded from <http://www.genmapp.org>.
-- System Requirements for GenMAPP 2.0/2.1 and MAPPFinder 2.0:
-- Operating System: Windows 98 or higher, Windows NT 4.0 or higher (2000, XP, etc)
+- This Gene Database is compatible with GenMAPP 3.0.0 and MAPPFinder 2.0.  These programs can be downloaded from <http://www.genmapp.org>.
+- System Requirements for GenMAPP 3.0.0 and MAPPFinder 2.0:
+- Operating System: Windows 98 or higher, Windows NT 4.0 or higher (2000, XP, etc), Windows 7 or higher
 - Monitor Resolution: 800 X 600 screen or greater (SVGA)
 - Internet Browser: Microsoft Internet Explorer 5.0 or later
 - Minimum hardware configuration:
@@ -35,7 +35,7 @@ GenMAPP (Gene Map Annotator and Pathway Profiler) is a free computer application
 - Disk Space: 300 MB disk (more recommended if multiple databases will be used)
 
 3\. Installation Instructions
-- Extract the zipped archive and place the file "Vc-Std\_External\_20131122.gdb" in the folder you use to store Gene Databases for GenMAPP.  If you accept the default folder during the GenMAPP installation process, this folder will be C:\GenMAPP 2 Data\Gene Databases.
+- Extract the zipped archive and place the file "Vc-Std\_External\_20161009.gdb" in the folder you use to store Gene Databases for GenMAPP.  If you accept the default folder during the GenMAPP installation process, this folder will be C:\GenMAPP 2 Data\Gene Databases.
 - To use the Gene Database, launch GenMAPP and go to the menu item _Data > Choose Gene Database_.  Alternatively, you can launch MAPPFinder and go to the menu item _File > Choose Gene Database_.
 
 4\. Gene Database Specifications
@@ -57,15 +57,15 @@ ii. Species
 
 iii. Data Sources and Versions
  
-- This _Vibrio cholerae_ Gene Database was built on October 24, 2013; this build date is reflected in the filename Vc-Std\_External\_20131122.gdb. All date fields internal to the Gene Database (and not usually seen by regular GenMAPP users) have been filled with this build date.
+- This _Vibrio cholerae_ Gene Database was built on October 9, 2016; this build date is reflected in the filename Vc-Std\_External\_20161009.gdb. All date fields internal to the Gene Database (and not usually seen by regular GenMAPP users) have been filled with this build date.
 - UniProt complete proteome set for _Vibrio cholera_e O1 biovar El Tor str. N16961, downloaded from this page: <http://www.uniprot.org/uniprot/?query=organism%3a243277+keyword%3a1185&format=\*&compress=yes>
 Filename: "uniprot-organism%3A243277+keyword%3A1185.xml" (downloaded as a compressed .gz file and extracted)
 Version information for the proteome sets can be found at  <http://www.uniprot.org/news/>
-The proteome set used for this version of the _Vibrio cholerae_ Gene Database was based on UniProt release 2013\_11 released on October 16, 2013.
+The proteome set used for this version of the _Vibrio cholerae_ Gene Database was based on UniProt release 2016\_09 released on October 5, 2016.
 - Gene Ontology gene associations are provided by the GOA project: <http://www.ebi.ac.uk/GOA/> as a tab-delimited text file.  The _Vibrio cholerae_ GOA file was accessed from the GOA proteomes FTP site: <ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/proteomes/>
-Filename: "46.V\_cholerae\_ATCC\_39315.goa".  Version 10/15/2013 6:09:00 PM.
+Filename: "46.V\_cholerae\_ATCC\_39315.goa".  Version 10/4/16, 7:16:00 AM.
 - Gene Ontology data is downloaded from <http://beta.geneontology.org/page/download-ontology>
-Data is released daily.  For this version of the _Vibrio cholerae_ Gene Database we used the ontology version 2013-10-21 12:54:57 PM.
+Data is released daily.  For this version of the _Vibrio cholerae_ Gene Database we used the ontology version 10/09/2016, 3:41 pm.
 Filename: "go\_daily-termdb.obo-xml.gz".
 
 iv. Database Report
@@ -92,7 +92,7 @@ iv. Database Report
 5\. Contact Information for support, bug reports, feature requests
 
 - The Gene Database for _Vibrio cholerae_ was built by the Loyola Marymount University (LMU) Bioinformatics Group using the program GenMAPP Builder, part of the open source XMLPipeDB project <http://xmlpipedb.cs.lmu.edu/>.
-- For support, bug reports, or feature requests relating to XMLPipeDB or GenMAPP Builder, please consult the XMLPipeDB Manual found at <http://xmlpipedb.cs.lmu.edu/documentation.shtml> or go to our SourceForge site <http://sourceforge.net/projects/xmlpipedb/>.
+- For support, bug reports, or feature requests relating to XMLPipeDB or GenMAPP Builder, please consult the XMLPipeDB Manual found at <http://xmlpipedb.cs.lmu.edu/documentation.shtml> or go to our Github <https://github.com/lmu-bioinformatics/xmlpipedb>.
 - For issues related to the _Vibrio cholerae_ Gene Database, please contact:
 
 
@@ -112,8 +112,8 @@ iv. Database Report
 
 6\. Release Notes
 
-i. Current version:  Vc-Std\_External\_20131122.gdb
-- Kam D. Dahlquist and John David N. Dionisio contributed to this release.
+i. Current version:  Vc-Std\_External\_20161009.gdb
+- Nicole Anguiano, Kam D. Dahlquist and John David N. Dionisio contributed to this release.
 
 ii. Previous version:  Vc-Std\_External\_20101022.gdb
 - Kam D. Dahlquist and John David N. Dionisio contributed to this release.

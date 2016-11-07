@@ -9,5 +9,5 @@ permalink:        none
 destination:      _gh_pages
 host:             127.0.0.1
 port:             3001
-baseurl:          /xmlpipedb
+baseurl:          
 encoding:         UTF-8

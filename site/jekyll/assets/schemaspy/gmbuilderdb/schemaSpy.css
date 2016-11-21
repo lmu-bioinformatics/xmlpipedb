@@ -1,8 +1,9 @@
 /* required colors MUST be specified in RGB hex notation or the diagrams won't have correct colors */
 
 body  {
-  color: #000000;
-  font-family: Georgia, Serif;
+  color: #000;
+  background-color: #F7F7F7;
+  font-family: arial, geneva, helvetica, lucida, sans-serif;
   margin: 0 0 0 0;
   padding: 0px;
 }
@@ -17,7 +18,7 @@ body  {
 
 /* background-color must be specified for th to propagate into diagrams */
 th {
-  background-color: #9b8559;
+  background-color: #9BAB96;
   text-align: left;
   padding: 0px 4px;
 }
@@ -31,7 +32,7 @@ tr.even td.detail {
 }
 
 tr.odd td.detail {
-  background-color: #000000;
+  background-color: #F7F7F7;
 }
 
 h1 {
@@ -40,25 +41,25 @@ h1 {
 
 /* background must be specified for .primaryKey to propagate into diagrams */
 .primaryKey {
-  background: #e16239;
+  background: #BED1B8;
   padding: 0px 4px;
 }
 
 /* background must be specified for .indexedColumn to propagate into diagrams */
 .indexedColumn {
-  background: #f8df1b;
+  background: #F4F7DA;
   padding: 0px 4px;
 }
 
 /* background must be specified for .excludedColumn to propagate into diagrams */
 .excludedColumn {
-  background: #f4c04a;
+  background: #C0C0C0;
   padding: 0px 4px;
 }
 
 /* background must be specified for .selectedTable to propagate into diagrams */
 .selectedTable {
-  background: #d9ab22;
+  background: #A9AB96;
 }
 
 .detail {
@@ -164,19 +165,43 @@ table {
 }
 
 a:link {
-  color: maroon;
+  color: #489148;
 }
 
 a:visited {
-  color: #666;
+  color: #183118;
 }
 
 .sortedByColumn {
-  background-color: #e1771d;
+  background-color: #6C7769;
 }
 
 .notSortedByColumn {
   color: #000000;
+}
+
+.viewDefinition {
+  font-size: 90%;
+  background-color: #ffffff;
+  border-style: solid;
+  border-width: 1px;
+  float: left;
+  padding: 4px;
+  font-family: "Courier New", Courier, monospace
+}
+
+.viewReferences {
+  font-size: 90%;
+  padding: 4px;
+}
+
+/* wrap around divs that float so they "take up space" */
+div.spacer {
+  clear: both;
+}
+
+.preFormatted {
+  white-space: pre;
 }
 
 /* Tabs from http://www.alistapart.com/articles/slidingdoors/ */
@@ -192,7 +217,7 @@ a:visited {
 #header {
   float:left;
   width: 100%;
-  background:#ffc70e url("images/background.gif") repeat-x bottom;
+  background:#BED1B8 url("images/background.gif") repeat-x bottom;
   font-size:80%;
   line-height:normal;
 }
@@ -244,7 +269,7 @@ a:visited {
 
 #header li:hover, #header li:hover a {
   background-position:0% -150px;
-  color:#ffac0e;
+  color:#9BAB96;
 }
 
 #header li:hover a {

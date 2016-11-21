@@ -1,0 +1,47 @@
+// dot 2.38.0 on Windows 8.1 6.3
+// SchemaSpy rev 590
+digraph "goa" {
+  graph [
+    rankdir="RL"
+    bgcolor="#f7f7f7"
+    nodesep="0.18"
+    ranksep="0.46"
+    fontname="Helvetica"
+    fontsize="11"
+  ];
+  node [
+    fontname="Helvetica"
+    fontsize="11"
+    shape="plaintext"
+  ];
+  edge [
+    arrowsize="0.8"
+  ];
+  "goa" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">goa</TD></TR>
+      <TR><TD PORT="primdbkey" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">primdbkey</TD></TR>
+      <TR><TD PORT="db" COLSPAN="3" ALIGN="LEFT">db</TD></TR>
+      <TR><TD PORT="db_object_id" COLSPAN="3" ALIGN="LEFT">db_object_id</TD></TR>
+      <TR><TD PORT="db_object_symbol" COLSPAN="3" ALIGN="LEFT">db_object_symbol</TD></TR>
+      <TR><TD PORT="qualifier" COLSPAN="3" ALIGN="LEFT">qualifier</TD></TR>
+      <TR><TD PORT="go_id" COLSPAN="3" ALIGN="LEFT">go_id</TD></TR>
+      <TR><TD PORT="db_reference" COLSPAN="3" ALIGN="LEFT">db_reference</TD></TR>
+      <TR><TD PORT="evidence_code" COLSPAN="3" ALIGN="LEFT">evidence_code</TD></TR>
+      <TR><TD PORT="with_or_from" COLSPAN="3" ALIGN="LEFT">with_or_from</TD></TR>
+      <TR><TD PORT="aspect" COLSPAN="3" ALIGN="LEFT">aspect</TD></TR>
+      <TR><TD PORT="db_object_name" COLSPAN="3" ALIGN="LEFT">db_object_name</TD></TR>
+      <TR><TD PORT="db_object_synonym" COLSPAN="3" ALIGN="LEFT">db_object_synonym</TD></TR>
+      <TR><TD PORT="db_object_type" COLSPAN="3" ALIGN="LEFT">db_object_type</TD></TR>
+      <TR><TD PORT="taxon" COLSPAN="3" ALIGN="LEFT">taxon</TD></TR>
+      <TR><TD PORT="date" COLSPAN="3" ALIGN="LEFT">date</TD></TR>
+      <TR><TD PORT="assigned_by" COLSPAN="3" ALIGN="LEFT">assigned_by</TD></TR>
+      <TR><TD PORT="annotation_extension" COLSPAN="3" ALIGN="LEFT">annotation_extension</TD></TR>
+      <TR><TD PORT="gene_product_form_id" COLSPAN="3" ALIGN="LEFT">gene_product_form_id</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="tables/goa.html"
+    tooltip="goa"
+  ];
+}

@@ -1,5 +1,5 @@
-// dot 2.22.2 on Windows Vista 6.0
-// SchemaSpy rev 536
+// dot 2.38.0 on Windows 8.1 6.3
+// SchemaSpy rev 590
 digraph "twoDegreesRelationshipsDiagram" {
   graph [
     rankdir="RL"
@@ -19,29 +19,29 @@ digraph "twoDegreesRelationshipsDiagram" {
   edge [
     arrowsize="0.8"
   ];
-  "dbreferencetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "dbreferencetype":"elipses":w -> "organismtype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "entrytype":"protein":w -> "proteintype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "entrytype":"proteinexistence":w -> "proteinexistencetype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "entrytype":"sequence":w -> "sequencetype":"hjid.type":e [arrowhead=none arrowtail=crowodot];
-  "entrytype":"uniprottype_entry_hjid":w -> "uniprottype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "entrytype_accession":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "entrytype_comment":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "entrytype_genetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "entrytype_name":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "evidencetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "featuretype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "genelocationtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "keywordtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "organismtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "organismtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "referencetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
+  "dbreferencetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "dbreferencetype":"elipses":w -> "organismtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype":"organism":w -> "organismtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype":"protein":w -> "proteintype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype":"proteinexistence":w -> "proteinexistencetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype":"sequence":w -> "sequencetype":"hjid.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype":"uniprottype_entry_hjid":w -> "uniprottype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype_accession":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype_comment":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype_name":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "featuretype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "genelocationtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "genetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "keywordtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "organismtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "referencetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
   "dbreferencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">dbreferencetype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">dbreferencetype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="dbreferencetype.html"
     tooltip="dbreferencetype"
@@ -49,20 +49,21 @@ digraph "twoDegreesRelationshipsDiagram" {
   "entrytype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
+      <TR><TD PORT="organism" COLSPAN="3" ALIGN="LEFT">organism</TD></TR>
       <TR><TD PORT="modified" COLSPAN="3" ALIGN="LEFT">modified</TD></TR>
+      <TR><TD PORT="dataset" COLSPAN="3" ALIGN="LEFT">dataset</TD></TR>
       <TR><TD PORT="sequence" COLSPAN="3" ALIGN="LEFT">sequence</TD></TR>
+      <TR><TD PORT="protein" COLSPAN="3" ALIGN="LEFT">protein</TD></TR>
+      <TR><TD PORT="created" COLSPAN="3" ALIGN="LEFT">created</TD></TR>
       <TR><TD PORT="version" COLSPAN="3" ALIGN="LEFT">version</TD></TR>
       <TR><TD PORT="proteinexistence" COLSPAN="3" ALIGN="LEFT">proteinexistence</TD></TR>
-      <TR><TD PORT="dataset" COLSPAN="3" ALIGN="LEFT">dataset</TD></TR>
-      <TR><TD PORT="created" COLSPAN="3" ALIGN="LEFT">created</TD></TR>
-      <TR><TD PORT="protein" COLSPAN="3" ALIGN="LEFT">protein</TD></TR>
       <TR><TD PORT="uniprottype_entry_hjid" COLSPAN="3" ALIGN="LEFT">uniprottype_entry_hjid</TD></TR>
       <TR><TD PORT="uniprottype_entry_hjindex" COLSPAN="3" ALIGN="LEFT">uniprottype_entry_hjindex</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">12 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 5</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 &gt;</TD></TR>
     </TABLE>>
     URL="entrytype.html"
     tooltip="entrytype"
@@ -70,7 +71,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "entrytype_accession" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype_accession</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype_accession</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -80,27 +81,17 @@ digraph "twoDegreesRelationshipsDiagram" {
   "entrytype_comment" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype_comment</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype_comment</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="entrytype_comment.html"
     tooltip="entrytype_comment"
   ];
-  "entrytype_genetype" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype_genetype</TD></TR>
-      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
-    </TABLE>>
-    URL="entrytype_genetype.html"
-    tooltip="entrytype_genetype"
-  ];
   "entrytype_name" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype_name</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype_name</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -110,9 +101,9 @@ digraph "twoDegreesRelationshipsDiagram" {
   "evidencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">evidencetype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">evidencetype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="evidencetype.html"
     tooltip="evidencetype"
@@ -120,9 +111,9 @@ digraph "twoDegreesRelationshipsDiagram" {
   "featuretype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">featuretype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">featuretype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
     </TABLE>>
     URL="featuretype.html"
     tooltip="featuretype"
@@ -130,19 +121,29 @@ digraph "twoDegreesRelationshipsDiagram" {
   "genelocationtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">genelocationtype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">genelocationtype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
     </TABLE>>
     URL="genelocationtype.html"
     tooltip="genelocationtype"
   ];
+  "genetype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">genetype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="genetype.html"
+    tooltip="genetype"
+  ];
   "keywordtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">keywordtype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">keywordtype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="keywordtype.html"
     tooltip="keywordtype"
@@ -150,9 +151,9 @@ digraph "twoDegreesRelationshipsDiagram" {
   "organismtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">organismtype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">organismtype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="organismtype.html"
     tooltip="organismtype"
@@ -160,7 +161,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteinexistencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteinexistencetype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteinexistencetype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -170,7 +171,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteintype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteintype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteintype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
@@ -180,9 +181,9 @@ digraph "twoDegreesRelationshipsDiagram" {
   "referencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">referencetype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">referencetype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
     </TABLE>>
     URL="referencetype.html"
     tooltip="referencetype"
@@ -190,18 +191,18 @@ digraph "twoDegreesRelationshipsDiagram" {
   "sequencetype" [
     label=<
     <TABLE BORDER="2" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">sequencetype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="2" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD><TD PORT="hjid.type" ALIGN="LEFT">int8[8]</TD></TR>
-      <TR><TD PORT="hjtype" COLSPAN="2" ALIGN="LEFT">hjtype</TD><TD PORT="hjtype.type" ALIGN="LEFT">varchar[0]</TD></TR>
-      <TR><TD PORT="hjversion" COLSPAN="2" ALIGN="LEFT">hjversion</TD><TD PORT="hjversion.type" ALIGN="LEFT">int8[8]</TD></TR>
-      <TR><TD PORT="modified" COLSPAN="2" ALIGN="LEFT">modified</TD><TD PORT="modified.type" ALIGN="LEFT">timestamp[8,6]</TD></TR>
-      <TR><TD PORT="value" COLSPAN="2" ALIGN="LEFT">value</TD><TD PORT="value.type" ALIGN="LEFT">varchar[0]</TD></TR>
-      <TR><TD PORT="version" COLSPAN="2" ALIGN="LEFT">version</TD><TD PORT="version.type" ALIGN="LEFT">numeric[65535,65531]</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">sequencetype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="2" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD><TD PORT="hjid.type" ALIGN="LEFT">int8[19]</TD></TR>
+      <TR><TD PORT="hjtype" COLSPAN="2" ALIGN="LEFT">hjtype</TD><TD PORT="hjtype.type" ALIGN="LEFT">varchar[2147483647]</TD></TR>
+      <TR><TD PORT="hjversion" COLSPAN="2" ALIGN="LEFT">hjversion</TD><TD PORT="hjversion.type" ALIGN="LEFT">int8[19]</TD></TR>
+      <TR><TD PORT="mass" COLSPAN="2" ALIGN="LEFT">mass</TD><TD PORT="mass.type" ALIGN="LEFT">int4[10]</TD></TR>
+      <TR><TD PORT="modified" COLSPAN="2" ALIGN="LEFT">modified</TD><TD PORT="modified.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
+      <TR><TD PORT="length" COLSPAN="2" ALIGN="LEFT">length</TD><TD PORT="length.type" ALIGN="LEFT">int4[10]</TD></TR>
+      <TR><TD PORT="version" COLSPAN="2" ALIGN="LEFT">version</TD><TD PORT="version.type" ALIGN="LEFT">int4[10]</TD></TR>
+      <TR><TD PORT="checksum" COLSPAN="2" ALIGN="LEFT">checksum</TD><TD PORT="checksum.type" ALIGN="LEFT">varchar[2147483647]</TD></TR>
+      <TR><TD PORT="value" COLSPAN="2" ALIGN="LEFT">value</TD><TD PORT="value.type" ALIGN="LEFT">varchar[2147483647]</TD></TR>
+      <TR><TD PORT="fragment" COLSPAN="2" ALIGN="LEFT">fragment</TD><TD PORT="fragment.type" ALIGN="LEFT">varchar[2147483647]</TD></TR>
       <TR><TD PORT="precursor" COLSPAN="2" ALIGN="LEFT">precursor</TD><TD PORT="precursor.type" ALIGN="LEFT">bool[1]</TD></TR>
-      <TR><TD PORT="mass" COLSPAN="2" ALIGN="LEFT">mass</TD><TD PORT="mass.type" ALIGN="LEFT">numeric[65535,65531]</TD></TR>
-      <TR><TD PORT="fragment" COLSPAN="2" ALIGN="LEFT">fragment</TD><TD PORT="fragment.type" ALIGN="LEFT">varchar[0]</TD></TR>
-      <TR><TD PORT="length" COLSPAN="2" ALIGN="LEFT">length</TD><TD PORT="length.type" ALIGN="LEFT">numeric[65535,65531]</TD></TR>
-      <TR><TD PORT="checksum" COLSPAN="2" ALIGN="LEFT">checksum</TD><TD PORT="checksum.type" ALIGN="LEFT">varchar[0]</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 0</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="sequencetype.html"
@@ -210,7 +211,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "uniprottype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">uniprottype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">uniprottype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>

@@ -1,5 +1,5 @@
-// dot 2.22.2 on Windows Vista 6.0
-// SchemaSpy rev 536
+// dot 2.38.0 on Windows 8.1 6.3
+// SchemaSpy rev 590
 digraph "twoDegreesRelationshipsDiagram" {
   graph [
     rankdir="RL"
@@ -19,25 +19,41 @@ digraph "twoDegreesRelationshipsDiagram" {
   edge [
     arrowsize="0.8"
   ];
-  "commenttype":"absorption":w -> "bpccommentgroupabsorptiontype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "commenttype":"conflict":w -> "commenttype_conflicttype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "commenttype":"kinetics":w -> "bpccommentgroupkineticstype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "commenttype":"text":w -> "evidencedstringtype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "commenttype_linktype":"elipses":w -> "commenttype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "eventtype":"commenttype_event_hjid":w -> "commenttype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"elipses":w -> "subcellularlocationtype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"elipses":w -> "subcellularlocationtype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"elipses":w -> "subcellularlocationtype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "interactanttype":"elipses":w -> "commenttype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "isoformtype":"elipses":w -> "commenttype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "locationtype":"elipses":w -> "commenttype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "subcellularlocationtype":"elipses":w -> "commenttype":"hjid":e [arrowhead=none arrowtail=crowodot];
+  "bpccommentgroupabsorptiontype":"elipses":w -> "evidencedstringtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "cofactortype":"elipses":w -> "commenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"absorption":w -> "bpccommentgroupabsorptiontype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"conflict":w -> "commenttype_conflicttype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"disease":w -> "commenttype_diseasetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"kinetics":w -> "bpccommentgroupkineticstype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"molecule":w -> "moleculetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"phdependence":w -> "bpccommentgroupphdependencetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"redoxpotential":w -> "bpccommentgroupredoxpotentialtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"temperaturedependence":w -> "bpccommentgrouptemperaturedependencetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype_evidence":"elipses":w -> "commenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype_linktype":"elipses":w -> "commenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "eventtype":"commenttype_event_hjid":w -> "commenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"elipses":w -> "bpccommentgroupabsorptiontype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"elipses":w -> "bpccommentgroupkineticstype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"elipses":w -> "bpccommentgroupkineticstype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"elipses":w -> "bpccommentgroupkineticstype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"elipses":w -> "bpccommentgroupphdependencetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"elipses":w -> "bpccommentgroupredoxpotentialtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"elipses":w -> "bpccommentgrouptemperaturedependencetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"elipses":w -> "commenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"elipses":w -> "isoformtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"elipses":w -> "subcellularlocationtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"elipses":w -> "subcellularlocationtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"elipses":w -> "subcellularlocationtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "interactanttype":"elipses":w -> "commenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "isoformtype":"elipses":w -> "commenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "locationtype":"elipses":w -> "commenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "subcellularlocationtype":"elipses":w -> "commenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
   "bpccommentgroupabsorptiontype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">bpccommentgroupabsorptiontype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupabsorptiontype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
     </TABLE>>
     URL="bpccommentgroupabsorptiontype.html"
     tooltip="bpccommentgroupabsorptiontype"
@@ -45,37 +61,77 @@ digraph "twoDegreesRelationshipsDiagram" {
   "bpccommentgroupkineticstype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">bpccommentgroupkineticstype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupkineticstype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="bpccommentgroupkineticstype.html"
     tooltip="bpccommentgroupkineticstype"
   ];
+  "bpccommentgroupphdependencetype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupphdependencetype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+    </TABLE>>
+    URL="bpccommentgroupphdependencetype.html"
+    tooltip="bpccommentgroupphdependencetype"
+  ];
+  "bpccommentgroupredoxpotentialtype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupredoxpotentialtype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+    </TABLE>>
+    URL="bpccommentgroupredoxpotentialtype.html"
+    tooltip="bpccommentgroupredoxpotentialtype"
+  ];
+  "bpccommentgrouptemperaturedependencetype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgrouptemperaturedependencetype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+    </TABLE>>
+    URL="bpccommentgrouptemperaturedependencetype.html"
+    tooltip="bpccommentgrouptemperaturedependencetype"
+  ];
+  "cofactortype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">cofactortype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="cofactortype.html"
+    tooltip="cofactortype"
+  ];
   "commenttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">commenttype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
-      <TR><TD PORT="type" COLSPAN="3" ALIGN="LEFT">type</TD></TR>
-      <TR><TD PORT="experiments" COLSPAN="3" ALIGN="LEFT">experiments</TD></TR>
-      <TR><TD PORT="conflict" COLSPAN="3" ALIGN="LEFT">conflict</TD></TR>
-      <TR><TD PORT="method" COLSPAN="3" ALIGN="LEFT">method</TD></TR>
-      <TR><TD PORT="text" COLSPAN="3" ALIGN="LEFT">text</TD></TR>
       <TR><TD PORT="phdependence" COLSPAN="3" ALIGN="LEFT">phdependence</TD></TR>
-      <TR><TD PORT="kinetics" COLSPAN="3" ALIGN="LEFT">kinetics</TD></TR>
-      <TR><TD PORT="mass" COLSPAN="3" ALIGN="LEFT">mass</TD></TR>
-      <TR><TD PORT="error" COLSPAN="3" ALIGN="LEFT">error</TD></TR>
+      <TR><TD PORT="disease" COLSPAN="3" ALIGN="LEFT">disease</TD></TR>
+      <TR><TD PORT="redoxpotential" COLSPAN="3" ALIGN="LEFT">redoxpotential</TD></TR>
+      <TR><TD PORT="experiments" COLSPAN="3" ALIGN="LEFT">experiments</TD></TR>
+      <TR><TD PORT="name" COLSPAN="3" ALIGN="LEFT">name</TD></TR>
+      <TR><TD PORT="absorption" COLSPAN="3" ALIGN="LEFT">absorption</TD></TR>
       <TR><TD PORT="temperaturedependence" COLSPAN="3" ALIGN="LEFT">temperaturedependence</TD></TR>
       <TR><TD PORT="organismsdiffer" COLSPAN="3" ALIGN="LEFT">organismsdiffer</TD></TR>
+      <TR><TD PORT="error" COLSPAN="3" ALIGN="LEFT">error</TD></TR>
+      <TR><TD PORT="method" COLSPAN="3" ALIGN="LEFT">method</TD></TR>
+      <TR><TD PORT="mass" COLSPAN="3" ALIGN="LEFT">mass</TD></TR>
       <TR><TD PORT="molecule" COLSPAN="3" ALIGN="LEFT">molecule</TD></TR>
-      <TR><TD PORT="evidence" COLSPAN="3" ALIGN="LEFT">evidence</TD></TR>
-      <TR><TD PORT="name" COLSPAN="3" ALIGN="LEFT">name</TD></TR>
-      <TR><TD PORT="redoxpotential" COLSPAN="3" ALIGN="LEFT">redoxpotential</TD></TR>
-      <TR><TD PORT="absorption" COLSPAN="3" ALIGN="LEFT">absorption</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD PORT="type" COLSPAN="3" ALIGN="LEFT">type</TD></TR>
+      <TR><TD PORT="conflict" COLSPAN="3" ALIGN="LEFT">conflict</TD></TR>
+      <TR><TD PORT="kinetics" COLSPAN="3" ALIGN="LEFT">kinetics</TD></TR>
+      <TR><TD PORT="locationtype" COLSPAN="3" ALIGN="LEFT">locationtype</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 8</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">9 &gt;</TD></TR>
     </TABLE>>
     URL="commenttype.html"
     tooltip="commenttype"
@@ -83,17 +139,37 @@ digraph "twoDegreesRelationshipsDiagram" {
   "commenttype_conflicttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">commenttype_conflicttype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype_conflicttype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="commenttype_conflicttype.html"
     tooltip="commenttype_conflicttype"
   ];
+  "commenttype_diseasetype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype_diseasetype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="commenttype_diseasetype.html"
+    tooltip="commenttype_diseasetype"
+  ];
+  "commenttype_evidence" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype_evidence</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="commenttype_evidence.html"
+    tooltip="commenttype_evidence"
+  ];
   "commenttype_linktype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">commenttype_linktype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype_linktype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -103,13 +179,13 @@ digraph "twoDegreesRelationshipsDiagram" {
   "eventtype" [
     label=<
     <TABLE BORDER="2" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">eventtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="2" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD><TD PORT="hjid.type" ALIGN="LEFT">int8[8]</TD></TR>
-      <TR><TD PORT="hjtype" COLSPAN="2" ALIGN="LEFT">hjtype</TD><TD PORT="hjtype.type" ALIGN="LEFT">varchar[0]</TD></TR>
-      <TR><TD PORT="hjversion" COLSPAN="2" ALIGN="LEFT">hjversion</TD><TD PORT="hjversion.type" ALIGN="LEFT">int8[8]</TD></TR>
-      <TR><TD PORT="type" COLSPAN="2" ALIGN="LEFT">type</TD><TD PORT="type.type" ALIGN="LEFT">varchar[0]</TD></TR>
-      <TR><TD PORT="commenttype_event_hjid" COLSPAN="2" ALIGN="LEFT">commenttype_event_hjid</TD><TD PORT="commenttype_event_hjid.type" ALIGN="LEFT">int8[8]</TD></TR>
-      <TR><TD PORT="commenttype_event_hjindex" COLSPAN="2" ALIGN="LEFT">commenttype_event_hjindex</TD><TD PORT="commenttype_event_hjindex.type" ALIGN="LEFT">int4[4]</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">eventtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="2" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD><TD PORT="hjid.type" ALIGN="LEFT">int8[19]</TD></TR>
+      <TR><TD PORT="hjtype" COLSPAN="2" ALIGN="LEFT">hjtype</TD><TD PORT="hjtype.type" ALIGN="LEFT">varchar[2147483647]</TD></TR>
+      <TR><TD PORT="hjversion" COLSPAN="2" ALIGN="LEFT">hjversion</TD><TD PORT="hjversion.type" ALIGN="LEFT">int8[19]</TD></TR>
+      <TR><TD PORT="type" COLSPAN="2" ALIGN="LEFT">type</TD><TD PORT="type.type" ALIGN="LEFT">varchar[2147483647]</TD></TR>
+      <TR><TD PORT="commenttype_event_hjid" COLSPAN="2" ALIGN="LEFT">commenttype_event_hjid</TD><TD PORT="commenttype_event_hjid.type" ALIGN="LEFT">int8[19]</TD></TR>
+      <TR><TD PORT="commenttype_event_hjindex" COLSPAN="2" ALIGN="LEFT">commenttype_event_hjindex</TD><TD PORT="commenttype_event_hjindex.type" ALIGN="LEFT">int4[10]</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 &gt;</TD></TR>
     </TABLE>>
     URL="eventtype.html"
@@ -118,9 +194,9 @@ digraph "twoDegreesRelationshipsDiagram" {
   "evidencedstringtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">evidencedstringtype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">evidencedstringtype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 11</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">10 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 23</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 &gt;</TD></TR>
     </TABLE>>
     URL="evidencedstringtype.html"
     tooltip="evidencedstringtype"
@@ -128,7 +204,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "interactanttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">interactanttype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">interactanttype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -138,9 +214,9 @@ digraph "twoDegreesRelationshipsDiagram" {
   "isoformtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">isoformtype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">isoformtype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
     </TABLE>>
     URL="isoformtype.html"
     tooltip="isoformtype"
@@ -148,17 +224,27 @@ digraph "twoDegreesRelationshipsDiagram" {
   "locationtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">locationtype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">locationtype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="locationtype.html"
     tooltip="locationtype"
   ];
+  "moleculetype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">moleculetype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+    </TABLE>>
+    URL="moleculetype.html"
+    tooltip="moleculetype"
+  ];
   "subcellularlocationtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">subcellularlocationtype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">subcellularlocationtype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
     </TABLE>>

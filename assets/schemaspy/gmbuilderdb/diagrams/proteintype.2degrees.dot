@@ -1,5 +1,5 @@
-// dot 2.22.2 on Windows Vista 6.0
-// SchemaSpy rev 536
+// dot 2.38.0 on Windows 8.1 6.3
+// SchemaSpy rev 590
 digraph "twoDegreesRelationshipsDiagram" {
   graph [
     rankdir="RL"
@@ -19,62 +19,131 @@ digraph "twoDegreesRelationshipsDiagram" {
   edge [
     arrowsize="0.8"
   ];
-  "commenttype":"elipses":w -> "evidencedstringtype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "dbreferencetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "dbreferencetype":"elipses":w -> "organismtype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "entrytype":"protein":w -> "proteintype":"hjid.type":e [arrowhead=none arrowtail=crowodot];
-  "entrytype":"proteinexistence":w -> "proteinexistencetype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "entrytype":"sequence":w -> "sequencetype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "entrytype":"uniprottype_entry_hjid":w -> "uniprottype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "entrytype_accession":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "entrytype_comment":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "entrytype_genetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "entrytype_name":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"proteinnamegroupalternativenametype_shortname_hjid":w -> "proteinnamegroupalternativenametype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"proteinnamegrouprecommendednametype_shortname_hjid":w -> "proteinnamegrouprecommendednametype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"proteintype_cdantigenname_hjid":w -> "proteintype":"hjid.type":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"proteintype_componenttype_cdantigenname_hjid":w -> "proteintype_componenttype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"proteintype_componenttype_innname_hjid":w -> "proteintype_componenttype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"proteintype_domaintype_cdantigenname_hjid":w -> "proteintype_domaintype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"proteintype_domaintype_innname_hjid":w -> "proteintype_domaintype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"proteintype_innname_hjid":w -> "proteintype":"hjid.type":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"subcellularlocationtype_location_hjid":w -> "subcellularlocationtype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"subcellularlocationtype_orientation_hjid":w -> "subcellularlocationtype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "evidencedstringtype":"subcellularlocationtype_topology_hjid":w -> "subcellularlocationtype":"elipses":e [arrowhead=none arrowtail=crowodot];
-  "evidencetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "featuretype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "genelocationtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "keywordtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "organismtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "organismtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteinnamegroupalternativenametype":"fullname":w -> "evidencedstringtype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteinnamegroupalternativenametype":"proteintype_alternativename_hjid":w -> "proteintype":"hjid.type":e [arrowhead=none arrowtail=crowodot];
-  "proteinnamegroupalternativenametype":"proteintype_componenttype_alternativename_hjid":w -> "proteintype_componenttype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteinnamegroupalternativenametype":"proteintype_domaintype_alternativename_hjid":w -> "proteintype_domaintype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteinnamegrouprecommendednametype":"fullname":w -> "evidencedstringtype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteinnamegroupsubmittednametype":"fullname":w -> "evidencedstringtype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteinnamegroupsubmittednametype":"proteintype_componenttype_submittedname_hjid":w -> "proteintype_componenttype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteinnamegroupsubmittednametype":"proteintype_domaintype_submittedname_hjid":w -> "proteintype_domaintype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteinnamegroupsubmittednametype":"proteintype_submittedname_hjid":w -> "proteintype":"hjid.type":e [arrowhead=none arrowtail=crowodot];
-  "proteintype":"allergenname":w -> "evidencedstringtype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteintype":"biotechname":w -> "evidencedstringtype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteintype":"recommendedname":w -> "proteinnamegrouprecommendednametype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteintype_componenttype":"allergenname":w -> "evidencedstringtype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteintype_componenttype":"biotechname":w -> "evidencedstringtype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteintype_componenttype":"proteintype_component_hjid":w -> "proteintype":"hjid.type":e [arrowhead=none arrowtail=crowodot];
-  "proteintype_componenttype":"recommendedname":w -> "proteinnamegrouprecommendednametype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteintype_domaintype":"allergenname":w -> "evidencedstringtype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteintype_domaintype":"biotechname":w -> "evidencedstringtype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "proteintype_domaintype":"proteintype_domain_hjid":w -> "proteintype":"hjid.type":e [arrowhead=none arrowtail=crowodot];
-  "proteintype_domaintype":"recommendedname":w -> "proteinnamegrouprecommendednametype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "referencetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none arrowtail=crowodot];
-  "subcellularlocationtype":"elipses":w -> "commenttype":"elipses":e [arrowhead=none arrowtail=crowodot];
+  "bpccommentgroupabsorptiontype":"elipses":w -> "evidencedstringtype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"elipses":w -> "bpccommentgroupabsorptiontype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"elipses":w -> "bpccommentgroupkineticstype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"elipses":w -> "bpccommentgroupphdependencetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"elipses":w -> "bpccommentgroupredoxpotentialtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "commenttype":"elipses":w -> "bpccommentgrouptemperaturedependencetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "dbreferencetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "dbreferencetype":"elipses":w -> "organismtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype":"organism":w -> "organismtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype":"protein":w -> "proteintype":"hjid.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype":"proteinexistence":w -> "proteinexistencetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype":"sequence":w -> "sequencetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype":"uniprottype_entry_hjid":w -> "uniprottype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype_accession":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype_comment":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "entrytype_name":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"bpccommentgroupabsorptiontype_text_hjid":w -> "bpccommentgroupabsorptiontype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"bpccommentgroupkineticstype_km_hjid":w -> "bpccommentgroupkineticstype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"bpccommentgroupkineticstype_text_hjid":w -> "bpccommentgroupkineticstype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"bpccommentgroupkineticstype_vmax_hjid":w -> "bpccommentgroupkineticstype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"bpccommentgroupphdependencetype_text_hjid":w -> "bpccommentgroupphdependencetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"bpccommentgroupredoxpotentialtype_text_hjid":w -> "bpccommentgroupredoxpotentialtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"bpccommentgrouptemperaturedependencetype_text_hjid":w -> "bpccommentgrouptemperaturedependencetype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"commenttype_text_hjid":w -> "commenttype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"isoformtype_text_hjid":w -> "isoformtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"proteinnamegroupalternativenametype_ecnumber_hjid":w -> "proteinnamegroupalternativenametype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"proteinnamegroupalternativenametype_shortname_hjid":w -> "proteinnamegroupalternativenametype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"proteinnamegrouprecommendednametype_ecnumber_hjid":w -> "proteinnamegrouprecommendednametype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"proteinnamegrouprecommendednametype_shortname_hjid":w -> "proteinnamegrouprecommendednametype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"proteinnamegroupsubmittednametype_ecnumber_hjid":w -> "proteinnamegroupsubmittednametype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"proteintype_cdantigenname_hjid":w -> "proteintype":"hjid.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"proteintype_componenttype_cdantigenname_hjid":w -> "proteintype_componenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"proteintype_componenttype_innname_hjid":w -> "proteintype_componenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"proteintype_domaintype_cdantigenname_hjid":w -> "proteintype_domaintype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"proteintype_domaintype_innname_hjid":w -> "proteintype_domaintype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"proteintype_innname_hjid":w -> "proteintype":"hjid.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"subcellularlocationtype_location_hjid":w -> "subcellularlocationtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"subcellularlocationtype_orientation_hjid":w -> "subcellularlocationtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype":"subcellularlocationtype_topology_hjid":w -> "subcellularlocationtype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencedstringtype_evidence":"elipses":w -> "evidencedstringtype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "evidencetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "featuretype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "genelocationtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "genetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "isoformtype":"elipses":w -> "commenttype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "keywordtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "organismtype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteinnamegroupalternativenametype":"fullname":w -> "evidencedstringtype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteinnamegroupalternativenametype":"proteintype_alternativename_hjid":w -> "proteintype":"hjid.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteinnamegroupalternativenametype":"proteintype_componenttype_alternativename_hjid":w -> "proteintype_componenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteinnamegroupalternativenametype":"proteintype_domaintype_alternativename_hjid":w -> "proteintype_domaintype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteinnamegrouprecommendednametype":"fullname":w -> "evidencedstringtype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteinnamegroupsubmittednametype":"fullname":w -> "evidencedstringtype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteinnamegroupsubmittednametype":"proteintype_componenttype_submittedname_hjid":w -> "proteintype_componenttype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteinnamegroupsubmittednametype":"proteintype_domaintype_submittedname_hjid":w -> "proteintype_domaintype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteinnamegroupsubmittednametype":"proteintype_submittedname_hjid":w -> "proteintype":"hjid.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteintype":"allergenname":w -> "evidencedstringtype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteintype":"biotechname":w -> "evidencedstringtype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteintype":"recommendedname":w -> "proteinnamegrouprecommendednametype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteintype_componenttype":"allergenname":w -> "evidencedstringtype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteintype_componenttype":"biotechname":w -> "evidencedstringtype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteintype_componenttype":"proteintype_component_hjid":w -> "proteintype":"hjid.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteintype_componenttype":"recommendedname":w -> "proteinnamegrouprecommendednametype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteintype_domaintype":"allergenname":w -> "evidencedstringtype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteintype_domaintype":"biotechname":w -> "evidencedstringtype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteintype_domaintype":"proteintype_domain_hjid":w -> "proteintype":"hjid.type":e [arrowhead=none dir=back arrowtail=crowodot];
+  "proteintype_domaintype":"recommendedname":w -> "proteinnamegrouprecommendednametype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "referencetype":"elipses":w -> "entrytype":"hjid":e [arrowhead=none dir=back arrowtail=crowodot];
+  "subcellularlocationtype":"elipses":w -> "commenttype":"elipses":e [arrowhead=none dir=back arrowtail=crowodot];
+  "bpccommentgroupabsorptiontype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupabsorptiontype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+    </TABLE>>
+    URL="bpccommentgroupabsorptiontype.html"
+    tooltip="bpccommentgroupabsorptiontype"
+  ];
+  "bpccommentgroupkineticstype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupkineticstype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+    </TABLE>>
+    URL="bpccommentgroupkineticstype.html"
+    tooltip="bpccommentgroupkineticstype"
+  ];
+  "bpccommentgroupphdependencetype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupphdependencetype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+    </TABLE>>
+    URL="bpccommentgroupphdependencetype.html"
+    tooltip="bpccommentgroupphdependencetype"
+  ];
+  "bpccommentgroupredoxpotentialtype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgroupredoxpotentialtype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+    </TABLE>>
+    URL="bpccommentgroupredoxpotentialtype.html"
+    tooltip="bpccommentgroupredoxpotentialtype"
+  ];
+  "bpccommentgrouptemperaturedependencetype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">bpccommentgrouptemperaturedependencetype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+    </TABLE>>
+    URL="bpccommentgrouptemperaturedependencetype.html"
+    tooltip="bpccommentgrouptemperaturedependencetype"
+  ];
   "commenttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">commenttype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">commenttype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 8</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">9 &gt;</TD></TR>
     </TABLE>>
     URL="commenttype.html"
     tooltip="commenttype"
@@ -82,9 +151,9 @@ digraph "twoDegreesRelationshipsDiagram" {
   "dbreferencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">dbreferencetype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">dbreferencetype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">6 &gt;</TD></TR>
     </TABLE>>
     URL="dbreferencetype.html"
     tooltip="dbreferencetype"
@@ -92,20 +161,21 @@ digraph "twoDegreesRelationshipsDiagram" {
   "entrytype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
+      <TR><TD PORT="organism" COLSPAN="3" ALIGN="LEFT">organism</TD></TR>
       <TR><TD PORT="modified" COLSPAN="3" ALIGN="LEFT">modified</TD></TR>
+      <TR><TD PORT="dataset" COLSPAN="3" ALIGN="LEFT">dataset</TD></TR>
       <TR><TD PORT="sequence" COLSPAN="3" ALIGN="LEFT">sequence</TD></TR>
+      <TR><TD PORT="protein" COLSPAN="3" ALIGN="LEFT">protein</TD></TR>
+      <TR><TD PORT="created" COLSPAN="3" ALIGN="LEFT">created</TD></TR>
       <TR><TD PORT="version" COLSPAN="3" ALIGN="LEFT">version</TD></TR>
       <TR><TD PORT="proteinexistence" COLSPAN="3" ALIGN="LEFT">proteinexistence</TD></TR>
-      <TR><TD PORT="dataset" COLSPAN="3" ALIGN="LEFT">dataset</TD></TR>
-      <TR><TD PORT="created" COLSPAN="3" ALIGN="LEFT">created</TD></TR>
-      <TR><TD PORT="protein" COLSPAN="3" ALIGN="LEFT">protein</TD></TR>
       <TR><TD PORT="uniprottype_entry_hjid" COLSPAN="3" ALIGN="LEFT">uniprottype_entry_hjid</TD></TR>
       <TR><TD PORT="uniprottype_entry_hjindex" COLSPAN="3" ALIGN="LEFT">uniprottype_entry_hjindex</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">12 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 5</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 &gt;</TD></TR>
     </TABLE>>
     URL="entrytype.html"
     tooltip="entrytype"
@@ -113,7 +183,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "entrytype_accession" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype_accession</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype_accession</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -123,27 +193,17 @@ digraph "twoDegreesRelationshipsDiagram" {
   "entrytype_comment" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype_comment</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype_comment</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="entrytype_comment.html"
     tooltip="entrytype_comment"
   ];
-  "entrytype_genetype" [
-    label=<
-    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype_genetype</TD></TR>
-      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
-    </TABLE>>
-    URL="entrytype_genetype.html"
-    tooltip="entrytype_genetype"
-  ];
   "entrytype_name" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">entrytype_name</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">entrytype_name</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
@@ -153,17 +213,40 @@ digraph "twoDegreesRelationshipsDiagram" {
   "evidencedstringtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">evidencedstringtype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">evidencedstringtype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
       <TR><TD PORT="status" COLSPAN="3" ALIGN="LEFT">status</TD></TR>
       <TR><TD PORT="value" COLSPAN="3" ALIGN="LEFT">value</TD></TR>
-      <TR><TD PORT="evidence" COLSPAN="3" ALIGN="LEFT">evidence</TD></TR>
+      <TR><TD PORT="bpccommentgroupabsorptiontype_text_hjid" COLSPAN="3" ALIGN="LEFT">bpccommentgroupabsorptiontype_text_hjid</TD></TR>
+      <TR><TD PORT="bpccommentgroupabsorptiontype_text_hjindex" COLSPAN="3" ALIGN="LEFT">bpccommentgroupabsorptiontype_text_hjindex</TD></TR>
+      <TR><TD PORT="bpccommentgroupkineticstype_km_hjid" COLSPAN="3" ALIGN="LEFT">bpccommentgroupkineticstype_km_hjid</TD></TR>
+      <TR><TD PORT="bpccommentgroupkineticstype_km_hjindex" COLSPAN="3" ALIGN="LEFT">bpccommentgroupkineticstype_km_hjindex</TD></TR>
+      <TR><TD PORT="bpccommentgroupkineticstype_vmax_hjid" COLSPAN="3" ALIGN="LEFT">bpccommentgroupkineticstype_vmax_hjid</TD></TR>
+      <TR><TD PORT="bpccommentgroupkineticstype_vmax_hjindex" COLSPAN="3" ALIGN="LEFT">bpccommentgroupkineticstype_vmax_hjindex</TD></TR>
+      <TR><TD PORT="bpccommentgroupkineticstype_text_hjid" COLSPAN="3" ALIGN="LEFT">bpccommentgroupkineticstype_text_hjid</TD></TR>
+      <TR><TD PORT="bpccommentgroupkineticstype_text_hjindex" COLSPAN="3" ALIGN="LEFT">bpccommentgroupkineticstype_text_hjindex</TD></TR>
+      <TR><TD PORT="bpccommentgroupphdependencetype_text_hjid" COLSPAN="3" ALIGN="LEFT">bpccommentgroupphdependencetype_text_hjid</TD></TR>
+      <TR><TD PORT="bpccommentgroupphdependencetype_text_hjindex" COLSPAN="3" ALIGN="LEFT">bpccommentgroupphdependencetype_text_hjindex</TD></TR>
+      <TR><TD PORT="bpccommentgroupredoxpotentialtype_text_hjid" COLSPAN="3" ALIGN="LEFT">bpccommentgroupredoxpotentialtype_text_hjid</TD></TR>
+      <TR><TD PORT="bpccommentgroupredoxpotentialtype_text_hjindex" COLSPAN="3" ALIGN="LEFT">bpccommentgroupredoxpotentialtype_text_hjindex</TD></TR>
+      <TR><TD PORT="bpccommentgrouptemperaturedependencetype_text_hjid" COLSPAN="3" ALIGN="LEFT">bpccommentgrouptemperaturedependencetype_text_hjid</TD></TR>
+      <TR><TD PORT="bpccommentgrouptemperaturedependencetype_text_hjindex" COLSPAN="3" ALIGN="LEFT">bpccommentgrouptemperaturedependencetype_text_hjindex</TD></TR>
+      <TR><TD PORT="commenttype_text_hjid" COLSPAN="3" ALIGN="LEFT">commenttype_text_hjid</TD></TR>
+      <TR><TD PORT="commenttype_text_hjindex" COLSPAN="3" ALIGN="LEFT">commenttype_text_hjindex</TD></TR>
+      <TR><TD PORT="isoformtype_text_hjid" COLSPAN="3" ALIGN="LEFT">isoformtype_text_hjid</TD></TR>
+      <TR><TD PORT="isoformtype_text_hjindex" COLSPAN="3" ALIGN="LEFT">isoformtype_text_hjindex</TD></TR>
+      <TR><TD PORT="proteinnamegroupalternativenametype_ecnumber_hjid" COLSPAN="3" ALIGN="LEFT">proteinnamegroupalternativenametype_ecnumber_hjid</TD></TR>
+      <TR><TD PORT="proteinnamegroupalternativenametype_ecnumber_hjindex" COLSPAN="3" ALIGN="LEFT">proteinnamegroupalternativenametype_ecnumber_hjindex</TD></TR>
       <TR><TD PORT="proteinnamegroupalternativenametype_shortname_hjid" COLSPAN="3" ALIGN="LEFT">proteinnamegroupalternativenametype_shortname_hjid</TD></TR>
       <TR><TD PORT="proteinnamegroupalternativenametype_shortname_hjindex" COLSPAN="3" ALIGN="LEFT">proteinnamegroupalternativenametype_shortname_hjindex</TD></TR>
+      <TR><TD PORT="proteinnamegrouprecommendednametype_ecnumber_hjid" COLSPAN="3" ALIGN="LEFT">proteinnamegrouprecommendednametype_ecnumber_hjid</TD></TR>
+      <TR><TD PORT="proteinnamegrouprecommendednametype_ecnumber_hjindex" COLSPAN="3" ALIGN="LEFT">proteinnamegrouprecommendednametype_ecnumber_hjindex</TD></TR>
       <TR><TD PORT="proteinnamegrouprecommendednametype_shortname_hjid" COLSPAN="3" ALIGN="LEFT">proteinnamegrouprecommendednametype_shortname_hjid</TD></TR>
       <TR><TD PORT="proteinnamegrouprecommendednametype_shortname_hjindex" COLSPAN="3" ALIGN="LEFT">proteinnamegrouprecommendednametype_shortname_hjindex</TD></TR>
+      <TR><TD PORT="proteinnamegroupsubmittednametype_ecnumber_hjid" COLSPAN="3" ALIGN="LEFT">proteinnamegroupsubmittednametype_ecnumber_hjid</TD></TR>
+      <TR><TD PORT="proteinnamegroupsubmittednametype_ecnumber_hjindex" COLSPAN="3" ALIGN="LEFT">proteinnamegroupsubmittednametype_ecnumber_hjindex</TD></TR>
       <TR><TD PORT="proteintype_componenttype_cdantigenname_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_componenttype_cdantigenname_hjid</TD></TR>
       <TR><TD PORT="proteintype_componenttype_cdantigenname_hjindex" COLSPAN="3" ALIGN="LEFT">proteintype_componenttype_cdantigenname_hjindex</TD></TR>
       <TR><TD PORT="proteintype_componenttype_innname_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_componenttype_innname_hjid</TD></TR>
@@ -178,21 +261,31 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="proteintype_innname_hjindex" COLSPAN="3" ALIGN="LEFT">proteintype_innname_hjindex</TD></TR>
       <TR><TD PORT="subcellularlocationtype_topology_hjid" COLSPAN="3" ALIGN="LEFT">subcellularlocationtype_topology_hjid</TD></TR>
       <TR><TD PORT="subcellularlocationtype_topology_hjindex" COLSPAN="3" ALIGN="LEFT">subcellularlocationtype_topology_hjindex</TD></TR>
-      <TR><TD PORT="subcellularlocationtype_location_hjid" COLSPAN="3" ALIGN="LEFT">subcellularlocationtype_location_hjid</TD></TR>
-      <TR><TD PORT="subcellularlocationtype_location_hjindex" COLSPAN="3" ALIGN="LEFT">subcellularlocationtype_location_hjindex</TD></TR>
       <TR><TD PORT="subcellularlocationtype_orientation_hjid" COLSPAN="3" ALIGN="LEFT">subcellularlocationtype_orientation_hjid</TD></TR>
       <TR><TD PORT="subcellularlocationtype_orientation_hjindex" COLSPAN="3" ALIGN="LEFT">subcellularlocationtype_orientation_hjindex</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 11</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">10 &gt;</TD></TR>
+      <TR><TD PORT="subcellularlocationtype_location_hjid" COLSPAN="3" ALIGN="LEFT">subcellularlocationtype_location_hjid</TD></TR>
+      <TR><TD PORT="subcellularlocationtype_location_hjindex" COLSPAN="3" ALIGN="LEFT">subcellularlocationtype_location_hjindex</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 23</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">11 &gt;</TD></TR>
     </TABLE>>
     URL="evidencedstringtype.html"
     tooltip="evidencedstringtype"
   ];
+  "evidencedstringtype_evidence" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">evidencedstringtype_evidence</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+    </TABLE>>
+    URL="evidencedstringtype_evidence.html"
+    tooltip="evidencedstringtype_evidence"
+  ];
   "evidencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">evidencetype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">evidencetype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
     </TABLE>>
     URL="evidencetype.html"
     tooltip="evidencetype"
@@ -200,9 +293,9 @@ digraph "twoDegreesRelationshipsDiagram" {
   "featuretype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">featuretype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">featuretype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
     </TABLE>>
     URL="featuretype.html"
     tooltip="featuretype"
@@ -210,19 +303,39 @@ digraph "twoDegreesRelationshipsDiagram" {
   "genelocationtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">genelocationtype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">genelocationtype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
     </TABLE>>
     URL="genelocationtype.html"
     tooltip="genelocationtype"
   ];
+  "genetype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">genetype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+    </TABLE>>
+    URL="genetype.html"
+    tooltip="genetype"
+  ];
+  "isoformtype" [
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">isoformtype</TD></TR>
+      <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
+    </TABLE>>
+    URL="isoformtype.html"
+    tooltip="isoformtype"
+  ];
   "keywordtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">keywordtype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">keywordtype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="keywordtype.html"
     tooltip="keywordtype"
@@ -230,9 +343,9 @@ digraph "twoDegreesRelationshipsDiagram" {
   "organismtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">organismtype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">organismtype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 2</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
     </TABLE>>
     URL="organismtype.html"
     tooltip="organismtype"
@@ -240,7 +353,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteinexistencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteinexistencetype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteinexistencetype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -250,11 +363,10 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteinnamegroupalternativenametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteinnamegroupalternativenametype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteinnamegroupalternativenametype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
-      <TR><TD PORT="ref" COLSPAN="3" ALIGN="LEFT">ref</TD></TR>
       <TR><TD PORT="fullname" COLSPAN="3" ALIGN="LEFT">fullname</TD></TR>
       <TR><TD PORT="proteintype_componenttype_alternativename_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_componenttype_alternativename_hjid</TD></TR>
       <TR><TD PORT="proteintype_componenttype_alternativename_hjindex" COLSPAN="3" ALIGN="LEFT">proteintype_componenttype_alternativename_hjindex</TD></TR>
@@ -262,7 +374,7 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="proteintype_domaintype_alternativename_hjindex" COLSPAN="3" ALIGN="LEFT">proteintype_domaintype_alternativename_hjindex</TD></TR>
       <TR><TD PORT="proteintype_alternativename_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_alternativename_hjid</TD></TR>
       <TR><TD PORT="proteintype_alternativename_hjindex" COLSPAN="3" ALIGN="LEFT">proteintype_alternativename_hjindex</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
     </TABLE>>
     URL="proteinnamegroupalternativenametype.html"
     tooltip="proteinnamegroupalternativenametype"
@@ -270,13 +382,12 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteinnamegrouprecommendednametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteinnamegrouprecommendednametype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteinnamegrouprecommendednametype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
-      <TR><TD PORT="ref" COLSPAN="3" ALIGN="LEFT">ref</TD></TR>
       <TR><TD PORT="fullname" COLSPAN="3" ALIGN="LEFT">fullname</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">5 &gt;</TD></TR>
     </TABLE>>
     URL="proteinnamegrouprecommendednametype.html"
     tooltip="proteinnamegrouprecommendednametype"
@@ -284,11 +395,10 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteinnamegroupsubmittednametype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteinnamegroupsubmittednametype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteinnamegroupsubmittednametype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
-      <TR><TD PORT="ref" COLSPAN="3" ALIGN="LEFT">ref</TD></TR>
       <TR><TD PORT="fullname" COLSPAN="3" ALIGN="LEFT">fullname</TD></TR>
       <TR><TD PORT="proteintype_componenttype_submittedname_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_componenttype_submittedname_hjid</TD></TR>
       <TR><TD PORT="proteintype_componenttype_submittedname_hjindex" COLSPAN="3" ALIGN="LEFT">proteintype_componenttype_submittedname_hjindex</TD></TR>
@@ -296,7 +406,7 @@ digraph "twoDegreesRelationshipsDiagram" {
       <TR><TD PORT="proteintype_domaintype_submittedname_hjindex" COLSPAN="3" ALIGN="LEFT">proteintype_domaintype_submittedname_hjindex</TD></TR>
       <TR><TD PORT="proteintype_submittedname_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_submittedname_hjid</TD></TR>
       <TR><TD PORT="proteintype_submittedname_hjindex" COLSPAN="3" ALIGN="LEFT">proteintype_submittedname_hjindex</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">  </TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="proteinnamegroupsubmittednametype.html"
     tooltip="proteinnamegroupsubmittednametype"
@@ -304,13 +414,13 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteintype" [
     label=<
     <TABLE BORDER="2" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteintype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="2" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD><TD PORT="hjid.type" ALIGN="LEFT">int8[8]</TD></TR>
-      <TR><TD PORT="hjtype" COLSPAN="2" ALIGN="LEFT">hjtype</TD><TD PORT="hjtype.type" ALIGN="LEFT">varchar[0]</TD></TR>
-      <TR><TD PORT="hjversion" COLSPAN="2" ALIGN="LEFT">hjversion</TD><TD PORT="hjversion.type" ALIGN="LEFT">int8[8]</TD></TR>
-      <TR><TD PORT="allergenname" COLSPAN="2" ALIGN="LEFT">allergenname</TD><TD PORT="allergenname.type" ALIGN="LEFT">int8[8]</TD></TR>
-      <TR><TD PORT="biotechname" COLSPAN="2" ALIGN="LEFT">biotechname</TD><TD PORT="biotechname.type" ALIGN="LEFT">int8[8]</TD></TR>
-      <TR><TD PORT="recommendedname" COLSPAN="2" ALIGN="LEFT">recommendedname</TD><TD PORT="recommendedname.type" ALIGN="LEFT">int8[8]</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteintype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="2" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD><TD PORT="hjid.type" ALIGN="LEFT">int8[19]</TD></TR>
+      <TR><TD PORT="hjtype" COLSPAN="2" ALIGN="LEFT">hjtype</TD><TD PORT="hjtype.type" ALIGN="LEFT">varchar[2147483647]</TD></TR>
+      <TR><TD PORT="hjversion" COLSPAN="2" ALIGN="LEFT">hjversion</TD><TD PORT="hjversion.type" ALIGN="LEFT">int8[19]</TD></TR>
+      <TR><TD PORT="biotechname" COLSPAN="2" ALIGN="LEFT">biotechname</TD><TD PORT="biotechname.type" ALIGN="LEFT">int8[19]</TD></TR>
+      <TR><TD PORT="recommendedname" COLSPAN="2" ALIGN="LEFT">recommendedname</TD><TD PORT="recommendedname.type" ALIGN="LEFT">int8[19]</TD></TR>
+      <TR><TD PORT="allergenname" COLSPAN="2" ALIGN="LEFT">allergenname</TD><TD PORT="allergenname.type" ALIGN="LEFT">int8[19]</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">7 &gt;</TD></TR>
     </TABLE>>
     URL="proteintype.html"
@@ -319,13 +429,13 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteintype_componenttype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteintype_componenttype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteintype_componenttype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
-      <TR><TD PORT="allergenname" COLSPAN="3" ALIGN="LEFT">allergenname</TD></TR>
       <TR><TD PORT="biotechname" COLSPAN="3" ALIGN="LEFT">biotechname</TD></TR>
       <TR><TD PORT="recommendedname" COLSPAN="3" ALIGN="LEFT">recommendedname</TD></TR>
+      <TR><TD PORT="allergenname" COLSPAN="3" ALIGN="LEFT">allergenname</TD></TR>
       <TR><TD PORT="proteintype_component_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_component_hjid</TD></TR>
       <TR><TD PORT="proteintype_component_hjindex" COLSPAN="3" ALIGN="LEFT">proteintype_component_hjindex</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
@@ -336,13 +446,13 @@ digraph "twoDegreesRelationshipsDiagram" {
   "proteintype_domaintype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">proteintype_domaintype</TD></TR>
-      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#e16239" ALIGN="LEFT">hjid</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">proteintype_domaintype</TD></TR>
+      <TR><TD PORT="hjid" COLSPAN="3" BGCOLOR="#bed1b8" ALIGN="LEFT">hjid</TD></TR>
       <TR><TD PORT="hjtype" COLSPAN="3" ALIGN="LEFT">hjtype</TD></TR>
       <TR><TD PORT="hjversion" COLSPAN="3" ALIGN="LEFT">hjversion</TD></TR>
-      <TR><TD PORT="allergenname" COLSPAN="3" ALIGN="LEFT">allergenname</TD></TR>
       <TR><TD PORT="biotechname" COLSPAN="3" ALIGN="LEFT">biotechname</TD></TR>
       <TR><TD PORT="recommendedname" COLSPAN="3" ALIGN="LEFT">recommendedname</TD></TR>
+      <TR><TD PORT="allergenname" COLSPAN="3" ALIGN="LEFT">allergenname</TD></TR>
       <TR><TD PORT="proteintype_domain_hjid" COLSPAN="3" ALIGN="LEFT">proteintype_domain_hjid</TD></TR>
       <TR><TD PORT="proteintype_domain_hjindex" COLSPAN="3" ALIGN="LEFT">proteintype_domain_hjindex</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 4</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">4 &gt;</TD></TR>
@@ -353,9 +463,9 @@ digraph "twoDegreesRelationshipsDiagram" {
   "referencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">referencetype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">referencetype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 3</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">2 &gt;</TD></TR>
     </TABLE>>
     URL="referencetype.html"
     tooltip="referencetype"
@@ -363,7 +473,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "sequencetype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">sequencetype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">sequencetype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
@@ -373,7 +483,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "subcellularlocationtype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">subcellularlocationtype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">subcellularlocationtype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">3 &gt;</TD></TR>
     </TABLE>>
@@ -383,7 +493,7 @@ digraph "twoDegreesRelationshipsDiagram" {
   "uniprottype" [
     label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#ffffff">
-      <TR><TD COLSPAN="3" BGCOLOR="#9b8559" ALIGN="CENTER">uniprottype</TD></TR>
+      <TR><TD COLSPAN="3" BGCOLOR="#9bab96" ALIGN="CENTER">uniprottype</TD></TR>
       <TR><TD PORT="elipses" COLSPAN="3" ALIGN="LEFT">...</TD></TR>
       <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">  </TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">0 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>

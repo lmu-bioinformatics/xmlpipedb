@@ -1,6 +1,6 @@
 **ReadMe for GenMAPP Gene Database for  *Vibrio cholerae*  O1 biovar El Tor str. N16961, Vc-Std\_External\_20161009.gdb**
 
-Last revised:  10/24/16
+Last revised:  11/28/16
 
 This document contains the following:
 
@@ -77,15 +77,15 @@ iv. Database Report
 
 | ID System | ID CountCurrent version | ID Count20101022 version | ID Count20090622 version |
 | --- | --- | --- | --- |
-| EMBL | 228 | 293 | 199 |
-| GeneID (NCBI) | 3404 | 3827 | 3441 |
-| GeneOntology | 5556 | 3829 | 3528 |
-| InterPro | 4349 | 3942 | 2596 |
+| EMBL | 176 | 293 | 199 |
+| GeneID (NCBI) | 3339 | 3827 | 3441 |
+| GeneOntology | 6920 | 3829 | 3528 |
+| InterPro | 4554 | 3942 | 2596 |
 | OrderedLocusNames | 7664\* | 7664\* | 6890 |
-| PDB | 223 | 157 | 67 |
-| Pfam | 2102 | 1955 | 1449 |
-| RefSeq | 3403 | 3827 | 3441 |
-| UniProt | 3784 | 3784 | 3397 |
+| PDB | 312 | 157 | 67 |
+| Pfam | 2200 | 1955 | 1449 |
+| RefSeq | 6556 | 3827 | 3441 |
+| UniProt | 3577 | 3784 | 3397 |
 
 \*There are 3832 unique genes/proteins in the current version of the Gene Database; the 7664 count represents the total number of IDs due to duplicate IDs of the form VC#### and VC\_####.
 

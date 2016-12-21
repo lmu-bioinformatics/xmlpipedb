@@ -75,7 +75,7 @@ iv. Database Report
 - The OrderedLocusNames ID system was derived from the cross-references in the UniProt proteome set.  Each ID appears twice, once in the form of VC\_#### and once in the form of VC####, (e.g., VC0001 and VC\_0001) because IDs of both forms can be found in the literature. 
 - The following table lists the numbers of gene IDs found in each gene ID system:
 
-| ID System | ID CountCurrent version | ID Count20101022 version | ID Count20090622 version |
+| ID System | ID Count Current version | ID Count 20101022 version | ID Count 20090622 version |
 | --- | --- | --- | --- |
 | EMBL | 176 | 293 | 199 |
 | GeneID (NCBI) | 3339 | 3827 | 3441 |

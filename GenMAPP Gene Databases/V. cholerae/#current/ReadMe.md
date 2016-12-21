@@ -42,7 +42,7 @@ GenMAPP (Gene Map Annotator and Pathway Profiler) is a free computer application
  
 i. Gene ID Systems
 
-This _Vibrio__cholerae_ Gene Database is UniProt-centric in that the main data source (primary ID System) for gene IDs and annotation is the UniProt complete proteome set for _Vibrio cholerae_, made available as an XML download. In addition to UniProt IDs, this database provides the following proper gene ID systems that were cross-referenced by the UniProt data: OrderedLocusNames, GeneID (NCBI), and RefSeq (protein IDs of the form NP\_######). It also supplies UniProt-derived annotation links from the following systems: EMBL, InterPro, PDB, and Pfam.  The Gene Ontology data has been acquired directly from the Gene Ontology Project. The GOA project was used to link Gene Ontology terms to UniProt IDs. Links to data sources are listed in the section below.
+This _Vibrio_cholerae_ Gene Database is UniProt-centric in that the main data source (primary ID System) for gene IDs and annotation is the UniProt complete proteome set for _Vibrio cholerae_, made available as an XML download. In addition to UniProt IDs, this database provides the following proper gene ID systems that were cross-referenced by the UniProt data: OrderedLocusNames, GeneID (NCBI), and RefSeq (protein IDs of the form NP\_######). It also supplies UniProt-derived annotation links from the following systems: EMBL, InterPro, PDB, and Pfam.  The Gene Ontology data has been acquired directly from the Gene Ontology Project. The GOA project was used to link Gene Ontology terms to UniProt IDs. Links to data sources are listed in the section below.
 
 | Proper ID System | SystemCode |
 | --- | --- |
@@ -57,7 +57,7 @@ ii. Species
 
 iii. Data Sources and Versions
  
-- This _Vibrio cholerae_ Gene Database was built on October 9, 2016; this build date is reflected in the filename Vc-Std\_External\_20161009.gdb. All date fields internal to the Gene Database (and not usually seen by regular GenMAPP users) have been filled with this build date.
+- This Gene Database was built on October 9, 2016; this build date is reflected in the filename Vc-Std\_External\_20161009.gdb. All date fields internal to the Gene Database (and not usually seen by regular GenMAPP users) have been filled with this build date.
 - UniProt complete proteome set for _Vibrio cholera_e O1 biovar El Tor str. N16961, downloaded from this page: <http://www.uniprot.org/uniprot/?query=organism%3a243277+keyword%3a1185&format=\*&compress=yes>
 Filename: "uniprot-organism%3A243277+keyword%3A1185.xml" (downloaded as a compressed .gz file and extracted)
 Version information for the proteome sets can be found at  <http://www.uniprot.org/news/>

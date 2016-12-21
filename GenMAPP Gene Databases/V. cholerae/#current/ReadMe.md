@@ -42,12 +42,13 @@ GenMAPP (Gene Map Annotator and Pathway Profiler) is a free computer application
  
 i. Gene ID Systems
 
-This _Vibrio cholerae_ Gene Database is UniProt-centric in that the main data source (primary ID System) for gene IDs and annotation is the UniProt complete proteome set for _Vibrio cholerae_, made available as an XML download. In addition to UniProt IDs, this database provides the following proper gene ID systems that were cross-referenced by the UniProt data: OrderedLocusNames, GeneID (NCBI), and RefSeq (protein IDs of the form NP\_######). It also supplies UniProt-derived annotation links from the following systems: EMBL, InterPro, PDB, and Pfam.  The Gene Ontology data has been acquired directly from the Gene Ontology Project. The GOA project was used to link Gene Ontology terms to UniProt IDs. Links to data sources are listed in the section below.
+This _Vibrio cholerae_ Gene Database is UniProt-centric in that the main data source (primary ID System) for gene IDs and annotation is the UniProt complete proteome set for _Vibrio cholerae_, made available as an XML download. In addition to UniProt IDs, this database provides the following proper gene ID systems that were cross-referenced by the UniProt data: OrderedLocusNames, EnsemblBacteria, GeneID (NCBI), and RefSeq (protein IDs of the form NP\_###### and WP\_#########). It also supplies UniProt-derived annotation links from the following systems: EMBL, InterPro, PDB, and Pfam.  The Gene Ontology data has been acquired directly from the Gene Ontology Project. The GOA project was used to link Gene Ontology terms to UniProt IDs. Links to data sources are listed in the section below.
 
 | Proper ID System | SystemCode |
 | --- | --- |
 | UniProt | S |
 | OrderedLocusNames | N |
+| EnsemblBacteria | Eb |
 | GeneID (NCBI) | L |
 | RefSeq | Q |
 

@@ -97,15 +97,15 @@ iv. Database Report
 - For issues related to the _Vibrio cholerae_ Gene Database, please contact:
 
 
-      Kam D. Dahlquist, PhD.
+      Kam D. Dahlquist, PhD., 
     
-      Department of Biology
+      Department of Biology, 
     
-      Loyola Marymount University
+      Loyola Marymount University, 
     
-      1 LMU Drive, MS 8888
+      1 LMU Drive, MS 8888, 
     
-      Los Angeles, CA 90045-2659
+      Los Angeles, CA 90045-2659, 
     
       kdahlquist at lmu dot edu
 

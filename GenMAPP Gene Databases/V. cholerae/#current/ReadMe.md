@@ -72,8 +72,7 @@ Filename: "go\_daily-termdb.obo-xml.gz".
 iv. Database Report
  
 - UniProt is the primary ID system for the _Vibrio cholerae_ Gene Database. The UniProt table contains all 3784 UniProt IDs contained in the UniProt proteome set for this species.
-- The OrderedLocusNames ID system was derived from the cross-references in the UniProt proteome set.  Each ID appears twice, once in the form of VC\_#### and once in the form of VC####, (e.g., VC0001 and VC\_0001) because IDs of both forms can be found in the literature. We compared this table with the list of gene IDs in the JCVI Comprehensive Microbial Resource (CMR) at
-<http://cmr.jcvi.org/cgi-bin/CMR/GenomePage.cgi?org=gvc>.  There are 3887 protein coding genes listed there.  Of the protein coding genes, 55 gene IDs do not appear in our Gene Database because they are not cross-listed in the UniProt XML file.
+- The OrderedLocusNames ID system was derived from the cross-references in the UniProt proteome set.  Each ID appears twice, once in the form of VC\_#### and once in the form of VC####, (e.g., VC0001 and VC\_0001) because IDs of both forms can be found in the literature. 
 - The following table lists the numbers of gene IDs found in each gene ID system:
 
 | ID System | ID CountCurrent version | ID Count20101022 version | ID Count20090622 version |

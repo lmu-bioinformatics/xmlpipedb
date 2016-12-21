@@ -108,3 +108,6 @@ ii. Previous version:  Vc-Std\_External\_20101022.gdb
 iii. Previous version:  Vc-Std\_External\_20090622.gdb
 - Alexandrea Alphonso, Derek Smith, John David N. Dionisio, and Kam D. Dahlquist contributed to the first release.
 
+7\. Database Schema Diagram
+
+![Database Schema Diagram](Vibrio_cholerae_gdb_schema_20161009.jpg)

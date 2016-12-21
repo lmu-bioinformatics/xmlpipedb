@@ -94,21 +94,7 @@ iv. Database Report
 
 - The Gene Database for _Vibrio cholerae_ was built by the Loyola Marymount University (LMU) Bioinformatics Group using the program GenMAPP Builder, part of the open source XMLPipeDB project <https://lmu-bioinformatics.github.io/xmlpipedb/>.
 - For support, bug reports, or feature requests relating to XMLPipeDB or GenMAPP Builder, please consult the XMLPipeDB Manual found at <http://xmlpipedb.cs.lmu.edu/documentation.shtml> or go to our Github repository at <https://github.com/lmu-bioinformatics/xmlpipedb>.
-- For issues related to the _Vibrio cholerae_ Gene Database, please contact:
-
-
-      Kam D. Dahlquist, PhD., 
-    
-      Department of Biology, 
-    
-      Loyola Marymount University, 
-    
-      1 LMU Drive, MS 8888, 
-    
-      Los Angeles, CA 90045-2659, 
-    
-      kdahlquist at lmu dot edu
-
+- For issues related to the _Vibrio cholerae_ Gene Database, please contact: Kam D. Dahlquist, PhD., Department of Biology, Loyola Marymount University, 1 LMU Drive, MS 8888, Los Angeles, CA 90045-2659, kdahlquist at lmu dot edu.
 - For issues related to GenMAPP 2.0/2.1 or MAPPFinder 2.0 please contact GenMAPP support directly by e-mailing genmapp@gladstone.ucsf.edu or GenMAPP@googlegroups.com.
 
 6\. Release Notes

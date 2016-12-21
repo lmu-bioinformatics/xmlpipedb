@@ -54,7 +54,7 @@ This _Vibrio cholerae_ Gene Database is UniProt-centric in that the main data so
 
 ii. Species
  
-- This Gene Database is based on the UniProt proteome set for O1 biovar El Tor str. N16961 (ATCC 39315), taxon ID 243277.
+- This Gene Database is based on the UniProt proteome set for _Vibrio cholerae_ O1 biovar El Tor str. N16961 (ATCC 39315), taxon ID 243277.
 
 iii. Data Sources and Versions
  

@@ -86,7 +86,7 @@ iv. Database Report
 | PDB | 312 | 157 | 67 |
 | Pfam | 2200 | 1955 | 1449 |
 | RefSeq | 6556 | 3827 | 3441 |
-| UniProt | 3577 | 3784 | 3397 |
+| UniProt | 3788 | 3784 | 3397 |
 
 \*There are 3832 unique genes/proteins in the current version of the Gene Database; the 7664 count represents the total number of IDs due to duplicate IDs of the form VC#### and VC\_####.
 

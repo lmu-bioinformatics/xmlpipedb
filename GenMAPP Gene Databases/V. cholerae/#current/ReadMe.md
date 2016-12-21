@@ -59,7 +59,7 @@ ii. Species
 iii. Data Sources and Versions
  
 - This Gene Database was built on October 9, 2016; this build date is reflected in the filename Vc-Std\_External\_20161009.gdb. All date fields internal to the Gene Database (and not usually seen by regular GenMAPP users) have been filled with this build date.
-- UniProt complete proteome set for _Vibrio cholera_e O1 biovar El Tor str. N16961, downloaded from this page: <http://www.uniprot.org/uniprot/?query=organism%3a243277+keyword%3a1185&format=\*&compress=yes>
+- UniProt complete proteome set for Vibrio cholerae O1 biovar El Tor str. N16961, downloaded from this page: <http://www.uniprot.org/uniprot/?query=organism%3a243277+keyword%3a1185&format=\*&compress=yes>
 Filename: "uniprot-organism%3A243277+keyword%3A1185.xml" (downloaded as a compressed .gz file and extracted)
 Version information for the proteome sets can be found at  <http://www.uniprot.org/news/>
 The proteome set used for this version of the _Vibrio cholerae_ Gene Database was based on UniProt release 2016\_09 released on October 5, 2016.

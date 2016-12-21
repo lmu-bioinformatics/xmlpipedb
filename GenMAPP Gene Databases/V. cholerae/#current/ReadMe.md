@@ -78,6 +78,7 @@ iv. Database Report
 | ID System | ID Count Current version | ID Count 20101022 version | ID Count 20090622 version |
 | --- | --- | --- | --- |
 | EMBL | 176 | 293 | 199 |
+| EnsemblBacteria | 3827 | N/A | N/A |
 | GeneID (NCBI) | 3339 | 3827 | 3441 |
 | GeneOntology | 6920 | 3829 | 3528 |
 | InterPro | 4554 | 3942 | 2596 |
